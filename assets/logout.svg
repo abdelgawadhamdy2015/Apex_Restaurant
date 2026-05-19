@@ -1,0 +1,36 @@
+<svg width="20" height="25" viewBox="0 0 20 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="paint0_linear_235_2877" x1="9.24856" y1="10.543" x2="9.24856" y2="14.5507" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0353A4"/>
+<stop offset="0.173077" stop-color="#0356AA"/>
+<stop offset="0.413462" stop-color="#035BB3"/>
+<stop offset="0.576923" stop-color="#045EB9"/>
+<stop offset="0.798077" stop-color="#0462C1"/>
+<stop offset="0.865385" stop-color="#0463C3"/>
+<stop offset="1" stop-color="#0466C8"/>
+</linearGradient>
+<linearGradient id="paint1_linear_235_2877" x1="12.2818" y1="12.5469" x2="12.2818" y2="13.5469" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0353A4"/>
+<stop offset="0.173077" stop-color="#0356AA"/>
+<stop offset="0.413462" stop-color="#035BB3"/>
+<stop offset="0.576923" stop-color="#045EB9"/>
+<stop offset="0.798077" stop-color="#0462C1"/>
+<stop offset="0.865385" stop-color="#0463C3"/>
+<stop offset="1" stop-color="#0466C8"/>
+</linearGradient>
+<linearGradient id="paint2_linear_235_2877" x1="6.86899" y1="6.23804" x2="6.86899" y2="18.7621" gradientUnits="userSpaceOnUse">
+<stop stop-color="#0353A4"/>
+<stop offset="0.173077" stop-color="#0356AA"/>
+<stop offset="0.413462" stop-color="#035BB3"/>
+<stop offset="0.576923" stop-color="#045EB9"/>
+<stop offset="0.798077" stop-color="#0462C1"/>
+<stop offset="0.865385" stop-color="#0463C3"/>
+<stop offset="1" stop-color="#0466C8"/>
+</linearGradient>
+</defs>
+<path d="M18.5 12.5C18.5 5.59644 12.9036 0 6 0H5.75C3.40279 0 1.5 1.90279 1.5 4.25V16.5C1.5 21.1944 5.30558 25 10 25C14.6944 25 18.5 21.1944 18.5 16.5V12.5Z" fill="#3085FE" fill-opacity="0.1"/>
+<path d="M10.2505 14.5507L8.24664 12.5468L10.2505 10.543" stroke="url(#paint0_linear_235_2877)" stroke-width="1.2524" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M16.2621 12.5469H8.30149" stroke="url(#paint1_linear_235_2877)" stroke-width="1.2524" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M10 6.23804C6.54023 6.23804 3.73798 8.5863 3.73798 12.5001C3.73798 16.4138 6.54023 18.7621 10 18.7621" stroke="url(#paint2_linear_235_2877)" stroke-width="1.2524" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+
+</svg>
