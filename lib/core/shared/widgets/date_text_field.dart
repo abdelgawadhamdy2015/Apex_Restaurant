@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,9 @@ class DateTextField extends StatelessWidget {
         label != null
             ? Text(
                 label!,
-                style: TextStyles.lighterGrayBoldStyle(SizeConfig.fontSize2!),
+                style: TextStyles.lighterGrayBoldStyle(
+                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+                ),
               )
             : SizedBox.shrink(),
         label != null ? HelperMethods.verticalSpacing(.01) : SizedBox.shrink(),
@@ -37,12 +39,14 @@ class DateTextField extends StatelessWidget {
           contentPadding: EdgeInsets.only(
             right: SizeConfig.screenWidth! * .003,
           ),
-          hintStyle: TextStyles.blackRegulerStyle(SizeConfig.fontSize2!),
+          hintStyle: TextStyles.blackRegulerStyle(
+            fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+          ),
           inputTextStyle: TextStyles.lighterGrayBoldStyle(
-            SizeConfig.fontSize2!,
+            fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
             fontFamily: RestaurantConstants.droidArabicKufi,
           ),
-          fillColor: ColorManger.whiteColor,
+          fillColor: AppColors.white,
           readOnly: true,
           excep: label,
           suffixIcon: Icon(

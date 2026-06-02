@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -90,7 +90,7 @@ class _MyTextFormState extends State<MyTextForm> {
           decoration: InputDecoration(
             contentPadding: widget.contentPadding,
             border: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManger.textFormBorderColor),
+              borderSide: BorderSide(color: AppColors.border),
               borderRadius: BorderRadius.circular(
                 SizeConfig.screenWidth! * .02,
               ),
@@ -98,7 +98,7 @@ class _MyTextFormState extends State<MyTextForm> {
             prefixIcon: widget.icon,
             labelStyle: widget.hintStyle,
             labelText: widget.labelText,
-            fillColor: widget.fillColor ?? ColorManger.morelightGray,
+            fillColor: widget.fillColor ?? AppColors.white,
             filled: true,
             suffixIcon: widget.suffixIcon,
             hintText: widget.hint,
@@ -109,10 +109,7 @@ class _MyTextFormState extends State<MyTextForm> {
                   borderRadius: BorderRadius.circular(
                     SizeConfig.screenWidth! * .02,
                   ),
-                  borderSide: BorderSide(
-                    color: ColorManger.textFormBorderColor,
-                    width: .6.w,
-                  ),
+                  borderSide: BorderSide(color: AppColors.border, width: .6.w),
                   //borderRadius: BorderRadius.circular(16),
                 ),
             enabledBorder:
@@ -121,10 +118,7 @@ class _MyTextFormState extends State<MyTextForm> {
                   borderRadius: BorderRadius.circular(
                     SizeConfig.screenWidth! * .02,
                   ),
-                  borderSide: BorderSide(
-                    color: ColorManger.textFormBorderColor,
-                    width: 0.9.w,
-                  ),
+                  borderSide: BorderSide(color: AppColors.border, width: 0.9.w),
                 ),
             errorBorder:
                 widget.errorBorder ??
@@ -147,10 +141,7 @@ class _MyTextFormState extends State<MyTextForm> {
                   borderRadius: BorderRadius.circular(
                     SizeConfig.screenWidth! * .02,
                   ),
-                  borderSide: BorderSide(
-                    color: ColorManger.lighterGray,
-                    width: 0.6.w,
-                  ),
+                  borderSide: BorderSide(color: AppColors.border, width: 0.6.w),
                 ),
           ),
           validator: (val) {

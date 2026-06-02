@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class MyProgressIndicator extends StatefulWidget {
@@ -33,7 +33,10 @@ class _MyProgressIndicatorState extends State<MyProgressIndicator>
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: CircularProgressIndicator(color: ColorManger.mainBlue),
+      child: CircularProgressIndicator(
+        color: AppColors.primary,
+        value: _controller.value,
+      ),
     );
   }
 }

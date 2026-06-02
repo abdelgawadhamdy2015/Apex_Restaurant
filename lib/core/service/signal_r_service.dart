@@ -5,14 +5,15 @@ import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/service/api_error_model.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
-import 'package:apex_restaurant/featchers/login/ui/widget/login_mobile_screen.dart';
+import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:signalr_core/signalr_core.dart';
+import 'package:signalr_netcore/hub_connection.dart';
+import 'package:signalr_netcore/signalr_client.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -26,7 +27,7 @@ class SignalRService {
     hubConnection = HubConnectionBuilder()
         .withUrl(
           '${ApiConstants.baseUsrl}NotificationHub',
-          HttpConnectionOptions(accessTokenFactory: () async => token),
+          options: HttpConnectionOptions(accessTokenFactory: () async => token),
         )
         .build();
     await hubConnection?.start();
@@ -86,7 +87,7 @@ class SignalRService {
 
   void stopConnection() {
     hubConnection?.stop();
-    hubConnection!.state == HubConnectionState.disconnected
+    hubConnection!.state == HubConnectionState.Disconnected
         ? print("signalRService stopped")
         : print("signalRService ${hubConnection!.state}");
   }

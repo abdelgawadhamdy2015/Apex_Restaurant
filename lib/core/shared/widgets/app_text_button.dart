@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -50,7 +50,7 @@ class AppButtonText extends StatelessWidget {
             ),
           ),
           backgroundColor: WidgetStatePropertyAll(
-            backGroundColor ?? ColorManger.mainBlue,
+            backGroundColor ?? AppColors.sidebarActiveBorder,
           ),
           padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(

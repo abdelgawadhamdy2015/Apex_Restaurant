@@ -1,145 +1,176 @@
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
+import 'package:apex_restaurant/core/theme/font_weight_helper.dart';
 import 'package:flutter/material.dart';
 
-import 'font_weight_helper.dart';
-
 class TextStyles {
-  static double factor = SizeConfig.isTablet
-      ? 1.7
-      : SizeConfig.screenWidth! > 375
-      ? .7
-      : 1;
-  static TextStyle lighterGrayBoldStyle(double fontSize, {String? fontFamily}) {
-    return TextStyle(
-      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
-      fontWeight: FontWeightHelper.bold,
-      color: ColorManger.lighterGray,
-    );
-  }
+  static const double _defaultFontSize = 14;
 
-  static TextStyle lighterGrayRegulerStyle(
-    double fontSize, {
+  static TextStyle lighterGrayBoldStyle({
+    double fontSize = _defaultFontSize,
     String? fontFamily,
   }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
-      fontWeight: FontWeightHelper.reguler,
-      color: ColorManger.lighterGray,
-    );
-  }
-
-  static TextStyle blackBoldStyle(double fontSize, {String? fontFamily}) {
-    return TextStyle(
-      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.bold,
-      color: ColorManger.darkBlack,
+      color: AppColors.textSecondary,
     );
   }
 
-  static TextStyle blackRegulerStyle(double fontSize, {String? fontFamily}) {
-    return TextStyle(
-      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
-      fontWeight: FontWeightHelper.reguler,
-      color: ColorManger.darkBlack,
-    );
-  }
-
-  static TextStyle blackMediumStyle(double fontSize, {String? fontFamily}) {
-    return TextStyle(
-      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
-      fontWeight: FontWeightHelper.medium,
-      color: ColorManger.darkBlack,
-    );
-  }
-
-  static TextStyle blackSemiBoldStyle(double fontSize, {String? fontFamily}) {
-    return TextStyle(
-      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
-      fontWeight: FontWeightHelper.semiBold,
-      color: ColorManger.darkBlack,
-    );
-  }
-
-  static TextStyle lightRedRegulerStyle(double fontSize, {String? fontFamily}) {
-    return TextStyle(
-      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
-      fontWeight: FontWeightHelper.reguler,
-      color: ColorManger.lightred,
-    );
-  }
-
-  static TextStyle lightGreenRegulerStyle(
-    double fontSize, {
+  static TextStyle lighterGrayRegulerStyle({
+    double fontSize = _defaultFontSize,
     String? fontFamily,
   }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.reguler,
-      color: ColorManger.lightGreen,
+      color: AppColors.textSecondary,
     );
   }
 
-  static TextStyle whiteRegulerStyle(double fontSize, {String? fontFamily}) {
+  static TextStyle blackBoldStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
+      fontWeight: FontWeightHelper.bold,
+      color: AppColors.textPrimary,
+    );
+  }
+
+  static TextStyle blackRegulerStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
+      fontSize: fontSize,
+      fontWeight: FontWeightHelper.reguler,
+      color: AppColors.textPrimary,
+    );
+  }
+
+  static TextStyle blackMediumStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
+      fontSize: fontSize,
+      fontWeight: FontWeightHelper.medium,
+      color: AppColors.textPrimary,
+    );
+  }
+
+  static TextStyle blackSemiBoldStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
+      fontSize: fontSize,
+      fontWeight: FontWeightHelper.semiBold,
+      color: AppColors.textPrimary,
+    );
+  }
+
+  static TextStyle lightRedRegulerStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
+      fontSize: fontSize,
+      fontWeight: FontWeightHelper.reguler,
+      color: AppColors.error,
+    );
+  }
+
+  static TextStyle lightGreenRegulerStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
+      fontSize: fontSize,
+      fontWeight: FontWeightHelper.reguler,
+      color: AppColors.success,
+    );
+  }
+
+  static TextStyle whiteRegulerStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.reguler,
       color: Colors.white,
     );
   }
 
-  static TextStyle whiteBoldStyle(double fontSize, {String? fontFamily}) {
+  static TextStyle whiteBoldStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.bold,
       color: Colors.white,
     );
   }
 
-  static TextStyle whiteSemiBoldStyle(double fontSize, {String? fontFamily}) {
+  static TextStyle whiteSemiBoldStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.semiBold,
       color: Colors.white,
     );
   }
 
-  static TextStyle whiteMediumStyle(double fontSize, {String? fontFamily}) {
+  static TextStyle whiteMediumStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.medium,
       color: Colors.white,
     );
   }
 
-  static TextStyle darkBlueRegulerStyle(double fontSize, {String? fontFamily}) {
+  static TextStyle darkBlueRegulerStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.reguler,
-      color: ColorManger.darkBlue,
+      color: AppColors.primary,
     );
   }
 
-  static TextStyle darkBlueBoldStyle(double fontSize, {String? fontFamily}) {
+  static TextStyle darkBlueBoldStyle({
+    double fontSize = _defaultFontSize,
+    String? fontFamily,
+  }) {
     return TextStyle(
       fontFamily: fontFamily ?? RestaurantConstants.cairoFont,
-      fontSize: (fontSize * factor),
+      fontSize: fontSize,
       fontWeight: FontWeightHelper.bold,
-      color: ColorManger.darkBlue,
+      color: AppColors.textPrimary,
     );
   }
 }

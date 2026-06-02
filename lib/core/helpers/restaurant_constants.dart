@@ -1,7 +1,9 @@
+import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/login/data/models/user_info.dart';
 import 'package:intl/intl.dart';
 
 class RestaurantConstants {
+  static EmployeeBranch? currentBranch;
   static const String pushNotification = "pushNotification";
   static const String requestModel = "requestModel";
   static const String logoutNotification = "LogoutNotification";

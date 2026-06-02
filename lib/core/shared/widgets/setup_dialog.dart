@@ -6,10 +6,11 @@ import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
 import 'package:apex_restaurant/core/service/signal_r_service.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/colors.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/core/theme/text_styles.dart';
-import 'package:apex_restaurant/featchers/login/ui/widget/login_mobile_screen.dart';
+import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:dio/dio.dart';
@@ -38,7 +39,9 @@ void setupDialogState(
             child: data is String
                 ? Text(
                     data,
-                    style: TextStyles.blackBoldStyle(SizeConfig.fontSize3!),
+                    style: TextStyles.blackBoldStyle(
+                      fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+                    ),
                     textAlign: TextAlign.center,
                   )
                 : data,
@@ -55,7 +58,9 @@ void setupDialogState(
                 linearGradient: ColorManger.mainBlueGrediant,
                 borderRadius: SizeConfig.screenWidth! * .02,
                 buttonHeight: SizeConfig.screenHeight! * .06,
-                textStyle: TextStyles.whiteRegulerStyle(SizeConfig.fontSize3!),
+                textStyle: TextStyles.whiteRegulerStyle(
+                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+                ),
                 butonText: S.of(context).okDialog,
                 onPressed: () async {
                   context.pop();
@@ -103,7 +108,9 @@ void setupLogOutDialogState(
       content: Text(
         textAlign: TextAlign.center,
         data,
-        style: TextStyles.blackBoldStyle(SizeConfig.fontSize3 ?? 10),
+        style: TextStyles.blackBoldStyle(
+          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+        ),
       ),
       actions: [
         Row(
@@ -117,7 +124,8 @@ void setupLogOutDialogState(
                     child: Text(
                       actions[1],
                       style: TextStyles.blackBoldStyle(
-                        SizeConfig.fontSize3 ?? 10,
+                        fontSize:
+                            AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                       ),
                     ),
                   )
@@ -135,7 +143,9 @@ void setupLogOutDialogState(
               },
               child: Text(
                 actions[0],
-                style: TextStyles.blackBoldStyle(SizeConfig.fontSize3 ?? 10),
+                style: TextStyles.blackBoldStyle(
+                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+                ),
               ),
             ),
           ],
@@ -160,7 +170,9 @@ void setupResendRequestDialogState(
       content: Text(
         textAlign: TextAlign.center,
         data,
-        style: TextStyles.blackBoldStyle(SizeConfig.fontSize3!),
+        style: TextStyles.blackBoldStyle(
+          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+        ),
       ),
       actions: [
         Row(
@@ -172,7 +184,9 @@ void setupResendRequestDialogState(
                 linearGradient: ColorManger.mainBlueGrediant,
                 borderRadius: SizeConfig.screenWidth! * .02,
                 buttonHeight: SizeConfig.screenHeight! * .06,
-                textStyle: TextStyles.whiteRegulerStyle(SizeConfig.fontSize3!),
+                textStyle: TextStyles.whiteRegulerStyle(
+                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+                ),
                 butonText: actions[0],
                 onPressed: () {
                   oKButtonClick();
@@ -185,11 +199,11 @@ void setupResendRequestDialogState(
                 child: AppButtonText(
                   verticalPadding: 0,
                   horizontalPadding: 0,
-                  backGroundColor: ColorManger.lighterGray,
+                  backGroundColor: AppColors.textSecondary,
                   borderRadius: SizeConfig.screenWidth! * .02,
                   buttonHeight: SizeConfig.screenHeight! * .06,
                   textStyle: TextStyles.whiteRegulerStyle(
-                    SizeConfig.fontSize3!,
+                    fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                   ),
                   butonText: actions[1],
                   onPressed: (cancelClick != null)
@@ -216,7 +230,7 @@ void showFingerprintDialog(
   showDialog(
     context: context,
     builder: (_) => Dialog(
-      backgroundColor: ColorManger.whiteColor,
+      backgroundColor: AppColors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -233,7 +247,9 @@ void showFingerprintDialog(
 
             Text(
               data,
-              style: TextStyles.blackMediumStyle(SizeConfig.fontSize3!),
+              style: TextStyles.blackMediumStyle(
+                fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+              ),
               textAlign: TextAlign.center,
             ),
 
@@ -248,12 +264,13 @@ void showFingerprintDialog(
                     child: AppButtonText(
                       verticalPadding: 0,
                       horizontalPadding: 0,
-                      backGroundColor: ColorManger.redButtonColor,
+                      backGroundColor: AppColors.error,
                       borderRadius: SizeConfig.screenWidth! * .02,
                       buttonHeight: SizeConfig.screenHeight! * .06,
                       icon: Icons.replay,
                       textStyle: TextStyles.whiteRegulerStyle(
-                        SizeConfig.fontSize3!,
+                        fontSize:
+                            AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                       ),
                       butonText: S.of(context).retry,
                       onPressed: () {
@@ -271,7 +288,7 @@ void showFingerprintDialog(
                     buttonHeight: SizeConfig.screenHeight! * .06,
                     icon: Icons.home_sharp,
                     textStyle: TextStyles.whiteRegulerStyle(
-                      SizeConfig.fontSize3!,
+                      fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                     ),
                     butonText: S.of(context).home,
                     onPressed: () {

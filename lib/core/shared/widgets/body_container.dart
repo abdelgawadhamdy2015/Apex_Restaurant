@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +26,7 @@ class BodyContainer extends StatelessWidget {
       height: height,
       padding: padding ?? SizeConfig().getScreenPadding(),
       decoration: BoxDecoration(
-        color: ColorManger.backGroundGray,
+        color: AppColors.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(RestaurantConstants.containerRadius),
           topRight: Radius.circular(RestaurantConstants.containerRadius),
