@@ -1,11 +1,12 @@
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/shared/widgets/location_service_provider.dart';
-import 'package:apex_restaurant/featchers/home/presentation/ui/home_screen.dart';
-import 'package:apex_restaurant/featchers/login/presentation/providers/auth_bloc.dart';
-import 'package:apex_restaurant/featchers/login/ui/forget_password_screen.dart';
-import 'package:apex_restaurant/featchers/login/ui/login_screen.dart';
-import 'package:apex_restaurant/featchers/onboarding/presentation/ui/onboarding_screen.dart';
+import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:apex_restaurant/featchers/home/presentation/pages/home_page.dart';
+import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
+import 'package:apex_restaurant/featchers/login/presentation/pages/forget_password_page.dart';
+import 'package:apex_restaurant/featchers/login/presentation/pages/login_page.dart';
+import 'package:apex_restaurant/featchers/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +28,7 @@ class AppRouter {
         builder: (context, state) {
           return BlocProvider(
             create: (_) => getIt<AuthBloc>(),
-            child: const OnBoardingScreen(),
+            child: const OnBoardingPage(),
           );
         },
       ),
@@ -38,12 +39,8 @@ class AppRouter {
           return MultiProvider(
             providers: [
               BlocProvider<AuthBloc>(create: (_) => getIt<AuthBloc>()),
-
-              ChangeNotifierProvider<LocationServiceProvider>(
-                create: (_) => LocationServiceProvider(),
-              ),
             ],
-            child: LoginScreen(changeLanguage: changeLanguage),
+            child: LoginPage(changeLanguage: changeLanguage),
           );
         },
       ),
@@ -54,7 +51,7 @@ class AppRouter {
         builder: (context, state) {
           return BlocProvider(
             create: (_) => getIt<AuthBloc>(),
-            child: ForgetPasswordScreen(changeLanguage: changeLanguage),
+            child: ForgetPasswordPage(changeLanguage: changeLanguage),
           );
         },
       ),
@@ -64,8 +61,18 @@ class AppRouter {
         name: Routes.homeScreen,
         builder: (context, state) {
           return BlocProvider(
+            create: (_) => getIt<HomeBloc>(),
+            child: const HomePage(),
+          );
+        },
+      ),
+      GoRoute(
+        path: Routes.posScreen,
+        name: Routes.posScreen,
+        builder: (context, state) {
+          return BlocProvider(
             create: (_) => getIt<AuthBloc>(),
-            child: const HomeScreen(),
+            child: const PosPage(),
           );
         },
       ),

@@ -6,6 +6,15 @@ class ApiConstants {
   static const String localUrl = "http://192.168.1.253:1313/api/";
   static const String login = "Login";
 
+  // Restaurants apis
+  static const String getAllFloors = "Restaurants/Floors/GetAllFloors";
+  static const String getAllFoodTables =
+      "Restaurants/FoodTables/GetAllFoodTables";
+
+  // General apis
+  static const String getEmployeeBranches =
+      "Store/GeneralAPIs/getEmployeeBranchs";
+
   static DioExceptionType dioExceptionType = DioExceptionType.unknown;
 
   static int? userId;

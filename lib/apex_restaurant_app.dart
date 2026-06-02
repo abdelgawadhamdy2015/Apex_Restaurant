@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/router/router.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -88,18 +88,12 @@ class _MyAppState extends State<ApexRestaurantApp> {
 
           theme: ThemeData(
             datePickerTheme: DatePickerThemeData(
-              dayBackgroundColor: WidgetStatePropertyAll(
-                ColorManger.whiteColor,
-              ),
-              todayForegroundColor: WidgetStatePropertyAll(
-                ColorManger.whiteColor,
-              ),
-              todayBackgroundColor: WidgetStatePropertyAll(
-                ColorManger.seconderyBlue,
-              ),
+              dayBackgroundColor: WidgetStatePropertyAll(AppColors.white),
+              todayForegroundColor: WidgetStatePropertyAll(AppColors.white),
+              todayBackgroundColor: WidgetStatePropertyAll(AppColors.white),
               headerBackgroundColor: Colors.white,
               locale: Locale(RestaurantConstants.english),
-              backgroundColor: ColorManger.whiteColor,
+              backgroundColor: AppColors.white,
             ),
             textTheme: TextTheme(
               bodyMedium: TextStyle(fontSize: SizeConfig.fontSize3),

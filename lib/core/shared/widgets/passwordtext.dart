@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
@@ -53,29 +53,29 @@ class _PasswordTextState extends State<PasswordText> {
         obscureText: obsecured,
         obscuringCharacter: "*",
         decoration: InputDecoration(
-          fillColor: widget.fillColor ?? ColorManger.morelightGray,
+          fillColor: widget.fillColor ?? AppColors.white,
           filled: true,
           hintText: widget.hint,
           hintStyle: widget.hintStyle ?? TextStyle(fontSize: 10.sp),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: ColorManger.textFormBorderColor),
+            borderSide: BorderSide(color: AppColors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: Colors.blue, width: 0.6.w),
+            borderSide: BorderSide(color: AppColors.primary, width: 0.6.w),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: Colors.red, width: 0.6.w),
+            borderSide: BorderSide(color: AppColors.error, width: 0.6.w),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: Colors.red.shade300, width: 0.6.w),
+            borderSide: BorderSide(color: AppColors.error, width: 0.6.w),
           ),
           errorStyle: TextStyle(fontSize: 15.sp),
           suffixIcon: IconButton(
-            color: ColorManger.loginButtonColorBlue,
+            color: AppColors.primary,
             icon: SvgPicture.asset(Assets.eye),
             onPressed: () {
               setState(() {

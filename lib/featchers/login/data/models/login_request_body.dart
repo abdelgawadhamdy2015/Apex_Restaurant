@@ -10,11 +10,15 @@ class LoginRequest {
   @JsonKey(name: 'FCMToken')
   final String? fcmToken;
 
-  LoginRequest(
-      {required this.username,
-      this.password,
-      required this.companyName,
-      required this.isLoginFromMobile,
-      this.fcmToken});
+  LoginRequest({
+    required this.username,
+    this.password,
+    required this.companyName,
+    required this.isLoginFromMobile,
+    this.fcmToken,
+  });
   Map<String, dynamic> toJson() => _$LoginRequestToJson(this);
+
+  factory LoginRequest.fromJson(Map<String, dynamic> json) =>
+      _$LoginRequestFromJson(json);
 }

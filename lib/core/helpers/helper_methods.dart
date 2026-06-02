@@ -6,10 +6,10 @@ import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
 import 'package:apex_restaurant/core/shared/widgets/toast_design.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/core/theme/text_styles.dart';
-import 'package:apex_restaurant/featchers/login/ui/widget/login_mobile_screen.dart';
+import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -68,11 +68,11 @@ class HelperMethods {
   static Color getStatusColor(String status) {
     switch (status) {
       case RestaurantConstants.waiting:
-        return ColorManger.amper;
+        return AppColors.warning;
       case RestaurantConstants.approved:
-        return ColorManger.statusGreen;
+        return AppColors.success;
       case RestaurantConstants.rejected:
-        return Colors.red;
+        return AppColors.error;
       default:
         return Colors.grey;
     }
@@ -207,10 +207,14 @@ class HelperMethods {
       child: MyTextForm(
         icon: icon,
         enabled: false,
-        fillColor: ColorManger.whiteColor,
+        fillColor: AppColors.white,
         labelText: lable,
-        inputTextStyle: TextStyles.blackRegulerStyle(SizeConfig.fontSize3!),
-        hintStyle: TextStyles.lighterGrayRegulerStyle(SizeConfig.fontSize3!),
+        inputTextStyle: TextStyles.blackRegulerStyle(
+          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+        ),
+        hintStyle: TextStyles.lighterGrayRegulerStyle(
+          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
+        ),
         controller: controller,
       ),
     );
