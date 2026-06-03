@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
+import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/order_type_dialog.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/table_selection_dialog.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +22,7 @@ class OrderPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 300,
+      width: SizeConfig.screenWidth! * .3,
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(right: BorderSide(color: AppColors.border, width: 1)),
@@ -37,23 +40,24 @@ class OrderPanel extends StatelessWidget {
   }
 }
 
-// ignore: must_be_immutable
 class _Header extends StatelessWidget {
-  _Header();
-  String orderTitle = 'طلب صالة';
-  String _orderTitle(PosOrderType type) {
+  late final S lang;
+  String orderTitle(PosOrderType type) {
     switch (type) {
       case PosOrderType.dineIn:
-        return 'طلب صالة';
+        return lang.dineInOrder;
+
       case PosOrderType.takeaway:
-        return 'طلب سفري';
+        return lang.takeawayOrder;
+
       case PosOrderType.delivery:
-        return 'طلب استلام';
+        return lang.deliveryOrder;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    lang = AppStrings.current;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
@@ -67,7 +71,7 @@ class _Header extends StatelessWidget {
                       verticalPadding: AppSpacing.xs,
                       backGroundColor: AppColors.primary,
                       buttonHeight: 40,
-                      butonText: _orderTitle(state.orderType),
+                      butonText: orderTitle(state.orderType),
                       textStyle: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
@@ -79,6 +83,7 @@ class _Header extends StatelessWidget {
                         );
                         log(type.toString());
                         if (type != null) {
+                          // ignore: use_build_context_synchronously
                           context.read<PosBloc>().add(
                             ChangeOrderTypeEvent(type),
                           );
@@ -102,22 +107,28 @@ class _Header extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
 
               Expanded(
-                child: AppButtonText(
-                  verticalPadding: AppSpacing.xs,
-                  backGroundColor: AppColors.accent,
-                  buttonHeight: 40,
-                  butonText: 'طاولة ',
-                  textStyle: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  onPressed: () async {
-                    await showDialog(
-                      context: context,
-                      builder: (_) => BlocProvider.value(
-                        value: context.read<PosBloc>(),
-                        child: const TableSelectionDialog(),
+                child: BlocBuilder<PosBloc, PosState>(
+                  builder: (context, state) {
+                    return AppButtonText(
+                      verticalPadding: AppSpacing.xs,
+                      backGroundColor: AppColors.primary,
+                      buttonHeight: SizeConfig.screenHeight! * .03,
+                      butonText: lang.table,
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
                       ),
+                      onPressed: state.orderType == PosOrderType.dineIn
+                          ? () async {
+                              await showDialog(
+                                context: context,
+                                builder: (_) => BlocProvider.value(
+                                  value: context.read<PosBloc>(),
+                                  child: const TableSelectionDialog(),
+                                ),
+                              );
+                            }
+                          : null,
                     );
                   },
                 ),
@@ -160,28 +171,32 @@ class _OrderHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.xs,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(AppRadius.full),
-            ),
-            child: BlocBuilder<PosBloc, PosState>(
-              builder: (context, state) {
-                return Text(
-                  'طاولة ${state.selectedTable?.arabicName ?? ''}',
-                  style: GoogleFonts.cairo(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.white,
-                  ),
-                );
-              },
-            ),
+          BlocBuilder<PosBloc, PosState>(
+            builder: (context, state) {
+              return (state.orderType == PosOrderType.dineIn &&
+                      state.selectedTable != null)
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(AppRadius.full),
+                      ),
+                      child: Text(
+                        'طاولة ${state.selectedTable?.arabicName ?? ''}',
+                        style: GoogleFonts.cairo(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink();
+            },
           ),
+
           const Spacer(),
           Text(
             'الطلب الحالي',
@@ -291,7 +306,7 @@ class _OrderItemRow extends StatelessWidget {
                 color: AppColors.textSecondary,
                 bgColor: AppColors.background,
                 onTap: () => context.read<PosBloc>().add(
-                  DecrementItemEvent(orderItem.menuItem.id),
+                  DecrementItemEvent(orderItem.menuItem.id.toString()),
                 ),
               ),
               Container(
@@ -311,7 +326,7 @@ class _OrderItemRow extends StatelessWidget {
                 color: AppColors.white,
                 bgColor: AppColors.primary,
                 onTap: () => context.read<PosBloc>().add(
-                  IncrementItemEvent(orderItem.menuItem.id),
+                  IncrementItemEvent(orderItem.menuItem.id.toString()),
                 ),
               ),
             ],
@@ -325,7 +340,7 @@ class _OrderItemRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  orderItem.menuItem.name,
+                  orderItem.menuItem.arabicName ?? "",
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

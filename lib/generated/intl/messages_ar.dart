@@ -106,9 +106,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "dayStatus": MessageLookupByLibrary.simpleMessage("حالة اليوم"),
     "days": MessageLookupByLibrary.simpleMessage("ايام"),
     "dbName": MessageLookupByLibrary.simpleMessage("اسم قاعدة البيانات"),
+    "deliveryOrder": MessageLookupByLibrary.simpleMessage("طلب استلام"),
     "department": MessageLookupByLibrary.simpleMessage("الإدارة"),
     "departures": MessageLookupByLibrary.simpleMessage("المغادرات"),
     "detailedReport": MessageLookupByLibrary.simpleMessage("التفصيلي"),
+    "dineInOrder": MessageLookupByLibrary.simpleMessage("طلب صالة"),
     "directManager": MessageLookupByLibrary.simpleMessage("المدير المباشر"),
     "duration": MessageLookupByLibrary.simpleMessage("المدة"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
@@ -201,6 +203,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "notLeave": MessageLookupByLibrary.simpleMessage(
       "لم تقم بتسجيل الانصراف بعد",
     ),
+    "notRestaurantCompany": MessageLookupByLibrary.simpleMessage(
+      "هذه الشركة ليست شركة مطاعم.",
+    ),
     "notes": MessageLookupByLibrary.simpleMessage("ملاحظات"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "okDialog": MessageLookupByLibrary.simpleMessage("موافق"),
@@ -279,6 +284,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "sureDelete": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك بحاجة إلى حذف هذا الطلب",
     ),
+    "table": MessageLookupByLibrary.simpleMessage("طاولة"),
+    "takeawayOrder": MessageLookupByLibrary.simpleMessage("طلب سفري"),
     "task": MessageLookupByLibrary.simpleMessage("المهمة"),
     "temporary": MessageLookupByLibrary.simpleMessage("مؤقت"),
     "timesOfWork": MessageLookupByLibrary.simpleMessage("مواعيد الدوام"),

@@ -125,6 +125,7 @@ class _TableSelectionDialogState extends State<TableSelectionDialog> {
         setState(() {
           selectedFloor = floor;
         });
+
         context.read<PosBloc>().add(
           LoadTablesEvent(floorID: floor.id, forPOS: true),
         );

@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,16 +11,20 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   final SubmitOrderUseCase _submitOrder;
   final GetFloorsUseCase _getFloors;
   final GetTablesUseCase _getTables;
+  final GetMenuItemsByCategoryUseCase _itemsByCategoryUseCase;
   PosBloc({
     required this._getMenuCategories,
     required this._sendToKitchen,
     required this._submitOrder,
     required this._getFloors,
     required this._getTables,
+    required this._itemsByCategoryUseCase,
   }) : super(PosState.initial()) {
     on<LoadFloorsEvent>(_onLoadFloors);
     on<LoadTablesEvent>(_onLoadTables);
-    on<LoadMenuEvent>(_onLoadMenu);
+    on<LoadCategoriesEvent>(_onLoadCategories);
+    on<LoadItemsEvent>(_onLoadItems);
+
     on<SelectCategoryEvent>(_onSelectCategory);
     on<AddItemToOrderEvent>(_onAddItem);
     on<RemoveItemFromOrderEvent>(_onRemoveItem);
@@ -83,19 +88,54 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     }
   }
 
-  Future<void> _onLoadMenu(LoadMenuEvent event, Emitter<PosState> emit) async {
+  Future<void> _onLoadCategories(
+    LoadCategoriesEvent event,
+    Emitter<PosState> emit,
+  ) async {
     emit(state.copyWith(status: PosStatus.loading));
+
     try {
       final categories = await _getMenuCategories();
       final firstCategory = categories.isNotEmpty ? categories.first : null;
+
       emit(
         state.copyWith(
           status: PosStatus.loaded,
           categories: categories,
-          selectedCategoryId: firstCategory?.id ?? '',
-          currentMenuItems: firstCategory?.items ?? [],
+          selectedCategory: firstCategory,
         ),
       );
+
+      if (firstCategory != null) {
+        add(
+          LoadItemsEvent(
+            GetItemsRequestModel(
+              categories: firstCategory.id?.toString(),
+              isRestaurantItem: true,
+              pageNumber: 1,
+              pageSize: 50,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: PosStatus.error,
+          errorMessage: 'فشل تحميل القائمة. يرجى المحاولة مرة أخرى.',
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLoadItems(
+    LoadItemsEvent event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(status: PosStatus.loading));
+    try {
+      final items = await _itemsByCategoryUseCase(event.requestModel);
+      emit(state.copyWith(status: PosStatus.loaded, currentMenuItems: items));
     } catch (e) {
       emit(
         state.copyWith(
@@ -107,14 +147,16 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   }
 
   void _onSelectCategory(SelectCategoryEvent event, Emitter<PosState> emit) {
-    final category = state.categories.firstWhere(
-      (c) => c.id == event.categoryId,
-      orElse: () => state.categories.first,
-    );
-    emit(
-      state.copyWith(
-        selectedCategoryId: event.categoryId,
-        currentMenuItems: category.items,
+    emit(state.copyWith(selectedCategory: event.category));
+
+    add(
+      LoadItemsEvent(
+        GetItemsRequestModel(
+          categories: event.category.id?.toString(),
+          pageNumber: 1,
+          pageSize: 50,
+          isRestaurantItem: true,
+        ),
       ),
     );
   }
@@ -136,7 +178,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     emit(
       state.copyWith(
         currentOrder: state.currentOrder.copyWith(items: existingItems),
-        toastMessage: 'تمت إضافة "${event.item.name}" إلى الطلب',
+        toastMessage: 'تمت إضافة "${event.item.arabicName}" إلى الطلب',
       ),
     );
   }
@@ -212,7 +254,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         PosState.initial().copyWith(
           status: PosStatus.loaded,
           categories: state.categories,
-          selectedCategoryId: state.selectedCategoryId,
+          selectedCategory: state.selectedCategory,
           currentMenuItems: state.currentMenuItems,
           toastMessage: 'تم إتمام الدفع بنجاح',
         ),

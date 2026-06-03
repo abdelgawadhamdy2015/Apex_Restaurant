@@ -56,8 +56,8 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     selectedLanguage = Intl.defaultLocale == MyConstants.arabic
-//         ? S.of(context).arabic
-//         : S.of(context).english;
+//         ?AppStrings.current.arabic
+//         :AppStrings.current.english;
 
 //     return PopScope(
 //       canPop: finish,
@@ -138,14 +138,14 @@
 //             setState(() {
 //               selectedLanguage = newValue;
 //               widget.changeLanguage(
-//                 selectedLanguage == S.of(context).arabic
+//                 selectedLanguage ==AppStrings.current.arabic
 //                     ? const Locale("ar")
 //                     : const Locale("en"),
 //               );
 //             });
 //           }
 //         },
-//         items: [S.of(context).english, S.of(context).arabic].map((value) {
+//         items: [S.of(context).english,AppStrings.current.arabic].map((value) {
 //           return DropdownMenuItem<String>(
 //             value: value,
 //             child: Text(value,
@@ -169,17 +169,17 @@
 //               children: [
 //                 _buildLoginTitle(),
 //                 _buildTextField(
-//                     S.of(context).dbName,
+//                    AppStrings.current.dbName,
 //                     context.read<LoginCubit>().dbController,
-//                     S.of(context).insertDBName),
+//                    AppStrings.current.insertDBName),
 //                 _buildTextField(
-//                     S.of(context).email,
+//                    AppStrings.current.email,
 //                     context.read<LoginCubit>().emailController,
-//                     S.of(context).insertEmail),
+//                    AppStrings.current.insertEmail),
 //                 _buildTextField(
-//                     S.of(context).insertPassword,
+//                    AppStrings.current.insertPassword,
 //                     context.read<LoginCubit>().passwordController,
-//                     S.of(context).password,
+//                    AppStrings.current.password,
 //                     obsecure: true),
 //                 _buildRememberAndForget(),
 //                 HelperMethods.verticalSpacing(.01),
@@ -196,7 +196,7 @@
 //   Widget _buildLoginTitle() {
 //     return Center(
 //       child: Text(
-//         S.of(context).login,
+//        AppStrings.current.login,
 //         style: TextStyles.blackBoldStyle(SizeConfig.fontSize3!),
 //       ),
 //     );
@@ -283,7 +283,7 @@
 //         shaderCallback: (bounds) =>
 //             ColorManger.mainBlueGrediant.createShader(bounds),
 //         child: Text(
-//           S.of(context).forgetPassword,
+//          AppStrings.current.forgetPassword,
 //           style: TextStyle(
 //             fontFamily: MyConstants.cairoFont,
 //             fontWeight: FontWeightHelper.medium,
@@ -304,7 +304,7 @@
 //                 verticalPadding: 0,
 //                 buttonHeight: SizeConfig.defaultSize! * 4,
 //                 linearGradient: ColorManger.mainBlueGrediant,
-//                 butonText: S.of(context).login,
+//                 butonText:AppStrings.current.login,
 //                 onPressed: () => _validateThenLogin(context),
 //                 textStyle: TextStyles.whiteBoldStyle(SizeConfig.fontSize2!),
 //               )

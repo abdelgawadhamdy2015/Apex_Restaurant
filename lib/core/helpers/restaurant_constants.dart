@@ -1,9 +1,10 @@
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
-import 'package:apex_restaurant/featchers/login/data/models/user_info.dart';
+import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:intl/intl.dart';
 
 class RestaurantConstants {
-  static EmployeeBranch? currentBranch;
+  static const String appName = "ApexRestaurant";
+
   static const String pushNotification = "pushNotification";
   static const String requestModel = "requestModel";
   static const String logoutNotification = "LogoutNotification";
@@ -115,5 +116,7 @@ class RestaurantConstants {
   static const String latstLongitude = "latstLongitude";
 
   // permission
-  static List<UserPermissions> permissions = [];
+  static List<PermissionGroupModel> permissions = [];
+
+  static EmployeeBranch? currentBranch;
 }

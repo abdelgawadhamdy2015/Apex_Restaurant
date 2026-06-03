@@ -182,5 +182,10 @@
     "locationSpoofingDetected": "تم اكتشاف استخدام موقع وهمي. سيتم إغلاق التطبيق.",
     "securityWarning": "تحذير أمني",
     "savedSuccessfully": "تم الحفظ بنجاح",
-    "saveFailed": "فشل الحفظ. يرجى المحاولة مرة أخرى."
+    "saveFailed": "فشل الحفظ. يرجى المحاولة مرة أخرى.",
+    "notRestaurantCompany": "هذه الشركة ليست شركة مطاعم.",
+    "dineInOrder": "طلب صالة",
+    "takeawayOrder": "طلب سفري",
+    "deliveryOrder": "طلب استلام",
+    "table": "طاولة"
 }

@@ -1398,6 +1398,36 @@ class S {
       args: [],
     );
   }
+
+  /// `This company is not a restaurant.`
+  String get notRestaurantCompany {
+    return Intl.message(
+      'This company is not a restaurant.',
+      name: 'notRestaurantCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Dine-in `
+  String get dineInOrder {
+    return Intl.message('Dine-in ', name: 'dineInOrder', desc: '', args: []);
+  }
+
+  /// `Takeaway `
+  String get takeawayOrder {
+    return Intl.message('Takeaway ', name: 'takeawayOrder', desc: '', args: []);
+  }
+
+  /// `Pickup `
+  String get deliveryOrder {
+    return Intl.message('Pickup ', name: 'deliveryOrder', desc: '', args: []);
+  }
+
+  /// `Table`
+  String get table {
+    return Intl.message('Table', name: 'table', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

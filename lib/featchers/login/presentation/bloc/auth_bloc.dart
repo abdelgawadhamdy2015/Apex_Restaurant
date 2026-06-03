@@ -3,16 +3,16 @@ import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
-import 'package:apex_restaurant/featchers/login/domain/repo/auth_repo.dart';
+import 'package:apex_restaurant/featchers/login/domain/usecases/auth_usecase.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_event.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepo _repo;
+  final LoginUsecase _loginUsecase;
 
-  AuthBloc(this._repo) : super(const AuthState.initial()) {
+  AuthBloc({required this._loginUsecase}) : super(const AuthState.initial()) {
     on<LoginSubmitted>(_onLoginSubmitted);
   }
 
@@ -32,7 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     loadingLogin = true;
 
     try {
-      final response = await _repo.login(
+      final response = await _loginUsecase(
         LoginRequest(
           username: emailController.text,
           password: passwordController.text,
@@ -48,12 +48,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           loadingLogin = false;
         },
         failure: (error) async {
-          // await CrashlyticsLogger.logError(
-          //   screen: "Login",
-          //   error: error,
-          //   stackTrace: StackTrace.current,
-          // );
-
           emit(
             AuthState.error(
               error:

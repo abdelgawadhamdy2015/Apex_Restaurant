@@ -1,10 +1,12 @@
 // Side Navigation
+import 'package:apex_restaurant/core/helpers/app_string.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/core/theme/text_styles.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SideNav extends StatelessWidget {
   const SideNav({super.key});
@@ -55,19 +57,40 @@ class SideNav extends StatelessWidget {
           ),
           const SizedBox(height: 32),
           // ── Nav items
-          _NavItem(icon: Icons.point_of_sale_outlined, label: 'نقطة البيع'),
-          _NavItem(icon: Icons.list_alt_outlined, label: 'الطلبات'),
-          _NavItem(icon: Icons.table_restaurant_outlined, label: 'الطاولات'),
-          _NavItem(icon: Icons.bar_chart_outlined, label: 'التقارير'),
+          _NavItem(
+            icon: Icons.home_sharp,
+            label: 'الصفحة الرئيسية',
+            onTap: () => context.goNamed(Routes.homeScreen),
+          ),
+          _NavItem(
+            icon: Icons.point_of_sale_outlined,
+            label: 'نقطة البيع',
+            onTap: () => context.goNamed(Routes.posScreen),
+          ),
+          _NavItem(
+            icon: Icons.list_alt_outlined,
+            label: 'الطلبات',
+            onTap: () {},
+          ),
+          _NavItem(
+            icon: Icons.table_restaurant_outlined,
+            label: 'الطاولات',
+            onTap: () {},
+          ),
+          _NavItem(
+            icon: Icons.bar_chart_outlined,
+            label: 'التقارير',
+            onTap: () {},
+          ),
           const Spacer(),
           // ── Logout
           Padding(
             padding: const EdgeInsets.only(bottom: 28, right: 20, left: 20),
             child: GestureDetector(
               onTap: () {
-                setupLogOutDialogState(context, S.of(context).logout, [
-                  S.of(context).okDialog,
-                  S.of(context).cancel,
+                setupLogOutDialogState(context, AppStrings.current.logout, [
+                  AppStrings.current.okDialog,
+                  AppStrings.current.cancel,
                 ]);
               },
               child: Row(
@@ -98,8 +121,12 @@ class SideNav extends StatelessWidget {
 class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
-
-  const _NavItem({required this.icon, required this.label});
+  final VoidCallback onTap;
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +145,7 @@ class _NavItem extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          onTap: () {},
+          onTap: onTap,
           hoverColor: const Color(0xFFF0F4FF),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,

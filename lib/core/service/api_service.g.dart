@@ -89,6 +89,95 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<BaseResponse<List<CategoryModel>>> getAllCategories() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<List<CategoryModel>>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'Store/Categories/GetAllCategoriesDropDown',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<List<CategoryModel>> _value;
+    try {
+      _value = BaseResponse<List<CategoryModel>>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<CategoryModel>(
+                    (i) => CategoryModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
+            : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<List<MenuItemModel>>> getItemsByCategory({
+    int? pageNumber,
+    int? pageSize,
+    int? statues,
+    String? name,
+    String? categories,
+    bool? isRestaurantItem,
+    bool? isRestaurantIngrediant,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'pageNumber': pageNumber,
+      r'pageSize': pageSize,
+      r'statues': statues,
+      r'name': name,
+      r'categories': categories,
+      r'isRestaurantItem': isRestaurantItem,
+      r'isRestaurantIngrediant': isRestaurantIngrediant,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<List<MenuItemModel>>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'Store/RestaurantItemCard/GetAllItems',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<List<MenuItemModel>> _value;
+    try {
+      _value = BaseResponse<List<MenuItemModel>>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<MenuItemModel>(
+                    (i) => MenuItemModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
+            : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<BaseResponse<List<FloorModel>>> getAllFloors({
     int? pageNumber,
     int? pageSize,

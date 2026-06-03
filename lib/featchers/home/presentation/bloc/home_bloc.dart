@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/home/domain/usescases/home_usecases.dart';
+import 'package:apex_restaurant/featchers/home/domain/usecases/home_usecases.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

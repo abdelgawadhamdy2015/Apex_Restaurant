@@ -1,5 +1,7 @@
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:equatable/equatable.dart';
@@ -11,25 +13,27 @@ class PosState extends Equatable {
   final List<FloorModel> floors;
   final List<TableModel> tables;
 
-  final List<MenuCategory> categories;
-  final String selectedCategoryId;
-  final List<MenuItem> currentMenuItems;
+  final List<CategoryModel> categories;
+  final CategoryModel? selectedCategory;
+  final List<MenuItemModel> currentMenuItems;
   final Order currentOrder;
   final String? errorMessage;
   final String? toastMessage;
   final bool isKitchenSent;
   final PosOrderType orderType;
+  final FloorModel? selectedFloor;
   final TableModel? selectedTable;
   const PosState({
     this.status = PosStatus.initial,
     this.categories = const [],
-    this.selectedCategoryId = '',
+    this.selectedCategory,
     this.currentMenuItems = const [],
     required this.currentOrder,
     this.errorMessage,
     this.toastMessage,
     this.isKitchenSent = false,
-    this.orderType = PosOrderType.dineIn,
+    this.orderType = PosOrderType.takeaway,
+    this.selectedFloor,
     this.selectedTable,
     this.floors = const [],
     this.tables = const [],
@@ -43,9 +47,9 @@ class PosState extends Equatable {
     PosStatus? status,
     List<FloorModel>? floors,
     List<TableModel>? tables,
-    List<MenuCategory>? categories,
-    String? selectedCategoryId,
-    List<MenuItem>? currentMenuItems,
+    List<CategoryModel>? categories,
+    CategoryModel? selectedCategory,
+    List<MenuItemModel>? currentMenuItems,
     Order? currentOrder,
     String? errorMessage,
     String? toastMessage,
@@ -53,11 +57,12 @@ class PosState extends Equatable {
     bool? isKitchenSent,
     PosOrderType? orderType,
     TableModel? selectedTable,
+    FloorModel? selectedFloor,
   }) {
     return PosState(
       status: status ?? this.status,
       categories: categories ?? this.categories,
-      selectedCategoryId: selectedCategoryId ?? this.selectedCategoryId,
+      selectedCategory: selectedCategory ?? this.selectedCategory,
       currentMenuItems: currentMenuItems ?? this.currentMenuItems,
       currentOrder: currentOrder ?? this.currentOrder,
       errorMessage: errorMessage ?? this.errorMessage,
@@ -65,6 +70,7 @@ class PosState extends Equatable {
       isKitchenSent: isKitchenSent ?? this.isKitchenSent,
       orderType: orderType ?? this.orderType,
       selectedTable: selectedTable ?? this.selectedTable,
+      selectedFloor: selectedFloor ?? this.selectedFloor,
       floors: floors ?? this.floors,
       tables: tables ?? this.tables,
     );
@@ -74,7 +80,7 @@ class PosState extends Equatable {
   List<Object?> get props => [
     status,
     categories,
-    selectedCategoryId,
+    selectedCategory,
     currentMenuItems,
     currentOrder,
     errorMessage,
@@ -82,6 +88,7 @@ class PosState extends Equatable {
     isKitchenSent,
     orderType,
     selectedTable,
+    selectedFloor,
     floors,
     tables,
   ];

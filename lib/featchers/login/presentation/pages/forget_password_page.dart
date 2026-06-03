@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
@@ -34,8 +35,8 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     selectedLanguage = Intl.defaultLocale == RestaurantConstants.arabic
-        ? S.of(context).arabic
-        : S.of(context).english;
+        ? AppStrings.current.arabic
+        : AppStrings.current.english;
 
     return Scaffold(
       body: GradientContainer(
@@ -128,14 +129,14 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
           setState(() {
             selectedLanguage = newValue;
             widget.changeLanguage(
-              selectedLanguage == S.of(context).arabic
+              selectedLanguage == AppStrings.current.arabic
                   ? const Locale("ar")
                   : const Locale("en"),
             );
           });
         }
       },
-      items: [S.of(context).english, S.of(context).arabic].map((value) {
+      items: [S.of(context).english, AppStrings.current.arabic].map((value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
@@ -153,7 +154,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     return Container(
       padding: const EdgeInsets.only(top: 10),
       child: Text(
-        S.of(context).forgetPassword,
+        AppStrings.current.forgetPassword,
         style: TextStyle(
           fontSize: 20.sp,
           fontWeight: FontWeight.bold,
@@ -169,11 +170,15 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
       children: [
         Center(child: myLogoText()),
         _buildTextField(
-          S.of(context).dbName,
+          AppStrings.current.dbName,
           companyText,
-          S.of(context).dbName,
+          AppStrings.current.dbName,
         ),
-        _buildTextField(S.of(context).email, emailText, S.of(context).email),
+        _buildTextField(
+          S.of(context).email,
+          emailText,
+          AppStrings.current.email,
+        ),
         HelperMethods.verticalSpacing(.02),
         Center(child: _buildLoginButton()),
       ],
@@ -223,7 +228,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   Widget _buildLoginButton() {
     return AppButtonText(
       linearGradient: ColorManger.mainBlueGrediant,
-      butonText: S.of(context).send,
+      butonText: AppStrings.current.send,
       onPressed: () => _validateThenLogin(context),
       textStyle: TextStyles.whiteBoldStyle(
         fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,

@@ -1,4 +1,7 @@
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
@@ -38,14 +41,14 @@ class GetTablesUseCase {
 class GetMenuCategoriesUseCase {
   final PosRepository _repository;
   GetMenuCategoriesUseCase(this._repository);
-  Future<List<MenuCategory>> call() => _repository.getMenuCategories();
+  Future<List<CategoryModel>> call() => _repository.getMenuCategories();
 }
 
 class GetMenuItemsByCategoryUseCase {
   final PosRepository _repository;
   GetMenuItemsByCategoryUseCase(this._repository);
-  Future<List<MenuItem>> call(String categoryId) =>
-      _repository.getMenuItemsByCategory(categoryId);
+  Future<List<MenuItemModel>> call(GetItemsRequestModel? request) =>
+      _repository.getMenuItemsByCategory(request);
 }
 
 class SendToKitchenUseCase {
