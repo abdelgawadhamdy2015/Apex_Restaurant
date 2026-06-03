@@ -16,7 +16,7 @@ class PosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<PosBloc>()..add(const LoadMenuEvent()),
+      create: (_) => getIt<PosBloc>()..add(const LoadCategoriesEvent()),
       child: const _PosPageView(),
     );
   }

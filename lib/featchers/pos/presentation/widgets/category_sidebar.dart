@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
@@ -28,7 +29,7 @@ class CategorySidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
+      width: SizeConfig.screenWidth! * .15,
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(left: BorderSide(color: AppColors.border, width: 1)),
@@ -39,13 +40,13 @@ class CategorySidebar extends StatelessWidget {
             children: [
               const SizedBox(height: AppSpacing.md),
               ...state.categories.map((category) {
-                final isSelected = category.id == state.selectedCategoryId;
+                final isSelected = category == state.selectedCategory;
                 return _CategoryItem(
                   category: category,
                   isSelected: isSelected,
-                  icon: _getCategoryIcon(category.icon),
+                  icon: _getCategoryIcon(category.arabicName!),
                   onTap: () => context.read<PosBloc>().add(
-                    SelectCategoryEvent(category.id),
+                    SelectCategoryEvent(category),
                   ),
                 );
               }),
@@ -58,7 +59,7 @@ class CategorySidebar extends StatelessWidget {
 }
 
 class _CategoryItem extends StatelessWidget {
-  final MenuCategory category;
+  final CategoryModel category;
   final bool isSelected;
   final IconData icon;
   final VoidCallback onTap;
@@ -101,7 +102,7 @@ class _CategoryItem extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              category.name,
+              category.arabicName ?? "",
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(
                 fontSize: 10,

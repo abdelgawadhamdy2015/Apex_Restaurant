@@ -81,11 +81,9 @@ class _MyAppState extends State<ApexRestaurantApp> {
       builder: (context, child) {
         return MaterialApp.router(
           scaffoldMessengerKey: scaffoldMessengerKey,
-
           debugShowCheckedModeBanner: false,
           key: const Key("connect"),
           themeMode: ThemeMode.light,
-
           theme: ThemeData(
             datePickerTheme: DatePickerThemeData(
               dayBackgroundColor: WidgetStatePropertyAll(AppColors.white),

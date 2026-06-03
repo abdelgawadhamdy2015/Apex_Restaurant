@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +59,7 @@ class MenuGrid extends StatelessWidget {
 }
 
 class _MenuItemCard extends StatefulWidget {
-  final MenuItem item;
+  final MenuItemModel item;
   const _MenuItemCard({required this.item});
 
   @override
@@ -136,38 +136,39 @@ class _MenuItemCardState extends State<_MenuItemCard>
                 flex: 2,
                 child: Stack(
                   children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(AppRadius.lg),
-                        topRight: Radius.circular(AppRadius.lg),
-                      ),
-                      child: Image.network(
-                        widget.item.imageUrl,
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
-                          color: AppColors.background,
-                          child: const Icon(
-                            Icons.restaurant,
-                            color: AppColors.textMuted,
-                            size: 32,
-                          ),
+                    if (widget.item.imagePath != null)
+                      ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(AppRadius.lg),
+                          topRight: Radius.circular(AppRadius.lg),
                         ),
-                        loadingBuilder: (_, child, progress) {
-                          if (progress == null) return child;
-                          return Container(
+                        child: Image.network(
+                          widget.item.imagePath!,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
                             color: AppColors.background,
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.accent,
-                              ),
+                            child: const Icon(
+                              Icons.restaurant,
+                              color: AppColors.textMuted,
+                              size: 32,
                             ),
-                          );
-                        },
+                          ),
+                          loadingBuilder: (_, child, progress) {
+                            if (progress == null) return child;
+                            return Container(
+                              color: AppColors.background,
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.accent,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
                     Positioned(
                       top: AppSpacing.sm,
                       left: AppSpacing.sm,
@@ -203,7 +204,7 @@ class _MenuItemCardState extends State<_MenuItemCard>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        widget.item.name,
+                        widget.item.arabicName ?? "",
                         textAlign: TextAlign.right,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -215,7 +216,7 @@ class _MenuItemCardState extends State<_MenuItemCard>
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        widget.item.description,
+                        widget.item.description ?? "",
 
                         textAlign: TextAlign.right,
                         maxLines: 1,

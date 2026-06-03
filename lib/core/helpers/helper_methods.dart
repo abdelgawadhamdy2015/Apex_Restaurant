@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
@@ -81,9 +82,9 @@ class HelperMethods {
   static String getRequestType(int? type, BuildContext context) {
     switch (type) {
       case 1:
-        return S.of(context).permission;
+        return AppStrings.current.permission;
       case 2:
-        return S.of(context).annual;
+        return AppStrings.current.annual;
       default:
         return "";
     }
@@ -136,13 +137,13 @@ class HelperMethods {
   static String getShift(int shift, BuildContext context) {
     switch (shift) {
       case 1:
-        return S.of(context).shift1;
+        return AppStrings.current.shift1;
       case 2:
-        return S.of(context).shift2;
+        return AppStrings.current.shift2;
       case 3:
-        return S.of(context).shift3;
+        return AppStrings.current.shift3;
       case 4:
-        return S.of(context).shift4;
+        return AppStrings.current.shift4;
     }
     return "";
   }

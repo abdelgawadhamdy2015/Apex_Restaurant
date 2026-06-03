@@ -1,5 +1,7 @@
+import 'package:apex_restaurant/core/helpers/permission_checker.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
@@ -134,7 +136,7 @@ class _TopBar extends StatelessWidget {
           const Spacer(),
           // App name left side (rtl → appears right)
           const Text(
-            'ApexRestaurant',
+            RestaurantConstants.appName,
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -193,29 +195,32 @@ class _MainContent extends StatelessWidget {
             child: Row(
               children: [
                 // شاشة البيع
-                Expanded(
-                  child: _ActionCard(
-                    icon: Icons.point_of_sale,
-                    iconColor: const Color(0xFF8A94A6),
-                    iconBg: const Color(0xFFDDE3EE),
-                    title: 'شاشة البيع',
-                    subtitle: 'الوصول إلى لوحة التحكم والطلبات والمبيعات',
-                    badge: _Badge(
-                      text: 'يرجى تسجيل الحضور أولاً',
-                      color: const Color(0xFF2563EB),
-                      isLink: true,
-                      onTap: () {},
+                if (PermissionChecker(
+                  RestaurantConstants.permissions,
+                ).hasAnyAccess(AppPermission.itemCardRestaurant))
+                  Expanded(
+                    child: _ActionCard(
+                      icon: Icons.point_of_sale,
+                      iconColor: const Color(0xFF8A94A6),
+                      iconBg: const Color(0xFFDDE3EE),
+                      title: 'شاشة البيع',
+                      subtitle: 'الوصول إلى لوحة التحكم والطلبات والمبيعات',
+                      badge: _Badge(
+                        text: 'يرجى تسجيل الحضور أولاً',
+                        color: const Color(0xFF2563EB),
+                        isLink: true,
+                        onTap: () {},
+                      ),
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ShiftStartDialog();
+                          },
+                        );
+                      },
                     ),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return ShiftStartDialog();
-                        },
-                      );
-                    },
                   ),
-                ),
                 const SizedBox(width: 24),
                 // تسجيل الحضور
                 Expanded(

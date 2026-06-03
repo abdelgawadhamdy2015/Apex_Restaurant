@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
@@ -65,8 +66,8 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   @override
   Widget build(BuildContext context) {
     selectedLanguage = Intl.defaultLocale == RestaurantConstants.arabic
-        ? S.of(context).arabic
-        : S.of(context).english;
+        ? AppStrings.current.arabic
+        : AppStrings.current.english;
 
     return PopScope(
       canPop: finish,
@@ -150,14 +151,14 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
             selectedLanguage = newValue;
 
             widget.changeLanguage(
-              selectedLanguage == S.of(context).arabic
+              selectedLanguage == AppStrings.current.arabic
                   ? const Locale("ar")
                   : const Locale("en"),
             );
           });
         }
       },
-      items: [S.of(context).english, S.of(context).arabic].map((value) {
+      items: [S.of(context).english, AppStrings.current.arabic].map((value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
@@ -190,21 +191,21 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
                   HelperMethods.verticalSpacing(.02),
 
                   _buildTextField(
-                    S.of(context).dbName,
+                    AppStrings.current.dbName,
                     context.read<AuthBloc>().dbController,
-                    S.of(context).insertDBName,
+                    AppStrings.current.insertDBName,
                   ),
 
                   _buildTextField(
-                    S.of(context).email,
+                    AppStrings.current.email,
                     context.read<AuthBloc>().emailController,
-                    S.of(context).insertEmail,
+                    AppStrings.current.insertEmail,
                   ),
 
                   _buildTextField(
-                    S.of(context).insertPassword,
+                    AppStrings.current.insertPassword,
                     context.read<AuthBloc>().passwordController,
-                    S.of(context).password,
+                    AppStrings.current.password,
                     obsecure: true,
                   ),
 
@@ -227,7 +228,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   Widget _buildLoginTitle() {
     return Center(
       child: Text(
-        S.of(context).login,
+        AppStrings.current.login,
         style: TextStyles.blackBoldStyle(
           fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
         ),
@@ -290,7 +291,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
               HelperMethods.horizontalSpacing(.03),
 
               Text(
-                S.of(context).rememberMe,
+                AppStrings.current.rememberMe,
                 style: TextStyles.blackRegulerStyle(
                   fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                 ),
@@ -336,7 +337,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
         shaderCallback: (bounds) =>
             ColorManger.mainBlueGrediant.createShader(bounds),
         child: Text(
-          S.of(context).forgetPassword,
+          AppStrings.current.forgetPassword,
           style: TextStyle(
             fontFamily: RestaurantConstants.cairoFont,
             fontWeight: FontWeightHelper.medium,
@@ -355,7 +356,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
         return !context.read<AuthBloc>().loadingLogin
             ? AppButtonText(
                 linearGradient: ColorManger.mainBlueGrediant,
-                butonText: S.of(context).login,
+                butonText: AppStrings.current.login,
                 onPressed: () => _validateThenLogin(context),
                 textStyle: TextStyles.whiteBoldStyle(
                   fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,

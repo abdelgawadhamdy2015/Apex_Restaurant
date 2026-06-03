@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
@@ -43,6 +44,15 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
             context.read<AuthBloc>().loadingLogin = false;
 
             if (response.result == 1) {
+              if (response.data?.isRestaurant == false) {
+                setupDialogState(
+                  context,
+                  AppStrings.current.notRestaurantCompany,
+                  route: Routes.loginScreen,
+                );
+                return;
+              }
+
               /// Save Token
               await SharedPrefHelper.setData(
                 RestaurantConstants.myToken,
@@ -51,7 +61,7 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
 
               /// Save Permissions
               RestaurantConstants.permissions =
-                  response.data?.premissions ?? [];
+                  response.data?.permissions ?? [];
 
               /// Save DB Name
               await SharedPrefHelper.setData(

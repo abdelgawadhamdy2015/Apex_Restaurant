@@ -3,7 +3,9 @@ import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
@@ -18,6 +20,19 @@ abstract class ApiService {
   @GET(ApiConstants.getEmployeeBranches)
   Future<BaseResponse<List<EmployeeBranch>>> getEmployeeBranches();
 
+  @GET(ApiConstants.getAllCategoriesDropDown)
+  Future<BaseResponse<List<CategoryModel>>> getAllCategories();
+
+  @GET(ApiConstants.getAllItems)
+  Future<BaseResponse<List<MenuItemModel>>> getItemsByCategory({
+    @Query("pageNumber") int? pageNumber,
+    @Query("pageSize") int? pageSize,
+    @Query("statues") int? statues,
+    @Query("name") String? name,
+    @Query("categories") String? categories,
+    @Query("isRestaurantItem") bool? isRestaurantItem,
+    @Query("isRestaurantIngrediant") bool? isRestaurantIngrediant,
+  });
   @GET(ApiConstants.getAllFloors)
   Future<BaseResponse<List<FloorModel>>> getAllFloors({
     @Query("pageNumber") int? pageNumber,

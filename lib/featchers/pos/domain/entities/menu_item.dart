@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:equatable/equatable.dart';
 
 class MenuItem extends Equatable {
@@ -49,7 +50,7 @@ class MenuCategory extends Equatable {
 }
 
 class OrderItem extends Equatable {
-  final MenuItem menuItem;
+  final MenuItemModel menuItem;
   final int quantity;
   final String? notes;
   final List<String> addons;
@@ -61,10 +62,10 @@ class OrderItem extends Equatable {
     this.addons = const [],
   });
 
-  double get totalPrice => menuItem.price * quantity;
+  double get totalPrice => (menuItem.units?.first.salePrice1 ?? 0) * quantity;
 
   OrderItem copyWith({
-    MenuItem? menuItem,
+    MenuItemModel? menuItem,
     int? quantity,
     String? notes,
     List<String>? addons,

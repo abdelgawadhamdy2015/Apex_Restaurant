@@ -1,5 +1,8 @@
 import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
@@ -10,14 +13,18 @@ class PosRepositoryImpl implements PosRepository {
   PosRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<List<MenuCategory>> getMenuCategories() async {
+  Future<List<CategoryModel>> getMenuCategories() async {
     final categories = await _remoteDataSource.getMenuCategories();
     return categories;
   }
 
   @override
-  Future<List<MenuItem>> getMenuItemsByCategory(String categoryId) async {
-    final items = await _remoteDataSource.getMenuItemsByCategory(categoryId);
+  Future<List<MenuItemModel>> getMenuItemsByCategory(
+    GetItemsRequestModel? request,
+  ) async {
+    final items = await _remoteDataSource.getMenuItemsByCategory(
+      request: request,
+    );
     return items;
   }
 

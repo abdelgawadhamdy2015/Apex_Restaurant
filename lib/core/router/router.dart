@@ -14,13 +14,14 @@ import 'package:provider/provider.dart';
 
 class AppRouter {
   final Function(Locale) changeLanguage;
+  static final navigatorKey = GlobalKey<NavigatorState>();
 
   AppRouter(this.changeLanguage);
 
   late final GoRouter router = GoRouter(
     initialLocation: Routes.onBoardingScreen,
     debugLogDiagnostics: true,
-
+    navigatorKey: navigatorKey,
     routes: [
       GoRoute(
         path: Routes.onBoardingScreen,

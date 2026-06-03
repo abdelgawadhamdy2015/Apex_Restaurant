@@ -1,12 +1,14 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
-import 'package:apex_restaurant/featchers/home/data/dtat/menu_remote_datasource.dart';
+import 'package:apex_restaurant/featchers/home/data/datasource/menu_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/home/data/repo_imp/home_repo_imp.dart';
 import 'package:apex_restaurant/featchers/home/domain/repo/home_repo.dart';
-import 'package:apex_restaurant/featchers/home/domain/usescases/home_usecases.dart';
+import 'package:apex_restaurant/featchers/home/domain/usecases/home_usecases.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:apex_restaurant/featchers/login/data/datasource/auth_datasource.dart';
 import 'package:apex_restaurant/featchers/login/data/repo_imp/login_repo.dart';
 import 'package:apex_restaurant/featchers/login/domain/repo/auth_repo.dart';
+import 'package:apex_restaurant/featchers/login/domain/usecases/auth_usecase.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/pos/data/repositories/pos_repository_impl.dart';
@@ -26,7 +28,14 @@ Future<void> setupGetIt() async {
 
   getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
 
-  // Data Sources
+  /// ─────────────────────────────────────────────────────────
+  /// Data Sources
+  /// ─────────────────────────────────────────────────────────
+
+  // AUTH
+  getIt.registerLazySingleton<AuthDatasource>(
+    () => AuthDatasourceImp(getIt<ApiService>()),
+  );
   getIt.registerLazySingleton<HomeDatasource>(
     () => HomeDatasourceImpl(getIt<ApiService>()),
   );
@@ -34,16 +43,38 @@ Future<void> setupGetIt() async {
     () => PosRemoteDataSourceImpl(getIt<ApiService>()),
   );
 
-  // Repositories
+  /// ─────────────────────────────────────────────────────────
+  /// Repositories
+  /// ─────────────────────────────────────────────────────────
+
+  // AUTH
+  getIt.registerLazySingleton<AuthRepo>(
+    () => AuthRepoImp(getIt<AuthDatasource>()),
+  );
+
+  //HOME
   getIt.registerLazySingleton<HomeRepository>(
     () => HomeRepoImpl(getIt<HomeDatasource>()),
   );
-  getIt.registerLazySingleton<AuthRepo>(() => AuthRepoImp(getIt<ApiService>()));
+
+  //POS
   getIt.registerLazySingleton<PosRepository>(
     () => PosRepositoryImpl(getIt<PosRemoteDataSource>()),
   );
 
-  // Use Cases
+  /// ─────────────────────────────────────────────────────────
+  /// Use Cases
+  /// ─────────────────────────────────────────────────────────
+
+  // AUTH
+  getIt.registerLazySingleton(() => LoginUsecase(getIt<AuthRepo>()));
+
+  //HOME
+  getIt.registerLazySingleton(
+    () => GetEmployeeBranchesUseCase(getIt<HomeRepository>()),
+  );
+
+  //POS
   getIt.registerLazySingleton(
     () => GetMenuCategoriesUseCase(getIt<PosRepository>()),
   );
@@ -57,13 +88,21 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(() => GetFloorsUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(() => GetTablesUseCase(getIt<PosRepository>()));
 
-  getIt.registerLazySingleton(
-    () => GetEmployeeBranchesUseCase(getIt<HomeRepository>()),
+  /// ─────────────────────────────────────────────────────────
+  /// BLoCs
+  /// ─────────────────────────────────────────────────────────
+
+  // AUTH
+  getIt.registerFactory<AuthBloc>(
+    () => AuthBloc(loginUsecase: getIt<LoginUsecase>()),
   );
 
-  // BLoC (factory so new instance per screen)
-  getIt.registerFactory<AuthBloc>(() => AuthBloc(getIt<AuthRepo>()));
+  //HOME
+  getIt.registerFactory(
+    () => HomeBloc(getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>()),
+  );
 
+  //POS
   getIt.registerFactory(
     () => PosBloc(
       getMenuCategories: getIt<GetMenuCategoriesUseCase>(),
@@ -71,10 +110,7 @@ Future<void> setupGetIt() async {
       submitOrder: getIt<SubmitOrderUseCase>(),
       getFloors: getIt<GetFloorsUseCase>(),
       getTables: getIt<GetTablesUseCase>(),
+      itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),
     ),
-  );
-
-  getIt.registerFactory(
-    () => HomeBloc(getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>()),
   );
 }

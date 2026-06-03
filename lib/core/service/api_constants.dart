@@ -10,6 +10,9 @@ class ApiConstants {
   static const String getAllFloors = "Restaurants/Floors/GetAllFloors";
   static const String getAllFoodTables =
       "Restaurants/FoodTables/GetAllFoodTables";
+  static const String getAllCategoriesDropDown =
+      "Store/Categories/GetAllCategoriesDropDown";
+  static const String getAllItems = "Store/RestaurantItemCard/GetAllItems";
 
   // General apis
   static const String getEmployeeBranches =

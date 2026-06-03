@@ -1,10 +1,11 @@
+import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
+import 'package:apex_restaurant/core/router/router.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
-import 'package:apex_restaurant/core/service/signal_r_service.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/colors.dart';
@@ -12,7 +13,6 @@ import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -61,7 +61,7 @@ void setupDialogState(
                 textStyle: TextStyles.whiteRegulerStyle(
                   fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                 ),
-                butonText: S.of(context).okDialog,
+                butonText: AppStrings.current.okDialog,
                 onPressed: () async {
                   context.pop();
                   if (ApiConstants.dioExceptionType ==
@@ -102,7 +102,7 @@ void setupLogOutDialogState(
   List<String> actions,
 ) {
   showDialog(
-    context: navigatorKey.currentContext ?? context,
+    context: AppRouter.navigatorKey.currentContext ?? context,
     builder: (context) => AlertDialog(
       icon: const Icon(Icons.logout_outlined, color: Colors.amber, size: 32),
       content: Text(
@@ -164,7 +164,7 @@ void setupResendRequestDialogState(
   Function()? cancelClick,
 }) {
   showDialog(
-    context: navigatorKey.currentContext ?? context,
+    context: AppRouter.navigatorKey.currentContext ?? context,
     builder: (BuildContext dialogContext) => AlertDialog(
       icon: icon,
       content: Text(
@@ -272,7 +272,7 @@ void showFingerprintDialog(
                         fontSize:
                             AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                       ),
-                      butonText: S.of(context).retry,
+                      butonText: AppStrings.current.retry,
                       onPressed: () {
                         onclick!();
                       },
@@ -290,7 +290,7 @@ void showFingerprintDialog(
                     textStyle: TextStyles.whiteRegulerStyle(
                       fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                     ),
-                    butonText: S.of(context).home,
+                    butonText: AppStrings.current.home,
                     onPressed: () {
                       context.pushReplacementNamed(Routes.homeScreen);
                     },

@@ -12,7 +12,7 @@ class AppButtonText extends StatelessWidget {
   final double? buttonHeight;
   final TextStyle textStyle;
   final String butonText;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final LinearGradient? linearGradient;
   final IconData? icon;
   const AppButtonText({
@@ -50,7 +50,9 @@ class AppButtonText extends StatelessWidget {
             ),
           ),
           backgroundColor: WidgetStatePropertyAll(
-            backGroundColor ?? AppColors.sidebarActiveBorder,
+            onPressed != null
+                ? backGroundColor ?? AppColors.sidebarActiveBorder
+                : AppColors.textMuted,
           ),
           padding: WidgetStateProperty.all(
             EdgeInsets.symmetric(

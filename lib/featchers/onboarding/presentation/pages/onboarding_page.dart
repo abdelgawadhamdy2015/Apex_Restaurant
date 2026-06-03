@@ -74,7 +74,7 @@ class _OnBoardingPageState extends State<OnBoardingPage>
 
 //   @override
 //   Widget build(BuildContext context) {
-//     var lang = S.of(context);
+//     var lang =AppStrings.current;
 //     return AlertDialog(
 //       title: Text(
 //         lang.appUpdate,

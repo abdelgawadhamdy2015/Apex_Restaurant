@@ -181,5 +181,10 @@
     "locationSpoofingDetected": "Location spoofing detected. The app will be closed.",
     "securityWarning": "Security Warning",
     "savedSuccessfully": "Saved successfully",
-    "saveFailed": "Failed to save. Please try again."
+    "saveFailed": "Failed to save. Please try again.",
+    "notRestaurantCompany": "This company is not a restaurant.",
+    "dineInOrder": "Dine-in ",
+    "takeawayOrder": "Takeaway ",
+    "deliveryOrder": "Pickup ",
+    "table": "Table"
 }
