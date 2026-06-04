@@ -5,11 +5,14 @@ class ApiConstants {
 
   static const String localUrl = "http://192.168.1.253:1313/api/";
   static const String login = "Login";
+  static const String getUserData = "General/UsersManager/getUserById";
 
   // Restaurants apis
   static const String getAllFloors = "Restaurants/Floors/GetAllFloors";
   static const String getAllFoodTables =
       "Restaurants/FoodTables/GetAllFoodTables";
+  static const String getAllFoodAdditives =
+      "Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS";
   static const String getAllCategoriesDropDown =
       "Store/Categories/GetAllCategoriesDropDown";
   static const String getAllItems = "Store/RestaurantItemCard/GetAllItems";

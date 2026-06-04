@@ -1,10 +1,12 @@
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
+import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:retrofit/retrofit.dart';
@@ -16,7 +18,8 @@ abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
   @POST(ApiConstants.login)
   Future<BaseResponse<LoginData>> login(@Body() LoginRequest loginRequestBody);
-
+  @GET("${ApiConstants.getUserData}/{id}")
+  Future<BaseResponse<UserDataModel>> getUserData(@Path("id") int id);
   @GET(ApiConstants.getEmployeeBranches)
   Future<BaseResponse<List<EmployeeBranch>>> getEmployeeBranches();
 
@@ -50,5 +53,13 @@ abstract class ApiService {
     @Query("name") String? name,
     @Query("floorID") String? floorID,
     @Query("forPOS") bool? forPOS,
+  });
+
+  @GET(ApiConstants.getAllFoodAdditives)
+  Future<BaseResponse<List<FoodAdditiveModel>>> getAllFoodAdditives({
+    @Query("pageNumber") int? pageNumber,
+    @Query("pageSize") int? pageSize,
+    @Query("name") String? name,
+    @Query("categoryID") int? categoryID,
   });
 }

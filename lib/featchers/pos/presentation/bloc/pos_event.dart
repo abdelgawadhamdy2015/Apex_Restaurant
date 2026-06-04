@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
@@ -18,6 +19,11 @@ class LoadCategoriesEvent extends PosEvent {
 class LoadItemsEvent extends PosEvent {
   final GetItemsRequestModel? requestModel;
   const LoadItemsEvent(this.requestModel);
+}
+
+class LoadFoodAdditivesEvent extends PosEvent {
+  final GetFoodAdditiveRequest? requestModel;
+  const LoadFoodAdditivesEvent({this.requestModel});
 }
 
 class LoadFloorsEvent extends PosEvent {
@@ -58,6 +64,13 @@ class SelectCategoryEvent extends PosEvent {
   const SelectCategoryEvent(this.category);
   @override
   List<Object?> get props => [category];
+}
+
+class SelectItemEvent extends PosEvent {
+  final MenuItemModel item;
+  const SelectItemEvent(this.item);
+  @override
+  List<Object?> get props => [item];
 }
 
 class AddItemToOrderEvent extends PosEvent {

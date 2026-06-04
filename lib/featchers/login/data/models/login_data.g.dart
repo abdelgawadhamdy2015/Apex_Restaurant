@@ -73,7 +73,7 @@ AuthTokenModel _$AuthTokenModelFromJson(Map<String, dynamic> json) =>
       token: json['token'] as String?,
       userInfo: json['userInfo'] == null
           ? null
-          : UserInfoModel.fromJson(json['userInfo'] as Map<String, dynamic>),
+          : LoginUserData.fromJson(json['userInfo'] as Map<String, dynamic>),
       allowedModule: json['allowedModule'] as List<dynamic>?,
       allowedForms: json['allowedForms'] as List<dynamic>?,
       expiresInn: json['expiresInn'] == null
@@ -90,8 +90,8 @@ Map<String, dynamic> _$AuthTokenModelToJson(AuthTokenModel instance) =>
       'expiresInn': instance.expiresInn?.toIso8601String(),
     };
 
-UserInfoModel _$UserInfoModelFromJson(Map<String, dynamic> json) =>
-    UserInfoModel(
+LoginUserData _$LoginUserDataFromJson(Map<String, dynamic> json) =>
+    LoginUserData(
       userId: json['userId'] as String?,
       employeesId: (json['employeesId'] as num?)?.toInt(),
       userName: json['userName'] as String?,
@@ -102,7 +102,7 @@ UserInfoModel _$UserInfoModelFromJson(Map<String, dynamic> json) =>
       imageUrl: json['imageUrl'] as String?,
     );
 
-Map<String, dynamic> _$UserInfoModelToJson(UserInfoModel instance) =>
+Map<String, dynamic> _$LoginUserDataToJson(LoginUserData instance) =>
     <String, dynamic>{
       'userId': instance.userId,
       'employeesId': instance.employeesId,

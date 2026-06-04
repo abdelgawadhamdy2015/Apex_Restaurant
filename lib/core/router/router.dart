@@ -1,6 +1,5 @@
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/pages/home_page.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/login/presentation/pages/forget_password_page.dart';
@@ -61,10 +60,7 @@ class AppRouter {
         path: Routes.homeScreen,
         name: Routes.homeScreen,
         builder: (context, state) {
-          return BlocProvider(
-            create: (_) => getIt<HomeBloc>(),
-            child: const HomePage(),
-          );
+          return HomePage(changeLanguage: changeLanguage);
         },
       ),
       GoRoute(
@@ -73,7 +69,7 @@ class AppRouter {
         builder: (context, state) {
           return BlocProvider(
             create: (_) => getIt<AuthBloc>(),
-            child: const PosPage(),
+            child: PosPage(changeLanguage: changeLanguage),
           );
         },
       ),

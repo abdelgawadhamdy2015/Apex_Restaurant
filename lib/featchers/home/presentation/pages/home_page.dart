@@ -1,19 +1,22 @@
 import 'package:apex_restaurant/core/helpers/permission_checker.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/core/service/api_constants.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
-import 'package:apex_restaurant/featchers/home/presentation/widgets/branches_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/shift_start_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_bar.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.changeLanguage});
+  final Function(Locale) changeLanguage;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -30,133 +33,40 @@ class _HomePageState extends State<HomePage> {
 
   void _loadEmployeeBranches() {
     context.read<HomeBloc>().add(LoadBranchesEvent());
+    context.read<HomeBloc>().add(LoadUserDataEvent(id: ApiConstants.userId!));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: Directionality.of(context),
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF4F6F9),
-        drawer: Directionality.of(context) == TextDirection.ltr
-            ? SideNav()
-            : null,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF4F6F9),
+      drawer: SideNav(changeLanguage: widget.changeLanguage),
 
-        endDrawer: Directionality.of(context) == TextDirection.rtl
-            ? SideNav()
-            : null,
-
-        body: SafeArea(
-          child: Column(
-            children: [
-              BlocBuilder<HomeBloc, HomeState>(
-                builder: (context, state) {
-                  final branches = state.branches
-                      .whereType<EmployeeBranch>()
-                      .toList();
-                  final current = branches.isNotEmpty ? branches.first : null;
-                  return _TopBar(currentBranch: current);
-                },
-              ),
-              Expanded(
-                child: Row(
-                  children: [
-                    // ── Main content
-                    const Expanded(child: _MainContent()),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Top Bar
-class _TopBar extends StatelessWidget {
-  const _TopBar({this.currentBranch});
-  final EmployeeBranch? currentBranch;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 56,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(
-        children: [
-          // Icons right side (rtl → appears left)
-          Icon(
-            Icons.account_circle_outlined,
-            size: SizeConfig.iconSize1,
-            color: Color(0xFF555E6D),
-          ),
-          const SizedBox(width: 18),
-          Icon(
-            Icons.notifications_none_outlined,
-            size: SizeConfig.iconSize1,
-            color: Color(0xFF555E6D),
-          ),
-
-          if (currentBranch != null)
-            ElevatedButton(
-              onPressed: () {
-                context.read<HomeBloc>().add(LoadBranchesEvent());
-                showDialog(
-                  context: context,
-                  builder: (_) {
-                    return BranchesDialog(
-                      branches: context.read<HomeBloc>().state.branches,
-                      currentBranch: currentBranch!,
-                      onBranchSelected: (branch) {
-                        context.read<HomeBloc>().add(SelectBranchEvent(branch));
-                        RestaurantConstants.currentBranch = branch;
-                      },
-                    );
-                  },
-                );
+      body: SafeArea(
+        child: Column(
+          children: [
+            BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                final branches = state.branches
+                    .whereType<EmployeeBranch>()
+                    .toList();
+                final current = branches.isNotEmpty ? branches.first : null;
+                if (current != null && state.selectedEmployeeBranch == null) {
+                  context.read<HomeBloc>().add(SelectBranchEvent(current));
+                }
+                return PosTopBar();
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
-                ),
-                minimumSize: Size.zero,
-              ),
-              child: Text(
-                currentBranch!.arabicName,
-                style: TextStyle(fontSize: 12, color: Colors.white),
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  // ── Main content
+                  Expanded(child: _MainContent()),
+                ],
               ),
             ),
-          const Spacer(),
-          // App name left side (rtl → appears right)
-          const Text(
-            RestaurantConstants.appName,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1B3A6B),
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(width: 18),
-
-          IconButton(
-            icon: const Icon(Icons.menu, size: 26, color: Color(0xFF555E6D)),
-            onPressed: () {
-              if (Directionality.of(context) == TextDirection.ltr) {
-                Scaffold.of(context).openDrawer();
-              } else if (Directionality.of(context) == TextDirection.rtl) {
-                Scaffold.of(context).openEndDrawer();
-              }
-            },
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -164,89 +74,94 @@ class _TopBar extends StatelessWidget {
 
 // Main Content
 
+// ignore: must_be_immutable
 class _MainContent extends StatelessWidget {
-  const _MainContent();
-
+  _MainContent();
+  late S lang;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 40),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // ── Greeting
-          const SizedBox(height: 20),
-          const Text(
-            'مرحباً بك، أحمد',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1B2A4A),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'الرجاء اختيار الإجراء المطلوب للمتابعة',
-            style: TextStyle(fontSize: 14, color: Color(0xFF8A94A6)),
-          ),
-          const SizedBox(height: 48),
-          // ── Action cards
-          Expanded(
-            child: Row(
-              children: [
-                // شاشة البيع
-                if (PermissionChecker(
-                  RestaurantConstants.permissions,
-                ).hasAnyAccess(AppPermission.itemCardRestaurant))
-                  Expanded(
-                    child: _ActionCard(
-                      icon: Icons.point_of_sale,
-                      iconColor: const Color(0xFF8A94A6),
-                      iconBg: const Color(0xFFDDE3EE),
-                      title: 'شاشة البيع',
-                      subtitle: 'الوصول إلى لوحة التحكم والطلبات والمبيعات',
-                      badge: _Badge(
-                        text: 'يرجى تسجيل الحضور أولاً',
-                        color: const Color(0xFF2563EB),
-                        isLink: true,
+    lang = S.of(context);
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // ── Greeting
+              Text(
+                '${lang.welcome}، ${state.userDataModel?.employees?.arabicName}',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1B2A4A),
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'الرجاء اختيار الإجراء المطلوب للمتابعة',
+                style: TextStyle(fontSize: 14, color: Color(0xFF8A94A6)),
+              ),
+              const SizedBox(height: 48),
+              // ── Action cards
+              Expanded(
+                child: Row(
+                  children: [
+                    // شاشة البيع
+                    if (PermissionChecker(
+                      RestaurantConstants.permissions,
+                    ).hasAnyAccess(AppPermission.itemCardRestaurant))
+                      Expanded(
+                        child: _ActionCard(
+                          icon: Icons.point_of_sale,
+                          iconColor: const Color(0xFF8A94A6),
+                          iconBg: const Color(0xFFDDE3EE),
+                          title: lang.salesScreen,
+                          subtitle: 'الوصول إلى لوحة التحكم والطلبات والمبيعات',
+                          badge: _Badge(
+                            text: 'يرجى تسجيل الحضور أولاً',
+                            color: const Color(0xFF2563EB),
+                            isLink: true,
+                            onTap: () {},
+                          ),
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ShiftStartDialog();
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    SizedBox(width: AppSpacing.lg),
+                    // تسجيل الحضور
+                    Expanded(
+                      child: _ActionCard(
+                        icon: Icons.person_pin_rounded,
+                        iconColor: Colors.white,
+                        iconBg: const Color(0xFF2563EB),
+                        title: lang.signIn,
+                        subtitle: 'قم بتسجيل حضورك لبدء وردية العمل الجديدة',
+                        badge: _Badge(
+                          text: 'الوردية لم تبدأ بعد',
+                          color: const Color(0xFFF97316),
+                          isLink: false,
+                          icon: Icons.info_outline,
+                        ),
                         onTap: () {},
                       ),
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return ShiftStartDialog();
-                          },
-                        );
-                      },
                     ),
-                  ),
-                const SizedBox(width: 24),
-                // تسجيل الحضور
-                Expanded(
-                  child: _ActionCard(
-                    icon: Icons.person_pin_rounded,
-                    iconColor: Colors.white,
-                    iconBg: const Color(0xFF2563EB),
-                    title: 'تسجيل الحضور',
-                    subtitle: 'قم بتسجيل حضورك لبدء وردية العمل الجديدة',
-                    badge: _Badge(
-                      text: 'الوردية لم تبدأ بعد',
-                      color: const Color(0xFFF97316),
-                      isLink: false,
-                      icon: Icons.info_outline,
-                    ),
-                    onTap: () {},
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 24),
+              // ── Status bar
+              _StatusBar(),
+            ],
           ),
-          const SizedBox(height: 24),
-          // ── Status bar
-          _StatusBar(),
-        ],
-      ),
+        );
+      },
     );
   }
 }

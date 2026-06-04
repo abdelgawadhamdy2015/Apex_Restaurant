@@ -74,6 +74,10 @@ Future<void> setupGetIt() async {
     () => GetEmployeeBranchesUseCase(getIt<HomeRepository>()),
   );
 
+  getIt.registerLazySingleton(
+    () => GetUserDataUseCase(getIt<HomeRepository>()),
+  );
+
   //POS
   getIt.registerLazySingleton(
     () => GetMenuCategoriesUseCase(getIt<PosRepository>()),
@@ -81,12 +85,16 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetMenuItemsByCategoryUseCase(getIt<PosRepository>()),
   );
+
   getIt.registerLazySingleton(
     () => SendToKitchenUseCase(getIt<PosRepository>()),
   );
   getIt.registerLazySingleton(() => SubmitOrderUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(() => GetFloorsUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(() => GetTablesUseCase(getIt<PosRepository>()));
+  getIt.registerLazySingleton(
+    () => GetFoodAdditivesUseCase(getIt<PosRepository>()),
+  );
 
   /// ─────────────────────────────────────────────────────────
   /// BLoCs
@@ -99,7 +107,10 @@ Future<void> setupGetIt() async {
 
   //HOME
   getIt.registerFactory(
-    () => HomeBloc(getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>()),
+    () => HomeBloc(
+      getUseDataUseCase: getIt<GetUserDataUseCase>(),
+      getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>(),
+    ),
   );
 
   //POS
@@ -110,6 +121,7 @@ Future<void> setupGetIt() async {
       submitOrder: getIt<SubmitOrderUseCase>(),
       getFloors: getIt<GetFloorsUseCase>(),
       getTables: getIt<GetTablesUseCase>(),
+      getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
       itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),
     ),
   );

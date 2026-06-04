@@ -1428,6 +1428,26 @@ class S {
   String get table {
     return Intl.message('Table', name: 'table', desc: '', args: []);
   }
+
+  /// `Language`
+  String get language {
+    return Intl.message('Language', name: 'language', desc: '', args: []);
+  }
+
+  /// `Apply`
+  String get apply {
+    return Intl.message('Apply', name: 'apply', desc: '', args: []);
+  }
+
+  /// `Sales Screen`
+  String get salesScreen {
+    return Intl.message(
+      'Sales Screen',
+      name: 'salesScreen',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

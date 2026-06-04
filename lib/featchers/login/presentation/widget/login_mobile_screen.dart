@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
@@ -44,7 +43,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   bool rememberMe = false;
   late String selectedLanguage;
   bool finish = false;
-
+  late S lang;
   @override
   void initState() {
     super.initState();
@@ -65,9 +64,10 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     selectedLanguage = Intl.defaultLocale == RestaurantConstants.arabic
-        ? AppStrings.current.arabic
-        : AppStrings.current.english;
+        ? lang.arabic
+        : lang.english;
 
     return PopScope(
       canPop: finish,
@@ -151,14 +151,14 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
             selectedLanguage = newValue;
 
             widget.changeLanguage(
-              selectedLanguage == AppStrings.current.arabic
+              selectedLanguage == lang.arabic
                   ? const Locale("ar")
                   : const Locale("en"),
             );
           });
         }
       },
-      items: [S.of(context).english, AppStrings.current.arabic].map((value) {
+      items: [S.of(context).english, lang.arabic].map((value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
@@ -191,21 +191,21 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
                   HelperMethods.verticalSpacing(.02),
 
                   _buildTextField(
-                    AppStrings.current.dbName,
+                    lang.dbName,
                     context.read<AuthBloc>().dbController,
-                    AppStrings.current.insertDBName,
+                    lang.insertDBName,
                   ),
 
                   _buildTextField(
-                    AppStrings.current.email,
+                    lang.email,
                     context.read<AuthBloc>().emailController,
-                    AppStrings.current.insertEmail,
+                    lang.insertEmail,
                   ),
 
                   _buildTextField(
-                    AppStrings.current.insertPassword,
+                    lang.insertPassword,
                     context.read<AuthBloc>().passwordController,
-                    AppStrings.current.password,
+                    lang.password,
                     obsecure: true,
                   ),
 
@@ -228,7 +228,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   Widget _buildLoginTitle() {
     return Center(
       child: Text(
-        AppStrings.current.login,
+        lang.login,
         style: TextStyles.blackBoldStyle(
           fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
         ),
@@ -291,7 +291,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
               HelperMethods.horizontalSpacing(.03),
 
               Text(
-                AppStrings.current.rememberMe,
+                lang.rememberMe,
                 style: TextStyles.blackRegulerStyle(
                   fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                 ),
@@ -337,7 +337,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
         shaderCallback: (bounds) =>
             ColorManger.mainBlueGrediant.createShader(bounds),
         child: Text(
-          AppStrings.current.forgetPassword,
+          lang.forgetPassword,
           style: TextStyle(
             fontFamily: RestaurantConstants.cairoFont,
             fontWeight: FontWeightHelper.medium,
@@ -356,7 +356,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
         return !context.read<AuthBloc>().loadingLogin
             ? AppButtonText(
                 linearGradient: ColorManger.mainBlueGrediant,
-                butonText: AppStrings.current.login,
+                butonText: lang.login,
                 onPressed: () => _validateThenLogin(context),
                 textStyle: TextStyles.whiteBoldStyle(
                   fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,

@@ -1,6 +1,10 @@
+import 'package:apex_restaurant/core/service/api_result.dart';
+import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -36,6 +40,14 @@ class GetTablesUseCase {
     floorID: floorID,
     forPOS: forPOS,
   );
+}
+
+class GetFoodAdditivesUseCase {
+  final PosRepository _repository;
+  GetFoodAdditivesUseCase(this._repository);
+  Future<ApiResult<BaseResponse<List<FoodAdditiveModel>>>> call(
+    GetFoodAdditiveRequest? request,
+  ) => _repository.getFoodAdditives(request);
 }
 
 class GetMenuCategoriesUseCase {

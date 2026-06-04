@@ -1,4 +1,3 @@
-import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
@@ -28,15 +27,15 @@ class ForgetPasswordPage extends StatefulWidget {
 class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController companyText = TextEditingController();
   final TextEditingController emailText = TextEditingController();
-  bool lang = true;
   late String selectedLanguage;
   final formKey = GlobalKey<FormState>();
-
+  late S lang;
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     selectedLanguage = Intl.defaultLocale == RestaurantConstants.arabic
-        ? AppStrings.current.arabic
-        : AppStrings.current.english;
+        ? lang.arabic
+        : lang.english;
 
     return Scaffold(
       body: GradientContainer(
@@ -129,14 +128,14 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
           setState(() {
             selectedLanguage = newValue;
             widget.changeLanguage(
-              selectedLanguage == AppStrings.current.arabic
+              selectedLanguage == lang.arabic
                   ? const Locale("ar")
                   : const Locale("en"),
             );
           });
         }
       },
-      items: [S.of(context).english, AppStrings.current.arabic].map((value) {
+      items: [S.of(context).english, lang.arabic].map((value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(
@@ -154,7 +153,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     return Container(
       padding: const EdgeInsets.only(top: 10),
       child: Text(
-        AppStrings.current.forgetPassword,
+        lang.forgetPassword,
         style: TextStyle(
           fontSize: 20.sp,
           fontWeight: FontWeight.bold,
@@ -164,21 +163,13 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     );
   }
 
-  _buildForm() {
+  Widget _buildForm() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(child: myLogoText()),
-        _buildTextField(
-          AppStrings.current.dbName,
-          companyText,
-          AppStrings.current.dbName,
-        ),
-        _buildTextField(
-          S.of(context).email,
-          emailText,
-          AppStrings.current.email,
-        ),
+        _buildTextField(lang.dbName, companyText, lang.dbName),
+        _buildTextField(S.of(context).email, emailText, lang.email),
         HelperMethods.verticalSpacing(.02),
         Center(child: _buildLoginButton()),
       ],
@@ -228,7 +219,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   Widget _buildLoginButton() {
     return AppButtonText(
       linearGradient: ColorManger.mainBlueGrediant,
-      butonText: AppStrings.current.send,
+      butonText: lang.send,
       onPressed: () => _validateThenLogin(context),
       textStyle: TextStyles.whiteBoldStyle(
         fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
@@ -21,7 +19,6 @@ class AuthRepoImp extends AuthRepo {
       final response = await datasource.login(loginRequest);
       return ApiResult.success(response);
     } catch (error) {
-      log('Login error: $error');
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }

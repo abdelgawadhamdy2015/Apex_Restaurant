@@ -1,6 +1,8 @@
+import 'package:apex_restaurant/core/service/api_error_handler.dart';
+import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +14,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   final GetFloorsUseCase _getFloors;
   final GetTablesUseCase _getTables;
   final GetMenuItemsByCategoryUseCase _itemsByCategoryUseCase;
+  final GetFoodAdditivesUseCase _getfoodAdditivesUseCase;
   PosBloc({
     required this._getMenuCategories,
     required this._sendToKitchen,
@@ -19,13 +22,16 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     required this._getFloors,
     required this._getTables,
     required this._itemsByCategoryUseCase,
+    required this._getfoodAdditivesUseCase,
   }) : super(PosState.initial()) {
     on<LoadFloorsEvent>(_onLoadFloors);
     on<LoadTablesEvent>(_onLoadTables);
     on<LoadCategoriesEvent>(_onLoadCategories);
     on<LoadItemsEvent>(_onLoadItems);
-
+    on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
     on<SelectCategoryEvent>(_onSelectCategory);
+    on<SelectItemEvent>(_onSelectItem);
+
     on<AddItemToOrderEvent>(_onAddItem);
     on<RemoveItemFromOrderEvent>(_onRemoveItem);
     on<IncrementItemEvent>(_onIncrementItem);
@@ -128,6 +134,37 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     }
   }
 
+  Future<void> _onLoadFoodAdditives(
+    LoadFoodAdditivesEvent event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(status: PosStatus.loading));
+
+    try {
+      final response = await _getfoodAdditivesUseCase(event.requestModel);
+      response.when(
+        success: (data) {
+          emit(state.copyWith(status: PosStatus.loaded, additives: data.data));
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              status: PosStatus.error,
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: PosStatus.error,
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+        ),
+      );
+    }
+  }
+
   Future<void> _onLoadItems(
     LoadItemsEvent event,
     Emitter<PosState> emit,
@@ -159,6 +196,10 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         ),
       ),
     );
+  }
+
+  void _onSelectItem(SelectItemEvent event, Emitter<PosState> emit) {
+    emit(state.copyWith(selectedMenuItem: event.item));
   }
 
   void _onAddItem(AddItemToOrderEvent event, Emitter<PosState> emit) {

@@ -2,7 +2,6 @@
 
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
@@ -15,6 +14,7 @@ import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_state.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -47,7 +47,7 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
               if (response.data?.isRestaurant == false) {
                 setupDialogState(
                   context,
-                  AppStrings.current.notRestaurantCompany,
+                  S.of(context).notRestaurantCompany,
                   route: Routes.loginScreen,
                 );
                 return;

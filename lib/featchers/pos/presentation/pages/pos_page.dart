@@ -7,55 +7,53 @@ import 'package:apex_restaurant/featchers/pos/presentation/widgets/menu_grid.dar
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/order_panel.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_toast.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_bar.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PosPage extends StatelessWidget {
-  const PosPage({super.key});
+class PosPage extends StatefulWidget {
+  const PosPage({super.key, required this.changeLanguage});
+  final Function(Locale) changeLanguage;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => getIt<PosBloc>()..add(const LoadCategoriesEvent()),
-      child: const _PosPageView(),
-    );
-  }
+  State<PosPage> createState() => _PosPageState();
 }
 
-class _PosPageView extends StatelessWidget {
-  const _PosPageView();
+class _PosPageState extends State<PosPage> {
+  _PosPageState();
 
+  late S lang;
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
+    lang = S.current;
+    return BlocProvider(
+      create: (_) => getIt<PosBloc>()
+        ..add(const LoadCategoriesEvent())
+        ..add(const LoadFoodAdditivesEvent()),
       child: Scaffold(
-        drawer: Directionality.of(context) == TextDirection.ltr
-            ? SideNav()
-            : null,
+        drawer: SideNav(changeLanguage: widget.changeLanguage),
 
-        endDrawer: Directionality.of(context) == TextDirection.rtl
-            ? SideNav()
-            : null,
-        appBar: const PosTopBar(),
         body: SafeArea(
-          child: Stack(
+          child: Column(
             children: [
-              Row(
-                children: [
-                  // Right: Category sidebar
-                  const CategorySidebar(),
+              PosTopBar(lang: lang),
+              Expanded(
+                child: Row(
+                  children: [
+                    // Right: Category sidebar
+                    const CategorySidebar(),
 
-                  // Center: Menu grid
-                  const Expanded(child: MenuGrid()),
+                    // Center: Menu grid
+                    const Expanded(child: MenuGrid()),
 
-                  // Left: Order panel
-                  const OrderPanel(),
-                ],
+                    // Left: Order panel
+                    const OrderPanel(),
+                  ],
+                ),
               ),
 
               // Toast overlay
-              const PosToast(),
+              PosToast(),
             ],
           ),
         ),

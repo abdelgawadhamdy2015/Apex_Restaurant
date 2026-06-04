@@ -41,6 +41,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "am": MessageLookupByLibrary.simpleMessage("A.M"),
     "annual": MessageLookupByLibrary.simpleMessage("Annual"),
     "annualLeave": MessageLookupByLibrary.simpleMessage("Annual leave"),
+    "apply": MessageLookupByLibrary.simpleMessage("Apply"),
     "approvals": MessageLookupByLibrary.simpleMessage("Approvals"),
     "approved": MessageLookupByLibrary.simpleMessage("Approved"),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
@@ -166,6 +167,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "insertEmail": MessageLookupByLibrary.simpleMessage("Insert Email"),
     "insertPassword": MessageLookupByLibrary.simpleMessage("Insert Password"),
+    "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lateTime": MessageLookupByLibrary.simpleMessage("Late time "),
     "leaveForReset": MessageLookupByLibrary.simpleMessage("Leave for reset"),
     "leaveRecord": MessageLookupByLibrary.simpleMessage("Leave recorded at "),
@@ -259,6 +261,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "restMinutes": MessageLookupByLibrary.simpleMessage("Rest 60 minutes"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "salaries": MessageLookupByLibrary.simpleMessage("Salaries"),
+    "salesScreen": MessageLookupByLibrary.simpleMessage("Sales Screen"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveFailed": MessageLookupByLibrary.simpleMessage(
       "Failed to save. Please try again.",

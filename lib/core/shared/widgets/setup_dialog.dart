@@ -1,4 +1,3 @@
-import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
@@ -13,6 +12,7 @@ import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -61,7 +61,7 @@ void setupDialogState(
                 textStyle: TextStyles.whiteRegulerStyle(
                   fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                 ),
-                butonText: AppStrings.current.okDialog,
+                butonText: S.of(context).okDialog,
                 onPressed: () async {
                   context.pop();
                   if (ApiConstants.dioExceptionType ==
@@ -272,7 +272,7 @@ void showFingerprintDialog(
                         fontSize:
                             AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                       ),
-                      butonText: AppStrings.current.retry,
+                      butonText: S.of(context).retry,
                       onPressed: () {
                         onclick!();
                       },
@@ -290,7 +290,7 @@ void showFingerprintDialog(
                     textStyle: TextStyles.whiteRegulerStyle(
                       fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
                     ),
-                    butonText: AppStrings.current.home,
+                    butonText: S.of(context).home,
                     onPressed: () {
                       context.pushReplacementNamed(Routes.homeScreen);
                     },
