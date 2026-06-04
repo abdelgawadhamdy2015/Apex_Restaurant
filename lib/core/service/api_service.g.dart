@@ -53,6 +53,36 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<BaseResponse<UserDataModel>> getUserData(int id) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<UserDataModel>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'General/UsersManager/getUserById/${id}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<UserDataModel> _value;
+    try {
+      _value = BaseResponse<UserDataModel>.fromJson(
+        _result.data!,
+        (json) => UserDataModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<BaseResponse<List<EmployeeBranch>>> getEmployeeBranches() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -266,6 +296,54 @@ class _ApiService implements ApiService {
             ? json
                   .map<TableModel>(
                     (i) => TableModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
+            : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<List<FoodAdditiveModel>>> getAllFoodAdditives({
+    int? pageNumber,
+    int? pageSize,
+    String? name,
+    int? categoryID,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'pageNumber': pageNumber,
+      r'pageSize': pageSize,
+      r'name': name,
+      r'categoryID': categoryID,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<List<FoodAdditiveModel>>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<List<FoodAdditiveModel>> _value;
+    try {
+      _value = BaseResponse<List<FoodAdditiveModel>>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<FoodAdditiveModel>(
+                    (i) =>
+                        FoodAdditiveModel.fromJson(i as Map<String, dynamic>),
                   )
                   .toList()
             : List.empty(),

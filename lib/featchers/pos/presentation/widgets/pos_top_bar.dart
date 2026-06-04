@@ -1,86 +1,130 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
+import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
+import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
+import 'package:apex_restaurant/featchers/home/presentation/widgets/branches_dialog.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PosTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const PosTopBar({super.key});
-
+  const PosTopBar({super.key, this.lang});
+  final S? lang;
   @override
   Size get preferredSize => const Size.fromHeight(60);
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
-        height: 60,
-        decoration: const BoxDecoration(
-          color: AppColors.white,
-          border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-        child: Row(
-          children: [
-            // Left: User info (RTL - right side)
-            Row(
-              children: [
-                _NotificationButton(),
-                const SizedBox(width: AppSpacing.md),
-                _WifiIndicator(),
-                const SizedBox(width: AppSpacing.lg),
-                _UserChip(),
-              ],
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return SafeArea(
+          child: Container(
+            height: SizeConfig.screenHeight! * .08,
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              border: Border(
+                bottom: BorderSide(color: AppColors.border, width: 1),
+              ),
             ),
-
-            const Spacer(),
-
-            // Right: Branch info + Logo (RTL - left side)
-            Row(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            child: Row(
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                _AppLogo(),
+                Row(
                   children: [
-                    Text(
-                      RestaurantConstants.currentBranch?.arabicName ??
-                          'فرع غير معروف',
-                      style: GoogleFonts.cairo(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Row(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          'متصل الآن',
-                          style: GoogleFonts.cairo(
-                            fontSize: 11,
-                            color: AppColors.success,
+                        if (state.selectedEmployeeBranch != null)
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<HomeBloc>().add(LoadBranchesEvent());
+                              showDialog(
+                                context: context,
+                                builder: (_) {
+                                  return BranchesDialog(
+                                    branches: context
+                                        .read<HomeBloc>()
+                                        .state
+                                        .branches,
+                                    currentBranch:
+                                        state.selectedEmployeeBranch!,
+                                    onBranchSelected: (branch) {
+                                      context.read<HomeBloc>().add(
+                                        SelectBranchEvent(branch),
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF2563EB),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 6,
+                              ),
+                              minimumSize: Size.zero,
+                            ),
+                            child: Text(
+                              state.selectedEmployeeBranch?.arabicName ?? "",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: AppColors.success,
-                            shape: BoxShape.circle,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              'متصل الآن',
+                              style: GoogleFonts.cairo(
+                                fontSize: 11,
+                                color: AppColors.success,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: AppColors.success,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    const SizedBox(width: AppSpacing.lg),
                   ],
                 ),
-                const SizedBox(width: AppSpacing.lg),
-                _AppLogo(),
+                const Spacer(),
+
+                Row(
+                  children: [
+                    _NotificationButton(),
+                    const SizedBox(width: AppSpacing.md),
+                    _WifiIndicator(),
+                    const SizedBox(width: AppSpacing.lg),
+                    _UserChip(),
+                  ],
+                ),
+
+                // Right: Branch info + Logo (RTL - left side)
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -90,11 +134,7 @@ class _AppLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        if (Directionality.of(context) == TextDirection.ltr) {
-          Scaffold.of(context).openDrawer();
-        } else if (Directionality.of(context) == TextDirection.rtl) {
-          Scaffold.of(context).openEndDrawer();
-        }
+        Scaffold.of(context).openDrawer();
       },
       child: Row(
         children: [
@@ -109,23 +149,8 @@ class _AppLogo extends StatelessWidget {
               ),
               borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
-            child: SvgPicture.asset(
-              Assets.images.logo,
-              width: 20,
-              height: 20,
-              // color: Colors.white,
-            ),
+            child: SvgPicture.asset(Assets.images.logo, width: 20, height: 20),
           ),
-          // const SizedBox(width: AppSpacing.sm),
-          // Text(
-          //   'ApexTime',
-          //   style: GoogleFonts.cairo(
-          //     fontSize: 20,
-          //     fontWeight: FontWeight.w800,
-          //     color: AppColors.primary,
-          //     letterSpacing: -0.5,
-          //   ),
-          // ),
         ],
       ),
     );
@@ -185,40 +210,45 @@ class _WifiIndicator extends StatelessWidget {
 class _UserChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(AppRadius.full),
-        border: const BorderSide(color: AppColors.border).toPaint().isAntiAlias
-            ? null
-            : null,
-      ),
-      child: Row(
-        children: [
-          Text(
-            'أحمد العتيبي',
-            style: GoogleFonts.cairo(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.xs,
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Container(
-            width: 30,
-            height: 30,
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.person, color: Colors.white, size: 16),
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(AppRadius.full),
+            border:
+                const BorderSide(color: AppColors.border).toPaint().isAntiAlias
+                ? null
+                : null,
           ),
-        ],
-      ),
+          child: Row(
+            children: [
+              Text(
+                state.userDataModel?.employees?.arabicName ?? "",
+                style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.person, color: Colors.white, size: 16),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

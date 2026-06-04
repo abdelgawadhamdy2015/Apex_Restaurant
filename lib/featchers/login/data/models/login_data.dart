@@ -74,7 +74,7 @@ class AppModel {
 @JsonSerializable(explicitToJson: true)
 class AuthTokenModel {
   final String? token;
-  final UserInfoModel? userInfo;
+  final LoginUserData? userInfo;
 
   final List<dynamic>? allowedModule;
   final List<dynamic>? allowedForms;
@@ -96,7 +96,7 @@ class AuthTokenModel {
 }
 
 @JsonSerializable()
-class UserInfoModel {
+class LoginUserData {
   final String? userId;
   final int? employeesId;
   final String? userName;
@@ -109,7 +109,7 @@ class UserInfoModel {
 
   final String? imageUrl;
 
-  const UserInfoModel({
+  const LoginUserData({
     this.userId,
     this.employeesId,
     this.userName,
@@ -120,10 +120,10 @@ class UserInfoModel {
     this.imageUrl,
   });
 
-  factory UserInfoModel.fromJson(Map<String, dynamic> json) =>
-      _$UserInfoModelFromJson(json);
+  factory LoginUserData.fromJson(Map<String, dynamic> json) =>
+      _$LoginUserDataFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserInfoModelToJson(this);
+  Map<String, dynamic> toJson() => _$LoginUserDataToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)

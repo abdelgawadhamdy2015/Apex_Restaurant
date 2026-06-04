@@ -1,14 +1,15 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/helpers/app_string.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/additives_selection_dialog.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/order_type_dialog.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/table_selection_dialog.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
@@ -22,7 +23,7 @@ class OrderPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: SizeConfig.screenWidth! * .3,
+      width: SizeConfig.screenWidth! * .35,
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(right: BorderSide(color: AppColors.border, width: 1)),
@@ -57,7 +58,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    lang = AppStrings.current;
+    lang = S.of(context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
@@ -278,101 +279,137 @@ class _OrderItemRow extends StatelessWidget {
   final OrderItem orderItem;
   const _OrderItemRow({required this.orderItem});
 
+  Future<List<FoodAdditiveModel>?> showAdditivesDialog({
+    required BuildContext context,
+    required List<FoodAdditiveModel> additives,
+    List<FoodAdditiveModel> initialSelection = const [],
+  }) {
+    return showModalBottomSheet<List<FoodAdditiveModel>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => AdditivesDialog(
+        additives: additives,
+        initialSelection: initialSelection,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
-      ),
-      child: Row(
-        children: [
-          // Price
-          Text(
-            orderItem.totalPrice.toStringAsFixed(2),
-            style: GoogleFonts.cairo(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
+    return BlocBuilder<PosBloc, PosState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.md,
           ),
-          const Spacer(),
-
-          // Quantity controls
-          Row(
+          child: Row(
             children: [
-              _QtyButton(
-                icon: Icons.remove,
-                color: AppColors.textSecondary,
-                bgColor: AppColors.background,
-                onTap: () => context.read<PosBloc>().add(
-                  DecrementItemEvent(orderItem.menuItem.id.toString()),
+              // Price
+              Text(
+                orderItem.totalPrice.toStringAsFixed(2),
+                style: GoogleFonts.cairo(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
                 ),
               ),
-              Container(
-                width: 36,
-                alignment: Alignment.center,
-                child: Text(
-                  '${orderItem.quantity}',
-                  style: GoogleFonts.cairo(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+              const Spacer(),
+
+              // Quantity controls
+              Row(
+                children: [
+                  _QtyButton(
+                    icon: Icons.remove,
+                    color: AppColors.textSecondary,
+                    bgColor: AppColors.background,
+                    onTap: () => context.read<PosBloc>().add(
+                      DecrementItemEvent(orderItem.menuItem.id.toString()),
+                    ),
                   ),
-                ),
+                  Container(
+                    width: 36,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${orderItem.quantity}',
+                      style: GoogleFonts.cairo(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  _QtyButton(
+                    icon: Icons.add,
+                    color: AppColors.white,
+                    bgColor: AppColors.primary,
+                    onTap: () => context.read<PosBloc>().add(
+                      IncrementItemEvent(orderItem.menuItem.id.toString()),
+                    ),
+                  ),
+                ],
               ),
-              _QtyButton(
-                icon: Icons.add,
-                color: AppColors.white,
-                bgColor: AppColors.primary,
-                onTap: () => context.read<PosBloc>().add(
-                  IncrementItemEvent(orderItem.menuItem.id.toString()),
+              const SizedBox(width: AppSpacing.md),
+
+              // Item info
+              InkWell(
+                onTap: () async {
+                  context.read<PosBloc>().add(
+                    SelectItemEvent(orderItem.menuItem),
+                  );
+                  List<FoodAdditiveModel> additives =
+                      await showAdditivesDialog(
+                        context: context,
+                        additives: state.additives,
+                      ) ??
+                      [];
+
+                  log(state.selectedMenuItem?.arabicName ?? "");
+                },
+                child: Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        orderItem.menuItem.arabicName ?? "",
+                        textAlign: TextAlign.right,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.cairo(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      if (orderItem.addons.isNotEmpty ||
+                          orderItem.notes != null)
+                        Text(
+                          orderItem.notes ?? orderItem.addons.join('، '),
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cairo(
+                            fontSize: 10,
+                            color: AppColors.textMuted,
+                          ),
+                        )
+                      else
+                        Text(
+                          'بدون إضافات',
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.cairo(
+                            fontSize: 10,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(width: AppSpacing.md),
-
-          // Item info
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  orderItem.menuItem.arabicName ?? "",
-                  textAlign: TextAlign.right,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                if (orderItem.addons.isNotEmpty || orderItem.notes != null)
-                  Text(
-                    orderItem.notes ?? orderItem.addons.join('، '),
-                    textAlign: TextAlign.right,
-                    style: GoogleFonts.cairo(
-                      fontSize: 10,
-                      color: AppColors.textMuted,
-                    ),
-                  )
-                else
-                  Text(
-                    'بدون إضافات',
-                    textAlign: TextAlign.right,
-                    style: GoogleFonts.cairo(
-                      fontSize: 10,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

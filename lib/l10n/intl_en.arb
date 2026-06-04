@@ -186,5 +186,8 @@
     "dineInOrder": "Dine-in ",
     "takeawayOrder": "Takeaway ",
     "deliveryOrder": "Pickup ",
-    "table": "Table"
+    "table": "Table",
+    "language": "Language",
+    "apply": "Apply",
+    "salesScreen": "Sales Screen"
 }

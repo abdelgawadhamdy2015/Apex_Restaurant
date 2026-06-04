@@ -39,6 +39,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "am": MessageLookupByLibrary.simpleMessage("صباحا"),
     "annual": MessageLookupByLibrary.simpleMessage("إجازة"),
     "annualLeave": MessageLookupByLibrary.simpleMessage("إجازة سنوية"),
+    "apply": MessageLookupByLibrary.simpleMessage("تطبيق"),
     "approvals": MessageLookupByLibrary.simpleMessage("الاعتمادات"),
     "approved": MessageLookupByLibrary.simpleMessage("موافق عليه"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
@@ -164,6 +165,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل البريد الإلكتروني",
     ),
     "insertPassword": MessageLookupByLibrary.simpleMessage("أدخل كلمة المرور"),
+    "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "lateTime": MessageLookupByLibrary.simpleMessage("وقت التأخير "),
     "leaveForReset": MessageLookupByLibrary.simpleMessage("خروج للراحة"),
     "leaveRecord": MessageLookupByLibrary.simpleMessage(
@@ -259,6 +261,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "restMinutes": MessageLookupByLibrary.simpleMessage("راحة 60 دقيقة"),
     "retry": MessageLookupByLibrary.simpleMessage("حاول ثانية"),
     "salaries": MessageLookupByLibrary.simpleMessage("الرواتب"),
+    "salesScreen": MessageLookupByLibrary.simpleMessage("شاشة البيع"),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "saveFailed": MessageLookupByLibrary.simpleMessage(
       "فشل الحفظ. يرجى المحاولة مرة أخرى.",

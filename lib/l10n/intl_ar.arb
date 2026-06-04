@@ -187,5 +187,8 @@
     "dineInOrder": "طلب صالة",
     "takeawayOrder": "طلب سفري",
     "deliveryOrder": "طلب استلام",
-    "table": "طاولة"
+    "table": "طاولة",
+    "language": "اللغة",
+    "apply": "تطبيق",
+    "salesScreen": "شاشة البيع"
 }
