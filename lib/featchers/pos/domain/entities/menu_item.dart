@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:equatable/equatable.dart';
 
@@ -53,7 +54,7 @@ class OrderItem extends Equatable {
   final MenuItemModel menuItem;
   final int quantity;
   final String? notes;
-  final List<String> addons;
+  final List<FoodAdditiveModel> addons;
 
   const OrderItem({
     required this.menuItem,
@@ -68,7 +69,7 @@ class OrderItem extends Equatable {
     MenuItemModel? menuItem,
     int? quantity,
     String? notes,
-    List<String>? addons,
+    List<FoodAdditiveModel>? addons,
   }) {
     return OrderItem(
       menuItem: menuItem ?? this.menuItem,

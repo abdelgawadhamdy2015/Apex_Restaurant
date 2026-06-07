@@ -33,9 +33,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "active": MessageLookupByLibrary.simpleMessage("Active"),
+    "activeNow": MessageLookupByLibrary.simpleMessage("Active Now"),
     "actualWorkingHours": MessageLookupByLibrary.simpleMessage(
       "Actual WorkingHours",
     ),
+    "addAdditives": MessageLookupByLibrary.simpleMessage("Add Additives"),
     "address": MessageLookupByLibrary.simpleMessage("Address"),
     "all": MessageLookupByLibrary.simpleMessage("All"),
     "am": MessageLookupByLibrary.simpleMessage("A.M"),
@@ -99,7 +101,11 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "closeApp": MessageLookupByLibrary.simpleMessage("Close App"),
     "comeFromReset": MessageLookupByLibrary.simpleMessage("Come from reset"),
+    "confirmAdditives": MessageLookupByLibrary.simpleMessage(
+      "Confirm additives",
+    ),
     "controlBoard": MessageLookupByLibrary.simpleMessage("Control Board"),
+    "currentOrder": MessageLookupByLibrary.simpleMessage("Current Order"),
     "dailyWorkingHours": MessageLookupByLibrary.simpleMessage(
       "from 9:00 A.M to 6:00 P.M",
     ),
@@ -195,10 +201,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "needSignOut": MessageLookupByLibrary.simpleMessage(
       "Are you shure you need log signOut? ",
     ),
+    "noAddons": MessageLookupByLibrary.simpleMessage("No Add-ons"),
     "noDateFound": MessageLookupByLibrary.simpleMessage("No Data Found"),
     "noInternet": MessageLookupByLibrary.simpleMessage(
       " No internet , check your connection and try again",
     ),
+    "notActive": MessageLookupByLibrary.simpleMessage("Not Active"),
     "notAttendance": MessageLookupByLibrary.simpleMessage(
       " you not signIn yet",
     ),
@@ -212,6 +220,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "openSetting": MessageLookupByLibrary.simpleMessage("Open Settings"),
     "overallReport": MessageLookupByLibrary.simpleMessage("Overall"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "pay": MessageLookupByLibrary.simpleMessage("Pay"),
     "performancePanel": MessageLookupByLibrary.simpleMessage(
       "Performance Panel",
     ),
@@ -229,6 +238,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "play": MessageLookupByLibrary.simpleMessage("Play"),
     "pleaseFill": MessageLookupByLibrary.simpleMessage("please fill "),
     "pm": MessageLookupByLibrary.simpleMessage("P.M"),
+    "pos": MessageLookupByLibrary.simpleMessage("POS"),
     "project": MessageLookupByLibrary.simpleMessage("Project"),
     "quickAccessList": MessageLookupByLibrary.simpleMessage(
       "Quick access list",
@@ -258,10 +268,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Request sent successfully",
     ),
     "requestType": MessageLookupByLibrary.simpleMessage("Request Type"),
+    "requests": MessageLookupByLibrary.simpleMessage("Requests"),
     "restMinutes": MessageLookupByLibrary.simpleMessage("Rest 60 minutes"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "salaries": MessageLookupByLibrary.simpleMessage("Salaries"),
     "salesScreen": MessageLookupByLibrary.simpleMessage("Sales Screen"),
+    "sar": MessageLookupByLibrary.simpleMessage("SAR"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveFailed": MessageLookupByLibrary.simpleMessage(
       "Failed to save. Please try again.",
@@ -271,6 +283,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "section": MessageLookupByLibrary.simpleMessage("Section"),
     "securityWarning": MessageLookupByLibrary.simpleMessage("Security Warning"),
+    "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "shift": MessageLookupByLibrary.simpleMessage("Shift"),
     "shift1": MessageLookupByLibrary.simpleMessage("first shift"),
@@ -283,19 +296,31 @@ class MessageLookup extends MessageLookupByLibrary {
     "sickLeave": MessageLookupByLibrary.simpleMessage("Sick leave"),
     "signIn": MessageLookupByLibrary.simpleMessage("Check-in "),
     "signOut": MessageLookupByLibrary.simpleMessage("Check-out "),
+    "skip": MessageLookupByLibrary.simpleMessage("Skip"),
     "startDate": MessageLookupByLibrary.simpleMessage("Start Date"),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
     "stop": MessageLookupByLibrary.simpleMessage("Stop"),
+    "subtotal": MessageLookupByLibrary.simpleMessage("Subtotal"),
     "sureDelete": MessageLookupByLibrary.simpleMessage(
       "are you sure you need delete this request",
     ),
     "table": MessageLookupByLibrary.simpleMessage("Table"),
+    "tables": MessageLookupByLibrary.simpleMessage("Tables"),
     "takeawayOrder": MessageLookupByLibrary.simpleMessage("Takeaway "),
+    "tapAnyItemToAdd": MessageLookupByLibrary.simpleMessage(
+      "Tap an item to add it to the order",
+    ),
+    "tapItemsToSelect": MessageLookupByLibrary.simpleMessage(
+      "Tap items to select",
+    ),
     "task": MessageLookupByLibrary.simpleMessage("Task"),
+    "tax": MessageLookupByLibrary.simpleMessage("Tax"),
     "temporary": MessageLookupByLibrary.simpleMessage("Temp"),
     "timesOfWork": MessageLookupByLibrary.simpleMessage("Times of work"),
     "to": MessageLookupByLibrary.simpleMessage("to"),
     "toDate": MessageLookupByLibrary.simpleMessage(" To Date"),
+    "toRestaurant": MessageLookupByLibrary.simpleMessage(" To Restaurant"),
+    "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalDays": MessageLookupByLibrary.simpleMessage("Total vacation days"),
     "transaction": MessageLookupByLibrary.simpleMessage("Attendance "),
     "typeOfLeave": MessageLookupByLibrary.simpleMessage("Type of Leave"),
@@ -308,6 +333,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "vaccationsReports": MessageLookupByLibrary.simpleMessage(
       "Vacations Reports",
     ),
+    "vat": MessageLookupByLibrary.simpleMessage("VAT"),
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "Please wait until the current location data is loaded",
     ),

@@ -1,9 +1,11 @@
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class PosEvent extends Equatable {
@@ -66,18 +68,19 @@ class SelectCategoryEvent extends PosEvent {
   List<Object?> get props => [category];
 }
 
-class SelectItemEvent extends PosEvent {
-  final MenuItemModel item;
-  const SelectItemEvent(this.item);
-  @override
-  List<Object?> get props => [item];
-}
-
 class AddItemToOrderEvent extends PosEvent {
   final MenuItemModel item;
   const AddItemToOrderEvent(this.item);
   @override
   List<Object?> get props => [item];
+}
+
+class UpdateItemAddonsEvent extends PosEvent {
+  final OrderItem item;
+  final List<FoodAdditiveModel> addons;
+  const UpdateItemAddonsEvent({required this.item, required this.addons});
+  @override
+  List<Object?> get props => [item, addons];
 }
 
 class RemoveItemFromOrderEvent extends PosEvent {
@@ -88,14 +91,14 @@ class RemoveItemFromOrderEvent extends PosEvent {
 }
 
 class IncrementItemEvent extends PosEvent {
-  final String itemId;
+  final int itemId;
   const IncrementItemEvent(this.itemId);
   @override
   List<Object?> get props => [itemId];
 }
 
 class DecrementItemEvent extends PosEvent {
-  final String itemId;
+  final int itemId;
   const DecrementItemEvent(this.itemId);
   @override
   List<Object?> get props => [itemId];

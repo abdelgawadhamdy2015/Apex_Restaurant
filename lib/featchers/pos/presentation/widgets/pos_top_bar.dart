@@ -1,5 +1,4 @@
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
@@ -9,13 +8,13 @@ import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PosTopBar extends StatelessWidget implements PreferredSizeWidget {
   const PosTopBar({super.key, this.lang});
   final S? lang;
+
   @override
-  Size get preferredSize => const Size.fromHeight(60);
+  Size get preferredSize => Size.fromHeight(AppSizes.appBarHeight);
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +22,18 @@ class PosTopBar extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, state) {
         return SafeArea(
           child: Container(
-            height: SizeConfig.screenHeight! * .08,
+            height: AppSizes.appBarHeight,
             decoration: const BoxDecoration(
               color: AppColors.white,
               border: Border(
                 bottom: BorderSide(color: AppColors.border, width: 1),
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+            padding: EdgeInsets.symmetric(horizontal: AppPadding.sm),
             child: Row(
               children: [
                 _AppLogo(),
+                Spacer(),
                 Row(
                   children: [
                     Column(
@@ -46,39 +46,37 @@ class PosTopBar extends StatelessWidget implements PreferredSizeWidget {
                               context.read<HomeBloc>().add(LoadBranchesEvent());
                               showDialog(
                                 context: context,
-                                builder: (_) {
-                                  return BranchesDialog(
-                                    branches: context
-                                        .read<HomeBloc>()
-                                        .state
-                                        .branches,
-                                    currentBranch:
-                                        state.selectedEmployeeBranch!,
-                                    onBranchSelected: (branch) {
-                                      context.read<HomeBloc>().add(
-                                        SelectBranchEvent(branch),
-                                      );
-                                    },
-                                  );
-                                },
+                                builder: (_) => BranchesDialog(
+                                  branches: context
+                                      .read<HomeBloc>()
+                                      .state
+                                      .branches,
+                                  currentBranch: state.selectedEmployeeBranch!,
+                                  onBranchSelected: (branch) {
+                                    context.read<HomeBloc>().add(
+                                      SelectBranchEvent(branch),
+                                    );
+                                  },
+                                ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF2563EB),
+                              backgroundColor: AppColors.accent,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(
+                                  AppRadius.full,
+                                ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 6,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppPadding.sm,
+                                vertical: AppPadding.xs,
                               ),
                               minimumSize: Size.zero,
                             ),
                             child: Text(
                               state.selectedEmployeeBranch?.arabicName ?? "",
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white,
+                              style: AppFonts.bodySmall.colored(
+                                AppColors.white,
                               ),
                             ),
                           ),
@@ -86,15 +84,14 @@ class PosTopBar extends StatelessWidget implements PreferredSizeWidget {
                           children: [
                             Text(
                               'متصل الآن',
-                              style: GoogleFonts.cairo(
-                                fontSize: 11,
-                                color: AppColors.success,
+                              style: AppFonts.bodySmall.colored(
+                                AppColors.success,
                               ),
                             ),
-                            const SizedBox(width: 4),
+                            AppSizes.gapW4,
                             Container(
-                              width: 6,
-                              height: 6,
+                              width: AppSizes.w4,
+                              height: AppSizes.h4,
                               decoration: const BoxDecoration(
                                 color: AppColors.success,
                                 shape: BoxShape.circle,
@@ -104,22 +101,21 @@ class PosTopBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(width: AppSpacing.lg),
+                    AppSizes.gapW16,
                   ],
                 ),
+
                 const Spacer(),
 
                 Row(
                   children: [
                     _NotificationButton(),
-                    const SizedBox(width: AppSpacing.md),
+                    AppSizes.gapW12,
                     _WifiIndicator(),
-                    const SizedBox(width: AppSpacing.lg),
+                    AppSizes.gapW16,
                     _UserChip(),
                   ],
                 ),
-
-                // Right: Branch info + Logo (RTL - left side)
               ],
             ),
           ),
@@ -133,25 +129,19 @@ class _AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Scaffold.of(context).openDrawer();
-      },
-      child: Row(
-        children: [
-          Container(
-            width: 100,
-            height: 36,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.white, AppColors.white],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-            ),
-            child: SvgPicture.asset(Assets.images.logo, width: 20, height: 20),
-          ),
-        ],
+      onTap: () => Scaffold.of(context).openDrawer(),
+      child: Container(
+        width: AppSizes.w48,
+        height: AppSizes.h32,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(AppRadius.sm),
+        ),
+        child: SvgPicture.asset(
+          Assets.images.logo,
+          width: AppSizes.iconSm,
+          height: AppSizes.iconSm,
+        ),
       ),
     );
   }
@@ -163,24 +153,24 @@ class _NotificationButton extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 38,
-          height: 38,
+          width: AppSizes.w32,
+          height: AppSizes.h32,
           decoration: BoxDecoration(
             color: AppColors.background,
             borderRadius: BorderRadius.circular(AppRadius.sm),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.notifications_outlined,
-            size: 20,
+            size: AppSizes.iconMd,
             color: AppColors.textSecondary,
           ),
         ),
         Positioned(
-          top: 6,
-          right: 6,
+          top: AppPadding.xs,
+          right: AppPadding.xs,
           child: Container(
-            width: 8,
-            height: 8,
+            width: AppSizes.w8,
+            height: AppSizes.h8,
             decoration: const BoxDecoration(
               color: AppColors.error,
               shape: BoxShape.circle,
@@ -196,13 +186,13 @@ class _WifiIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 38,
-      height: 38,
+      width: AppSizes.w32,
+      height: AppSizes.h32,
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(AppRadius.sm),
       ),
-      child: const Icon(Icons.wifi, size: 20, color: AppColors.success),
+      child: Icon(Icons.wifi, size: AppSizes.iconMd, color: AppColors.success),
     );
   }
 }
@@ -213,37 +203,35 @@ class _UserChip extends StatelessWidget {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         return Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.xs,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppPadding.md,
+            vertical: AppPadding.xs,
           ),
           decoration: BoxDecoration(
             color: AppColors.background,
             borderRadius: BorderRadius.circular(AppRadius.full),
-            border:
-                const BorderSide(color: AppColors.border).toPaint().isAntiAlias
-                ? null
-                : null,
           ),
           child: Row(
             children: [
               Text(
                 state.userDataModel?.employees?.arabicName ?? "",
-                style: GoogleFonts.cairo(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
+                style: AppFonts.bodySmall
+                    .colored(AppColors.textPrimary)
+                    .semiBold(),
               ),
-              const SizedBox(width: AppSpacing.sm),
+              AppSizes.gapW8,
               Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
+                width: AppSizes.w24,
+                height: AppSizes.h24,
+                decoration: const BoxDecoration(
                   color: AppColors.primaryLight,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.person, color: Colors.white, size: 16),
+                child: Icon(
+                  Icons.person,
+                  color: AppColors.white,
+                  size: AppSizes.iconSm,
+                ),
               ),
             ],
           ),
@@ -252,7 +240,3 @@ class _UserChip extends StatelessWidget {
     );
   }
 }
-
-// extension on Paint {
-//   bool get isAntiAlias => true;
-// }

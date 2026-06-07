@@ -6,7 +6,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PosToast extends StatefulWidget {
   const PosToast({super.key});
@@ -55,9 +54,7 @@ class _PosToastState extends State<PosToast>
   void _hide() {
     if (mounted) {
       _controller.reverse().then((_) {
-        if (mounted) {
-          context.read<PosBloc>().add(const DismissToastEvent());
-        }
+        if (mounted) context.read<PosBloc>().add(const DismissToastEvent());
       });
     }
   }
@@ -75,9 +72,9 @@ class _PosToastState extends State<PosToast>
         builder: (context, state) {
           if (state.toastMessage == null) return const SizedBox.shrink();
           return Positioned(
-            bottom: 24,
-            left: 24,
-            right: 24,
+            bottom: AppPadding.xxl,
+            left: AppPadding.xxl,
+            right: AppPadding.xxl,
             child: SlideTransition(
               position: _slideAnimation,
               child: FadeTransition(
@@ -99,9 +96,9 @@ class _ToastCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppPadding.lg,
+        vertical: AppPadding.md,
       ),
       decoration: BoxDecoration(
         color: AppColors.primary,
@@ -117,24 +114,26 @@ class _ToastCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
+            width: AppSizes.w24,
+            height: AppSizes.h24,
+            decoration: const BoxDecoration(
               color: AppColors.success,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.check, size: 16, color: Colors.white),
+            child: Icon(
+              Icons.check,
+              size: AppSizes.iconSm,
+              color: AppColors.white,
+            ),
           ),
-          const SizedBox(width: AppSpacing.md),
+          AppSizes.gapW12,
           Expanded(
             child: Text(
               message,
               textAlign: TextAlign.right,
-              style: GoogleFonts.cairo(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: AppColors.white,
-              ),
+              style: AppFonts.bodySmall
+                  .colored(AppColors.white)
+                  .copyWith(fontWeight: FontWeight.w500),
             ),
           ),
         ],
