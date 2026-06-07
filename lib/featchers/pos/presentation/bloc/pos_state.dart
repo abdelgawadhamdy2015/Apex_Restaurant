@@ -18,7 +18,7 @@ class PosState extends Equatable {
   final CategoryModel? selectedCategory;
 
   final List<MenuItemModel> currentMenuItems;
-  final MenuItemModel? selectedMenuItem;
+  final OrderItem? selectedOrderItem;
 
   final Order currentOrder;
   final String? errorMessage;
@@ -32,7 +32,7 @@ class PosState extends Equatable {
     this.categories = const [],
     this.selectedCategory,
     this.currentMenuItems = const [],
-    this.selectedMenuItem,
+    this.selectedOrderItem,
     required this.currentOrder,
     this.errorMessage,
     this.toastMessage,
@@ -57,7 +57,7 @@ class PosState extends Equatable {
     List<CategoryModel>? categories,
     CategoryModel? selectedCategory,
     List<MenuItemModel>? currentMenuItems,
-    MenuItemModel? selectedMenuItem,
+    OrderItem? selectedMenuItem,
     Order? currentOrder,
     String? errorMessage,
     String? toastMessage,
@@ -72,7 +72,7 @@ class PosState extends Equatable {
       categories: categories ?? this.categories,
       selectedCategory: selectedCategory ?? this.selectedCategory,
       currentMenuItems: currentMenuItems ?? this.currentMenuItems,
-      selectedMenuItem: selectedMenuItem ?? this.selectedMenuItem,
+      selectedOrderItem: selectedMenuItem ?? this.selectedOrderItem,
       currentOrder: currentOrder ?? this.currentOrder,
       errorMessage: errorMessage ?? this.errorMessage,
       toastMessage: clearToast ? null : (toastMessage ?? this.toastMessage),
@@ -92,7 +92,7 @@ class PosState extends Equatable {
     categories,
     selectedCategory,
     currentMenuItems,
-    selectedMenuItem,
+    selectedOrderItem,
     currentOrder,
     errorMessage,
     toastMessage,

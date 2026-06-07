@@ -13,18 +13,14 @@ import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/colors.dart';
 import 'package:apex_restaurant/core/theme/font_weight_helper.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
-import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_event.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_state.dart';
-
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_bloc_listener.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -44,20 +40,17 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   late String selectedLanguage;
   bool finish = false;
   late S lang;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initData();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _initData());
   }
 
   Future<void> _initData() async {
     await SharedPrefHelper.removeData(RestaurantConstants.myToken);
-
     context.read<AuthBloc>().dbController.text =
         await SharedPrefHelper.getString(RestaurantConstants.loggedDBName);
-
     context.read<AuthBloc>().emailController.text =
         await SharedPrefHelper.getString(RestaurantConstants.loggedUserName);
   }
@@ -95,9 +88,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           duration: const Duration(seconds: 1),
         ),
       );
-
       setState(() => finish = true);
-
       Future.delayed(
         const Duration(seconds: 2),
         () => setState(() => finish = false),
@@ -106,29 +97,28 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   }
 
   Widget _buildHeader() {
+    final double dpr = MediaQuery.of(context).devicePixelRatio;
+    final double logoW = AppSizes.wFraction(0.48);
+    final double logoH = AppSizes.hFraction(0.08);
+
     return SizedBox(
-      height: SizeConfig.screenHeight! * .2,
+      height: AppSizes.hFraction(0.2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: Padding(
-              padding: EdgeInsets.only(top: SizeConfig.screenHeight! * .01),
+              padding: AppPadding.allLg,
               child: Assets.images.apexTime.image(
-                width: SizeConfig.defaultSize! * 20,
+                width: logoW,
                 color: AppColors.white,
-                cacheWidth:
-                    ((SizeConfig.defaultSize! * 20) *
-                            SizeConfig.devicePixelRatio!)
-                        .round(),
-                cacheHeight:
-                    ((SizeConfig.defaultSize! * 8) *
-                            SizeConfig.devicePixelRatio!)
-                        .round(),
+                cacheWidth: (logoW * dpr).round(),
+                cacheHeight: (logoH * dpr).round(),
               ),
             ),
           ),
+          AppSizes.gapW24,
           _buildLanguageDropdown(),
         ],
       ),
@@ -140,16 +130,13 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       value: selectedLanguage,
       icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
       dropdownColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(20.r),
-      style: TextStyles.darkBlueBoldStyle(
-        fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-      ),
+      borderRadius: BorderRadius.circular(AppRadius.xl),
+      style: AppFonts.displayMedium.colored(AppColors.primaryDark).bold(),
       underline: const SizedBox(),
       onChanged: (String? newValue) {
         if (newValue != null) {
           setState(() {
             selectedLanguage = newValue;
-
             widget.changeLanguage(
               selectedLanguage == lang.arabic
                   ? const Locale("ar")
@@ -163,9 +150,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           value: value,
           child: Text(
             value,
-            style: TextStyles.whiteBoldStyle(
-              fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-            ),
+            style: AppFonts.displayLarge.colored(AppColors.white).bold(),
           ),
         );
       }).toList(),
@@ -174,7 +159,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
 
   Widget _buildLoginForm() {
     return SizedBox(
-      height: SizeConfig.screenHeight! * .8,
+      height: AppSizes.hFraction(0.8),
       child: BodyContainer(
         child: SingleChildScrollView(
           child: SafeArea(
@@ -184,37 +169,28 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  HelperMethods.verticalSpacing(.02),
-
+                  AppSizes.gapH16,
                   _buildLoginTitle(),
-
-                  HelperMethods.verticalSpacing(.02),
-
+                  AppSizes.gapH16,
                   _buildTextField(
                     lang.dbName,
                     context.read<AuthBloc>().dbController,
                     lang.insertDBName,
                   ),
-
                   _buildTextField(
                     lang.email,
                     context.read<AuthBloc>().emailController,
                     lang.insertEmail,
                   ),
-
                   _buildTextField(
                     lang.insertPassword,
                     context.read<AuthBloc>().passwordController,
                     lang.password,
                     obsecure: true,
                   ),
-
                   _buildRememberAndForget(),
-
-                  HelperMethods.verticalSpacing(.01),
-
+                  AppSizes.gapH8,
                   _buildLoginButton(),
-
                   AuthBlocListener(rememberMe: rememberMe),
                 ],
               ),
@@ -229,9 +205,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     return Center(
       child: Text(
         lang.login,
-        style: TextStyles.blackBoldStyle(
-          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-        ),
+        style: AppFonts.displayLarge.colored(AppColors.textPrimary).bold(),
       ),
     );
   }
@@ -244,29 +218,25 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: SizeConfig.screenWidth! * .016,
-        vertical: SizeConfig.screenHeight! * .016,
+        horizontal: AppPadding.sm,
+        vertical: AppPadding.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: TextStyles.blackMediumStyle(
-              fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-            ),
+            style: AppFonts.displayMedium
+                .colored(AppColors.textPrimary)
+                .semiBold(),
           ),
-
-          HelperMethods.verticalSpacing(.01),
-
+          AppSizes.gapH8,
           MyTextForm(
-            hight: SizeConfig.defaultSize! * 5,
-            inputTextStyle: TextStyles.blackBoldStyle(
-              fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-            ),
-            hintStyle: TextStyles.blackRegulerStyle(
-              fontSize: AppTheme.theme.textTheme.bodySmall!.fontSize!,
-            ),
+            hight: AppSizes.inputHeight,
+            inputTextStyle: AppFonts.displayMedium
+                .colored(AppColors.textPrimary)
+                .bold(),
+            hintStyle: AppFonts.bodyLarge.colored(AppColors.textMuted),
             fillColor: AppColors.white,
             hint: hint,
             excep: label,
@@ -280,21 +250,17 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
 
   Widget _buildRememberAndForget() {
     return Padding(
-      padding: EdgeInsets.only(top: SizeConfig.screenHeight! * .01),
+      padding: EdgeInsets.only(top: AppPadding.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
               _buildRememberCheckbox(),
-
-              HelperMethods.horizontalSpacing(.03),
-
+              AppSizes.gapW12,
               Text(
                 lang.rememberMe,
-                style: TextStyles.blackRegulerStyle(
-                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-                ),
+                style: AppFonts.displayMedium.colored(AppColors.textPrimary),
               ),
             ],
           ),
@@ -310,16 +276,16 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.textSecondary, width: 2),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           color: rememberMe ? AppColors.primaryLight : Colors.transparent,
         ),
-        padding: const EdgeInsets.all(4),
+        padding: AppPadding.allXs,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          width: 20,
-          height: 20,
+          width: AppSizes.w20,
+          height: AppSizes.h20,
           child: rememberMe
-              ? const Icon(Icons.check, size: 16, color: Colors.white)
+              ? Icon(Icons.check, size: AppSizes.iconSm, color: AppColors.white)
               : null,
         ),
       ),
@@ -330,7 +296,6 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     return InkWell(
       onTap: () {
         context.read<AuthBloc>().formKey.currentState!.reset();
-
         context.pushNamed(Routes.forgetPasswordScreen);
       },
       child: ShaderMask(
@@ -338,12 +303,11 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
             ColorManger.mainBlueGrediant.createShader(bounds),
         child: Text(
           lang.forgetPassword,
-          style: TextStyle(
+          style: AppFonts.displayMedium.copyWith(
             fontFamily: RestaurantConstants.cairoFont,
             fontWeight: FontWeightHelper.medium,
-            color: Colors.white,
+            color: AppColors.white,
             decoration: TextDecoration.underline,
-            fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
           ),
         ),
       ),
@@ -358,11 +322,11 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
                 linearGradient: ColorManger.mainBlueGrediant,
                 butonText: lang.login,
                 onPressed: () => _validateThenLogin(context),
-                textStyle: TextStyles.whiteBoldStyle(
-                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-                ),
+                textStyle: AppFonts.displayMedium
+                    .colored(AppColors.white)
+                    .bold(),
               )
-            : MyProgressIndicator(scale: SizeConfig.screenHeight! * .0005);
+            : const MyProgressIndicator(scale: 0.5);
       },
     );
   }

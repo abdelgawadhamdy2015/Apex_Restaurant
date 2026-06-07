@@ -5,48 +5,37 @@ import 'package:go_router/go_router.dart';
 
 class OrderTypeDialog extends StatelessWidget {
   const OrderTypeDialog({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
       child: Container(
-        width: 450,
-        padding: const EdgeInsets.all(24),
+        width: AppSizes.w200,
+        padding: AppPadding.allXxl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'اختر نوع الفاتورة',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 30),
-
+            Text('اختر نوع الفاتورة', style: AppFonts.displayMedium),
+            AppSizes.gapH32,
             _TypeCard(
               title: 'سفري',
               icon: Icons.shopping_bag,
-              onTap: () {
-                context.pop(PosOrderType.takeaway);
-              },
+              onTap: () => context.pop(PosOrderType.takeaway),
             ),
-
-            const SizedBox(height: 12),
-
+            AppSizes.gapH12,
             _TypeCard(
               title: 'توصيل',
               icon: Icons.delivery_dining,
-              onTap: () {
-                context.pop(PosOrderType.delivery);
-              },
+              onTap: () => context.pop(PosOrderType.delivery),
             ),
-
-            const SizedBox(height: 12),
-
+            AppSizes.gapH12,
             _TypeCard(
               title: 'صالة',
               icon: Icons.table_restaurant,
-              onTap: () {
-                context.pop(PosOrderType.dineIn);
-              },
+              onTap: () => context.pop(PosOrderType.dineIn),
             ),
           ],
         ),
@@ -70,24 +59,21 @@ class _TypeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.md),
       child: Container(
-        height: 70,
+        height: AppSizes.h64,
         decoration: BoxDecoration(
           color: AppColors.primary,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(width: 12),
+            Icon(icon, color: AppColors.white, size: AppSizes.iconLg),
+            AppSizes.gapW12,
             Text(
               title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: AppFonts.titleLarge.colored(AppColors.white).bold(),
             ),
           ],
         ),

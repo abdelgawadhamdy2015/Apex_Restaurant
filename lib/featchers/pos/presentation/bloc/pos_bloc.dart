@@ -30,8 +30,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<LoadItemsEvent>(_onLoadItems);
     on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
     on<SelectCategoryEvent>(_onSelectCategory);
-    on<SelectItemEvent>(_onSelectItem);
-
+    on<UpdateItemAddonsEvent>(_onUpdateItemAddons);
     on<AddItemToOrderEvent>(_onAddItem);
     on<RemoveItemFromOrderEvent>(_onRemoveItem);
     on<IncrementItemEvent>(_onIncrementItem);
@@ -198,8 +197,22 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     );
   }
 
-  void _onSelectItem(SelectItemEvent event, Emitter<PosState> emit) {
-    emit(state.copyWith(selectedMenuItem: event.item));
+  void _onUpdateItemAddons(
+    UpdateItemAddonsEvent event,
+    Emitter<PosState> emit,
+  ) {
+    final updatedItems = state.currentOrder.items.map((item) {
+      if (item.menuItem.id == event.item.menuItem.id) {
+        return item.copyWith(addons: event.addons);
+      }
+      return item;
+    }).toList();
+
+    emit(
+      state.copyWith(
+        currentOrder: state.currentOrder.copyWith(items: updatedItems),
+      ),
+    );
   }
 
   void _onAddItem(AddItemToOrderEvent event, Emitter<PosState> emit) {

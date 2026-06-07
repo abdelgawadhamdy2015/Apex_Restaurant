@@ -1,12 +1,10 @@
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class CategorySidebar extends StatelessWidget {
   const CategorySidebar({super.key});
@@ -29,7 +27,7 @@ class CategorySidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: SizeConfig.screenWidth! * .15,
+      width: AppSizes.wFraction(0.15),
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(left: BorderSide(color: AppColors.border, width: 1)),
@@ -38,18 +36,17 @@ class CategorySidebar extends StatelessWidget {
         builder: (context, state) {
           return Column(
             children: [
-              const SizedBox(height: AppSpacing.md),
-              ...state.categories.map((category) {
-                final isSelected = category == state.selectedCategory;
-                return _CategoryItem(
+              AppSizes.gapH12,
+              ...state.categories.map(
+                (category) => _CategoryItem(
                   category: category,
-                  isSelected: isSelected,
+                  isSelected: category == state.selectedCategory,
                   icon: _getCategoryIcon(category.arabicName!),
                   onTap: () => context.read<PosBloc>().add(
                     SelectCategoryEvent(category),
                   ),
-                );
-              }),
+                ),
+              ),
             ],
           );
         },
@@ -77,14 +74,14 @@ class _CategoryItem extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(
-          bottom: AppSpacing.xs,
-          left: AppSpacing.sm,
-          right: AppSpacing.sm,
+        margin: EdgeInsets.only(
+          bottom: AppPadding.xs,
+          left: AppPadding.sm,
+          right: AppPadding.sm,
         ),
-        padding: const EdgeInsets.symmetric(
-          vertical: AppSpacing.md,
-          horizontal: AppSpacing.sm,
+        padding: EdgeInsets.symmetric(
+          vertical: AppPadding.md,
+          horizontal: AppPadding.sm,
         ),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.sidebarActive : Colors.transparent,
@@ -97,15 +94,16 @@ class _CategoryItem extends StatelessWidget {
           children: [
             Icon(
               icon,
-              size: 24,
+              size: AppSizes.iconLg,
               color: isSelected ? AppColors.accent : AppColors.textMuted,
             ),
-            const SizedBox(height: AppSpacing.xs),
+            AppSizes.gapH4,
             Text(
               category.arabicName ?? "",
+              maxLines: 2,
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(
-                fontSize: 10,
+              overflow: TextOverflow.ellipsis,
+              style: AppFonts.bodySmall.copyWith(
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected ? AppColors.accent : AppColors.textSecondary,
                 height: 1.3,

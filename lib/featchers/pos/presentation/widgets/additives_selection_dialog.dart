@@ -1,6 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,7 +22,7 @@ class AdditivesDialog extends StatefulWidget {
 
 class _AdditivesDialogState extends State<AdditivesDialog> {
   late final Set<String> _selectedIds;
-
+  late S lang;
   @override
   void initState() {
     super.initState();
@@ -28,11 +30,7 @@ class _AdditivesDialogState extends State<AdditivesDialog> {
   }
 
   void _toggle(String id) => setState(() {
-    if (_selectedIds.contains(id)) {
-      _selectedIds.remove(id);
-    } else {
-      _selectedIds.add(id);
-    }
+    _selectedIds.contains(id) ? _selectedIds.remove(id) : _selectedIds.add(id);
   });
 
   List<FoodAdditiveModel> get _selected =>
@@ -42,55 +40,48 @@ class _AdditivesDialogState extends State<AdditivesDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
+    lang = S.of(context);
     return DraggableScrollableSheet(
       initialChildSize: 0.65,
       minChildSize: 0.4,
       maxChildSize: 0.92,
       builder: (_, scrollController) => Container(
         decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          color: AppColors.white,
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(AppRadius.xl),
+          ),
         ),
         child: Column(
           children: [
-            // ── drag handle
             Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: EdgeInsets.only(top: AppPadding.sm),
               child: Container(
-                width: 40,
-                height: 4,
+                width: AppSizes.w40,
+                height: AppSizes.h4,
                 decoration: BoxDecoration(
-                  color: colorScheme.onSurface.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(2),
+                  color: AppColors.textMuted.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
                 ),
               ),
             ),
 
-            // ── header
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 16, 12),
+              padding: EdgeInsets.fromLTRB(
+                AppPadding.xl,
+                AppPadding.lg,
+                AppPadding.lg,
+                AppPadding.md,
+              ),
               child: Row(
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Add additives',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Tap items to select',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurface.withOpacity(0.55),
-                          ),
-                        ),
+                        Text(lang.addAdditives, style: AppFonts.titleMedium),
+                        AppSizes.gapH4,
+                        Text(lang.tapItemsToSelect, style: AppFonts.bodySmall),
                       ],
                     ),
                   ),
@@ -98,7 +89,7 @@ class _AdditivesDialogState extends State<AdditivesDialog> {
                     onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.close_rounded),
                     style: IconButton.styleFrom(
-                      foregroundColor: colorScheme.onSurface.withOpacity(0.6),
+                      foregroundColor: AppColors.textMuted,
                     ),
                   ),
                 ],
@@ -107,80 +98,72 @@ class _AdditivesDialogState extends State<AdditivesDialog> {
 
             const Divider(height: 1),
 
-            // ── list
             Expanded(
               child: ListView.separated(
                 controller: scrollController,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppPadding.lg,
+                  vertical: AppPadding.md,
                 ),
                 itemCount: widget.additives.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, __) => AppSizes.gapH8,
                 itemBuilder: (_, i) {
                   final item = widget.additives[i];
-                  final selected = _selectedIds.contains(item.id);
                   return _AdditiveItem(
                     additive: item,
-                    selected: selected,
+                    selected: _selectedIds.contains(item.id),
                     onTap: () => _toggle(item.id!),
                   );
                 },
               ),
             ),
 
-            // ── footer
             SafeArea(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppPadding.lg,
+                  vertical: AppPadding.md,
+                ),
                 decoration: BoxDecoration(
-                  color: colorScheme.surface,
+                  color: AppColors.white,
                   border: Border(
-                    top: BorderSide(
-                      color: colorScheme.outline.withOpacity(0.2),
-                    ),
+                    top: BorderSide(color: AppColors.border.withOpacity(0.2)),
                   ),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // summary row
                     if (_selected.isNotEmpty) ...[
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '${_selected.length} selected',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurface.withOpacity(0.6),
-                            ),
+                            '${_selected.length} ${lang.selected}',
+                            style: AppFonts.bodySmall,
                           ),
                           Text(
-                            '+${_totalPrice.toStringAsFixed(2)} EGP',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            '+${_totalPrice.toStringAsFixed(2)} ${lang.sar}',
+                            style: AppFonts.bodyMedium.semiBold(),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      AppSizes.gapH8,
                     ],
-                    // confirm button
                     SizedBox(
                       width: double.infinity,
-                      height: 48,
+                      height: AppSizes.buttonHeight,
                       child: FilledButton(
-                        onPressed: () {
-                          context.pop(_selected);
-                        },
+                        onPressed: () => context.pop(_selected),
                         style: FilledButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
                           ),
                         ),
                         child: Text(
-                          _selected.isEmpty ? 'Skip' : 'Confirm additives',
-                          style: const TextStyle(fontWeight: FontWeight.w600),
+                          _selected.isEmpty ? lang.skip : lang.confirmAdditives,
+                          style: AppFonts.bodyMedium
+                              .colored(AppColors.white)
+                              .semiBold(),
                         ),
                       ),
                     ),
@@ -195,8 +178,6 @@ class _AdditivesDialogState extends State<AdditivesDialog> {
   }
 }
 
-// ── Single additive row ───────────────────────────────────────────────────────
-
 class _AdditiveItem extends StatelessWidget {
   final FoodAdditiveModel additive;
   final bool selected;
@@ -210,43 +191,36 @@ class _AdditiveItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       decoration: BoxDecoration(
-        color: selected
-            ? colorScheme.primary.withOpacity(0.08)
-            : colorScheme.surface,
+        color: selected ? AppColors.primary.withOpacity(0.08) : AppColors.white,
         border: Border.all(
           color: selected
-              ? colorScheme.primary
-              : colorScheme.outline.withOpacity(0.25),
+              ? AppColors.primary
+              : AppColors.border.withOpacity(0.25),
           width: selected ? 1.8 : 0.8,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         child: Padding(
-          padding: const EdgeInsets.all(10),
+          padding: AppPadding.allSm,
           child: Row(
             children: [
-              // image
               if (additive.imagePath != null)
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppRadius.sm),
                   child: SizedBox(
-                    width: 52,
-                    height: 52,
+                    width: AppSizes.w48,
+                    height: AppSizes.h48,
                     child: _AdditiveImage(url: additive.imagePath!),
                   ),
                 ),
-              const SizedBox(width: 12),
+              AppSizes.gapW12,
 
-              // text
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,38 +230,35 @@ class _AdditiveItem extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: additive.arabicName,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
-                            ),
+                            style: AppFonts.bodyMedium
+                                .colored(AppColors.textPrimary)
+                                .semiBold(),
                           ),
                           TextSpan(
                             text: '  ·  ${additive.latinName}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurface.withOpacity(0.5),
+                            style: AppFonts.bodySmall.colored(
+                              AppColors.textMuted,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    AppSizes.gapH4,
                     Text(
-                      '${additive.price?.toStringAsFixed(2)} EGP',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: selected
-                            ? colorScheme.primary
-                            : colorScheme.onSurface.withOpacity(0.55),
-                      ),
+                      '${additive.price?.toStringAsFixed(2)} ${S.of(context).sar}',
+                      style: AppFonts.bodySmall
+                          .colored(
+                            selected ? AppColors.primary : AppColors.textMuted,
+                          )
+                          .semiBold(),
                     ),
                     if (additive.notes != null && additive.notes!.isNotEmpty)
                       Padding(
-                        padding: const EdgeInsets.only(top: 2),
+                        padding: EdgeInsets.only(top: AppPadding.xs),
                         child: Text(
                           additive.notes!,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurface.withOpacity(0.4),
-                            fontSize: 11,
+                          style: AppFonts.bodySmall.colored(
+                            AppColors.textMuted,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -297,28 +268,25 @@ class _AdditiveItem extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 8),
+              AppSizes.gapW8,
 
-              // check circle
               AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
-                width: 24,
-                height: 24,
+                width: AppSizes.w24,
+                height: AppSizes.h24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: selected ? colorScheme.primary : Colors.transparent,
+                  color: selected ? AppColors.primary : Colors.transparent,
                   border: Border.all(
-                    color: selected
-                        ? colorScheme.primary
-                        : colorScheme.outline.withOpacity(0.4),
+                    color: selected ? AppColors.primary : AppColors.border,
                     width: 1.5,
                   ),
                 ),
                 child: selected
-                    ? const Icon(
+                    ? Icon(
                         Icons.check_rounded,
-                        size: 15,
-                        color: Colors.white,
+                        size: AppSizes.iconSm,
+                        color: AppColors.white,
                       )
                     : null,
               ),
@@ -330,26 +298,23 @@ class _AdditiveItem extends StatelessWidget {
   }
 }
 
-// ── Network image with fallback ───────────────────────────────────────────────
-
 class _AdditiveImage extends StatelessWidget {
   final String url;
   const _AdditiveImage({required this.url});
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Image.network(
       url,
       fit: BoxFit.cover,
       loadingBuilder: (_, child, progress) => progress == null
           ? child
           : Container(
-              color: colorScheme.surfaceVariant,
+              color: AppColors.background,
               child: Center(
                 child: SizedBox(
-                  width: 20,
-                  height: 20,
+                  width: AppSizes.w20,
+                  height: AppSizes.h20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     value: progress.expectedTotalBytes != null
@@ -361,11 +326,11 @@ class _AdditiveImage extends StatelessWidget {
               ),
             ),
       errorBuilder: (_, __, ___) => Container(
-        color: colorScheme.surfaceVariant,
+        color: AppColors.background,
         child: Icon(
           Icons.fastfood_rounded,
-          size: 26,
-          color: colorScheme.onSurfaceVariant.withOpacity(0.5),
+          size: AppSizes.iconLg,
+          color: AppColors.textMuted.withOpacity(0.5),
         ),
       ),
     );

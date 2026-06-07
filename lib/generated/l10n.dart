@@ -1448,6 +1448,136 @@ class S {
       args: [],
     );
   }
+
+  /// ` To Restaurant`
+  String get toRestaurant {
+    return Intl.message(
+      ' To Restaurant',
+      name: 'toRestaurant',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pay`
+  String get pay {
+    return Intl.message('Pay', name: 'pay', desc: '', args: []);
+  }
+
+  /// `Tables`
+  String get tables {
+    return Intl.message('Tables', name: 'tables', desc: '', args: []);
+  }
+
+  /// `Total`
+  String get total {
+    return Intl.message('Total', name: 'total', desc: '', args: []);
+  }
+
+  /// `VAT`
+  String get vat {
+    return Intl.message('VAT', name: 'vat', desc: '', args: []);
+  }
+
+  /// `Tax`
+  String get tax {
+    return Intl.message('Tax', name: 'tax', desc: '', args: []);
+  }
+
+  /// `Subtotal`
+  String get subtotal {
+    return Intl.message('Subtotal', name: 'subtotal', desc: '', args: []);
+  }
+
+  /// `No Add-ons`
+  String get noAddons {
+    return Intl.message('No Add-ons', name: 'noAddons', desc: '', args: []);
+  }
+
+  /// `Tap an item to add it to the order`
+  String get tapAnyItemToAdd {
+    return Intl.message(
+      'Tap an item to add it to the order',
+      name: 'tapAnyItemToAdd',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `POS`
+  String get pos {
+    return Intl.message('POS', name: 'pos', desc: '', args: []);
+  }
+
+  /// `Requests`
+  String get requests {
+    return Intl.message('Requests', name: 'requests', desc: '', args: []);
+  }
+
+  /// `Active Now`
+  String get activeNow {
+    return Intl.message('Active Now', name: 'activeNow', desc: '', args: []);
+  }
+
+  /// `Not Active`
+  String get notActive {
+    return Intl.message('Not Active', name: 'notActive', desc: '', args: []);
+  }
+
+  /// `Current Order`
+  String get currentOrder {
+    return Intl.message(
+      'Current Order',
+      name: 'currentOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Skip`
+  String get skip {
+    return Intl.message('Skip', name: 'skip', desc: '', args: []);
+  }
+
+  /// `Confirm additives`
+  String get confirmAdditives {
+    return Intl.message(
+      'Confirm additives',
+      name: 'confirmAdditives',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected`
+  String get selected {
+    return Intl.message('Selected', name: 'selected', desc: '', args: []);
+  }
+
+  /// `Add Additives`
+  String get addAdditives {
+    return Intl.message(
+      'Add Additives',
+      name: 'addAdditives',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Tap items to select`
+  String get tapItemsToSelect {
+    return Intl.message(
+      'Tap items to select',
+      name: 'tapItemsToSelect',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `SAR`
+  String get sar {
+    return Intl.message('SAR', name: 'sar', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,8 +1,9 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:developer';
 
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -15,7 +16,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/widgets/table_selecti
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class OrderPanel extends StatelessWidget {
   const OrderPanel({super.key});
@@ -23,7 +23,7 @@ class OrderPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: SizeConfig.screenWidth! * .35,
+      width: AppSizes.wFraction(0.35),
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(right: BorderSide(color: AppColors.border, width: 1)),
@@ -32,9 +32,9 @@ class OrderPanel extends StatelessWidget {
         children: [
           _Header(),
           _OrderHeader(),
-          const Expanded(child: _OrderItemsList()),
-          const _OrderSummary(),
-          const _OrderActions(),
+          Flexible(child: _OrderItemsList()),
+          _OrderSummary(),
+          _OrderActions(),
         ],
       ),
     );
@@ -43,14 +43,13 @@ class OrderPanel extends StatelessWidget {
 
 class _Header extends StatelessWidget {
   late final S lang;
-  String orderTitle(PosOrderType type) {
+
+  String orderTitle(PosOrderType type, S lang) {
     switch (type) {
       case PosOrderType.dineIn:
         return lang.dineInOrder;
-
       case PosOrderType.takeaway:
         return lang.takeawayOrder;
-
       case PosOrderType.delivery:
         return lang.deliveryOrder;
     }
@@ -60,7 +59,7 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     lang = S.of(context);
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+      padding: AppPadding.allSm,
       child: Column(
         children: [
           Row(
@@ -69,14 +68,13 @@ class _Header extends StatelessWidget {
                 child: BlocBuilder<PosBloc, PosState>(
                   builder: (context, state) {
                     return AppButtonText(
-                      verticalPadding: AppSpacing.xs,
+                      verticalPadding: 0,
                       backGroundColor: AppColors.primary,
-                      buttonHeight: 40,
-                      butonText: orderTitle(state.orderType),
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      buttonHeight: AppSizes.buttonHeightSm,
+                      butonText: orderTitle(state.orderType, lang),
+                      textStyle: AppFonts.bodyMedium
+                          .colored(AppColors.white)
+                          .semiBold(),
                       onPressed: () async {
                         final type = await showDialog(
                           context: context,
@@ -105,20 +103,19 @@ class _Header extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: AppSpacing.sm),
+              AppSizes.gapW12,
 
               Expanded(
                 child: BlocBuilder<PosBloc, PosState>(
                   builder: (context, state) {
                     return AppButtonText(
-                      verticalPadding: AppSpacing.xs,
+                      verticalPadding: AppPadding.xs,
                       backGroundColor: AppColors.primary,
-                      buttonHeight: SizeConfig.screenHeight! * .03,
+                      buttonHeight: AppSizes.buttonHeightSm,
                       butonText: lang.table,
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      textStyle: AppFonts.bodyMedium
+                          .colored(AppColors.white)
+                          .semiBold(),
                       onPressed: state.orderType == PosOrderType.dineIn
                           ? () async {
                               await showDialog(
@@ -137,15 +134,14 @@ class _Header extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: AppSpacing.md),
+          AppSizes.gapH12,
 
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const Spacer(),
-
               Icon(
                 Icons.shopping_cart_outlined,
-                size: 20,
+                size: AppSizes.iconMd,
                 color: AppColors.textSecondary,
               ),
             ],
@@ -160,12 +156,11 @@ class _OrderHeader extends StatelessWidget {
   const _OrderHeader();
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppPadding.xs,
+        vertical: AppPadding.md,
       ),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.divider)),
@@ -177,21 +172,19 @@ class _OrderHeader extends StatelessWidget {
               return (state.orderType == PosOrderType.dineIn &&
                       state.selectedTable != null)
                   ? Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.md,
-                        vertical: AppSpacing.xs,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppPadding.md,
+                        vertical: AppPadding.xs,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(AppRadius.full),
                       ),
                       child: Text(
-                        'طاولة ${state.selectedTable?.arabicName ?? ''}',
-                        style: GoogleFonts.cairo(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.white,
-                        ),
+                        '${S.of(context).table} ${state.selectedTable?.arabicName ?? ''}',
+                        style: AppFonts.bodySmall
+                            .colored(AppColors.white)
+                            .bold(),
                       ),
                     )
                   : const SizedBox.shrink();
@@ -199,18 +192,11 @@ class _OrderHeader extends StatelessWidget {
           ),
 
           const Spacer(),
-          Text(
-            'الطلب الحالي',
-            style: GoogleFonts.cairo(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          const Icon(
+          Text(S.of(context).currentOrder, style: AppFonts.titleMedium),
+          AppSizes.gapW8,
+          Icon(
             Icons.receipt_long_outlined,
-            size: 20,
+            size: AppSizes.iconMd,
             color: AppColors.textSecondary,
           ),
         ],
@@ -220,10 +206,12 @@ class _OrderHeader extends StatelessWidget {
 }
 
 class _OrderItemsList extends StatelessWidget {
-  const _OrderItemsList();
+  _OrderItemsList();
+  late S lang = S();
 
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     return BlocBuilder<PosBloc, PosState>(
       builder: (context, state) {
         if (state.currentOrder.items.isEmpty) {
@@ -233,23 +221,16 @@ class _OrderItemsList extends StatelessWidget {
               children: [
                 Icon(
                   Icons.shopping_bag_outlined,
-                  size: 40,
+                  size: AppSizes.w40,
                   color: AppColors.textMuted.withOpacity(0.5),
                 ),
-                const SizedBox(height: AppSpacing.md),
+                AppSizes.gapH12,
+                Text(lang.noDateFound, style: AppFonts.bodySmall),
+                AppSizes.gapH8,
                 Text(
-                  'لا توجد عناصر في الطلب',
-                  style: GoogleFonts.cairo(
-                    fontSize: 13,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Text(
-                  'اضغط على أي صنف لإضافته',
-                  style: GoogleFonts.cairo(
-                    fontSize: 11,
-                    color: AppColors.textMuted.withOpacity(0.7),
+                  lang.tapAnyItemToAdd,
+                  style: AppFonts.bodySmall.colored(
+                    AppColors.textMuted.withOpacity(0.7),
                   ),
                 ),
               ],
@@ -258,16 +239,15 @@ class _OrderItemsList extends StatelessWidget {
         }
 
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+          padding: AppPadding.verticalSm,
           itemCount: state.currentOrder.items.length,
-          separatorBuilder: (_, __) => const Divider(
+          separatorBuilder: (_, __) => Divider(
             height: 1,
-            indent: AppSpacing.lg,
-            endIndent: AppSpacing.lg,
+            indent: AppPadding.lg,
+            endIndent: AppPadding.lg,
           ),
           itemBuilder: (context, index) {
-            final orderItem = state.currentOrder.items[index];
-            return _OrderItemRow(orderItem: orderItem);
+            return _OrderItemRow(orderItem: state.currentOrder.items[index]);
           },
         );
       },
@@ -277,7 +257,12 @@ class _OrderItemsList extends StatelessWidget {
 
 class _OrderItemRow extends StatelessWidget {
   final OrderItem orderItem;
-  const _OrderItemRow({required this.orderItem});
+  _OrderItemRow({required this.orderItem});
+  late S lang = S();
+
+  List<FoodAdditiveModel> _getInitSelection(List<FoodAdditiveModel> allAdons) {
+    return allAdons.where((a) => orderItem.addons.contains(a)).toList();
+  }
 
   Future<List<FoodAdditiveModel>?> showAdditivesDialog({
     required BuildContext context,
@@ -295,29 +280,81 @@ class _OrderItemRow extends StatelessWidget {
     );
   }
 
+  String additivesNames(List<FoodAdditiveModel> adds) {
+    log(adds.length.toString());
+    return adds.map((a) => a.arabicName).join(',');
+  }
+
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     return BlocBuilder<PosBloc, PosState>(
       builder: (context, state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
+          padding: EdgeInsets.symmetric(
+            horizontal: AppPadding.xs,
+            vertical: AppPadding.md,
           ),
           child: Row(
             children: [
-              // Price
-              Text(
-                orderItem.totalPrice.toStringAsFixed(2),
-                style: GoogleFonts.cairo(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+              Expanded(
+                flex: 3,
+                child: InkWell(
+                  onTap: () async {
+                    final additives =
+                        await showAdditivesDialog(
+                          context: context,
+                          additives: state.additives,
+                          initialSelection: _getInitSelection(state.additives),
+                        ) ??
+                        [];
+
+                    if (additives.isNotEmpty) {
+                      // ignore: use_build_context_synchronously
+                      context.read<PosBloc>().add(
+                        UpdateItemAddonsEvent(
+                          addons: additives,
+                          item: orderItem,
+                        ),
+                      );
+                    }
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        orderItem.menuItem.arabicName ?? "",
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+
+                        style: AppFonts.bodySmall
+                            .colored(AppColors.textPrimary)
+                            .semiBold(),
+                      ),
+                      BlocBuilder<PosBloc, PosState>(
+                        builder: (context, state) {
+                          final currentItem = state.currentOrder.items
+                              .firstWhere(
+                                (i) => i.menuItem.id == orderItem.menuItem.id,
+                                orElse: () => orderItem,
+                              );
+                          return Text(
+                            currentItem.addons.isNotEmpty
+                                ? additivesNames(currentItem.addons)
+                                : lang.noAddons,
+                            textAlign: TextAlign.center,
+                            style: AppFonts.bodySmall.colored(
+                              AppColors.textMuted,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const Spacer(),
-
-              // Quantity controls
+              Spacer(),
               Row(
                 children: [
                   _QtyButton(
@@ -325,19 +362,17 @@ class _OrderItemRow extends StatelessWidget {
                     color: AppColors.textSecondary,
                     bgColor: AppColors.background,
                     onTap: () => context.read<PosBloc>().add(
-                      DecrementItemEvent(orderItem.menuItem.id.toString()),
+                      DecrementItemEvent(orderItem.menuItem.id!),
                     ),
                   ),
-                  Container(
-                    width: 36,
-                    alignment: Alignment.center,
+                  SizedBox(
+                    width: AppSizes.w12,
                     child: Text(
                       '${orderItem.quantity}',
-                      style: GoogleFonts.cairo(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
+                      textAlign: TextAlign.center,
+                      style: AppFonts.bodyLarge
+                          .colored(AppColors.textPrimary)
+                          .bold(),
                     ),
                   ),
                   _QtyButton(
@@ -345,66 +380,18 @@ class _OrderItemRow extends StatelessWidget {
                     color: AppColors.white,
                     bgColor: AppColors.primary,
                     onTap: () => context.read<PosBloc>().add(
-                      IncrementItemEvent(orderItem.menuItem.id.toString()),
+                      IncrementItemEvent(orderItem.menuItem.id!),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(width: AppSpacing.md),
+              AppSizes.gapW12,
 
-              // Item info
-              InkWell(
-                onTap: () async {
-                  context.read<PosBloc>().add(
-                    SelectItemEvent(orderItem.menuItem),
-                  );
-                  List<FoodAdditiveModel> additives =
-                      await showAdditivesDialog(
-                        context: context,
-                        additives: state.additives,
-                      ) ??
-                      [];
-
-                  log(state.selectedMenuItem?.arabicName ?? "");
-                },
-                child: Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        orderItem.menuItem.arabicName ?? "",
-                        textAlign: TextAlign.right,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.cairo(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      if (orderItem.addons.isNotEmpty ||
-                          orderItem.notes != null)
-                        Text(
-                          orderItem.notes ?? orderItem.addons.join('، '),
-                          textAlign: TextAlign.right,
-                          style: GoogleFonts.cairo(
-                            fontSize: 10,
-                            color: AppColors.textMuted,
-                          ),
-                        )
-                      else
-                        Text(
-                          'بدون إضافات',
-                          textAlign: TextAlign.right,
-                          style: GoogleFonts.cairo(
-                            fontSize: 10,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
+              Text(
+                orderItem.totalPrice.toStringAsFixed(2),
+                style: AppFonts.bodyMedium
+                    .colored(AppColors.textPrimary)
+                    .bold(),
               ),
             ],
           ),
@@ -432,8 +419,8 @@ class _QtyButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 28,
-        height: 28,
+        width: AppSizes.w16,
+        height: AppSizes.h24,
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(AppRadius.sm),
@@ -441,22 +428,24 @@ class _QtyButton extends StatelessWidget {
               ? Border.all(color: AppColors.border)
               : null,
         ),
-        child: Icon(icon, size: 16, color: color),
+        child: Icon(icon, size: AppSizes.iconSm, color: color),
       ),
     );
   }
 }
 
 class _OrderSummary extends StatelessWidget {
-  const _OrderSummary();
+  _OrderSummary();
+  late S lang = S();
 
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     return BlocBuilder<PosBloc, PosState>(
       builder: (context, state) {
         final order = state.currentOrder;
         return Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: AppPadding.allLg,
           decoration: const BoxDecoration(
             border: Border(
               top: BorderSide(color: AppColors.divider),
@@ -466,21 +455,20 @@ class _OrderSummary extends StatelessWidget {
           child: Column(
             children: [
               _SummaryRow(
-                label: 'المجموع الفرعي',
+                label: lang.subtotal,
                 value: 'SAR ${order.subtotal.toStringAsFixed(2)}',
-                isLight: true,
+                isBold: false,
               ),
-              const SizedBox(height: AppSpacing.sm),
+              AppSizes.gapH8,
               _SummaryRow(
-                label: 'الضريبة (15%)',
+                label: '${lang.tax} (15%)',
                 value: 'SAR ${order.tax.toStringAsFixed(2)}',
-                isLight: true,
+                isBold: false,
               ),
-              const SizedBox(height: AppSpacing.md),
+              AppSizes.gapH12,
               _SummaryRow(
-                label: 'الإجمالي',
+                label: lang.total,
                 value: 'SAR ${order.total.toStringAsFixed(2)}',
-                isLight: false,
                 isBold: true,
               ),
             ],
@@ -494,14 +482,12 @@ class _OrderSummary extends StatelessWidget {
 class _SummaryRow extends StatelessWidget {
   final String label;
   final String value;
-  final bool isLight;
   final bool isBold;
 
   const _SummaryRow({
     required this.label,
     required this.value,
-    required this.isLight,
-    this.isBold = false,
+    required this.isBold,
   });
 
   @override
@@ -510,20 +496,16 @@ class _SummaryRow extends StatelessWidget {
       children: [
         Text(
           value,
-          style: GoogleFonts.cairo(
-            fontSize: isBold ? 18 : 13,
-            fontWeight: isBold ? FontWeight.w800 : FontWeight.w500,
-            color: isBold ? AppColors.primary : AppColors.textSecondary,
-          ),
+          style: isBold
+              ? AppFonts.titleLarge.colored(AppColors.primary)
+              : AppFonts.bodySmall.colored(AppColors.textSecondary),
         ),
         const Spacer(),
         Text(
           label,
-          style: GoogleFonts.cairo(
-            fontSize: isBold ? 16 : 13,
-            fontWeight: isBold ? FontWeight.w700 : FontWeight.w400,
-            color: isBold ? AppColors.textPrimary : AppColors.textSecondary,
-          ),
+          style: isBold
+              ? AppFonts.titleMedium.colored(AppColors.textPrimary)
+              : AppFonts.bodySmall.colored(AppColors.textSecondary),
         ),
       ],
     );
@@ -531,23 +513,24 @@ class _SummaryRow extends StatelessWidget {
 }
 
 class _OrderActions extends StatelessWidget {
-  const _OrderActions();
+  _OrderActions();
+  late S lang;
 
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     return BlocBuilder<PosBloc, PosState>(
       builder: (context, state) {
         final isSubmitting = state.status == PosStatus.submitting;
         return Padding(
-          padding: const EdgeInsets.all(AppSpacing.md),
+          padding: AppPadding.allMd,
           child: Column(
             children: [
-              // Kitchen + Pay buttons
               Row(
                 children: [
                   Expanded(
                     child: _ActionButton(
-                      label: 'للمطبخ',
+                      label: lang.toRestaurant,
                       icon: Icons.send_outlined,
                       bgColor: AppColors.primary,
                       textColor: AppColors.white,
@@ -557,10 +540,10 @@ class _OrderActions extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
+                  AppSizes.gapW8,
                   Expanded(
                     child: _ActionButton(
-                      label: 'دفع',
+                      label: lang.pay,
                       icon: Icons.payment_outlined,
                       bgColor: AppColors.accent,
                       textColor: AppColors.white,
@@ -571,13 +554,12 @@ class _OrderActions extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.sm),
-              // Cancel + Tables row
+              AppSizes.gapH8,
               Row(
                 children: [
                   Expanded(
                     child: _ActionButton(
-                      label: 'إلغاء',
+                      label: lang.cancel,
                       icon: Icons.close,
                       bgColor: AppColors.errorLight,
                       textColor: AppColors.error,
@@ -586,10 +568,10 @@ class _OrderActions extends StatelessWidget {
                           context.read<PosBloc>().add(const CancelOrderEvent()),
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
+                  AppSizes.gapW8,
                   Expanded(
                     child: _ActionButton(
-                      label: 'طاولات',
+                      label: lang.tables,
                       icon: Icons.table_restaurant_outlined,
                       bgColor: AppColors.background,
                       textColor: AppColors.textPrimary,
@@ -631,7 +613,7 @@ class _ActionButton extends StatelessWidget {
     return GestureDetector(
       onTap: isLoading ? null : onTap,
       child: Container(
-        height: 48,
+        height: AppSizes.buttonHeightSm,
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(AppRadius.md),
@@ -640,25 +622,21 @@ class _ActionButton extends StatelessWidget {
               : null,
         ),
         child: isLoading
-            ? const Center(
+            ? Center(
                 child: SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
+                  width: AppSizes.w16,
+                  height: AppSizes.h16,
+                  child: const CircularProgressIndicator(strokeWidth: 2),
                 ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(icon, size: 18, color: textColor),
-                  const SizedBox(width: AppSpacing.sm),
+                  Icon(icon, size: AppSizes.iconSm, color: textColor),
+                  AppSizes.gapW8,
                   Text(
                     label,
-                    style: GoogleFonts.cairo(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: textColor,
-                    ),
+                    style: AppFonts.bodyMedium.colored(textColor).semiBold(),
                   ),
                 ],
               ),
