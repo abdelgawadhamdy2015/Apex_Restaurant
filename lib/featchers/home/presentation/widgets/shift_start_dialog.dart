@@ -1,11 +1,8 @@
 import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-// ══════════════════════════════════════════════════════════════
-// Usage: show as dialog
-//   showDialog(context: context, builder: (_) => const ShiftStartDialog());
-// ══════════════════════════════════════════════════════════════
 
 class ShiftStartDialog extends StatefulWidget {
   const ShiftStartDialog({super.key});
@@ -18,27 +15,19 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
   String _amount = '0.00';
   final TextEditingController _notesController = TextEditingController();
 
-  // ── Numpad logic ────────────────────────────────────────────
   void _onKey(String key) {
     setState(() {
       if (key == '.') {
         if (_amount.contains('.')) return;
         _amount = '$_amount.';
       } else {
-        // Remove placeholder "0.00" on first real digit
         String raw = _amount.replaceAll('.', '');
         if (raw == '000') raw = '';
         raw += key;
-
-        // Format: keep up to 2 decimal places
         if (raw.length <= 10) {
-          // Pad to at least 3 digits so we always have X.XX
-          while (raw.length < 3) {
-            raw = '0$raw';
-          }
+          while (raw.length < 3) raw = '0$raw';
           final intPart = raw.substring(0, raw.length - 2);
           final decPart = raw.substring(raw.length - 2);
-          // Remove leading zeros from int part
           final cleaned = intPart.replaceFirst(RegExp(r'^0+'), '');
           _amount = '${cleaned.isEmpty ? '0' : cleaned}.$decPart';
         }
@@ -54,9 +43,7 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
         return;
       }
       raw = raw.substring(0, raw.length - 1);
-      while (raw.length < 3) {
-        raw = '0$raw';
-      }
+      while (raw.length < 3) raw = '0$raw';
       final intPart = raw.substring(0, raw.length - 2);
       final decPart = raw.substring(raw.length - 2);
       final cleaned = intPart.replaceFirst(RegExp(r'^0+'), '');
@@ -72,20 +59,23 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final lang = S.of(context);
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
+        insetPadding: EdgeInsets.symmetric(
+          horizontal: AppPadding.xxxl,
+          vertical: AppPadding.xxl,
+        ),
         child: Center(
           child: Container(
-            width: 480,
+            width: AppSizes.wFraction(.7),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppRadius.lg),
               boxShadow: [
                 BoxShadow(
-                  // ignore: deprecated_member_use
                   color: Colors.black.withOpacity(0.18),
                   blurRadius: 32,
                   offset: const Offset(0, 8),
@@ -95,183 +85,157 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // ── Title ──────────────────────────────────
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 22),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: AppPadding.xxl),
                   child: Text(
-                    'بداية الوردية',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1B3A6B),
-                      fontFamily: 'Cairo',
+                    lang.shiftStart,
+                    style: AppFonts.displayMedium.colored(
+                      AppColors.primaryDark,
                     ),
                   ),
                 ),
-                const Divider(height: 1, color: Color(0xFFE5E7EB)),
-
+                const Divider(height: 1, color: AppColors.border),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
+                  padding: EdgeInsets.fromLTRB(
+                    AppPadding.xl,
+                    AppPadding.lg,
+                    AppPadding.xl,
+                    AppPadding.xl,
+                  ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // ── Label ────────────────────────────
-                      const Text(
-                        'العهدة الافتتاحية',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF6B7280),
-                          fontFamily: 'Cairo',
+                      Text(
+                        lang.openingCash,
+                        style: AppFonts.bodyLarge.colored(
+                          AppColors.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      AppSizes.gapH8,
 
-                      // ── Amount display ───────────────────
+                      // Amount display
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppPadding.lg,
+                          vertical: AppPadding.md,
                         ),
                         decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFD1D5DB)),
-                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
                         child: Row(
                           children: [
-                            // Amount (LTR number)
                             Expanded(
                               child: Text(
                                 _amount,
                                 textDirection: TextDirection.ltr,
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF111827),
-                                  letterSpacing: 1,
-                                ),
+                                style: AppFonts.displayMedium
+                                    .colored(AppColors.textPrimary)
+                                    .copyWith(letterSpacing: 1),
                               ),
                             ),
-                            const Text(
-                              'SAR',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xFF6B7280),
-                                fontWeight: FontWeight.w500,
+                            AppSizes.gapW12,
+                            Text(
+                              lang.sar,
+                              style: AppFonts.bodySmall.colored(
+                                AppColors.textSecondary,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 14),
+                      AppSizes.gapH12,
 
-                      // ── Numpad ───────────────────────────
                       _Numpad(onKey: _onKey, onBackspace: _onBackspace),
-                      const SizedBox(height: 16),
+                      AppSizes.gapH16,
 
-                      // ── Notes label ──────────────────────
-                      const Align(
+                      Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          'ملاحظات (اختياري)',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Color(0xFF6B7280),
-                            fontFamily: 'Cairo',
+                          lang.optionalNotes,
+                          style: AppFonts.bodySmall.colored(
+                            AppColors.textSecondary,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      AppSizes.gapH8,
 
-                      // ── Notes field ──────────────────────
                       TextField(
                         controller: _notesController,
                         maxLines: 3,
                         textDirection: TextDirection.rtl,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontFamily: 'Cairo',
-                          color: Color(0xFF111827),
+                        style: AppFonts.bodyMedium.colored(
+                          AppColors.textPrimary,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'أضف ملاحظاتك هنا...',
-                          hintStyle: const TextStyle(
-                            color: Color(0xFFADB5BD),
-                            fontSize: 14,
-                            fontFamily: 'Cairo',
+                          hintText: lang.addNotesHint,
+                          hintStyle: AppFonts.bodyMedium.colored(
+                            AppColors.textMuted,
                           ),
-                          contentPadding: const EdgeInsets.all(14),
+                          contentPadding: AppPadding.allMd,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
                             borderSide: const BorderSide(
-                              color: Color(0xFFD1D5DB),
+                              color: AppColors.border,
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
                             borderSide: const BorderSide(
-                              color: Color(0xFFD1D5DB),
+                              color: AppColors.border,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(AppRadius.md),
                             borderSide: const BorderSide(
-                              color: Color(0xFF1B3A6B),
+                              color: AppColors.primaryDark,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      AppSizes.gapH16,
 
-                      // ── Save button ──────────────────────
                       SizedBox(
                         width: double.infinity,
-                        height: 52,
+                        height: AppSizes.buttonHeight,
                         child: ElevatedButton(
-                          onPressed: () {
-                            context.goNamed(Routes.posScreen);
-                          },
+                          onPressed: () => context.goNamed(Routes.posScreen),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF1B3A6B),
-                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primaryDark,
+                            foregroundColor: AppColors.white,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(AppRadius.md),
                             ),
                             elevation: 0,
                           ),
-                          child: const Text(
-                            'حفظ وفتح الوردية',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'Cairo',
-                            ),
+                          child: Text(
+                            lang.saveAndOpenShift,
+                            style: AppFonts.titleSmall
+                                .colored(AppColors.white)
+                                .bold(),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      AppSizes.gapH8,
 
-                      // ── Cancel button ────────────────────
                       SizedBox(
                         width: double.infinity,
-                        height: 48,
+                        height: AppSizes.buttonHeightSm,
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFFE53935),
-                            side: const BorderSide(color: Color(0xFFE5E7EB)),
+                            foregroundColor: AppColors.error,
+                            side: const BorderSide(color: AppColors.border),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(AppRadius.md),
                             ),
                           ),
-                          child: const Text(
-                            'إلغاء',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Cairo',
-                              color: Color(0xFFE53935),
-                            ),
+                          child: Text(
+                            lang.cancel,
+                            style: AppFonts.bodyMedium
+                                .colored(AppColors.error)
+                                .semiBold(),
                           ),
                         ),
                       ),
@@ -287,9 +251,6 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
   }
 }
 
-// ══════════════════════════════════════════════════════════════
-// Numpad Widget
-// ══════════════════════════════════════════════════════════════
 class _Numpad extends StatelessWidget {
   final void Function(String) onKey;
   final VoidCallback onBackspace;
@@ -298,25 +259,23 @@ class _Numpad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // RTL layout: 1 2 3 / 4 5 6 / 7 8 9 / . 0 ⌫
     final rows = [
       ['1', '2', '3'],
       ['4', '5', '6'],
       ['7', '8', '9'],
       ['.', '0', '⌫'],
     ];
-
     return Column(
       children: rows.map((row) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.only(bottom: AppPadding.sm),
           child: Row(
             children: row.map((key) {
               final isBackspace = key == '⌫';
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: row.indexOf(key) == 0 ? 0 : 8,
+                    right: row.indexOf(key) == 0 ? 0 : AppPadding.sm,
                   ),
                   child: _NumKey(
                     label: key,
@@ -347,29 +306,27 @@ class _NumKey extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: isBackspace ? const Color(0xFFFFE4E4) : const Color(0xFFF3F4F6),
-      borderRadius: BorderRadius.circular(10),
+      color: isBackspace ? AppColors.errorLight : AppColors.background,
+      borderRadius: BorderRadius.circular(AppRadius.md),
       child: InkWell(
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadius.md),
         onTap: onTap,
         splashColor: isBackspace
-            ? const Color(0xFFFFCDD2)
-            : const Color(0xFFE5E7EB),
+            ? AppColors.error.withOpacity(0.2)
+            : AppColors.border,
         child: SizedBox(
-          height: 58,
+          height: AppSizes.h48,
           child: Center(
             child: isBackspace
-                ? const Icon(
+                ? Icon(
                     Icons.backspace_outlined,
-                    color: Color(0xFFE53935),
-                    size: 22,
+                    color: AppColors.error,
+                    size: AppSizes.iconLg,
                   )
                 : Text(
                     label,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xFF1F2937),
+                    style: AppFonts.displayMedium.colored(
+                      AppColors.textPrimary,
                     ),
                   ),
           ),

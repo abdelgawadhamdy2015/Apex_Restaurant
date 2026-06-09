@@ -430,10 +430,10 @@ class S {
   }
 
   /// `No Data Found`
-  String get noDateFound {
+  String get noDataFound {
     return Intl.message(
       'No Data Found',
-      name: 'noDateFound',
+      name: 'noDataFound',
       desc: '',
       args: [],
     );
@@ -1464,6 +1464,11 @@ class S {
     return Intl.message('Pay', name: 'pay', desc: '', args: []);
   }
 
+  /// `Floors`
+  String get floors {
+    return Intl.message('Floors', name: 'floors', desc: '', args: []);
+  }
+
   /// `Tables`
   String get tables {
     return Intl.message('Tables', name: 'tables', desc: '', args: []);
@@ -1577,6 +1582,246 @@ class S {
   /// `SAR`
   String get sar {
     return Intl.message('SAR', name: 'sar', desc: '', args: []);
+  }
+
+  /// `Please select the required action to continue`
+  String get homeSubtitle {
+    return Intl.message(
+      'Please select the required action to continue',
+      name: 'homeSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Access the dashboard, orders and sales`
+  String get salesScreenSubtitle {
+    return Intl.message(
+      'Access the dashboard, orders and sales',
+      name: 'salesScreenSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please check in first`
+  String get pleaseCheckInFirst {
+    return Intl.message(
+      'Please check in first',
+      name: 'pleaseCheckInFirst',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Check in to start your new work shift`
+  String get signInSubtitle {
+    return Intl.message(
+      'Check in to start your new work shift',
+      name: 'signInSubtitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Shift has not started yet`
+  String get shiftNotStarted {
+    return Intl.message(
+      'Shift has not started yet',
+      name: 'shiftNotStarted',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current status: Off shift`
+  String get currentStatusOffShift {
+    return Intl.message(
+      'Current status: Off shift',
+      name: 'currentStatusOffShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Last check out`
+  String get lastCheckOut {
+    return Intl.message(
+      'Last check out',
+      name: 'lastCheckOut',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Yesterday, 11:30 PM`
+  String get lastCheckOutValue {
+    return Intl.message(
+      'Yesterday, 11:30 PM',
+      name: 'lastCheckOutValue',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `System time`
+  String get systemTime {
+    return Intl.message('System time', name: 'systemTime', desc: '', args: []);
+  }
+
+  /// `Shift Start`
+  String get shiftStart {
+    return Intl.message('Shift Start', name: 'shiftStart', desc: '', args: []);
+  }
+
+  /// `Opening Cash`
+  String get openingCash {
+    return Intl.message(
+      'Opening Cash',
+      name: 'openingCash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notes (optional)`
+  String get optionalNotes {
+    return Intl.message(
+      'Notes (optional)',
+      name: 'optionalNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add your notes here...`
+  String get addNotesHint {
+    return Intl.message(
+      'Add your notes here...',
+      name: 'addNotesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save and Open Shift`
+  String get saveAndOpenShift {
+    return Intl.message(
+      'Save and Open Shift',
+      name: 'saveAndOpenShift',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Branch`
+  String get selectBranch {
+    return Intl.message(
+      'Select Branch',
+      name: 'selectBranch',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Choose Delivery Company`
+  String get chooseDeliveryCompany {
+    return Intl.message(
+      'Choose Delivery Company',
+      name: 'chooseDeliveryCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Invoice Type`
+  String get selectInvoiceType {
+    return Intl.message(
+      'Select Invoice Type',
+      name: 'selectInvoiceType',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `DeliveryCompany`
+  String get deliveryCompany {
+    return Intl.message(
+      'DeliveryCompany',
+      name: 'deliveryCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Session Expired`
+  String get sessionExpired {
+    return Intl.message(
+      'Session Expired',
+      name: 'sessionExpired',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sign Out`
+  String get signOutTitle {
+    return Intl.message('Sign Out', name: 'signOutTitle', desc: '', args: []);
+  }
+
+  /// `Identity Confirmed`
+  String get identityConfirmed {
+    return Intl.message(
+      'Identity Confirmed',
+      name: 'identityConfirmed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Verification Failed`
+  String get verificationFailed {
+    return Intl.message(
+      'Verification Failed',
+      name: 'verificationFailed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Action`
+  String get confirmAction {
+    return Intl.message(
+      'Confirm Action',
+      name: 'confirmAction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Notice`
+  String get notice {
+    return Intl.message('Notice', name: 'notice', desc: '', args: []);
+  }
+
+  /// `Verified`
+  String get verified {
+    return Intl.message('Verified', name: 'verified', desc: '', args: []);
+  }
+
+  /// `Confirm`
+  String get confirm {
+    return Intl.message('Confirm', name: 'confirm', desc: '', args: []);
+  }
+
+  /// `Access Denied`
+  String get accessDenied {
+    return Intl.message(
+      'Access Denied',
+      name: 'accessDenied',
+      desc: '',
+      args: [],
+    );
   }
 }
 

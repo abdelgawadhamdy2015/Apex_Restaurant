@@ -31,6 +31,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "absence": MessageLookupByLibrary.simpleMessage("Absence"),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
+    "accessDenied": MessageLookupByLibrary.simpleMessage("Access Denied"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "active": MessageLookupByLibrary.simpleMessage("Active"),
     "activeNow": MessageLookupByLibrary.simpleMessage("Active Now"),
@@ -38,6 +39,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Actual WorkingHours",
     ),
     "addAdditives": MessageLookupByLibrary.simpleMessage("Add Additives"),
+    "addNotesHint": MessageLookupByLibrary.simpleMessage(
+      "Add your notes here...",
+    ),
     "address": MessageLookupByLibrary.simpleMessage("Address"),
     "all": MessageLookupByLibrary.simpleMessage("All"),
     "am": MessageLookupByLibrary.simpleMessage("A.M"),
@@ -99,13 +103,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "Please check your email for password reset instructions.",
     ),
+    "chooseDeliveryCompany": MessageLookupByLibrary.simpleMessage(
+      "Choose Delivery Company",
+    ),
     "closeApp": MessageLookupByLibrary.simpleMessage("Close App"),
     "comeFromReset": MessageLookupByLibrary.simpleMessage("Come from reset"),
+    "confirm": MessageLookupByLibrary.simpleMessage("Confirm"),
+    "confirmAction": MessageLookupByLibrary.simpleMessage("Confirm Action"),
     "confirmAdditives": MessageLookupByLibrary.simpleMessage(
       "Confirm additives",
     ),
     "controlBoard": MessageLookupByLibrary.simpleMessage("Control Board"),
     "currentOrder": MessageLookupByLibrary.simpleMessage("Current Order"),
+    "currentStatusOffShift": MessageLookupByLibrary.simpleMessage(
+      "Current status: Off shift",
+    ),
     "dailyWorkingHours": MessageLookupByLibrary.simpleMessage(
       "from 9:00 A.M to 6:00 P.M",
     ),
@@ -117,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dayStatus": MessageLookupByLibrary.simpleMessage("Day Status"),
     "days": MessageLookupByLibrary.simpleMessage("Days"),
     "dbName": MessageLookupByLibrary.simpleMessage("DataBase Name"),
+    "deliveryCompany": MessageLookupByLibrary.simpleMessage("DeliveryCompany"),
     "deliveryOrder": MessageLookupByLibrary.simpleMessage("Pickup "),
     "department": MessageLookupByLibrary.simpleMessage("Department"),
     "departures": MessageLookupByLibrary.simpleMessage("Departures"),
@@ -157,6 +170,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fingerPrint": MessageLookupByLibrary.simpleMessage("Fingerprint"),
     "fingerPrintType": MessageLookupByLibrary.simpleMessage("Fingerprint Type"),
     "fingerPrints": MessageLookupByLibrary.simpleMessage("Fingerprints"),
+    "floors": MessageLookupByLibrary.simpleMessage("Floors"),
     "forgetPassword": MessageLookupByLibrary.simpleMessage("Forget Password?"),
     "from": MessageLookupByLibrary.simpleMessage("from"),
     "fromDate": MessageLookupByLibrary.simpleMessage("From Date "),
@@ -166,7 +180,13 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select your holiday type ",
     ),
     "home": MessageLookupByLibrary.simpleMessage("Home"),
+    "homeSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Please select the required action to continue",
+    ),
     "hours": MessageLookupByLibrary.simpleMessage("Hour"),
+    "identityConfirmed": MessageLookupByLibrary.simpleMessage(
+      "Identity Confirmed",
+    ),
     "inactive": MessageLookupByLibrary.simpleMessage("Inactive"),
     "insertDBName": MessageLookupByLibrary.simpleMessage(
       "Insert DataBase Name",
@@ -174,6 +194,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "insertEmail": MessageLookupByLibrary.simpleMessage("Insert Email"),
     "insertPassword": MessageLookupByLibrary.simpleMessage("Insert Password"),
     "language": MessageLookupByLibrary.simpleMessage("Language"),
+    "lastCheckOut": MessageLookupByLibrary.simpleMessage("Last check out"),
+    "lastCheckOutValue": MessageLookupByLibrary.simpleMessage(
+      "Yesterday, 11:30 PM",
+    ),
     "lateTime": MessageLookupByLibrary.simpleMessage("Late time "),
     "leaveForReset": MessageLookupByLibrary.simpleMessage("Leave for reset"),
     "leaveRecord": MessageLookupByLibrary.simpleMessage("Leave recorded at "),
@@ -202,7 +226,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Are you shure you need log signOut? ",
     ),
     "noAddons": MessageLookupByLibrary.simpleMessage("No Add-ons"),
-    "noDateFound": MessageLookupByLibrary.simpleMessage("No Data Found"),
+    "noDataFound": MessageLookupByLibrary.simpleMessage("No Data Found"),
     "noInternet": MessageLookupByLibrary.simpleMessage(
       " No internet , check your connection and try again",
     ),
@@ -215,9 +239,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "This company is not a restaurant.",
     ),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
+    "notice": MessageLookupByLibrary.simpleMessage("Notice"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "okDialog": MessageLookupByLibrary.simpleMessage("OK"),
     "openSetting": MessageLookupByLibrary.simpleMessage("Open Settings"),
+    "openingCash": MessageLookupByLibrary.simpleMessage("Opening Cash"),
+    "optionalNotes": MessageLookupByLibrary.simpleMessage("Notes (optional)"),
     "overallReport": MessageLookupByLibrary.simpleMessage("Overall"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
@@ -236,6 +263,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "phoneNumbers": MessageLookupByLibrary.simpleMessage("Phone Numbers"),
     "play": MessageLookupByLibrary.simpleMessage("Play"),
+    "pleaseCheckInFirst": MessageLookupByLibrary.simpleMessage(
+      "Please check in first",
+    ),
     "pleaseFill": MessageLookupByLibrary.simpleMessage("please fill "),
     "pm": MessageLookupByLibrary.simpleMessage("P.M"),
     "pos": MessageLookupByLibrary.simpleMessage("POS"),
@@ -273,8 +303,14 @@ class MessageLookup extends MessageLookupByLibrary {
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "salaries": MessageLookupByLibrary.simpleMessage("Salaries"),
     "salesScreen": MessageLookupByLibrary.simpleMessage("Sales Screen"),
+    "salesScreenSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Access the dashboard, orders and sales",
+    ),
     "sar": MessageLookupByLibrary.simpleMessage("SAR"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
+    "saveAndOpenShift": MessageLookupByLibrary.simpleMessage(
+      "Save and Open Shift",
+    ),
     "saveFailed": MessageLookupByLibrary.simpleMessage(
       "Failed to save. Please try again.",
     ),
@@ -283,19 +319,32 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "section": MessageLookupByLibrary.simpleMessage("Section"),
     "securityWarning": MessageLookupByLibrary.simpleMessage("Security Warning"),
+    "selectBranch": MessageLookupByLibrary.simpleMessage("Select Branch"),
+    "selectInvoiceType": MessageLookupByLibrary.simpleMessage(
+      "Select Invoice Type",
+    ),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
+    "sessionExpired": MessageLookupByLibrary.simpleMessage("Session Expired"),
     "shift": MessageLookupByLibrary.simpleMessage("Shift"),
     "shift1": MessageLookupByLibrary.simpleMessage("first shift"),
     "shift2": MessageLookupByLibrary.simpleMessage("second shift"),
     "shift3": MessageLookupByLibrary.simpleMessage("third shift"),
     "shift4": MessageLookupByLibrary.simpleMessage("fourth shift"),
+    "shiftNotStarted": MessageLookupByLibrary.simpleMessage(
+      "Shift has not started yet",
+    ),
+    "shiftStart": MessageLookupByLibrary.simpleMessage("Shift Start"),
     "shiftToSecondDay": MessageLookupByLibrary.simpleMessage(
       "The shift extends to the next day",
     ),
     "sickLeave": MessageLookupByLibrary.simpleMessage("Sick leave"),
     "signIn": MessageLookupByLibrary.simpleMessage("Check-in "),
+    "signInSubtitle": MessageLookupByLibrary.simpleMessage(
+      "Check in to start your new work shift",
+    ),
     "signOut": MessageLookupByLibrary.simpleMessage("Check-out "),
+    "signOutTitle": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
     "startDate": MessageLookupByLibrary.simpleMessage("Start Date"),
     "status": MessageLookupByLibrary.simpleMessage("Status"),
@@ -304,6 +353,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sureDelete": MessageLookupByLibrary.simpleMessage(
       "are you sure you need delete this request",
     ),
+    "systemTime": MessageLookupByLibrary.simpleMessage("System time"),
     "table": MessageLookupByLibrary.simpleMessage("Table"),
     "tables": MessageLookupByLibrary.simpleMessage("Tables"),
     "takeawayOrder": MessageLookupByLibrary.simpleMessage("Takeaway "),
@@ -334,6 +384,10 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vacations Reports",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("VAT"),
+    "verificationFailed": MessageLookupByLibrary.simpleMessage(
+      "Verification Failed",
+    ),
+    "verified": MessageLookupByLibrary.simpleMessage("Verified"),
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "Please wait until the current location data is loaded",
     ),

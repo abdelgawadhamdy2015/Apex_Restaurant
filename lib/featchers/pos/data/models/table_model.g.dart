@@ -7,7 +7,7 @@ part of 'table_model.dart';
 // **************************************************************************
 
 TableModel _$TableModelFromJson(Map<String, dynamic> json) => TableModel(
-  tableId: (json['tableId'] as num?)?.toInt(),
+  tableId: json['tableId'] as String?,
   arabicName: json['arabicName'] as String?,
   latinName: json['latinName'] as String?,
   status: $enumDecodeNullable(_$TableStatusEnumMap, json['status']),

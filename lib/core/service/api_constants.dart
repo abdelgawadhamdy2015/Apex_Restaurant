@@ -3,23 +3,25 @@ import 'package:dio/dio.dart';
 class ApiConstants {
   static const String baseUsrl = localUrl;
 
-  static const String localUrl = "http://192.168.1.253:1313/api/";
-  static const String login = "Login";
-  static const String getUserData = "General/UsersManager/getUserById";
+  static const String localUrl = "http://192.168.1.253:1313/";
+  static const String login = "api/Login";
+  static const String getUserData = "api/General/UsersManager/getUserById";
 
   // Restaurants apis
-  static const String getAllFloors = "Restaurants/Floors/GetAllFloors";
+  static const String getAllFloors = "api/Restaurants/Floors/GetAllFloors";
   static const String getAllFoodTables =
-      "Restaurants/FoodTables/GetAllFoodTables";
+      "api/Restaurants/FoodTables/GetAllFoodTables";
   static const String getAllFoodAdditives =
-      "Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS";
+      "api/Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS";
+  static const String getAllDeliveryCompany =
+      "api/Restaurants/DeliveryCompany/GetAllDeliveryCompany";
   static const String getAllCategoriesDropDown =
-      "Store/Categories/GetAllCategoriesDropDown";
-  static const String getAllItems = "Store/RestaurantItemCard/GetAllItems";
+      "api/Store/Categories/GetAllCategoriesDropDown";
+  static const String getAllItems = "api/Store/RestaurantItemCard/GetAllItems";
 
   // General apis
   static const String getEmployeeBranches =
-      "Store/GeneralAPIs/getEmployeeBranchs";
+      "api/Store/GeneralAPIs/getEmployeeBranchs";
 
   static DioExceptionType dioExceptionType = DioExceptionType.unknown;
 

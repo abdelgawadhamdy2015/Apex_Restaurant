@@ -95,6 +95,9 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetFoodAdditivesUseCase(getIt<PosRepository>()),
   );
+  getIt.registerLazySingleton(
+    () => GetAllDeliveryCompanyUseCase(getIt<PosRepository>()),
+  );
 
   /// ─────────────────────────────────────────────────────────
   /// BLoCs
@@ -123,6 +126,7 @@ Future<void> setupGetIt() async {
       getTables: getIt<GetTablesUseCase>(),
       getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
       itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),
+      getAllDeliveryCompanyUseCase: getIt<GetAllDeliveryCompanyUseCase>(),
     ),
   );
 }

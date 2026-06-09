@@ -4,8 +4,8 @@ import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart'
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 
 abstract class HomeDatasource {
-  Future<List<EmployeeBranch>> getEmployeeBranches();
-  Future<BaseResponse<UserDataModel>> getUserData({required int id});
+  Future<BaseResponse<List<EmployeeBranch>?>> getEmployeeBranches();
+  Future<BaseResponse<UserDataModel?>> getUserData({required int id});
 }
 
 class HomeDatasourceImpl implements HomeDatasource {
@@ -13,12 +13,12 @@ class HomeDatasourceImpl implements HomeDatasource {
   HomeDatasourceImpl(this._apiService);
 
   @override
-  Future<List<EmployeeBranch>> getEmployeeBranches() async {
-    return (await _apiService.getEmployeeBranches()).data!;
+  Future<BaseResponse<List<EmployeeBranch>?>> getEmployeeBranches() async {
+    return (await _apiService.getEmployeeBranches());
   }
 
   @override
-  Future<BaseResponse<UserDataModel>> getUserData({required int id}) async {
+  Future<BaseResponse<UserDataModel?>> getUserData({required int id}) async {
     return (await _apiService.getUserData(id));
   }
 }

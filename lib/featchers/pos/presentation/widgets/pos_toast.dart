@@ -79,7 +79,7 @@ class _PosToastState extends State<PosToast>
               position: _slideAnimation,
               child: FadeTransition(
                 opacity: _fadeAnimation,
-                child: _ToastCard(message: state.toastMessage!),
+                child: ToastCard(message: state.toastMessage!),
               ),
             ),
           );
@@ -89,9 +89,9 @@ class _PosToastState extends State<PosToast>
   }
 }
 
-class _ToastCard extends StatelessWidget {
+class ToastCard extends StatelessWidget {
   final String message;
-  const _ToastCard({required this.message});
+  const ToastCard({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {

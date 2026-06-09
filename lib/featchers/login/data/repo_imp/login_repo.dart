@@ -12,7 +12,7 @@ class AuthRepoImp extends AuthRepo {
 
   AuthRepoImp(this.datasource);
   @override
-  Future<ApiResult<BaseResponse<LoginData>>> login(
+  Future<ApiResult<BaseResponse<LoginData?>>> login(
     LoginRequest loginRequest,
   ) async {
     try {

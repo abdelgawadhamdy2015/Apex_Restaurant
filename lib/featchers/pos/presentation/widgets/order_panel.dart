@@ -1,6 +1,4 @@
-// ignore_for_file: must_be_immutable
-
-import 'dart:developer';
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
@@ -11,11 +9,38 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/additives_selection_dialog.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/delivery_company_selection_dialpg.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/order_type_dialog.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/table_selection_dialog.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// ── Shared dialog helpers ──────────────────────────────────────────────────────
+
+Future<void> _showTableDialog(BuildContext context) => showDialog(
+  context: context,
+  builder: (_) => BlocProvider.value(
+    value: context.read<PosBloc>(),
+    child: const TableSelectionDialog(),
+  ),
+);
+
+Future<void> _showDeliveryDialog(BuildContext context) => showDialog(
+  context: context,
+  builder: (_) => BlocProvider.value(
+    value: context.read<PosBloc>()..add(LoadDeliveryCompaniesEvent()),
+    child: DeliveryCompanySelectionDialog(),
+  ),
+);
+
+Future<void> _showDialogForType(PosOrderType type, BuildContext context) {
+  if (type == PosOrderType.dineIn) return _showTableDialog(context);
+  if (type == PosOrderType.delivery) return _showDeliveryDialog(context);
+  return Future.value();
+}
+
+// ── OrderPanel ─────────────────────────────────────────────────────────────────
 
 class OrderPanel extends StatelessWidget {
   const OrderPanel({super.key});
@@ -31,7 +56,7 @@ class OrderPanel extends StatelessWidget {
       child: Column(
         children: [
           _Header(),
-          _OrderHeader(),
+          const _OrderHeader(),
           Flexible(child: _OrderItemsList()),
           _OrderSummary(),
           _OrderActions(),
@@ -41,10 +66,12 @@ class OrderPanel extends StatelessWidget {
   }
 }
 
+// ── _Header ────────────────────────────────────────────────────────────────────
+
 class _Header extends StatelessWidget {
   late final S lang;
 
-  String orderTitle(PosOrderType type, S lang) {
+  String _orderTitle(PosOrderType type) {
     switch (type) {
       case PosOrderType.dineIn:
         return lang.dineInOrder;
@@ -55,6 +82,18 @@ class _Header extends StatelessWidget {
     }
   }
 
+  String _secondButtonTitle(PosOrderType type) {
+    if (type == PosOrderType.delivery) return lang.deliveryCompany;
+    return lang.table;
+  }
+
+  VoidCallback? _secondButtonTap(PosOrderType type, BuildContext context) {
+    if (type == PosOrderType.dineIn) return () => _showTableDialog(context);
+    if (type == PosOrderType.delivery)
+      return () => _showDeliveryDialog(context);
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     lang = S.of(context);
@@ -62,80 +101,48 @@ class _Header extends StatelessWidget {
       padding: AppPadding.allSm,
       child: Column(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: BlocBuilder<PosBloc, PosState>(
-                  builder: (context, state) {
-                    return AppButtonText(
+          BlocBuilder<PosBloc, PosState>(
+            builder: (context, state) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: AppButtonText(
                       verticalPadding: 0,
                       backGroundColor: AppColors.primary,
                       buttonHeight: AppSizes.buttonHeightSm,
-                      butonText: orderTitle(state.orderType, lang),
+                      butonText: _orderTitle(state.orderType),
                       textStyle: AppFonts.bodyMedium
                           .colored(AppColors.white)
                           .semiBold(),
                       onPressed: () async {
-                        final type = await showDialog(
+                        final type = await showDialog<PosOrderType>(
                           context: context,
-                          builder: (_) => const OrderTypeDialog(),
+                          builder: (_) => OrderTypeDialog(),
                         );
-                        log(type.toString());
-                        if (type != null) {
-                          // ignore: use_build_context_synchronously
-                          context.read<PosBloc>().add(
-                            ChangeOrderTypeEvent(type),
-                          );
-                        }
-                        if (type == PosOrderType.dineIn) {
-                          await showDialog(
-                            // ignore: use_build_context_synchronously
-                            context: context,
-                            builder: (_) => BlocProvider.value(
-                              value: context.read<PosBloc>(),
-                              child: const TableSelectionDialog(),
-                            ),
-                          );
-                        }
+                        if (type == null) return;
+                        context.read<PosBloc>().add(ChangeOrderTypeEvent(type));
+                        await _showDialogForType(type, context);
                       },
-                    );
-                  },
-                ),
-              ),
-
-              AppSizes.gapW12,
-
-              Expanded(
-                child: BlocBuilder<PosBloc, PosState>(
-                  builder: (context, state) {
-                    return AppButtonText(
+                    ),
+                  ),
+                  AppSizes.gapW12,
+                  Expanded(
+                    child: AppButtonText(
                       verticalPadding: AppPadding.xs,
                       backGroundColor: AppColors.primary,
                       buttonHeight: AppSizes.buttonHeightSm,
-                      butonText: lang.table,
+                      butonText: _secondButtonTitle(state.orderType),
                       textStyle: AppFonts.bodyMedium
                           .colored(AppColors.white)
                           .semiBold(),
-                      onPressed: state.orderType == PosOrderType.dineIn
-                          ? () async {
-                              await showDialog(
-                                context: context,
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<PosBloc>(),
-                                  child: const TableSelectionDialog(),
-                                ),
-                              );
-                            }
-                          : null,
-                    );
-                  },
-                ),
-              ),
-            ],
+                      onPressed: _secondButtonTap(state.orderType, context),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
-
           AppSizes.gapH12,
-
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -152,8 +159,29 @@ class _Header extends StatelessWidget {
   }
 }
 
+// ── _OrderHeader ───────────────────────────────────────────────────────────────
+
 class _OrderHeader extends StatelessWidget {
   const _OrderHeader();
+
+  String _badgeText(PosState state, BuildContext context) {
+    final lang = S.of(context);
+    switch (state.orderType) {
+      case PosOrderType.dineIn:
+        return '${lang.table} ${state.selectedTable?.arabicName ?? ''}';
+      case PosOrderType.delivery:
+        return state.selectedDeliveryCompany?.arabicName ?? '';
+      default:
+        return '';
+    }
+  }
+
+  bool _showBadge(PosState state) {
+    return (state.orderType == PosOrderType.dineIn &&
+            state.selectedTable != null) ||
+        (state.orderType == PosOrderType.delivery &&
+            state.selectedDeliveryCompany != null);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,28 +197,27 @@ class _OrderHeader extends StatelessWidget {
         children: [
           BlocBuilder<PosBloc, PosState>(
             builder: (context, state) {
-              return (state.orderType == PosOrderType.dineIn &&
-                      state.selectedTable != null)
-                  ? Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: AppPadding.md,
-                        vertical: AppPadding.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(AppRadius.full),
-                      ),
-                      child: Text(
-                        '${S.of(context).table} ${state.selectedTable?.arabicName ?? ''}',
-                        style: AppFonts.bodySmall
-                            .colored(AppColors.white)
-                            .bold(),
-                      ),
-                    )
-                  : const SizedBox.shrink();
+              if (!_showBadge(state)) return const SizedBox.shrink();
+              return Expanded(
+                flex: 10,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppPadding.xs,
+                    vertical: AppPadding.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(AppRadius.full),
+                  ),
+                  child: Text(
+                    _badgeText(state, context),
+                    overflow: TextOverflow.ellipsis,
+                    style: AppFonts.bodySmall.colored(AppColors.white).bold(),
+                  ),
+                ),
+              );
             },
           ),
-
           const Spacer(),
           Text(S.of(context).currentOrder, style: AppFonts.titleMedium),
           AppSizes.gapW8,
@@ -204,6 +231,8 @@ class _OrderHeader extends StatelessWidget {
     );
   }
 }
+
+// ── _OrderItemsList ────────────────────────────────────────────────────────────
 
 class _OrderItemsList extends StatelessWidget {
   _OrderItemsList();
@@ -225,7 +254,7 @@ class _OrderItemsList extends StatelessWidget {
                   color: AppColors.textMuted.withOpacity(0.5),
                 ),
                 AppSizes.gapH12,
-                Text(lang.noDateFound, style: AppFonts.bodySmall),
+                Text(lang.noDataFound, style: AppFonts.bodySmall),
                 AppSizes.gapH8,
                 Text(
                   lang.tapAnyItemToAdd,
@@ -237,7 +266,6 @@ class _OrderItemsList extends StatelessWidget {
             ),
           );
         }
-
         return ListView.separated(
           padding: AppPadding.verticalSm,
           itemCount: state.currentOrder.items.length,
@@ -246,43 +274,51 @@ class _OrderItemsList extends StatelessWidget {
             indent: AppPadding.lg,
             endIndent: AppPadding.lg,
           ),
-          itemBuilder: (context, index) {
-            return _OrderItemRow(orderItem: state.currentOrder.items[index]);
-          },
+          itemBuilder: (_, index) =>
+              _OrderItemRow(orderItem: state.currentOrder.items[index]),
         );
       },
     );
   }
 }
 
+// ── _OrderItemRow ──────────────────────────────────────────────────────────────
+
 class _OrderItemRow extends StatelessWidget {
   final OrderItem orderItem;
   _OrderItemRow({required this.orderItem});
   late S lang = S();
 
-  List<FoodAdditiveModel> _getInitSelection(List<FoodAdditiveModel> allAdons) {
-    return allAdons.where((a) => orderItem.addons.contains(a)).toList();
+  String _additivesText(PosState state) {
+    final current = state.currentOrder.items.firstWhere(
+      (i) => i.menuItem.id == orderItem.menuItem.id,
+      orElse: () => orderItem,
+    );
+    if (current.addons.isEmpty) return lang.noAddons;
+    return current.addons.map((a) => a.arabicName).join(', ');
   }
 
-  Future<List<FoodAdditiveModel>?> showAdditivesDialog({
-    required BuildContext context,
-    required List<FoodAdditiveModel> additives,
-    List<FoodAdditiveModel> initialSelection = const [],
-  }) {
-    return showModalBottomSheet<List<FoodAdditiveModel>>(
+  List<FoodAdditiveModel> _initialSelection(List<FoodAdditiveModel> all) =>
+      all.where((a) => orderItem.addons.contains(a)).toList();
+
+  Future<void> _openAdditivesDialog(
+    BuildContext context,
+    PosState state,
+  ) async {
+    final result = await showModalBottomSheet<List<FoodAdditiveModel>>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => AdditivesDialog(
-        additives: additives,
-        initialSelection: initialSelection,
+        additives: state.additives,
+        initialSelection: _initialSelection(state.additives),
       ),
     );
-  }
-
-  String additivesNames(List<FoodAdditiveModel> adds) {
-    log(adds.length.toString());
-    return adds.map((a) => a.arabicName).join(',');
+    if (result != null && result.isNotEmpty) {
+      context.read<PosBloc>().add(
+        UpdateItemAddonsEvent(addons: result, item: orderItem),
+      );
+    }
   }
 
   @override
@@ -300,25 +336,7 @@ class _OrderItemRow extends StatelessWidget {
               Expanded(
                 flex: 3,
                 child: InkWell(
-                  onTap: () async {
-                    final additives =
-                        await showAdditivesDialog(
-                          context: context,
-                          additives: state.additives,
-                          initialSelection: _getInitSelection(state.additives),
-                        ) ??
-                        [];
-
-                    if (additives.isNotEmpty) {
-                      // ignore: use_build_context_synchronously
-                      context.read<PosBloc>().add(
-                        UpdateItemAddonsEvent(
-                          addons: additives,
-                          item: orderItem,
-                        ),
-                      );
-                    }
-                  },
+                  onTap: () => _openAdditivesDialog(context, state),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -327,66 +345,22 @@ class _OrderItemRow extends StatelessWidget {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-
                         style: AppFonts.bodySmall
                             .colored(AppColors.textPrimary)
                             .semiBold(),
                       ),
-                      BlocBuilder<PosBloc, PosState>(
-                        builder: (context, state) {
-                          final currentItem = state.currentOrder.items
-                              .firstWhere(
-                                (i) => i.menuItem.id == orderItem.menuItem.id,
-                                orElse: () => orderItem,
-                              );
-                          return Text(
-                            currentItem.addons.isNotEmpty
-                                ? additivesNames(currentItem.addons)
-                                : lang.noAddons,
-                            textAlign: TextAlign.center,
-                            style: AppFonts.bodySmall.colored(
-                              AppColors.textMuted,
-                            ),
-                          );
-                        },
+                      Text(
+                        _additivesText(state),
+                        textAlign: TextAlign.center,
+                        style: AppFonts.bodySmall.colored(AppColors.textMuted),
                       ),
                     ],
                   ),
                 ),
               ),
-              Spacer(),
-              Row(
-                children: [
-                  _QtyButton(
-                    icon: Icons.remove,
-                    color: AppColors.textSecondary,
-                    bgColor: AppColors.background,
-                    onTap: () => context.read<PosBloc>().add(
-                      DecrementItemEvent(orderItem.menuItem.id!),
-                    ),
-                  ),
-                  SizedBox(
-                    width: AppSizes.w12,
-                    child: Text(
-                      '${orderItem.quantity}',
-                      textAlign: TextAlign.center,
-                      style: AppFonts.bodyLarge
-                          .colored(AppColors.textPrimary)
-                          .bold(),
-                    ),
-                  ),
-                  _QtyButton(
-                    icon: Icons.add,
-                    color: AppColors.white,
-                    bgColor: AppColors.primary,
-                    onTap: () => context.read<PosBloc>().add(
-                      IncrementItemEvent(orderItem.menuItem.id!),
-                    ),
-                  ),
-                ],
-              ),
+              const Spacer(),
+              _QtyControls(orderItem: orderItem),
               AppSizes.gapW12,
-
               Text(
                 orderItem.totalPrice.toStringAsFixed(2),
                 style: AppFonts.bodyMedium
@@ -400,6 +374,47 @@ class _OrderItemRow extends StatelessWidget {
     );
   }
 }
+
+// ── _QtyControls ───────────────────────────────────────────────────────────────
+
+class _QtyControls extends StatelessWidget {
+  final OrderItem orderItem;
+  const _QtyControls({required this.orderItem});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _QtyButton(
+          icon: Icons.remove,
+          color: AppColors.textSecondary,
+          bgColor: AppColors.background,
+          onTap: () => context.read<PosBloc>().add(
+            DecrementItemEvent(orderItem.menuItem.id!),
+          ),
+        ),
+        SizedBox(
+          width: AppSizes.w24,
+          child: Text(
+            '${orderItem.quantity}',
+            textAlign: TextAlign.center,
+            style: AppFonts.bodyLarge.colored(AppColors.textPrimary).bold(),
+          ),
+        ),
+        _QtyButton(
+          icon: Icons.add,
+          color: AppColors.white,
+          bgColor: AppColors.primary,
+          onTap: () => context.read<PosBloc>().add(
+            IncrementItemEvent(orderItem.menuItem.id!),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── _QtyButton ─────────────────────────────────────────────────────────────────
 
 class _QtyButton extends StatelessWidget {
   final IconData icon;
@@ -419,7 +434,7 @@ class _QtyButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: AppSizes.w16,
+        width: AppSizes.w20,
         height: AppSizes.h24,
         decoration: BoxDecoration(
           color: bgColor,
@@ -433,6 +448,8 @@ class _QtyButton extends StatelessWidget {
     );
   }
 }
+
+// ── _OrderSummary ──────────────────────────────────────────────────────────────
 
 class _OrderSummary extends StatelessWidget {
   _OrderSummary();
@@ -511,6 +528,8 @@ class _SummaryRow extends StatelessWidget {
     );
   }
 }
+
+// ── _OrderActions ──────────────────────────────────────────────────────────────
 
 class _OrderActions extends StatelessWidget {
   _OrderActions();

@@ -1,10 +1,14 @@
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:equatable/equatable.dart';
 
@@ -29,36 +33,28 @@ class LoadFoodAdditivesEvent extends PosEvent {
 }
 
 class LoadFloorsEvent extends PosEvent {
-  final int? pageNumber;
-  final int? pageSize;
-  final String? id;
-  final String? name;
-  final int? branchId;
-  const LoadFloorsEvent({
-    this.pageNumber,
-    this.pageSize,
-    this.id,
-    this.name,
-    this.branchId,
-  });
+  final GetFloorsRequestModel request;
+
+  const LoadFloorsEvent({required this.request});
 }
 
 class LoadTablesEvent extends PosEvent {
-  final int? pageNumber;
-  final int? pageSize;
-  final String? id;
-  final String? name;
-  final String? floorID;
-  final bool? forPOS;
+  final GetTablesRequestModel request;
 
-  const LoadTablesEvent({
-    this.pageNumber,
-    this.pageSize,
-    this.id,
-    this.name,
-    this.floorID,
-    this.forPOS,
-  });
+  const LoadTablesEvent({required this.request});
+}
+
+class LoadDeliveryCompaniesEvent extends PosEvent {
+  final BaseRequest? request;
+
+  const LoadDeliveryCompaniesEvent({this.request});
+}
+
+class SelectDeliveryCompanyEvent extends PosEvent {
+  final DeliveryCompanyModel deliveryCompanyModel;
+  const SelectDeliveryCompanyEvent({required this.deliveryCompanyModel});
+  @override
+  List<Object?> get props => [deliveryCompanyModel];
 }
 
 class SelectCategoryEvent extends PosEvent {

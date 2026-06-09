@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 class RestaurantConstants {
   static const String appName = "ApexRestaurant";
+  static const String logOutMessage = "User Logged In From Another Place";
 
   static const String pushNotification = "pushNotification";
   static const String requestModel = "requestModel";

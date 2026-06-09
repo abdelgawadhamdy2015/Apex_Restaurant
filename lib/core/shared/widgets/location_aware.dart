@@ -48,7 +48,7 @@ class LocationAwareWidget extends StatelessWidget {
             TextButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                HelperMethods.exitApp(context);
+                HelperMethods.exitApp();
               },
               child: Text(S.of(context).closeApp),
             ),

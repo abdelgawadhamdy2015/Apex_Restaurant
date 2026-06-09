@@ -32,13 +32,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             errorMessage: e.apiErrorModel.errorMessageAr,
           ),
         ),
-        success: (BaseResponse<UserDataModel> data) {
-          emit(
-            state.copyWith(
-              status: HomeStatus.userDataLoaded,
-              userDataModel: data.data,
-            ),
-          );
+        success: (BaseResponse<UserDataModel?> data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: HomeStatus.userDataLoaded,
+                userDataModel: data.data,
+              ),
+            );
+          } else {
+            emit(state.copyWith(status: HomeStatus.error, apiResponse: data));
+          }
         },
       );
     } catch (e) {
@@ -57,8 +61,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     emit(state.copyWith(status: HomeStatus.loading));
     try {
-      final branches = await getEmployeeBranches();
-      emit(state.copyWith(status: HomeStatus.loaded, branches: branches));
+      final response = await getEmployeeBranches();
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(status: HomeStatus.loaded, branches: data.data),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: HomeStatus.error,
+                errorMessage: data.errorMessageAr,
+                apiResponse: data,
+              ),
+            );
+          }
+        },
+        failure: (e) {},
+      );
     } catch (e) {
       emit(
         state.copyWith(

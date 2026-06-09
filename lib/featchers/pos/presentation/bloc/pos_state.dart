@@ -1,5 +1,8 @@
+import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
+import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
@@ -9,13 +12,18 @@ import 'package:equatable/equatable.dart';
 
 enum PosStatus { initial, loading, loaded, error, submitting, submitted }
 
-class PosState extends Equatable {
+class PosState extends Equatable implements ErrorableState {
   final PosStatus status;
+  @override
+  final BaseResponse? apiResponse;
   final List<FloorModel> floors;
   final List<TableModel> tables;
   final List<FoodAdditiveModel> additives;
   final List<CategoryModel> categories;
   final CategoryModel? selectedCategory;
+
+  final List<DeliveryCompanyModel> deliveryCompanies;
+  final DeliveryCompanyModel? selectedDeliveryCompany;
 
   final List<MenuItemModel> currentMenuItems;
   final OrderItem? selectedOrderItem;
@@ -29,7 +37,10 @@ class PosState extends Equatable {
   final TableModel? selectedTable;
   const PosState({
     this.status = PosStatus.initial,
+    this.apiResponse,
     this.categories = const [],
+    this.deliveryCompanies = const [],
+    this.selectedDeliveryCompany,
     this.selectedCategory,
     this.currentMenuItems = const [],
     this.selectedOrderItem,
@@ -45,19 +56,26 @@ class PosState extends Equatable {
     this.additives = const [],
   });
 
+  // ── ErrorableState contract ──
+  @override
+  bool get hasError => status == PosStatus.error;
+
   factory PosState.initial() => PosState(
     currentOrder: const Order(tableId: '12', items: []),
   );
 
   PosState copyWith({
+    BaseResponse? apiResponse,
     PosStatus? status,
     List<FloorModel>? floors,
     List<TableModel>? tables,
     List<FoodAdditiveModel>? additives,
     List<CategoryModel>? categories,
+    List<DeliveryCompanyModel>? deliveryCompanies,
+    DeliveryCompanyModel? selectedDeliveryCompany,
     CategoryModel? selectedCategory,
     List<MenuItemModel>? currentMenuItems,
-    OrderItem? selectedMenuItem,
+    OrderItem? selectedOrderItem,
     Order? currentOrder,
     String? errorMessage,
     String? toastMessage,
@@ -68,11 +86,15 @@ class PosState extends Equatable {
     FloorModel? selectedFloor,
   }) {
     return PosState(
+      apiResponse: apiResponse ?? this.apiResponse,
       status: status ?? this.status,
       categories: categories ?? this.categories,
       selectedCategory: selectedCategory ?? this.selectedCategory,
+      deliveryCompanies: deliveryCompanies ?? this.deliveryCompanies,
+      selectedDeliveryCompany:
+          selectedDeliveryCompany ?? this.selectedDeliveryCompany,
       currentMenuItems: currentMenuItems ?? this.currentMenuItems,
-      selectedOrderItem: selectedMenuItem ?? this.selectedOrderItem,
+      selectedOrderItem: selectedOrderItem ?? this.selectedOrderItem,
       currentOrder: currentOrder ?? this.currentOrder,
       errorMessage: errorMessage ?? this.errorMessage,
       toastMessage: clearToast ? null : (toastMessage ?? this.toastMessage),
@@ -88,9 +110,12 @@ class PosState extends Equatable {
 
   @override
   List<Object?> get props => [
+    apiResponse,
     status,
     categories,
     selectedCategory,
+    deliveryCompanies,
+    selectedDeliveryCompany,
     currentMenuItems,
     selectedOrderItem,
     currentOrder,

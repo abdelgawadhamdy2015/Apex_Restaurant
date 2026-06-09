@@ -1,13 +1,12 @@
-class GetFoodAdditiveRequest {
-  final int? pageNumber;
-  final int? pageSize;
-  final String? name;
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+
+class GetFoodAdditiveRequest extends BaseRequest {
   final int? categoryID;
 
   const GetFoodAdditiveRequest({
-    this.pageNumber,
-    this.pageSize,
-    this.name,
+    super.pageNumber,
+    super.pageSize,
+    super.name,
     this.categoryID,
   });
 }

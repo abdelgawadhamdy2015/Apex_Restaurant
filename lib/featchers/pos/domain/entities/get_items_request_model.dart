@@ -1,24 +1,25 @@
-class GetItemsRequestModel {
-  final int? pageNumber;
-  final int? pageSize;
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+
+class GetItemsRequestModel extends BaseRequest {
   final int? status;
   final String? id;
-  final String? name;
+
   final String? categories;
   final bool? isRestaurantItem;
   final bool? isRestaurantIngrediant;
 
   const GetItemsRequestModel({
-    this.pageNumber,
-    this.pageSize,
+    super.pageNumber,
+    super.pageSize,
     this.status,
     this.id,
-    this.name,
+    super.name,
     this.categories,
     this.isRestaurantItem,
     this.isRestaurantIngrediant,
   });
 
+  @override
   GetItemsRequestModel copyWith({
     int? pageNumber,
     int? pageSize,
@@ -30,11 +31,11 @@ class GetItemsRequestModel {
     bool? isRestaurantIngrediant,
   }) {
     return GetItemsRequestModel(
-      pageNumber: pageNumber ?? this.pageNumber,
-      pageSize: pageSize ?? this.pageSize,
+      pageNumber: pageNumber ?? super.pageNumber,
+      pageSize: pageSize ?? super.pageSize,
       status: status ?? this.status,
       id: id ?? this.id,
-      name: name ?? this.name,
+      name: name ?? super.name,
       categories: categories ?? this.categories,
       isRestaurantItem: isRestaurantItem ?? this.isRestaurantItem,
       isRestaurantIngrediant:

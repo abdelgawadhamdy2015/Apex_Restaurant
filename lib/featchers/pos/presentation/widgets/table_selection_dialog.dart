@@ -3,9 +3,12 @@ import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,24 +26,29 @@ class _TableSelectionDialogState extends State<TableSelectionDialog> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _getFloors());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadFloors());
   }
 
-  void _getFloors() {
+  void _loadFloors() {
     context.read<PosBloc>().add(
-      LoadFloorsEvent(branchId: RestaurantConstants.currentBranch?.branchId),
+      LoadFloorsEvent(
+        request: GetFloorsRequestModel(
+          branchId: RestaurantConstants.currentBranch?.branchId,
+        ),
+      ),
     );
-    if (selectedFloor != null) {
-      context.read<PosBloc>().add(
-        LoadTablesEvent(floorID: selectedFloor!.id, forPOS: true),
-      );
-    }
   }
 
+  // ── FIX: use the parameter directly, not selectedFloor field ──────────────
   void _selectFloor(FloorModel floor) {
     setState(() => selectedFloor = floor);
     context.read<PosBloc>().add(
-      LoadTablesEvent(floorID: floor.id, forPOS: true),
+      LoadTablesEvent(
+        request: GetTablesRequestModel(
+          floorID: floor.id, // ← use parameter, not selectedFloor!.id
+          forPOS: true,
+        ),
+      ),
     );
   }
 
@@ -85,54 +93,76 @@ class _TableSelectionDialogState extends State<TableSelectionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-      ),
-      child: SizedBox(
-        width: AppSizes.wFraction(0.75),
-        height: AppSizes.hFraction(0.75),
-        child: Row(
-          children: [
-            _FloorSidebar(
-              selectedFloor: selectedFloor,
-              onFloorSelected: _selectFloor,
-              onFloorInit: (floor) => setState(() => selectedFloor = floor),
+    // ── BlocListener handles errors + auto-selects first floor ───────────────
+    return BlocListener<PosBloc, PosState>(
+      listenWhen: (prev, curr) =>
+          // floors just loaded and nothing selected yet → auto-select first
+          (prev.floors.isEmpty &&
+              curr.floors.isNotEmpty &&
+              selectedFloor == null) ||
+          // new error arrived
+          (curr.status == PosStatus.error &&
+              curr.apiResponse != null &&
+              prev.status != curr.status),
+      listener: (context, state) {
+        if (state.status == PosStatus.error && state.apiResponse != null) {
+          // show error dialog / snackbar
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.apiResponse?.errorMessageAr ?? 'حدث خطأ ما'),
             ),
-            if (selectedFloor != null)
-              _TablesGrid(
-                iconBuilder: _icon,
-                colorBuilder: _tableColor,
-                iconColorBuilder: _tableIconColor,
+          );
+          return;
+        }
+        // auto-select first floor and load its tables
+        if (state.floors.isNotEmpty && selectedFloor == null) {
+          _selectFloor(state.floors.first);
+        }
+      },
+      child: Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        child: SizedBox(
+          width: AppSizes.wFraction(0.75),
+          height: AppSizes.hFraction(0.75),
+          child: Row(
+            children: [
+              _FloorSidebar(
+                selectedFloor: selectedFloor,
+                onFloorSelected: _selectFloor,
               ),
-          ],
+              if (selectedFloor != null)
+                _TablesGrid(
+                  iconBuilder: _icon,
+                  colorBuilder: _tableColor,
+                  iconColorBuilder: _tableIconColor,
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _FloorSidebar extends StatelessWidget {
   final FloorModel? selectedFloor;
   final ValueChanged<FloorModel> onFloorSelected;
-  final ValueChanged<FloorModel> onFloorInit;
 
   const _FloorSidebar({
     required this.selectedFloor,
     required this.onFloorSelected,
-    required this.onFloorInit,
   });
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PosBloc, PosState>(
+      // ── only rebuild when the floors list itself changes ──────────────────
+      buildWhen: (prev, curr) => prev.floors != curr.floors,
       builder: (context, state) {
-        if (selectedFloor == null && state.floors.isNotEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback(
-            (_) => onFloorInit(state.floors.first),
-          );
-        }
-
         return Container(
           width: AppSizes.w100,
           decoration: BoxDecoration(
@@ -148,22 +178,24 @@ class _FloorSidebar extends StatelessWidget {
             children: [
               Padding(
                 padding: AppPadding.allLg,
-                child: Text('الطوابق', style: AppFonts.titleSmall),
+                child: Text(S.of(context).floors, style: AppFonts.titleSmall),
               ),
               const Divider(height: 1),
               Expanded(
-                child: ListView(
-                  padding: AppPadding.verticalSm,
-                  children: state.floors
-                      .map(
-                        (floor) => _FloorItem(
-                          floor: floor,
-                          isSelected: selectedFloor == floor,
-                          onTap: () => onFloorSelected(floor),
-                        ),
-                      )
-                      .toList(),
-                ),
+                child: state.floors.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView(
+                        padding: AppPadding.verticalSm,
+                        children: state.floors
+                            .map(
+                              (floor) => _FloorItem(
+                                floor: floor,
+                                isSelected: selectedFloor?.id == floor.id,
+                                onTap: () => onFloorSelected(floor),
+                              ),
+                            )
+                            .toList(),
+                      ),
               ),
             ],
           ),
@@ -172,6 +204,8 @@ class _FloorSidebar extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _FloorItem extends StatelessWidget {
   final FloorModel floor;
@@ -217,6 +251,8 @@ class _FloorItem extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+
 class _TablesGrid extends StatelessWidget {
   final IconData Function(TableStatus) iconBuilder;
   final Color Function(TableStatus) colorBuilder;
@@ -231,7 +267,26 @@ class _TablesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PosBloc, PosState>(
+      // ── only rebuild when tables list changes, not on every state tick ────
+      // buildWhen: (prev, curr) => prev.tables != curr.tables,
       builder: (context, state) {
+        if (state.status == PosStatus.loading && state.tables.isEmpty) {
+          return const Expanded(
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (state.tables.isEmpty) {
+          return Expanded(
+            child: Center(
+              child: Text(
+                S.of(context).noDataFound,
+                style: AppFonts.bodyMedium,
+              ),
+            ),
+          );
+        }
+
         return Expanded(
           child: GridView.builder(
             padding: AppPadding.allMd,
@@ -249,7 +304,7 @@ class _TablesGrid extends StatelessWidget {
                 bgColor: colorBuilder(table.status!),
                 iconColor: iconColorBuilder(table.status!),
                 onTap: () {
-                  context.pop(context);
+                  context.pop();
                   context.read<PosBloc>().add(SelectTableEvent(table: table));
                 },
               );
@@ -260,6 +315,8 @@ class _TablesGrid extends StatelessWidget {
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 class _TableCard extends StatelessWidget {
   final TableModel table;
