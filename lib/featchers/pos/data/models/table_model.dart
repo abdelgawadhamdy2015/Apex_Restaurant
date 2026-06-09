@@ -5,7 +5,7 @@ part 'table_model.g.dart';
 
 @JsonSerializable()
 class TableModel {
-  int? tableId;
+  String? tableId;
   String? arabicName;
   String? latinName;
   TableStatus? status;

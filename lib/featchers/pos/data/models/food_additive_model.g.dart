@@ -13,6 +13,7 @@ FoodAdditiveModel _$FoodAdditiveModelFromJson(Map<String, dynamic> json) =>
       latinName: json['latinName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       imagePath: json['imagePath'] as String?,
+      notes: json['notes'] as String?,
     );
 
 Map<String, dynamic> _$FoodAdditiveModelToJson(FoodAdditiveModel instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$FoodAdditiveModelToJson(FoodAdditiveModel instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'imagePath': instance.imagePath,
+      'notes': instance.notes,
     };

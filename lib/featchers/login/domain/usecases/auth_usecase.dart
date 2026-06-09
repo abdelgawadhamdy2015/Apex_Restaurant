@@ -8,6 +8,6 @@ class LoginUsecase {
   final AuthRepo repo;
   LoginUsecase(this.repo);
 
-  Future<ApiResult<BaseResponse<LoginData>>> call(LoginRequest request) =>
+  Future<ApiResult<BaseResponse<LoginData?>>> call(LoginRequest request) =>
       repo.login(request);
 }

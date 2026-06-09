@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class BranchesDialog extends StatelessWidget {
@@ -17,25 +17,41 @@ class BranchesDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lang = S.of(context);
     return AlertDialog(
-      title: const Text('اختر الفرع'),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+      ),
+      backgroundColor: AppColors.white,
+      title: Text(lang.selectBranch, style: AppFonts.titleMedium),
       content: SizedBox(
         width: double.maxFinite,
-        child: ListView.builder(
+        child: ListView.separated(
           shrinkWrap: true,
           itemCount: branches.length,
+          separatorBuilder: (_, __) =>
+              const Divider(height: 1, color: AppColors.divider),
           itemBuilder: (context, index) {
             final branch = branches[index];
+            final isSelected = branch.branchId == currentBranch.branchId;
             return ListTile(
               title: Text(
                 branch.arabicName,
-                style: TextStyles.blackBoldStyle(
-                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-                ),
+                style: AppFonts.titleLarge
+                    .colored(AppColors.textPrimary)
+                    .semiBold(),
               ),
-              trailing: branch.branchId == currentBranch.branchId
-                  ? const Icon(Icons.check, color: Colors.green)
+              trailing: isSelected
+                  ? Icon(
+                      Icons.check_circle_rounded,
+                      color: AppColors.success,
+                      size: AppSizes.iconLg,
+                    )
                   : null,
+              tileColor: isSelected ? AppColors.sidebarActive : null,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
               onTap: () {
                 onBranchSelected(branch);
                 Navigator.of(context).pop();

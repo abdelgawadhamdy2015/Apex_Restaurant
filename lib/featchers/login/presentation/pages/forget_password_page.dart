@@ -1,4 +1,3 @@
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
@@ -6,12 +5,9 @@ import 'package:apex_restaurant/core/shared/widgets/grediant_container.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/colors.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
-import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -27,9 +23,17 @@ class ForgetPasswordPage extends StatefulWidget {
 class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController companyText = TextEditingController();
   final TextEditingController emailText = TextEditingController();
-  late String selectedLanguage;
   final formKey = GlobalKey<FormState>();
+  late String selectedLanguage;
   late S lang;
+
+  @override
+  void dispose() {
+    companyText.dispose();
+    emailText.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     lang = S.of(context);
@@ -43,11 +47,11 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(context),
               SizedBox(
-                height: SizeConfig.screenHeight! * .8,
+                height: AppSizes.hFraction(0.8),
                 child: BodyContainer(
-                  child: Form(key: formKey, child: _buildForm()),
+                  child: Form(key: formKey, child: _buildForm(context)),
                 ),
               ),
             ],
@@ -57,9 +61,13 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final double dpr = MediaQuery.of(context).devicePixelRatio;
+    final double logoW = AppSizes.wFraction(0.48);
+    final double logoH = AppSizes.hFraction(0.08);
+
     return SizedBox(
-      height: SizeConfig.screenHeight! * .2,
+      height: AppSizes.hFraction(0.2),
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -68,13 +76,11 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
             Row(
               children: [
                 IconButton(
-                  onPressed: () {
-                    context.pop();
-                  },
+                  onPressed: () => context.pop(),
                   icon: Icon(
                     Icons.close,
                     color: AppColors.textPrimary,
-                    size: SizeConfig.iconSize2!,
+                    size: AppSizes.iconXl,
                   ),
                 ),
               ],
@@ -86,20 +92,12 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 children: [
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.only(
-                        top: SizeConfig.screenHeight! * .01,
-                      ),
+                      padding: EdgeInsets.only(top: AppPadding.sm),
                       child: Assets.images.apexTime.image(
-                        width: SizeConfig.defaultSize! * 20,
+                        width: logoW,
                         color: AppColors.textSecondary,
-                        cacheWidth:
-                            ((SizeConfig.defaultSize! * 20) *
-                                    SizeConfig.devicePixelRatio!)
-                                .round(),
-                        cacheHeight:
-                            ((SizeConfig.defaultSize! * 8) *
-                                    SizeConfig.devicePixelRatio!)
-                                .round(),
+                        cacheWidth: (logoW * dpr).round(),
+                        cacheHeight: (logoH * dpr).round(),
                       ),
                     ),
                   ),
@@ -118,10 +116,8 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
       value: selectedLanguage,
       icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
       dropdownColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(20.r),
-      style: TextStyles.darkBlueBoldStyle(
-        fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-      ),
+      borderRadius: BorderRadius.circular(AppRadius.xl),
+      style: AppFonts.bodyMedium.colored(AppColors.primaryDark).bold(),
       underline: const SizedBox(),
       onChanged: (String? newValue) {
         if (newValue != null) {
@@ -140,37 +136,30 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
           value: value,
           child: Text(
             value,
-            style: TextStyles.whiteBoldStyle(
-              fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-            ),
+            style: AppFonts.bodyMedium.colored(AppColors.white).bold(),
           ),
         );
       }).toList(),
     );
   }
 
-  myLogoText() {
-    return Container(
-      padding: const EdgeInsets.only(top: 10),
-      child: Text(
-        lang.forgetPassword,
-        style: TextStyle(
-          fontSize: 20.sp,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Center(child: myLogoText()),
+        Center(
+          child: Padding(
+            padding: EdgeInsets.only(top: AppPadding.sm),
+            child: Text(
+              lang.forgetPassword,
+              style: AppFonts.titleLarge.colored(AppColors.textPrimary),
+            ),
+          ),
+        ),
+        AppSizes.gapH16,
         _buildTextField(lang.dbName, companyText, lang.dbName),
         _buildTextField(S.of(context).email, emailText, lang.email),
-        HelperMethods.verticalSpacing(.02),
+        AppSizes.gapH16,
         Center(child: _buildLoginButton()),
       ],
     );
@@ -184,27 +173,23 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(
-        horizontal: SizeConfig.screenWidth! * .016,
-        vertical: SizeConfig.screenHeight! * .016,
+        horizontal: AppPadding.sm,
+        vertical: AppPadding.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: TextStyles.blackMediumStyle(
-              fontSize: AppTheme.theme.textTheme.bodySmall!.fontSize!,
-            ),
+            style: AppFonts.bodySmall.colored(AppColors.textPrimary).semiBold(),
           ),
-          HelperMethods.verticalSpacing(.01),
+          AppSizes.gapH8,
           MyTextForm(
-            hight: SizeConfig.defaultSize! * 5,
-            inputTextStyle: TextStyles.blackBoldStyle(
-              fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-            ),
-            hintStyle: TextStyles.blackRegulerStyle(
-              fontSize: AppTheme.theme.textTheme.bodySmall!.fontSize!,
-            ),
+            hight: AppSizes.inputHeight,
+            inputTextStyle: AppFonts.bodyMedium
+                .colored(AppColors.textPrimary)
+                .bold(),
+            hintStyle: AppFonts.bodySmall.colored(AppColors.textMuted),
             fillColor: AppColors.textSecondary,
             hint: hint,
             excep: label,
@@ -220,14 +205,12 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     return AppButtonText(
       linearGradient: ColorManger.mainBlueGrediant,
       butonText: lang.send,
-      onPressed: () => _validateThenLogin(context),
-      textStyle: TextStyles.whiteBoldStyle(
-        fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-      ),
+      onPressed: () => _validateThenSend(context),
+      textStyle: AppFonts.bodyMedium.colored(AppColors.white).bold(),
     );
   }
 
-  void _validateThenLogin(BuildContext context) {
+  void _validateThenSend(BuildContext context) {
     if (formKey.currentState!.validate()) {
       // context.read<ForgetPasswordCubit>().emitForgetPasswordStates(
       //   company: companyText.text,

@@ -1,13 +1,16 @@
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+// ignore: must_be_immutable
 class OrderTypeDialog extends StatelessWidget {
-  const OrderTypeDialog({super.key});
-
+  OrderTypeDialog({super.key});
+  late S lang;
   @override
   Widget build(BuildContext context) {
+    lang = S.of(context);
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -18,22 +21,22 @@ class OrderTypeDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('اختر نوع الفاتورة', style: AppFonts.displayMedium),
+            Text(lang.selectInvoiceType, style: AppFonts.displayMedium),
             AppSizes.gapH32,
             _TypeCard(
-              title: 'سفري',
+              title: lang.takeawayOrder,
               icon: Icons.shopping_bag,
               onTap: () => context.pop(PosOrderType.takeaway),
             ),
             AppSizes.gapH12,
             _TypeCard(
-              title: 'توصيل',
+              title: lang.deliveryOrder,
               icon: Icons.delivery_dining,
               onTap: () => context.pop(PosOrderType.delivery),
             ),
             AppSizes.gapH12,
             _TypeCard(
-              title: 'صالة',
+              title: lang.dineInOrder,
               icon: Icons.table_restaurant,
               onTap: () => context.pop(PosOrderType.dineIn),
             ),

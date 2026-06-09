@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -15,6 +17,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   final GetTablesUseCase _getTables;
   final GetMenuItemsByCategoryUseCase _itemsByCategoryUseCase;
   final GetFoodAdditivesUseCase _getfoodAdditivesUseCase;
+  final GetAllDeliveryCompanyUseCase _getAllDeliveryCompanyUseCase;
   PosBloc({
     required this._getMenuCategories,
     required this._sendToKitchen,
@@ -23,13 +26,18 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     required this._getTables,
     required this._itemsByCategoryUseCase,
     required this._getfoodAdditivesUseCase,
+    required this._getAllDeliveryCompanyUseCase,
   }) : super(PosState.initial()) {
     on<LoadFloorsEvent>(_onLoadFloors);
     on<LoadTablesEvent>(_onLoadTables);
     on<LoadCategoriesEvent>(_onLoadCategories);
+    on<SelectCategoryEvent>(_onSelectCategory);
+
     on<LoadItemsEvent>(_onLoadItems);
     on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
-    on<SelectCategoryEvent>(_onSelectCategory);
+    on<LoadDeliveryCompaniesEvent>(_onLoadDeliveryCompanies);
+    on<SelectDeliveryCompanyEvent>(_onSelectDeliveryCompany);
+
     on<UpdateItemAddonsEvent>(_onUpdateItemAddons);
     on<AddItemToOrderEvent>(_onAddItem);
     on<RemoveItemFromOrderEvent>(_onRemoveItem);
@@ -50,14 +58,22 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   ) async {
     emit(state.copyWith(status: PosStatus.loading));
     try {
-      final floors = await _getFloors(
-        pageNumber: event.pageNumber,
-        pageSize: event.pageSize,
-        id: event.id,
-        name: event.name,
-        branchId: event.branchId,
+      final response = await _getFloors(request: event.request);
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(state.copyWith(status: PosStatus.loaded, floors: data.data));
+          } else {
+            emit(state.copyWith(status: PosStatus.error, apiResponse: data));
+          }
+        },
+        failure: (errorHandler) => emit(
+          state.copyWith(
+            status: PosStatus.error,
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+          ),
+        ),
       );
-      emit(state.copyWith(status: PosStatus.loaded, floors: floors));
     } catch (e) {
       emit(
         state.copyWith(
@@ -74,20 +90,73 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   ) async {
     emit(state.copyWith(status: PosStatus.loading));
     try {
-      final tables = await _getTables(
-        pageNumber: event.pageNumber,
-        pageSize: event.pageSize,
-        id: event.id,
-        name: event.name,
-        floorID: event.floorID,
-        forPOS: event.forPOS,
+      final response = await _getTables(request: event.request);
+      response.when(
+        success: (data) {
+          log("${data.data?.length}");
+          if (data.result == 1) {
+            emit(state.copyWith(status: PosStatus.loaded, tables: data.data));
+          } else {
+            emit(state.copyWith(status: PosStatus.error, apiResponse: data));
+          }
+        },
+
+        failure: (errorHandler) {
+          log(errorHandler.apiErrorModel.errorMessageAr.toString());
+          emit(
+            state.copyWith(
+              status: PosStatus.error,
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
       );
-      emit(state.copyWith(status: PosStatus.loaded, tables: tables));
     } catch (e) {
       emit(
         state.copyWith(
           status: PosStatus.error,
           errorMessage: 'فشل تحميل الطوابق. يرجى المحاولة مرة أخرى.',
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLoadDeliveryCompanies(
+    LoadDeliveryCompaniesEvent event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(status: PosStatus.loading));
+    try {
+      final response = await _getAllDeliveryCompanyUseCase(
+        request: event.request,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: PosStatus.loaded,
+                deliveryCompanies: data.data,
+              ),
+            );
+          } else {
+            emit(state.copyWith(status: PosStatus.error, apiResponse: data));
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              status: PosStatus.error,
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: PosStatus.error,
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
         ),
       );
     }
@@ -100,29 +169,43 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     emit(state.copyWith(status: PosStatus.loading));
 
     try {
-      final categories = await _getMenuCategories();
-      final firstCategory = categories.isNotEmpty ? categories.first : null;
+      final response = await _getMenuCategories();
 
-      emit(
-        state.copyWith(
-          status: PosStatus.loaded,
-          categories: categories,
-          selectedCategory: firstCategory,
+      response.when(
+        success: (data) {
+          final firstCategory = data.data!.isNotEmpty ? data.data!.first : null;
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: PosStatus.loaded,
+                categories: data.data,
+                selectedCategory: firstCategory,
+              ),
+            );
+          } else {
+            emit(state.copyWith(status: PosStatus.error, apiResponse: data));
+          }
+
+          if (firstCategory != null) {
+            add(
+              LoadItemsEvent(
+                GetItemsRequestModel(
+                  categories: firstCategory.id?.toString(),
+                  isRestaurantItem: true,
+                  pageNumber: 1,
+                  pageSize: 50,
+                ),
+              ),
+            );
+          }
+        },
+        failure: (errorHandeler) => emit(
+          state.copyWith(
+            status: PosStatus.error,
+            errorMessage: errorHandeler.apiErrorModel.errorMessageAr,
+          ),
         ),
       );
-
-      if (firstCategory != null) {
-        add(
-          LoadItemsEvent(
-            GetItemsRequestModel(
-              categories: firstCategory.id?.toString(),
-              isRestaurantItem: true,
-              pageNumber: 1,
-              pageSize: 50,
-            ),
-          ),
-        );
-      }
     } catch (e) {
       emit(
         state.copyWith(
@@ -143,7 +226,13 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       final response = await _getfoodAdditivesUseCase(event.requestModel);
       response.when(
         success: (data) {
-          emit(state.copyWith(status: PosStatus.loaded, additives: data.data));
+          if (data.result == 1) {
+            emit(
+              state.copyWith(status: PosStatus.loaded, additives: data.data),
+            );
+          } else {
+            emit(state.copyWith(status: PosStatus.error, apiResponse: data));
+          }
         },
         failure: (errorHandler) {
           emit(
@@ -170,8 +259,27 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   ) async {
     emit(state.copyWith(status: PosStatus.loading));
     try {
-      final items = await _itemsByCategoryUseCase(event.requestModel);
-      emit(state.copyWith(status: PosStatus.loaded, currentMenuItems: items));
+      final response = await _itemsByCategoryUseCase(event.requestModel);
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: PosStatus.loaded,
+                currentMenuItems: data.data,
+              ),
+            );
+          } else {
+            emit(state.copyWith(status: PosStatus.error, apiResponse: data));
+          }
+        },
+        failure: (errorHandler) => emit(
+          state.copyWith(
+            status: PosStatus.error,
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+          ),
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -346,5 +454,13 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
   void _onSelectTable(SelectTableEvent event, Emitter<PosState> emit) {
     emit(state.copyWith(selectedTable: event.table));
+  }
+
+  void _onSelectDeliveryCompany(
+    SelectDeliveryCompanyEvent event,
+    Emitter<PosState> emit,
+  ) {
+    emit(state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel));
+    log(event.deliveryCompanyModel.arabicName.toString());
   }
 }

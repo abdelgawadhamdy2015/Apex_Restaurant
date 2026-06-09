@@ -1,0 +1,70 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flutter: Attach to Device",
+            "type": "dart",
+            "request": "attach"
+        },
+        {
+            "name": "apex_restaurant",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "apex_restaurant (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "apex_restaurant (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "firebase_crashlytics-5.2.2",
+            "cwd": "build/ios/SourcePackages/firebase_crashlytics-5.2.2",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "firebase_crashlytics-5.2.2 (profile mode)",
+            "cwd": "build/ios/SourcePackages/firebase_crashlytics-5.2.2",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "firebase_crashlytics-5.2.2 (release mode)",
+            "cwd": "build/ios/SourcePackages/firebase_crashlytics-5.2.2",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "firebase_crashlytics-5.2.2",
+            "cwd": "build/macos/SourcePackages/firebase_crashlytics-5.2.2",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "firebase_crashlytics-5.2.2 (profile mode)",
+            "cwd": "build/macos/SourcePackages/firebase_crashlytics-5.2.2",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "firebase_crashlytics-5.2.2 (release mode)",
+            "cwd": "build/macos/SourcePackages/firebase_crashlytics-5.2.2",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

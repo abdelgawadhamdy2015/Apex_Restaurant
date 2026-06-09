@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/helpers/permission_checker.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
+import 'package:apex_restaurant/core/shared/widgets/auth_listener.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
@@ -24,11 +25,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
-  initState() {
+  void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadEmployeeBranches();
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _loadEmployeeBranches(),
+    );
   }
 
   void _loadEmployeeBranches() {
@@ -38,125 +39,108 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F6F9),
-      drawer: SideNav(changeLanguage: widget.changeLanguage),
-
-      body: SafeArea(
-        child: Column(
-          children: [
-            BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-                final branches = state.branches
-                    .whereType<EmployeeBranch>()
-                    .toList();
-                final current = branches.isNotEmpty ? branches.first : null;
-                if (current != null && state.selectedEmployeeBranch == null) {
-                  context.read<HomeBloc>().add(SelectBranchEvent(current));
-                }
-                return PosTopBar();
-              },
-            ),
-            Expanded(
-              child: Row(
-                children: [
-                  // ── Main content
-                  Expanded(child: _MainContent()),
-                ],
+    return BlocErrorListener<HomeBloc, HomeState>(
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        drawer: SideNav(changeLanguage: widget.changeLanguage),
+        body: SafeArea(
+          child: Column(
+            children: [
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  final branches = state.branches
+                      .whereType<EmployeeBranch>()
+                      .toList();
+                  final current = branches.isNotEmpty ? branches.first : null;
+                  if (current != null && state.selectedEmployeeBranch == null) {
+                    context.read<HomeBloc>().add(SelectBranchEvent(current));
+                  }
+                  return const PosTopBar();
+                },
               ),
-            ),
-          ],
+              Expanded(
+                child: Row(children: [Expanded(child: _MainContent())]),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// Main Content
-
 // ignore: must_be_immutable
 class _MainContent extends StatelessWidget {
   _MainContent();
   late S lang;
+
   @override
   Widget build(BuildContext context) {
     lang = S.of(context);
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 40),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppPadding.xxxl,
+            vertical: AppPadding.xxxl,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ── Greeting
               Text(
                 '${lang.welcome}، ${state.userDataModel?.employees?.arabicName}',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1B2A4A),
-                ),
+                style: AppFonts.displayLarge.colored(AppColors.primaryDark),
               ),
-              const SizedBox(height: 8),
-              const Text(
-                'الرجاء اختيار الإجراء المطلوب للمتابعة',
-                style: TextStyle(fontSize: 14, color: Color(0xFF8A94A6)),
-              ),
-              const SizedBox(height: 48),
-              // ── Action cards
+              AppSizes.gapH8,
+              Text(lang.homeSubtitle, style: AppFonts.bodyMedium),
+              AppSizes.gapH32,
               Expanded(
                 child: Row(
                   children: [
-                    // شاشة البيع
                     if (PermissionChecker(
                       RestaurantConstants.permissions,
                     ).hasAnyAccess(AppPermission.itemCardRestaurant))
                       Expanded(
                         child: _ActionCard(
                           icon: Icons.point_of_sale,
-                          iconColor: const Color(0xFF8A94A6),
-                          iconBg: const Color(0xFFDDE3EE),
+                          iconColor: AppColors.textSecondary,
+                          iconBg: AppColors.unSelectedColor,
                           title: lang.salesScreen,
-                          subtitle: 'الوصول إلى لوحة التحكم والطلبات والمبيعات',
+                          subtitle: lang.salesScreenSubtitle,
                           badge: _Badge(
-                            text: 'يرجى تسجيل الحضور أولاً',
-                            color: const Color(0xFF2563EB),
+                            text: lang.pleaseCheckInFirst,
+                            color: AppColors.accent,
                             isLink: true,
+                            icon: Icons.alarm,
                             onTap: () {},
                           ),
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return ShiftStartDialog();
-                              },
-                            );
-                          },
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (_) => ShiftStartDialog(),
+                          ),
                         ),
                       ),
-                    SizedBox(width: AppSpacing.lg),
-                    // تسجيل الحضور
-                    Expanded(
-                      child: _ActionCard(
-                        icon: Icons.person_pin_rounded,
-                        iconColor: Colors.white,
-                        iconBg: const Color(0xFF2563EB),
-                        title: lang.signIn,
-                        subtitle: 'قم بتسجيل حضورك لبدء وردية العمل الجديدة',
-                        badge: _Badge(
-                          text: 'الوردية لم تبدأ بعد',
-                          color: const Color(0xFFF97316),
-                          isLink: false,
-                          icon: Icons.info_outline,
-                        ),
-                        onTap: () {},
-                      ),
-                    ),
+                    //  AppSizes.gapW16,
+                    // Expanded(
+                    //   child: _ActionCard(
+                    //     icon: Icons.person_pin_rounded,
+                    //     iconColor: AppColors.white,
+                    //     iconBg: AppColors.accent,
+                    //     title: lang.signIn,
+                    //     subtitle: lang.signInSubtitle,
+                    //     badge: _Badge(
+                    //       text: lang.shiftNotStarted,
+                    //       color: AppColors.warning,
+                    //       isLink: false,
+                    //       icon: Icons.info_outline,
+                    //     ),
+                    //     onTap: () {},
+                    //   ),
+                    // ),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              // ── Status bar
+              AppSizes.gapH24,
               _StatusBar(),
             ],
           ),
@@ -165,8 +149,6 @@ class _MainContent extends StatelessWidget {
     );
   }
 }
-
-// Action Card
 
 class _ActionCard extends StatelessWidget {
   final IconData icon;
@@ -190,46 +172,40 @@ class _ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(AppRadius.lg),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          padding: EdgeInsets.symmetric(
+            horizontal: AppPadding.xxxl,
+            vertical: AppPadding.xxxl,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon circle
               Container(
-                width: 80,
-                height: 80,
+                width: AppSizes.w80,
+                height: AppSizes.h80,
                 decoration: BoxDecoration(
                   color: iconBg,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: 38, color: iconColor),
+                child: Icon(icon, size: AppSizes.iconXl, color: iconColor),
               ),
-              const SizedBox(height: 24),
+              AppSizes.gapH24,
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1B2A4A),
-                ),
+                style: AppFonts.titleLarge.colored(AppColors.primaryDark),
               ),
-              const SizedBox(height: 10),
+              AppSizes.gapH8,
               badge,
-              const SizedBox(height: 12),
+              AppSizes.gapH12,
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF8A94A6),
-                  height: 1.6,
-                ),
+                style: AppFonts.bodySmall.copyWith(height: 1.6),
               ),
             ],
           ),
@@ -239,7 +215,6 @@ class _ActionCard extends StatelessWidget {
   }
 }
 
-// Badge widget (link style or pill style)
 class _Badge extends StatelessWidget {
   final String text;
   final Color color;
@@ -262,70 +237,66 @@ class _Badge extends StatelessWidget {
         onTap: onTap,
         child: Text(
           text,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: color,
-            decoration: TextDecoration.underline,
-            decorationColor: color,
-          ),
+          style: AppFonts.bodySmall
+              .colored(color)
+              .semiBold()
+              .copyWith(
+                decoration: TextDecoration.underline,
+                decorationColor: color,
+              ),
         ),
       );
     }
-    // Pill badge
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppPadding.md,
+        vertical: AppPadding.xs,
+      ),
       decoration: BoxDecoration(
         color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.25), width: 1),
+        borderRadius: BorderRadius.circular(AppRadius.full),
+        border: Border.all(color: color.withOpacity(0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 14, color: color),
-            const SizedBox(width: 5),
+            Icon(icon, size: AppSizes.iconSm, color: color),
+            AppSizes.gapW4,
           ],
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
+          Text(text, style: AppFonts.bodySmall.colored(color).semiBold()),
         ],
       ),
     );
   }
 }
 
-// Status Bar (bottom)
 class _StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final lang = S.of(context);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppPadding.xxl,
+        vertical: AppPadding.lg,
+      ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         children: [
-          // الحالة الحالية
-          const Icon(Icons.circle, size: 10, color: Color(0xFFE53935)),
-          const SizedBox(width: 8),
-          const Text(
-            'الحالة الحالية: خارج الوردية',
-            style: TextStyle(fontSize: 13, color: Color(0xFF2D3748)),
+          Icon(Icons.circle, size: AppSizes.iconSm, color: AppColors.error),
+          AppSizes.gapW8,
+          Text(
+            lang.currentStatusOffShift,
+            style: AppFonts.bodySmall.colored(AppColors.textPrimary),
           ),
           const Spacer(),
-          // آخر تسجيل خروج
-          _StatusItem(label: 'آخر تسجيل خروج', value: 'أمس، 11:30 م'),
-          const SizedBox(width: 32),
-          // توقيت النظام
-          _StatusItem(label: 'توقيت النظام', value: '09:15 ص'),
+          _StatusItem(label: lang.lastCheckOut, value: lang.lastCheckOutValue),
+          AppSizes.gapW24,
+          _StatusItem(label: lang.systemTime, value: '09:15 ص'),
         ],
       ),
     );
@@ -335,7 +306,6 @@ class _StatusBar extends StatelessWidget {
 class _StatusItem extends StatelessWidget {
   final String label;
   final String value;
-
   const _StatusItem({required this.label, required this.value});
 
   @override
@@ -343,18 +313,11 @@ class _StatusItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, color: Color(0xFF8A94A6)),
-        ),
-        const SizedBox(height: 2),
+        Text(label, style: AppFonts.bodySmall.colored(AppColors.textMuted)),
+        AppSizes.gapH4,
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF2D3748),
-          ),
+          style: AppFonts.bodySmall.colored(AppColors.textPrimary).semiBold(),
         ),
       ],
     );

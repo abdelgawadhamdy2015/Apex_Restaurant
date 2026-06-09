@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -29,13 +30,11 @@ class _OnBoardingPageState extends State<OnBoardingPage>
       SystemUiMode.manual,
       overlays: SystemUiOverlay.values,
     );
-    //super.initState();
     // Add a delay before navigating to the main screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(seconds: 2));
       context.pushReplacement(Routes.loginScreen);
     });
-    //get_data();
     super.initState();
   }
 
@@ -44,7 +43,7 @@ class _OnBoardingPageState extends State<OnBoardingPage>
     SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xffffffff),
+        backgroundColor: AppColors.white,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

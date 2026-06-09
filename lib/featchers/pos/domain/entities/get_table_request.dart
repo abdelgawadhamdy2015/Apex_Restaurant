@@ -1,16 +1,16 @@
-class GetTablesRequestModel {
-  final int? pageNumber;
-  final int? pageSize;
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+
+class GetTablesRequestModel extends BaseRequest {
   final String? id;
-  final String? name;
+
   final String? floorID;
   final bool? forPOS;
 
   const GetTablesRequestModel({
-    this.pageNumber,
-    this.pageSize,
+    super.pageNumber,
+    super.pageSize,
     this.id,
-    this.name,
+    super.name,
     this.floorID,
     this.forPOS,
   });

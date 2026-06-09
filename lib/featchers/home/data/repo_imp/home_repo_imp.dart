@@ -12,13 +12,18 @@ class HomeRepoImpl implements HomeRepository {
   HomeRepoImpl(this._remoteDataSource);
 
   @override
-  Future<List<EmployeeBranch>> getEmployeeBranches() async {
-    final branches = await _remoteDataSource.getEmployeeBranches();
-    return branches;
+  Future<ApiResult<BaseResponse<List<EmployeeBranch>?>>>
+  getEmployeeBranches() async {
+    try {
+      final response = await _remoteDataSource.getEmployeeBranches();
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
   }
 
   @override
-  Future<ApiResult<BaseResponse<UserDataModel>>> getUserData({
+  Future<ApiResult<BaseResponse<UserDataModel?>>> getUserData({
     required int id,
   }) async {
     try {

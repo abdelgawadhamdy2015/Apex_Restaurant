@@ -1,10 +1,7 @@
-// Side Navigation
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
-import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
@@ -13,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show Intl;
 
-// ignore: must_be_immutable
 class SideNav extends StatefulWidget {
   const SideNav({super.key, required this.changeLanguage});
   final Function(Locale) changeLanguage;
@@ -25,62 +21,57 @@ class SideNav extends StatefulWidget {
 class _SideNavState extends State<SideNav> {
   late String selectedLanguage;
   late S lang;
+
   @override
   Widget build(BuildContext context) {
     lang = S.of(context);
     selectedLanguage = Intl.defaultLocale == RestaurantConstants.arabic
         ? lang.arabic
         : lang.english;
+
     return Material(
       child: Container(
-        width: SizeConfig.screenWidth! * 0.4,
+        width: AppSizes.wFraction(0.4),
         color: AppColors.background,
         child: Column(
           children: [
-            SizedBox(height: AppSpacing.xxxl),
-            // ── User profile
+            AppSizes.gapH32,
+
+            // User profile
             Column(
               children: [
                 CircleAvatar(
                   radius: AppRadius.full,
-                  //  backgroundColor:,
                   child: ClipOval(
                     child: Container(
-                      width: SizeConfig.screenWidth! * .1,
-                      height: SizeConfig.screenWidth! * .1,
+                      width: AppSizes.wFraction(0.1),
+                      height: AppSizes.wFraction(0.1),
                       color: AppColors.textMuted,
                       child: Icon(
                         Icons.person,
-                        size: AppTheme.theme.iconTheme.size,
+                        size: AppSizes.iconLg,
                         color: AppColors.priceBadgeText,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(height: AppSpacing.lg),
+                AppSizes.gapH16,
                 BlocBuilder<HomeBloc, HomeState>(
                   builder: (context, state) {
                     return Column(
                       children: [
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            state.userDataModel?.employees?.arabicName ?? "",
-                            style: TextStyles.darkBlueRegulerStyle(
-                              fontSize:
-                                  AppTheme.theme.textTheme.bodySmall!.fontSize!,
-                            ),
+                        Text(
+                          state.userDataModel?.employees?.arabicName ?? "",
+                          style: AppFonts.titleLarge.colored(
+                            AppColors.primaryDark,
                           ),
                         ),
-                        SizedBox(height: AppSpacing.sm),
+                        AppSizes.gapH8,
                         Text(
-                          (state.userDataModel?.isActive == true)
+                          state.userDataModel?.isActive == true
                               ? lang.active
                               : lang.notActive,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.accent,
-                          ),
+                          style: AppFonts.titleSmall.colored(AppColors.accent),
                         ),
                       ],
                     );
@@ -88,8 +79,8 @@ class _SideNavState extends State<SideNav> {
                 ),
               ],
             ),
-            SizedBox(height: AppSpacing.xxl),
-            // ── Nav items
+            AppSizes.gapH24,
+
             _NavItem(
               icon: Icons.home_sharp,
               label: lang.home,
@@ -118,35 +109,34 @@ class _SideNavState extends State<SideNav> {
             _NavItem(
               icon: Icons.language_outlined,
               label: selectedLanguage,
-              onTap: () {
-                _showLanguageDialog(context);
-              },
+              onTap: () => _showLanguageDialog(context),
             ),
+
             const Spacer(),
-            // ── Logout
+
             Padding(
-              padding: const EdgeInsets.only(bottom: 28, right: 20, left: 20),
+              padding: EdgeInsets.only(
+                bottom: AppPadding.xxl,
+                right: AppPadding.xl,
+                left: AppPadding.xl,
+              ),
               child: GestureDetector(
-                onTap: () {
-                  setupLogOutDialogState(context, lang.logout, [
-                    lang.okDialog,
-                    lang.cancel,
-                  ]);
-                },
+                onTap: () => showLogOutDialogState(context, lang.logout, [
+                  lang.okDialog,
+                  lang.cancel,
+                ]),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       lang.logout,
-                      style: TextStyles.lightRedRegulerStyle(
-                        fontSize: AppTheme.theme.textTheme.bodySmall!.fontSize!,
-                      ),
+                      style: AppFonts.titleMedium.colored(AppColors.error),
                     ),
-                    SizedBox(width: 8),
+                    AppSizes.gapW8,
                     Icon(
                       Icons.logout,
-                      color: Color(0xFFE53935),
-                      size: AppTheme.theme.iconTheme.size,
+                      color: AppColors.error,
+                      size: AppSizes.iconLg,
                     ),
                   ],
                 ),
@@ -209,23 +199,23 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
   }
 
   void _apply() {
-    setState(() {});
     widget.changeLanguage(_selected);
     Navigator.of(context).pop();
     _showToast(context);
   }
 
   void _showToast(BuildContext context) {
-    final isArabic = _selected.languageCode == 'ar';
-    final msg = isArabic
+    final msg = _selected.languageCode == 'ar'
         ? 'تم تغيير اللغة إلى العربية ✓'
         : 'Language changed to English ✓';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg, textAlign: TextAlign.center),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: const Color(0xFF1A1A1A),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.md),
+        ),
+        backgroundColor: AppColors.textPrimary,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -233,50 +223,41 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
 
   @override
   Widget build(BuildContext context) {
-    S strings = S.of(context);
-
+    final strings = S.of(context);
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+        ),
+        backgroundColor: AppColors.white,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: AppPadding.allXl,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header
               Row(
                 children: [
-                  Text(
-                    strings.language,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF1A1A1A),
-                    ),
-                  ),
+                  Text(strings.language, style: AppFonts.titleMedium),
                   const Spacer(),
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: AppPadding.allXs,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF0F0F0),
-                        borderRadius: BorderRadius.circular(6),
+                        color: AppColors.unSelectedColor,
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close_rounded,
-                        size: 18,
-                        color: Color(0xFF666666),
+                        size: AppSizes.iconMd,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-
-              // Language options
+              AppSizes.gapH16,
               ..._languages.map(
                 (lang) => _LanguageTile(
                   option: lang,
@@ -285,41 +266,41 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
                   onTap: () => setState(() => _selected = lang.locale),
                 ),
               ),
-
-              const SizedBox(height: 4),
-              const Divider(height: 24, color: Color(0xFFEEEEEE)),
-
-              // Buttons
+              AppSizes.gapH4,
+              const Divider(height: 24, color: AppColors.divider),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF666666),
-                        side: const BorderSide(color: Color(0xFFDDDDDD)),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        foregroundColor: AppColors.textSecondary,
+                        side: const BorderSide(color: AppColors.border),
+                        padding: EdgeInsets.symmetric(vertical: AppPadding.md),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
                       ),
-                      child: Text(strings.cancel),
+                      child: Text(strings.cancel, style: AppFonts.titleLarge),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  AppSizes.gapW8,
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _apply,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF378ADD),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: AppColors.accent,
+                        foregroundColor: AppColors.white,
+                        padding: EdgeInsets.symmetric(vertical: AppPadding.md),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(AppRadius.md),
                         ),
                         elevation: 0,
                       ),
-                      child: Text(strings.apply),
+                      child: Text(
+                        strings.apply,
+                        style: AppFonts.titleLarge.colored(AppColors.white),
+                      ),
                     ),
                   ),
                 ],
@@ -331,8 +312,6 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
     );
   }
 }
-
-// ─── Language tile ────────────────────────────────────────────────────────────
 
 class _LanguageTile extends StatelessWidget {
   final _LanguageOption option;
@@ -351,24 +330,24 @@ class _LanguageTile extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        margin: EdgeInsets.only(bottom: AppPadding.sm),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.md,
+          vertical: AppPadding.md,
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFE6F1FB) : Colors.white,
+          color: isSelected ? AppColors.sidebarActive : AppColors.white,
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF378ADD)
-                : const Color(0xFFE0E0E0),
+            color: isSelected ? AppColors.accent : AppColors.border,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         child: Row(
           children: [
-            // Flag circle
             Container(
-              width: 40,
-              height: 40,
+              width: AppSizes.w40,
+              height: AppSizes.h40,
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.selectedColor
@@ -376,55 +355,46 @@ class _LanguageTile extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: Text(
-                  option.flag,
-                  style: TextStyle(fontSize: SizeConfig.fontSize3),
-                ),
+                child: Text(option.flag, style: AppFonts.titleLarge),
               ),
             ),
-            const SizedBox(width: 12),
-            // Text
+            AppSizes.gapW12,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     option.name,
-                    style: TextStyle(
-                      fontSize: SizeConfig.fontSize5,
+                    style: AppFonts.titleLarge.copyWith(
                       fontWeight: FontWeight.w500,
                       color: isSelected
                           ? AppColors.primary
                           : AppColors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: AppSpacing.md),
+                  AppSizes.gapH4,
                   Text(
                     option.nativeName,
-                    style: TextStyle(
-                      fontSize: SizeConfig.fontSize4,
-                      color: isSelected
-                          ? AppColors.primary
-                          : AppColors.textSecondary,
+                    style: AppFonts.titleSmall.colored(
+                      isSelected ? AppColors.primary : AppColors.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
-            // Checkmark
             AnimatedOpacity(
               opacity: isSelected ? 1.0 : 0.0,
               duration: const Duration(milliseconds: 180),
               child: Container(
-                width: SizeConfig.screenWidth! * .05,
-                height: SizeConfig.screenHeight! * .05,
+                width: AppSizes.w24,
+                height: AppSizes.h24,
                 decoration: const BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.check_rounded,
-                  size: SizeConfig.iconSize1! * .5,
+                  size: AppSizes.iconSm,
                   color: AppColors.background,
                 ),
               ),
@@ -435,8 +405,6 @@ class _LanguageTile extends StatelessWidget {
     );
   }
 }
-
-// ─── Data model ───────────────────────────────────────────────────────────────
 
 class _LanguageOption {
   final Locale locale;
@@ -456,6 +424,7 @@ class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+
   const _NavItem({
     required this.icon,
     required this.label,
@@ -465,31 +434,31 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: SizeConfig.screenWidth,
+      width: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppPadding.lg,
+          vertical: AppPadding.xs,
+        ),
         child: ListTile(
           leading: Icon(
             icon,
             color: AppColors.textSecondary,
-            size: SizeConfig.iconSize1,
+            size: AppSizes.iconMd,
           ),
           title: Text(
             label,
-            style: TextStyles.blackMediumStyle(
-              fontSize: AppTheme.theme.textTheme.bodySmall!.fontSize!,
-            ),
+            style: AppFonts.titleLarge
+                .colored(AppColors.textPrimary)
+                .semiBold(),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.lg),
           ),
           onTap: onTap,
           hoverColor: AppColors.background,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 0,
-          ),
-          minLeadingWidth: 20,
+          contentPadding: EdgeInsets.symmetric(horizontal: AppPadding.md),
+          minLeadingWidth: AppSizes.w20,
         ),
       ),
     );

@@ -1,39 +1,37 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 
 abstract class PosRemoteDataSource {
-  Future<List<FloorModel>> getFloors({
-    int? pageNumber,
-    int? pageSize,
-    String? id,
-    String? name,
-    int? branchId,
+  Future<BaseResponse<List<FloorModel>?>> getFloors({
+    required GetFloorsRequestModel request,
   });
-  Future<List<TableModel>> getTables({
-    int? pageNumber,
-    int? pageSize,
-    String? id,
-    String? name,
-    String? floorID,
-    bool? forPOS,
+  Future<BaseResponse<List<TableModel>?>> getTables({
+    required GetTablesRequestModel request,
   });
 
-  Future<BaseResponse<List<FoodAdditiveModel>>> getFoodAdditives({
+  Future<BaseResponse<List<FoodAdditiveModel>?>> getFoodAdditives({
     GetFoodAdditiveRequest? request,
   });
-  Future<List<CategoryModel>> getMenuCategories();
-  Future<List<MenuItemModel>> getMenuItemsByCategory({
+  Future<BaseResponse<List<CategoryModel>?>> getMenuCategories();
+  Future<BaseResponse<List<MenuItemModel>?>> getMenuItemsByCategory({
     GetItemsRequestModel? request,
   });
   Future<void> submitOrder(Map<String, dynamic> orderData);
   Future<void> sendToKitchen(Map<String, dynamic> orderData);
+  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
+    BaseRequest? request,
+  });
 }
 
 class PosRemoteDataSourceImpl implements PosRemoteDataSource {
@@ -42,14 +40,14 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   PosRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<List<CategoryModel>> getMenuCategories() async {
+  Future<BaseResponse<List<CategoryModel>?>> getMenuCategories() async {
     return _apiService.getAllCategories().then((response) {
-      return response.data ?? [];
+      return response;
     });
   }
 
   @override
-  Future<List<MenuItemModel>> getMenuItemsByCategory({
+  Future<BaseResponse<List<MenuItemModel>?>> getMenuItemsByCategory({
     GetItemsRequestModel? request,
   }) async {
     return await _apiService
@@ -63,7 +61,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
           isRestaurantIngrediant: request?.isRestaurantIngrediant,
         )
         .then((response) {
-          return response.data ?? [];
+          return response;
         });
   }
 
@@ -80,47 +78,34 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   }
 
   @override
-  Future<List<FloorModel>> getFloors({
-    int? pageNumber,
-    int? pageSize,
-    String? id,
-    String? name,
-    int? branchId,
-  }) {
-    return _apiService
-        .getAllFloors(
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-          id: id,
-          name: name,
-          branchId: branchId,
-        )
-        .then((response) => response.data ?? []);
+  Future<BaseResponse<List<FloorModel>?>> getFloors({
+    required GetFloorsRequestModel request,
+  }) async {
+    return await _apiService.getAllFloors(
+      pageNumber: request.pageNumber,
+      pageSize: request.pageSize,
+      id: request.id,
+      name: request.name,
+      branchId: request.branchId,
+    );
   }
 
   @override
-  Future<List<TableModel>> getTables({
-    int? pageNumber,
-    int? pageSize,
-    String? id,
-    String? name,
-    String? floorID,
-    bool? forPOS,
-  }) {
-    return _apiService
-        .getAllFoodTables(
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-          id: id,
-          name: name,
-          floorID: floorID,
-          forPOS: forPOS,
-        )
-        .then((response) => response.data ?? []);
+  Future<BaseResponse<List<TableModel>?>> getTables({
+    required GetTablesRequestModel request,
+  }) async {
+    return await _apiService.getAllFoodTables(
+      pageNumber: request.pageNumber,
+      pageSize: request.pageSize,
+      id: request.id,
+      name: request.name,
+      floorID: request.floorID,
+      forPOS: request.forPOS,
+    );
   }
 
   @override
-  Future<BaseResponse<List<FoodAdditiveModel>>> getFoodAdditives({
+  Future<BaseResponse<List<FoodAdditiveModel>?>> getFoodAdditives({
     GetFoodAdditiveRequest? request,
   }) {
     final respons = _apiService.getAllFoodAdditives(
@@ -131,5 +116,16 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
       name: request?.name,
     );
     return respons;
+  }
+
+  @override
+  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
+    BaseRequest? request,
+  }) async {
+    return await _apiService.getAllDeliveryCompany(
+      name: request?.name,
+      pageNumber: request?.pageNumber,
+      pageSize: request?.pageSize,
+    );
   }
 }

@@ -80,7 +80,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
 
   void _handlePop(bool didPop, dynamic result) {
     if (didPop) {
-      HelperMethods.exitApp(context);
+      HelperMethods.exitApp();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

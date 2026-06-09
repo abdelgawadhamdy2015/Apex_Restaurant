@@ -1,14 +1,20 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
 
@@ -18,19 +24,28 @@ class PosRepositoryImpl implements PosRepository {
   PosRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<List<CategoryModel>> getMenuCategories() async {
-    final categories = await _remoteDataSource.getMenuCategories();
-    return categories;
+  Future<ApiResult<BaseResponse<List<CategoryModel>?>>>
+  getMenuCategories() async {
+    try {
+      final response = await _remoteDataSource.getMenuCategories();
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
   }
 
   @override
-  Future<List<MenuItemModel>> getMenuItemsByCategory(
+  Future<ApiResult<BaseResponse<List<MenuItemModel>?>>> getMenuItemsByCategory(
     GetItemsRequestModel? request,
   ) async {
-    final items = await _remoteDataSource.getMenuItemsByCategory(
-      request: request,
-    );
-    return items;
+    try {
+      final response = await _remoteDataSource.getMenuItemsByCategory(
+        request: request,
+      );
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
   }
 
   @override
@@ -63,47 +78,49 @@ class PosRepositoryImpl implements PosRepository {
   };
 
   @override
-  Future<List<FloorModel>> getFloors({
-    int? pageNumber,
-    int? pageSize,
-    String? id,
-    String? name,
-    int? branchId,
-  }) {
-    return _remoteDataSource.getFloors(
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      id: id,
-      name: name,
-      branchId: branchId,
-    );
+  Future<ApiResult<BaseResponse<List<FloorModel>?>>> getFloors({
+    required GetFloorsRequestModel request,
+  }) async {
+    try {
+      final response = await _remoteDataSource.getFloors(request: request);
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
   }
 
   @override
-  Future<List<TableModel>> getTables({
-    int? pageNumber,
-    int? pageSize,
-    String? id,
-    String? name,
-    String? floorID,
-    bool? forPOS,
-  }) {
-    return _remoteDataSource.getTables(
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-      id: id,
-      name: name,
-      floorID: floorID,
-      forPOS: forPOS,
-    );
+  Future<ApiResult<BaseResponse<List<TableModel>?>>> getTables({
+    required GetTablesRequestModel request,
+  }) async {
+    try {
+      final response = await _remoteDataSource.getTables(request: request);
+      return ApiResult.success(response);
+    } catch (e) {
+      log(e.toString());
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
   }
 
   @override
-  Future<ApiResult<BaseResponse<List<FoodAdditiveModel>>>> getFoodAdditives(
+  Future<ApiResult<BaseResponse<List<FoodAdditiveModel>?>>> getFoodAdditives(
     GetFoodAdditiveRequest? request,
   ) async {
     try {
       final response = await _remoteDataSource.getFoodAdditives(
+        request: request,
+      );
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>>
+  getAllDeliveryCompany({BaseRequest? request}) async {
+    try {
+      final response = await _remoteDataSource.getAllDeliveryCompany(
         request: request,
       );
       return ApiResult.success(response);

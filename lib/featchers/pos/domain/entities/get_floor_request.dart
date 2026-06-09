@@ -1,15 +1,14 @@
-class GetFloorsRequestModel {
-  final int? pageNumber;
-  final int? pageSize;
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+
+class GetFloorsRequestModel extends BaseRequest {
   final String? id;
-  final String? name;
   final int? branchId;
 
   const GetFloorsRequestModel({
-    this.pageNumber,
-    this.pageSize,
+    super.pageNumber,
+    super.pageSize,
     this.id,
-    this.name,
+    super.name,
     this.branchId,
   });
 }

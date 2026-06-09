@@ -5,5 +5,5 @@ import 'package:apex_restaurant/featchers/login/data/models/login_request_body.d
 
 abstract class AuthRepo {
   AuthRepo();
-  Future<ApiResult<BaseResponse<LoginData>>> login(LoginRequest request);
+  Future<ApiResult<BaseResponse<LoginData?>>> login(LoginRequest request);
 }
