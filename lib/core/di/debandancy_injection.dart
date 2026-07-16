@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
+import 'package:apex_restaurant/core/settings/settings_cubit.dart';
 import 'package:apex_restaurant/featchers/home/data/datasource/menu_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/home/data/repo_imp/home_repo_imp.dart';
 import 'package:apex_restaurant/featchers/home/domain/repo/home_repo.dart';
@@ -16,9 +17,9 @@ import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository
 import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final getIt = GetIt.instance;
-
 Future<void> setupGetIt() async {
   /// ─────────────────────────────────────────────────────────
   /// Core
@@ -27,6 +28,13 @@ Future<void> setupGetIt() async {
   final dio = DioFactory.getDio();
 
   getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
+
+  // settings
+  final prefs = await SharedPreferences.getInstance();
+  getIt.registerLazySingleton<SharedPreferences>(() => prefs);
+  getIt.registerLazySingleton<SettingsCubit>(
+    () => SettingsCubit(getIt<SharedPreferences>()),
+  );
 
   /// ─────────────────────────────────────────────────────────
   /// Data Sources

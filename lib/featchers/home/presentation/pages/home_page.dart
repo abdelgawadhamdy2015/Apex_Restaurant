@@ -2,7 +2,6 @@ import 'package:apex_restaurant/core/helpers/permission_checker.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/auth_listener.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
@@ -10,7 +9,7 @@ import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/shift_start_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_bar.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/home_tap_bar.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocErrorListener<HomeBloc, HomeState>(
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         drawer: SideNav(changeLanguage: widget.changeLanguage),
         body: SafeArea(
           child: Column(
@@ -55,7 +54,7 @@ class _HomePageState extends State<HomePage> {
                   if (current != null && state.selectedEmployeeBranch == null) {
                     context.read<HomeBloc>().add(SelectBranchEvent(current));
                   }
-                  return const PosTopBar();
+                  return HomeTopBar(managerName: "");
                 },
               ),
               Expanded(
@@ -77,23 +76,24 @@ class _MainContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     lang = S.of(context);
+    final theme = Theme.of(context);
+
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         return Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppPadding.xxxl,
-            vertical: AppPadding.xxxl,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 '${lang.welcome}، ${state.userDataModel?.employees?.arabicName}',
-                style: AppFonts.displayLarge.colored(AppColors.primaryDark),
+                style: theme.textTheme.displayLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
               ),
-              AppSizes.gapH8,
-              Text(lang.homeSubtitle, style: AppFonts.bodyMedium),
-              AppSizes.gapH32,
+              const SizedBox(height: 8),
+              Text(lang.homeSubtitle, style: theme.textTheme.bodyMedium),
+              const SizedBox(height: 32),
               Expanded(
                 child: Row(
                   children: [
@@ -103,13 +103,13 @@ class _MainContent extends StatelessWidget {
                       Expanded(
                         child: _ActionCard(
                           icon: Icons.point_of_sale,
-                          iconColor: AppColors.textSecondary,
-                          iconBg: AppColors.unSelectedColor,
+                          iconColor: theme.colorScheme.onSurfaceVariant,
+                          iconBg: theme.colorScheme.surfaceContainerHighest,
                           title: lang.salesScreen,
                           subtitle: lang.salesScreenSubtitle,
                           badge: _Badge(
                             text: lang.pleaseCheckInFirst,
-                            color: AppColors.accent,
+                            color: theme.colorScheme.secondary,
                             isLink: true,
                             icon: Icons.alarm,
                             onTap: () {},
@@ -120,27 +120,10 @@ class _MainContent extends StatelessWidget {
                           ),
                         ),
                       ),
-                    //  AppSizes.gapW16,
-                    // Expanded(
-                    //   child: _ActionCard(
-                    //     icon: Icons.person_pin_rounded,
-                    //     iconColor: AppColors.white,
-                    //     iconBg: AppColors.accent,
-                    //     title: lang.signIn,
-                    //     subtitle: lang.signInSubtitle,
-                    //     badge: _Badge(
-                    //       text: lang.shiftNotStarted,
-                    //       color: AppColors.warning,
-                    //       isLink: false,
-                    //       icon: Icons.info_outline,
-                    //     ),
-                    //     onTap: () {},
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
-              AppSizes.gapH24,
+              const SizedBox(height: 24),
               _StatusBar(),
             ],
           ),
@@ -171,41 +154,42 @@ class _ActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Material(
-      color: AppColors.white,
-      borderRadius: BorderRadius.circular(AppRadius.lg),
+      color: theme.colorScheme.surface,
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
+        borderRadius: BorderRadius.circular(16),
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: AppPadding.xxxl,
-            vertical: AppPadding.xxxl,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: AppSizes.w80,
-                height: AppSizes.h80,
+                width: 80,
+                height: 80,
                 decoration: BoxDecoration(
                   color: iconBg,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, size: AppSizes.iconXl, color: iconColor),
+                child: Icon(icon, size: 32, color: iconColor),
               ),
-              AppSizes.gapH24,
+              const SizedBox(height: 24),
               Text(
                 title,
-                style: AppFonts.titleLarge.colored(AppColors.primaryDark),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                ),
               ),
-              AppSizes.gapH8,
+              const SizedBox(height: 8),
               badge,
-              AppSizes.gapH12,
+              const SizedBox(height: 12),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: AppFonts.bodySmall.copyWith(height: 1.6),
+                style: theme.textTheme.bodySmall?.copyWith(height: 1.6),
               ),
             ],
           ),
@@ -232,40 +216,44 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (isLink) {
       return GestureDetector(
         onTap: onTap,
         child: Text(
           text,
-          style: AppFonts.bodySmall
-              .colored(color)
-              .semiBold()
-              .copyWith(
-                decoration: TextDecoration.underline,
-                decorationColor: color,
-              ),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w600,
+            decoration: TextDecoration.underline,
+            decorationColor: color,
+          ),
         ),
       );
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppPadding.md,
-        vertical: AppPadding.xs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(AppRadius.full),
-        border: Border.all(color: color.withOpacity(0.25)),
+        color: color.withValues(alpha: .1),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: .25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: AppSizes.iconSm, color: color),
-            AppSizes.gapW4,
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 4),
           ],
-          Text(text, style: AppFonts.bodySmall.colored(color).semiBold()),
+          Text(
+            text,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );
@@ -276,26 +264,27 @@ class _StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = S.of(context);
+    final theme = Theme.of(context);
+
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppPadding.xxl,
-        vertical: AppPadding.lg,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          Icon(Icons.circle, size: AppSizes.iconSm, color: AppColors.error),
-          AppSizes.gapW8,
+          Icon(Icons.circle, size: 16, color: theme.colorScheme.error),
+          const SizedBox(width: 8),
           Text(
             lang.currentStatusOffShift,
-            style: AppFonts.bodySmall.colored(AppColors.textPrimary),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
           ),
           const Spacer(),
           _StatusItem(label: lang.lastCheckOut, value: lang.lastCheckOutValue),
-          AppSizes.gapW24,
+          const SizedBox(width: 24),
           _StatusItem(label: lang.systemTime, value: '09:15 ص'),
         ],
       ),
@@ -310,14 +299,24 @@ class _StatusItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(label, style: AppFonts.bodySmall.colored(AppColors.textMuted)),
-        AppSizes.gapH4,
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 4),
         Text(
           value,
-          style: AppFonts.bodySmall.colored(AppColors.textPrimary).semiBold(),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurface,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );

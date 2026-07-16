@@ -190,8 +190,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             add(
               LoadItemsEvent(
                 GetItemsRequestModel(
-                  categories: firstCategory.id?.toString(),
-                  isRestaurantItem: true,
+                  categoryId: firstCategory.id,
                   pageNumber: 1,
                   pageSize: 50,
                 ),
@@ -296,10 +295,9 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     add(
       LoadItemsEvent(
         GetItemsRequestModel(
-          categories: event.category.id?.toString(),
+          categoryId: event.category.id,
           pageNumber: 1,
           pageSize: 50,
-          isRestaurantItem: true,
         ),
       ),
     );
@@ -310,7 +308,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     Emitter<PosState> emit,
   ) {
     final updatedItems = state.currentOrder.items.map((item) {
-      if (item.menuItem.id == event.item.menuItem.id) {
+      if (item.menuItem.itemId == event.item.menuItem.itemId) {
         return item.copyWith(addons: event.addons);
       }
       return item;
@@ -326,7 +324,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   void _onAddItem(AddItemToOrderEvent event, Emitter<PosState> emit) {
     final existingItems = List<OrderItem>.from(state.currentOrder.items);
     final existingIndex = existingItems.indexWhere(
-      (i) => i.menuItem.id == event.item.id,
+      (i) => i.menuItem.itemId == event.item.itemId,
     );
 
     if (existingIndex >= 0) {
@@ -340,14 +338,14 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     emit(
       state.copyWith(
         currentOrder: state.currentOrder.copyWith(items: existingItems),
-        toastMessage: 'تمت إضافة "${event.item.arabicName}" إلى الطلب',
+        toastMessage: 'تمت إضافة "${event.item.itemNameAr}" إلى الطلب',
       ),
     );
   }
 
   void _onRemoveItem(RemoveItemFromOrderEvent event, Emitter<PosState> emit) {
     final items = state.currentOrder.items
-        .where((i) => i.menuItem.id != event.itemId)
+        .where((i) => i.menuItem.itemId != int.parse(event.itemId))
         .toList();
     emit(
       state.copyWith(currentOrder: state.currentOrder.copyWith(items: items)),
@@ -356,7 +354,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
   void _onIncrementItem(IncrementItemEvent event, Emitter<PosState> emit) {
     final items = state.currentOrder.items.map((item) {
-      if (item.menuItem.id == event.itemId) {
+      if (item.menuItem.itemId == event.itemId) {
         return item.copyWith(quantity: item.quantity + 1);
       }
       return item;
@@ -369,7 +367,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   void _onDecrementItem(DecrementItemEvent event, Emitter<PosState> emit) {
     final items = state.currentOrder.items
         .map((item) {
-          if (item.menuItem.id == event.itemId) {
+          if (item.menuItem.itemId == event.itemId) {
             if (item.quantity <= 1) return null;
             return item.copyWith(quantity: item.quantity - 1);
           }

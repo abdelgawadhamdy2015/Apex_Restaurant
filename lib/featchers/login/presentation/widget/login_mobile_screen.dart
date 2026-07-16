@@ -10,9 +10,6 @@ import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
 import 'package:apex_restaurant/core/shared/widgets/grediant_container.dart';
 import 'package:apex_restaurant/core/shared/widgets/my_progress_indicator.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
-import 'package:apex_restaurant/core/theme/font_weight_helper.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_event.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_state.dart';
@@ -70,7 +67,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [_buildHeader(), _buildLoginForm()],
+              children: [_buildHeader(context), _buildLoginForm(context)],
             ),
           ),
         ),
@@ -96,42 +93,45 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     }
   }
 
-  Widget _buildHeader() {
-    final double dpr = MediaQuery.of(context).devicePixelRatio;
-    final double logoW = AppSizes.wFraction(0.48);
-    final double logoH = AppSizes.hFraction(0.08);
+  Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
+    final double dpr = mediaQuery.devicePixelRatio;
+    final double logoW = mediaQuery.size.width * 0.48;
+    final double logoH = mediaQuery.size.height * 0.08;
 
     return SizedBox(
-      height: AppSizes.hFraction(0.2),
+      height: mediaQuery.size.height * 0.2,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
             child: Padding(
-              padding: AppPadding.allLg,
-              child: Assets.images.apexTime.image(
+              padding: const EdgeInsets.all(16),
+              child: Assets.images.logo.image(
                 width: logoW,
-                color: AppColors.white,
+                color: theme.colorScheme.onPrimary,
                 cacheWidth: (logoW * dpr).round(),
                 cacheHeight: (logoH * dpr).round(),
               ),
             ),
           ),
-          AppSizes.gapW24,
-          _buildLanguageDropdown(),
+          const SizedBox(width: 24),
+          _buildLanguageDropdown(context),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageDropdown() {
+  Widget _buildLanguageDropdown(BuildContext context) {
+    final theme = Theme.of(context);
+
     return DropdownButton<String>(
       value: selectedLanguage,
-      icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+      icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onPrimary),
       dropdownColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(AppRadius.xl),
-      style: AppFonts.displayMedium.colored(AppColors.primaryDark).bold(),
+      borderRadius: BorderRadius.circular(12),
       underline: const SizedBox(),
       onChanged: (String? newValue) {
         if (newValue != null) {
@@ -150,16 +150,21 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           value: value,
           child: Text(
             value,
-            style: AppFonts.displayLarge.colored(AppColors.white).bold(),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         );
       }).toList(),
     );
   }
 
-  Widget _buildLoginForm() {
+  Widget _buildLoginForm(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
     return SizedBox(
-      height: AppSizes.hFraction(0.8),
+      height: mediaQuery.size.height * 0.8,
       child: BodyContainer(
         child: SingleChildScrollView(
           child: SafeArea(
@@ -169,28 +174,31 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppSizes.gapH16,
-                  _buildLoginTitle(),
-                  AppSizes.gapH16,
+                  const SizedBox(height: 16),
+                  _buildLoginTitle(context),
+                  const SizedBox(height: 16),
                   _buildTextField(
+                    context,
                     lang.dbName,
                     context.read<AuthBloc>().dbController,
                     lang.insertDBName,
                   ),
                   _buildTextField(
+                    context,
                     lang.email,
                     context.read<AuthBloc>().emailController,
                     lang.insertEmail,
                   ),
                   _buildTextField(
+                    context,
                     lang.insertPassword,
                     context.read<AuthBloc>().passwordController,
                     lang.password,
                     obsecure: true,
                   ),
-                  _buildRememberAndForget(),
-                  AppSizes.gapH8,
-                  _buildLoginButton(),
+                  _buildRememberAndForget(context),
+                  const SizedBox(height: 8),
+                  _buildLoginButton(context),
                   AuthBlocListener(rememberMe: rememberMe),
                 ],
               ),
@@ -201,43 +209,45 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     );
   }
 
-  Widget _buildLoginTitle() {
+  Widget _buildLoginTitle(BuildContext context) {
+    final theme = Theme.of(context);
     return Center(
       child: Text(
         lang.login,
-        style: AppFonts.displayLarge.colored(AppColors.textPrimary).bold(),
+        style: theme.textTheme.headlineSmall?.copyWith(
+          color: theme.colorScheme.onSurface,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
+  /// Now relies entirely on the app's InputDecorationTheme + textTheme
+  /// (defined in AppTheme) instead of passing custom fill colors, hint
+  /// styles or input styles per field.
   Widget _buildTextField(
+    BuildContext context,
     String label,
     TextEditingController controller,
     String hint, {
     bool? obsecure,
   }) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppPadding.sm,
-        vertical: AppPadding.md,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: AppFonts.displayMedium
-                .colored(AppColors.textPrimary)
-                .semiBold(),
+            style: theme.textTheme.titleSmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          AppSizes.gapH8,
+          const SizedBox(height: 8),
           MyTextForm(
-            hight: AppSizes.inputHeight,
-            inputTextStyle: AppFonts.displayMedium
-                .colored(AppColors.textPrimary)
-                .bold(),
-            hintStyle: AppFonts.bodyLarge.colored(AppColors.textMuted),
-            fillColor: AppColors.white,
             hint: hint,
             excep: label,
             obsecure: obsecure,
@@ -248,83 +258,93 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     );
   }
 
-  Widget _buildRememberAndForget() {
+  Widget _buildRememberAndForget(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: AppPadding.sm),
+      padding: const EdgeInsets.only(top: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              _buildRememberCheckbox(),
-              AppSizes.gapW12,
+              _buildRememberCheckbox(context),
+              const SizedBox(width: 12),
               Text(
                 lang.rememberMe,
-                style: AppFonts.displayMedium.colored(AppColors.textPrimary),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),
-          _buildForgetPasswordLink(),
+          _buildForgetPasswordLink(context),
         ],
       ),
     );
   }
 
-  Widget _buildRememberCheckbox() {
+  Widget _buildRememberCheckbox(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: () => setState(() => rememberMe = !rememberMe),
       child: Container(
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.textSecondary, width: 2),
-          borderRadius: BorderRadius.circular(AppRadius.sm),
-          color: rememberMe ? AppColors.primaryLight : Colors.transparent,
+          border: Border.all(color: theme.colorScheme.outline, width: 2),
+          borderRadius: BorderRadius.circular(6),
+          color: rememberMe ? theme.colorScheme.primary : Colors.transparent,
         ),
-        padding: AppPadding.allXs,
+        padding: const EdgeInsets.all(2),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          width: AppSizes.w20,
-          height: AppSizes.h20,
+          width: 20,
+          height: 20,
           child: rememberMe
-              ? Icon(Icons.check, size: AppSizes.iconSm, color: AppColors.white)
+              ? Icon(Icons.check, size: 16, color: theme.colorScheme.onPrimary)
               : null,
         ),
       ),
     );
   }
 
-  Widget _buildForgetPasswordLink() {
+  Widget _buildForgetPasswordLink(BuildContext context) {
+    final theme = Theme.of(context);
+
     return InkWell(
       onTap: () {
         context.read<AuthBloc>().formKey.currentState!.reset();
         context.pushNamed(Routes.forgetPasswordScreen);
       },
-      child: ShaderMask(
-        shaderCallback: (bounds) =>
-            ColorManger.mainBlueGrediant.createShader(bounds),
-        child: Text(
-          lang.forgetPassword,
-          style: AppFonts.displayMedium.copyWith(
-            fontFamily: RestaurantConstants.cairoFont,
-            fontWeight: FontWeightHelper.medium,
-            color: AppColors.white,
-            decoration: TextDecoration.underline,
-          ),
+      child: Text(
+        lang.forgetPassword,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+          color: theme.colorScheme.primary,
+          decoration: TextDecoration.underline,
         ),
       ),
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildLoginButton(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return !context.read<AuthBloc>().loadingLogin
             ? AppButtonText(
-                linearGradient: ColorManger.mainBlueGrediant,
-                butonText: lang.login,
+                linearGradient: LinearGradient(
+                  colors: [
+                    theme.colorScheme.primary,
+                    theme.colorScheme.primary,
+                  ],
+                ),
+                padding: EdgeInsets.zero,
+                width: double.infinity,
+                buttonText: lang.login,
+
                 onPressed: () => _validateThenLogin(context),
-                textStyle: AppFonts.displayMedium
-                    .colored(AppColors.white)
-                    .bold(),
+                textStyle: theme.textTheme.bodyLarge?.copyWith(
+                  color: theme.colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               )
             : const MyProgressIndicator(scale: 0.5);
       },

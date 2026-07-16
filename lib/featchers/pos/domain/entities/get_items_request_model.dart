@@ -4,9 +4,9 @@ class GetItemsRequestModel extends BaseRequest {
   final int? status;
   final String? id;
 
-  final String? categories;
-  final bool? isRestaurantItem;
-  final bool? isRestaurantIngrediant;
+  final int? categoryId;
+  final int? companyId;
+  final String? searchKey;
 
   const GetItemsRequestModel({
     super.pageNumber,
@@ -14,9 +14,9 @@ class GetItemsRequestModel extends BaseRequest {
     this.status,
     this.id,
     super.name,
-    this.categories,
-    this.isRestaurantItem,
-    this.isRestaurantIngrediant,
+    this.categoryId,
+    this.companyId,
+    this.searchKey,
   });
 
   @override
@@ -26,9 +26,9 @@ class GetItemsRequestModel extends BaseRequest {
     int? status,
     String? id,
     String? name,
-    String? categories,
-    bool? isRestaurantItem,
-    bool? isRestaurantIngrediant,
+    int? categoryId,
+    int? companyId,
+    String? searchKey,
   }) {
     return GetItemsRequestModel(
       pageNumber: pageNumber ?? super.pageNumber,
@@ -36,10 +36,9 @@ class GetItemsRequestModel extends BaseRequest {
       status: status ?? this.status,
       id: id ?? this.id,
       name: name ?? super.name,
-      categories: categories ?? this.categories,
-      isRestaurantItem: isRestaurantItem ?? this.isRestaurantItem,
-      isRestaurantIngrediant:
-          isRestaurantIngrediant ?? this.isRestaurantIngrediant,
+      categoryId: categoryId ?? this.categoryId,
+      companyId: companyId ?? this.companyId,
+      searchKey: searchKey ?? this.searchKey,
     );
   }
 }

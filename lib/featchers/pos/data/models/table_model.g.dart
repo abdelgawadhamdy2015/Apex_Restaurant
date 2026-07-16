@@ -42,6 +42,7 @@ Map<String, dynamic> _$TableModelToJson(TableModel instance) =>
     };
 
 const _$TableStatusEnumMap = {
+  TableStatus.unAvailable: 0,
   TableStatus.available: 1,
   TableStatus.occupied: 2,
   TableStatus.reserved: 3,

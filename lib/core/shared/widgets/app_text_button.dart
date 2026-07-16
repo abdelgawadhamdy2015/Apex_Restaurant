@@ -1,83 +1,78 @@
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/core/themes/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppButtonText extends StatelessWidget {
   final double? borderRadius;
-  final Color? backGroundColor;
-  final double? horizontalPadding;
-  final double? verticalPadding;
-  final double? buttonWidth;
-  final double? buttonHeight;
-  final TextStyle textStyle;
-  final String butonText;
+  final Color? backgroundColor;
+  final EdgeInsetsGeometry? padding;
+  final double? width;
+  final double? height;
+  final String buttonText;
   final VoidCallback? onPressed;
   final LinearGradient? linearGradient;
   final IconData? icon;
+  final TextStyle? textStyle;
+
   const AppButtonText({
     super.key,
     this.borderRadius,
-    this.backGroundColor,
-    this.horizontalPadding,
-    this.verticalPadding,
-    this.buttonWidth,
-    this.buttonHeight,
-    required this.textStyle,
-    required this.butonText,
+    this.backgroundColor,
+    this.padding,
+    this.width,
+    this.height,
+    required this.buttonText,
     required this.onPressed,
     this.linearGradient,
     this.icon,
+    this.textStyle,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: linearGradient != null
-          ? BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
-              gradient: linearGradient,
-            )
-          : null,
-      height: buttonHeight ?? SizeConfig.screenHeight! * .065,
-      width: buttonWidth ?? SizeConfig.screenWidth! * .9,
-      child: TextButton(
-        onPressed: onPressed,
-        style: ButtonStyle(
-          shape: WidgetStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius ?? 8.r),
+    final resolvedTextStyle =
+        textStyle ??
+        Theme.of(context).textTheme.labelLarge?.copyWith(color: Colors.white);
+
+    return SizedBox(
+      width: width,
+      height: height ?? 48,
+      child: DecoratedBox(
+        decoration: linearGradient != null
+            ? BoxDecoration(
+                borderRadius: BorderRadius.circular(borderRadius ?? 8),
+                gradient: linearGradient,
+              )
+            : const BoxDecoration(),
+        child: TextButton(
+          onPressed: onPressed,
+          style: TextButton.styleFrom(
+            backgroundColor: linearGradient == null
+                ? (onPressed != null
+                      ? backgroundColor ?? AppColors.primary
+                      : AppColors.textSecondary)
+                : Colors.transparent,
+            padding:
+                padding ??
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius ?? 8),
             ),
           ),
-          backgroundColor: WidgetStatePropertyAll(
-            onPressed != null
-                ? backGroundColor ?? AppColors.sidebarActiveBorder
-                : AppColors.textMuted,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(buttonText, style: resolvedTextStyle),
+              if (icon != null) ...[
+                const SizedBox(width: 8),
+                Icon(
+                  icon,
+                  color: resolvedTextStyle?.color ?? Colors.white,
+                  size: resolvedTextStyle?.fontSize,
+                ),
+              ],
+            ],
           ),
-          padding: WidgetStateProperty.all(
-            EdgeInsets.symmetric(
-              horizontal: horizontalPadding ?? SizeConfig.screenWidth! * .016,
-              vertical: verticalPadding ?? SizeConfig.screenHeight! * .016,
-            ),
-          ),
-          fixedSize: WidgetStateProperty.all(
-            Size(
-              buttonWidth ?? SizeConfig.screenWidth! * .9,
-              buttonHeight ?? SizeConfig.screenHeight! * .06,
-            ),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(butonText, style: textStyle),
-            if (icon != null)
-              Icon(
-                icon,
-                color: Colors.white,
-                size: SizeConfig.screenWidth! * .06,
-              ),
-          ],
         ),
       ),
     );

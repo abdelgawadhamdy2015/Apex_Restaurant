@@ -4,11 +4,10 @@ import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart'
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
@@ -25,17 +24,17 @@ abstract class ApiService {
   Future<BaseResponse<List<EmployeeBranch>?>> getEmployeeBranches();
 
   @GET(ApiConstants.getAllCategoriesDropDown)
-  Future<BaseResponse<List<CategoryModel>?>> getAllCategories();
+  Future<BaseResponse<List<CategoryResponse>?>> getAllCategories();
 
   @GET(ApiConstants.getAllItems)
-  Future<BaseResponse<List<MenuItemModel>?>> getItemsByCategory({
+  Future<BaseResponse<List<RestaurantItemResponse>?>> getItemsByCategory({
     @Query("pageNumber") int? pageNumber,
     @Query("pageSize") int? pageSize,
     @Query("statues") int? statues,
     @Query("name") String? name,
-    @Query("categories") String? categories,
-    @Query("isRestaurantItem") bool? isRestaurantItem,
-    @Query("isRestaurantIngrediant") bool? isRestaurantIngrediant,
+    @Query("CategoryId") int? categoryId,
+    @Query("CompanyId") int? companyId,
+    @Query("SearchKey") String? searchKey,
   });
   @GET(ApiConstants.getAllFloors)
   Future<BaseResponse<List<FloorModel>?>> getAllFloors({
@@ -57,7 +56,7 @@ abstract class ApiService {
   });
 
   @GET(ApiConstants.getAllFoodAdditives)
-  Future<BaseResponse<List<FoodAdditiveModel>?>> getAllFoodAdditives({
+  Future<BaseResponse<List<AdditiveModel>?>> getAllFoodAdditives({
     @Query("pageNumber") int? pageNumber,
     @Query("pageSize") int? pageSize,
     @Query("name") String? name,

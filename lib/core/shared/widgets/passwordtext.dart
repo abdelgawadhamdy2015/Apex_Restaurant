@@ -1,106 +1,70 @@
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class PasswordText extends StatefulWidget {
   final String hint;
-  final bool obsecur;
+  final bool obscure;
   final Color? fillColor;
   final TextStyle? hintStyle;
   final TextStyle? inputTextStyle;
+  final TextEditingController controller;
 
-  final TextEditingController control;
   const PasswordText({
     super.key,
     required this.hint,
-    required this.obsecur,
-    required this.control,
+    this.obscure = true,
+    required this.controller,
     this.fillColor,
     this.hintStyle,
     this.inputTextStyle,
   });
+
   @override
   State<PasswordText> createState() => _PasswordTextState();
 }
 
 class _PasswordTextState extends State<PasswordText> {
-  var myHint = "";
-  var obsecured = true;
-  late double hight;
+  late bool _obscured;
 
   @override
   void initState() {
     super.initState();
-    hight = SizeConfig.screenHeight! * .06;
-    setState(() {
-      myHint = widget.hint;
-      obsecured = widget.obsecur;
-    });
+    _obscured = widget.obscure;
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: hight,
-      child: TextFormField(
-        style: widget.inputTextStyle,
-        controller: widget.control,
-        textAlignVertical: TextAlignVertical.center,
-        obscureText: obsecured,
-        obscuringCharacter: "*",
-        decoration: InputDecoration(
-          fillColor: widget.fillColor ?? AppColors.white,
-          filled: true,
-          hintText: widget.hint,
-          hintStyle: widget.hintStyle ?? TextStyle(fontSize: 10.sp),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: AppColors.border),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: AppColors.primary, width: 0.6.w),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: AppColors.error, width: 0.6.w),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(SizeConfig.screenWidth! * .02),
-            borderSide: BorderSide(color: AppColors.error, width: 0.6.w),
-          ),
-          errorStyle: TextStyle(fontSize: 15.sp),
-          suffixIcon: IconButton(
-            color: AppColors.primary,
-            icon: SvgPicture.asset(Assets.eye),
-            onPressed: () {
-              setState(() {
-                obsecured = !obsecured;
-              });
-            },
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return TextFormField(
+      controller: widget.controller,
+      obscureText: _obscured,
+      obscuringCharacter: '*',
+      style: widget.inputTextStyle ?? textTheme.bodyMedium,
+      textAlignVertical: TextAlignVertical.center,
+      decoration: InputDecoration(
+        hintText: widget.hint,
+        hintStyle: widget.hintStyle ?? textTheme.bodyMedium,
+        fillColor: widget.fillColor,
+        suffixIcon: IconButton(
+          onPressed: () {
+            setState(() => _obscured = !_obscured);
+          },
+          icon: SvgPicture.asset(
+            Assets.eye,
+            colorFilter: ColorFilter.mode(colorScheme.primary, BlendMode.srcIn),
           ),
         ),
-
-        // this male validation and i will add string variable and replace it with ''
-        //and add the global key in the main form
-        validator: (val) {
-          if (val!.isEmpty) {
-            setState(() {
-              hight = SizeConfig.screenHeight! * .07;
-            });
-            return "\u26A0 ${S.of(context).pleaseFill} ${S.of(context).password}";
-          } else {
-            setState(() {
-              hight = SizeConfig.screenHeight! * .05;
-            });
-            return null;
-          }
-        },
       ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "⚠ ${S.of(context).pleaseFill} ${S.of(context).password}";
+        }
+        return null;
+      },
     );
   }
 }

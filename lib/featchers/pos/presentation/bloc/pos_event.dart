@@ -1,12 +1,11 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -58,14 +57,14 @@ class SelectDeliveryCompanyEvent extends PosEvent {
 }
 
 class SelectCategoryEvent extends PosEvent {
-  final CategoryModel category;
+  final CategoryResponse category;
   const SelectCategoryEvent(this.category);
   @override
   List<Object?> get props => [category];
 }
 
 class AddItemToOrderEvent extends PosEvent {
-  final MenuItemModel item;
+  final RestaurantItemResponse item;
   const AddItemToOrderEvent(this.item);
   @override
   List<Object?> get props => [item];
@@ -73,7 +72,7 @@ class AddItemToOrderEvent extends PosEvent {
 
 class UpdateItemAddonsEvent extends PosEvent {
   final OrderItem item;
-  final List<FoodAdditiveModel> addons;
+  final List<AdditiveModel> addons;
   const UpdateItemAddonsEvent({required this.item, required this.addons});
   @override
   List<Object?> get props => [item, addons];
