@@ -16,8 +16,9 @@ class ApiConstants {
   static const String getAllDeliveryCompany =
       "api/Restaurants/DeliveryCompany/GetAllDeliveryCompany";
   static const String getAllCategoriesDropDown =
-      "api/Store/Categories/GetAllCategoriesDropDown";
-  static const String getAllItems = "api/Store/RestaurantItemCard/GetAllItems";
+      "api/Restaurants/RestaurantPos/GetRestaurantCategoryPOS";
+  static const String getAllItems =
+      "api/Restaurants/RestaurantPos/GetRestaurantItemsPOS";
 
   // General apis
   static const String getEmployeeBranches =

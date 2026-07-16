@@ -4,16 +4,12 @@ import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
+import 'package:apex_restaurant/core/shared/widgets/pos_toast.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/core/shared/widgets/toast_design.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
-import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -177,14 +173,22 @@ class HelperMethods {
 
   // ── Colors ─────────────────────────────────────────────────────────────────
 
-  static Color getStatusColor(String status) {
+  /// Now requires [context] to read the live `ColorScheme` instead of the
+  /// static `AppColors` constants, so status colors follow the active theme
+  /// (light/dark, seed color) instead of being fixed. `waiting`/`rejected`
+  /// map onto real ColorScheme roles (`tertiary`/`error`); `approved` has no
+  /// themed "success" role yet, so it stays a plain green with a TODO — same
+  /// open item flagged in the toast/dialog/branches-list conversions.
+  static Color getStatusColor(BuildContext context, String status) {
+    final scheme = Theme.of(context).colorScheme;
+
     switch (status) {
       case RestaurantConstants.waiting:
-        return AppColors.warning;
+        return scheme.tertiary;
       case RestaurantConstants.approved:
-        return AppColors.success;
+        return Colors.green;
       case RestaurantConstants.rejected:
-        return AppColors.error;
+        return scheme.error;
       default:
         return Colors.grey;
     }
@@ -195,32 +199,30 @@ class HelperMethods {
 
   // ── Spacing ────────────────────────────────────────────────────────────────
 
-  static SizedBox verticalSpacing(double height) =>
-      SizedBox(height: SizeConfig.screenHeight! * height.h);
+  /// Plain fixed-size gaps — no more `SizeConfig`/ScreenUtil scaling.
+  /// [height]/[width] are now taken as literal logical pixels.
+  static SizedBox verticalSpacing(double height) => SizedBox(height: height);
 
-  static SizedBox horizontalSpacing(double width) =>
-      SizedBox(width: SizeConfig.screenWidth! * width.w);
+  static SizedBox horizontalSpacing(double width) => SizedBox(width: width);
 
   // ── Widgets ────────────────────────────────────────────────────────────────
 
-  static Container buildEditText(
-    String lable,
+  /// Now requires [context]. Relies on the app's `InputDecorationTheme` and
+  /// `textTheme` (via `MyTextForm`'s own theme-driven defaults) instead of
+  /// the old `AppTheme.theme` / `TextStyles` statics and `SizeConfig`
+  /// padding helper.
+  static Widget buildEditText(
+    BuildContext context,
+    String label,
     TextEditingController controller, {
     Widget? icon,
   }) {
     return Container(
-      padding: SizeConfig().getScreenPadding(vertical: .01),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: MyTextForm(
         icon: icon,
         enabled: false,
-        fillColor: AppColors.white,
-        labelText: lable,
-        inputTextStyle: TextStyles.blackRegulerStyle(
-          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-        ),
-        hintStyle: TextStyles.lighterGrayRegulerStyle(
-          fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-        ),
+        labelText: label,
         controller: controller,
       ),
     );

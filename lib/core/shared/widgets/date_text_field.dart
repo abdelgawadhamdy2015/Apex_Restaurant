@@ -1,16 +1,12 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
-import 'package:apex_restaurant/core/theme/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class DateTextField extends StatelessWidget {
   final String? label;
   final TextEditingController controller;
   final VoidCallback onTap;
-  final bool? isDate;
+  final bool isDate;
 
   const DateTextField({
     super.key,
@@ -22,39 +18,33 @@ class DateTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        label != null
-            ? Text(
-                label!,
-                style: TextStyles.lighterGrayBoldStyle(
-                  fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-                ),
-              )
-            : SizedBox.shrink(),
-        label != null ? HelperMethods.verticalSpacing(.01) : SizedBox.shrink(),
+        if (label != null) ...[
+          Text(
+            label!,
+            style: textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          HelperMethods.verticalSpacing(.01),
+        ],
         MyTextForm(
-          textAllign: TextAlign.center,
-          contentPadding: EdgeInsets.only(
-            right: SizeConfig.screenWidth! * .003,
-          ),
-          hintStyle: TextStyles.blackRegulerStyle(
-            fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-          ),
-          inputTextStyle: TextStyles.lighterGrayBoldStyle(
-            fontSize: AppTheme.theme.textTheme.bodyMedium!.fontSize!,
-            fontFamily: RestaurantConstants.droidArabicKufi,
-          ),
-          fillColor: AppColors.white,
-          readOnly: true,
-          excep: label,
-          suffixIcon: Icon(
-            isDate! ? Icons.calendar_today : Icons.access_time,
-            size: SizeConfig.iconSize1!,
-          ),
           controller: controller,
-          onTab: onTap,
+          readOnly: true,
+          onTap: onTap,
+          textAlign: TextAlign.center,
+          excep: label,
+          contentPadding: const EdgeInsets.only(right: 4),
+          hintStyle: textTheme.bodyMedium,
+          inputTextStyle: textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+          suffixIcon: Icon(isDate ? Icons.calendar_today : Icons.access_time),
         ),
       ],
     );

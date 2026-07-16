@@ -1,5 +1,4 @@
 import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,7 @@ class NoInternetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BodyContainer(
-        height: SizeConfig.screenHeight,
+        height: 200,
         padding: EdgeInsets.all(10),
         child: SafeArea(
           child: Center(

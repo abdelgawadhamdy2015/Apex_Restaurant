@@ -1,6 +1,5 @@
 import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
+import 'package:apex_restaurant/core/themes/colors.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -40,15 +39,14 @@ class _OnBoardingPageState extends State<OnBoardingPage>
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.background,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Assets.images.apexTime.image(fit: BoxFit.contain),
+              Assets.images.logo.image(fit: BoxFit.contain),
               SizedBox(height: 16.h, width: double.infinity),
               Text(
                 versionNumberOfApp,

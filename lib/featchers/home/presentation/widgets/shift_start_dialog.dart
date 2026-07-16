@@ -1,5 +1,4 @@
 import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -60,23 +59,22 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
   @override
   Widget build(BuildContext context) {
     final lang = S.of(context);
+    final theme = Theme.of(context);
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.symmetric(
-          horizontal: AppPadding.xxxl,
-          vertical: AppPadding.xxl,
-        ),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
         child: Center(
           child: Container(
-            width: AppSizes.wFraction(.7),
+            width: MediaQuery.sizeOf(context).width * 0.7,
             decoration: BoxDecoration(
-              color: AppColors.white,
-              borderRadius: BorderRadius.circular(AppRadius.lg),
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.18),
+                  color: Colors.black.withValues(alpha: .18),
                   blurRadius: 32,
                   offset: const Offset(0, 8),
                 ),
@@ -86,43 +84,38 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: AppPadding.xxl),
+                  padding: const EdgeInsets.symmetric(vertical: 24),
                   child: Text(
                     lang.shiftStart,
-                    style: AppFonts.displayMedium.colored(
-                      AppColors.primaryDark,
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                Divider(height: 1, color: theme.dividerColor),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    AppPadding.xl,
-                    AppPadding.lg,
-                    AppPadding.xl,
-                    AppPadding.xl,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         lang.openingCash,
-                        style: AppFonts.bodyLarge.colored(
-                          AppColors.textSecondary,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      AppSizes.gapH8,
+                      const SizedBox(height: 8),
 
                       // Amount display
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppPadding.lg,
-                          vertical: AppPadding.md,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.border),
-                          borderRadius: BorderRadius.circular(AppRadius.md),
+                          border: Border.all(color: theme.dividerColor),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           children: [
@@ -130,112 +123,111 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
                               child: Text(
                                 _amount,
                                 textDirection: TextDirection.ltr,
-                                style: AppFonts.displayMedium
-                                    .colored(AppColors.textPrimary)
-                                    .copyWith(letterSpacing: 1),
+                                style: theme.textTheme.displayMedium?.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ),
-                            AppSizes.gapW12,
+                            const SizedBox(width: 12),
                             Text(
                               lang.sar,
-                              style: AppFonts.bodySmall.colored(
-                                AppColors.textSecondary,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      AppSizes.gapH12,
+                      const SizedBox(height: 12),
 
                       _Numpad(onKey: _onKey, onBackspace: _onBackspace),
-                      AppSizes.gapH16,
+                      const SizedBox(height: 16),
 
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
                           lang.optionalNotes,
-                          style: AppFonts.bodySmall.colored(
-                            AppColors.textSecondary,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
-                      AppSizes.gapH8,
+                      const SizedBox(height: 8),
 
                       TextField(
                         controller: _notesController,
                         maxLines: 3,
                         textDirection: TextDirection.rtl,
-                        style: AppFonts.bodyMedium.colored(
-                          AppColors.textPrimary,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface,
                         ),
                         decoration: InputDecoration(
                           hintText: lang.addNotesHint,
-                          hintStyle: AppFonts.bodyMedium.colored(
-                            AppColors.textMuted,
+                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
-                          contentPadding: AppPadding.allMd,
+                          contentPadding: const EdgeInsets.all(12),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            borderSide: const BorderSide(
-                              color: AppColors.border,
-                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: theme.dividerColor),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            borderSide: const BorderSide(
-                              color: AppColors.border,
-                            ),
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: theme.dividerColor),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(AppRadius.md),
-                            borderSide: const BorderSide(
-                              color: AppColors.primaryDark,
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: theme.colorScheme.primary,
                             ),
                           ),
                         ),
                       ),
-                      AppSizes.gapH16,
+                      const SizedBox(height: 16),
 
                       SizedBox(
                         width: double.infinity,
-                        height: AppSizes.buttonHeight,
+                        height: 48,
                         child: ElevatedButton(
                           onPressed: () => context.goNamed(Routes.posScreen),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryDark,
-                            foregroundColor: AppColors.white,
+                            backgroundColor: theme.colorScheme.primary,
+                            foregroundColor: theme.colorScheme.onPrimary,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppRadius.md),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
                           ),
                           child: Text(
                             lang.saveAndOpenShift,
-                            style: AppFonts.titleSmall
-                                .colored(AppColors.white)
-                                .bold(),
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: theme.colorScheme.onPrimary,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                      AppSizes.gapH8,
+                      const SizedBox(height: 8),
 
                       SizedBox(
                         width: double.infinity,
-                        height: AppSizes.buttonHeightSm,
+                        height: 40,
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(context).pop(),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.error,
-                            side: const BorderSide(color: AppColors.border),
+                            foregroundColor: theme.colorScheme.error,
+                            side: BorderSide(color: theme.dividerColor),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(AppRadius.md),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
                           child: Text(
                             lang.cancel,
-                            style: AppFonts.bodyMedium
-                                .colored(AppColors.error)
-                                .semiBold(),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
@@ -268,14 +260,14 @@ class _Numpad extends StatelessWidget {
     return Column(
       children: rows.map((row) {
         return Padding(
-          padding: EdgeInsets.only(bottom: AppPadding.sm),
+          padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             children: row.map((key) {
               final isBackspace = key == '⌫';
               return Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: row.indexOf(key) == 0 ? 0 : AppPadding.sm,
+                    right: row.indexOf(key) == 0 ? 0 : 8,
                   ),
                   child: _NumKey(
                     label: key,
@@ -305,28 +297,32 @@ class _NumKey extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Material(
-      color: isBackspace ? AppColors.errorLight : AppColors.background,
-      borderRadius: BorderRadius.circular(AppRadius.md),
+      color: isBackspace
+          ? theme.colorScheme.errorContainer
+          : theme.colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadius.md),
+        borderRadius: BorderRadius.circular(12),
         onTap: onTap,
         splashColor: isBackspace
-            ? AppColors.error.withOpacity(0.2)
-            : AppColors.border,
+            ? theme.colorScheme.error.withValues(alpha: .2)
+            : theme.dividerColor,
         child: SizedBox(
-          height: AppSizes.h48,
+          height: 48,
           child: Center(
             child: isBackspace
                 ? Icon(
                     Icons.backspace_outlined,
-                    color: AppColors.error,
-                    size: AppSizes.iconLg,
+                    color: theme.colorScheme.error,
+                    size: 24,
                   )
                 : Text(
                     label,
-                    style: AppFonts.displayMedium.colored(
-                      AppColors.textPrimary,
+                    style: theme.textTheme.displayMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
           ),

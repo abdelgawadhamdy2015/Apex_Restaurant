@@ -3,8 +3,6 @@ import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
 import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
 import 'package:apex_restaurant/core/shared/widgets/grediant_container.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
-import 'package:apex_restaurant/core/theme/colors.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +39,8 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
         ? lang.arabic
         : lang.english;
 
+    final mediaQuery = MediaQuery.of(context);
+
     return Scaffold(
       body: GradientContainer(
         child: SingleChildScrollView(
@@ -49,7 +49,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
             children: [
               _buildHeader(context),
               SizedBox(
-                height: AppSizes.hFraction(0.8),
+                height: mediaQuery.size.height * 0.8,
                 child: BodyContainer(
                   child: Form(key: formKey, child: _buildForm(context)),
                 ),
@@ -62,12 +62,14 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final double dpr = MediaQuery.of(context).devicePixelRatio;
-    final double logoW = AppSizes.wFraction(0.48);
-    final double logoH = AppSizes.hFraction(0.08);
+    final theme = Theme.of(context);
+    final mediaQuery = MediaQuery.of(context);
+    final double dpr = mediaQuery.devicePixelRatio;
+    final double logoW = mediaQuery.size.width * 0.48;
+    final double logoH = mediaQuery.size.height * 0.08;
 
     return SizedBox(
-      height: AppSizes.hFraction(0.2),
+      height: mediaQuery.size.height * 0.2,
       child: SafeArea(
         bottom: false,
         child: Column(
@@ -79,8 +81,8 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
                   onPressed: () => context.pop(),
                   icon: Icon(
                     Icons.close,
-                    color: AppColors.textPrimary,
-                    size: AppSizes.iconXl,
+                    color: theme.colorScheme.onSurface,
+                    size: 32,
                   ),
                 ),
               ],
@@ -92,16 +94,16 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
                 children: [
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.only(top: AppPadding.sm),
-                      child: Assets.images.apexTime.image(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Assets.images.logo.image(
                         width: logoW,
-                        color: AppColors.textSecondary,
+                        color: theme.colorScheme.onSurfaceVariant,
                         cacheWidth: (logoW * dpr).round(),
                         cacheHeight: (logoH * dpr).round(),
                       ),
                     ),
                   ),
-                  _buildLanguageDropdown(),
+                  _buildLanguageDropdown(context),
                 ],
               ),
             ),
@@ -111,13 +113,18 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     );
   }
 
-  Widget _buildLanguageDropdown() {
+  Widget _buildLanguageDropdown(BuildContext context) {
+    final theme = Theme.of(context);
+
     return DropdownButton<String>(
       value: selectedLanguage,
-      icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+      icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onPrimary),
       dropdownColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(AppRadius.xl),
-      style: AppFonts.bodyMedium.colored(AppColors.primaryDark).bold(),
+      borderRadius: BorderRadius.circular(20),
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: theme.colorScheme.primary,
+        fontWeight: FontWeight.bold,
+      ),
       underline: const SizedBox(),
       onChanged: (String? newValue) {
         if (newValue != null) {
@@ -136,7 +143,10 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
           value: value,
           child: Text(
             value,
-            style: AppFonts.bodyMedium.colored(AppColors.white).bold(),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         );
       }).toList(),
@@ -144,53 +154,54 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
   }
 
   Widget _buildForm(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
           child: Padding(
-            padding: EdgeInsets.only(top: AppPadding.sm),
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
               lang.forgetPassword,
-              style: AppFonts.titleLarge.colored(AppColors.textPrimary),
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ),
         ),
-        AppSizes.gapH16,
-        _buildTextField(lang.dbName, companyText, lang.dbName),
-        _buildTextField(S.of(context).email, emailText, lang.email),
-        AppSizes.gapH16,
-        Center(child: _buildLoginButton()),
+        const SizedBox(height: 16),
+        _buildTextField(context, lang.dbName, companyText, lang.dbName),
+        _buildTextField(context, S.of(context).email, emailText, lang.email),
+        const SizedBox(height: 16),
+        Center(child: _buildLoginButton(context)),
       ],
     );
   }
 
   Widget _buildTextField(
+    BuildContext context,
     String label,
     TextEditingController controller,
     String hint, {
     bool? obsecure,
   }) {
+    final theme = Theme.of(context);
+
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppPadding.sm,
-        vertical: AppPadding.md,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: AppFonts.bodySmall.colored(AppColors.textPrimary).semiBold(),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          AppSizes.gapH8,
+          const SizedBox(height: 8),
           MyTextForm(
-            hight: AppSizes.inputHeight,
-            inputTextStyle: AppFonts.bodyMedium
-                .colored(AppColors.textPrimary)
-                .bold(),
-            hintStyle: AppFonts.bodySmall.colored(AppColors.textMuted),
-            fillColor: AppColors.textSecondary,
             hint: hint,
             excep: label,
             obsecure: obsecure,
@@ -201,12 +212,19 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildLoginButton(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppButtonText(
-      linearGradient: ColorManger.mainBlueGrediant,
-      butonText: lang.send,
+      linearGradient: LinearGradient(
+        colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
+      ),
+      buttonText: lang.send,
       onPressed: () => _validateThenSend(context),
-      textStyle: AppFonts.bodyMedium.colored(AppColors.white).bold(),
+      textStyle: theme.textTheme.bodyMedium?.copyWith(
+        color: theme.colorScheme.onPrimary,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 

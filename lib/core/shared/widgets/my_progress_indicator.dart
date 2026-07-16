@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/theme/app_theme.dart';
+import 'package:apex_restaurant/core/themes/colors.dart';
 import 'package:flutter/material.dart';
 
 class MyProgressIndicator extends StatefulWidget {

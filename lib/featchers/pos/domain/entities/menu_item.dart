@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
 import 'package:equatable/equatable.dart';
 
 class MenuItem extends Equatable {
@@ -51,10 +51,10 @@ class MenuCategory extends Equatable {
 }
 
 class OrderItem extends Equatable {
-  final MenuItemModel menuItem;
+  final RestaurantItemResponse menuItem;
   final int quantity;
   final String? notes;
-  final List<FoodAdditiveModel> addons;
+  final List<AdditiveModel> addons;
 
   const OrderItem({
     required this.menuItem,
@@ -63,13 +63,13 @@ class OrderItem extends Equatable {
     this.addons = const [],
   });
 
-  double get totalPrice => (menuItem.units?.first.salePrice1 ?? 0) * quantity;
+  double get totalPrice => (menuItem.sizes.first.price) * quantity;
 
   OrderItem copyWith({
-    MenuItemModel? menuItem,
+    RestaurantItemResponse? menuItem,
     int? quantity,
     String? notes,
-    List<FoodAdditiveModel>? addons,
+    List<AdditiveModel>? addons,
   }) {
     return OrderItem(
       menuItem: menuItem ?? this.menuItem,

@@ -123,30 +123,30 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<List<CategoryModel>?>> getAllCategories() async {
+  Future<BaseResponse<List<CategoryResponse>?>> getAllCategories() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse<List<CategoryModel>?>>(
+    final _options = _setStreamType<BaseResponse<List<CategoryResponse>?>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Store/Categories/GetAllCategoriesDropDown',
+            'api/Restaurants/RestaurantPos/GetRestaurantCategoryPOS',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<List<CategoryModel>?> _value;
+    late BaseResponse<List<CategoryResponse>?> _value;
     try {
-      _value = BaseResponse<List<CategoryModel>?>.fromJson(
+      _value = BaseResponse<List<CategoryResponse>?>.fromJson(
         _result.data!,
         (json) => json is List<dynamic>
             ? json
-                  .map<CategoryModel>(
-                    (i) => CategoryModel.fromJson(i as Map<String, dynamic>),
+                  .map<CategoryResponse>(
+                    (i) => CategoryResponse.fromJson(i as Map<String, dynamic>),
                   )
                   .toList()
             : List.empty(),
@@ -159,14 +159,14 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<List<MenuItemModel>?>> getItemsByCategory({
+  Future<BaseResponse<List<RestaurantItemResponse>?>> getItemsByCategory({
     int? pageNumber,
     int? pageSize,
     int? statues,
     String? name,
-    String? categories,
-    bool? isRestaurantItem,
-    bool? isRestaurantIngrediant,
+    int? categoryId,
+    int? companyId,
+    String? searchKey,
   }) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -174,32 +174,37 @@ class _ApiService implements ApiService {
       r'pageSize': pageSize,
       r'statues': statues,
       r'name': name,
-      r'categories': categories,
-      r'isRestaurantItem': isRestaurantItem,
-      r'isRestaurantIngrediant': isRestaurantIngrediant,
+      r'CategoryId': categoryId,
+      r'CompanyId': companyId,
+      r'SearchKey': searchKey,
     };
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse<List<MenuItemModel>?>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'api/Store/RestaurantItemCard/GetAllItems',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
+    final _options =
+        _setStreamType<BaseResponse<List<RestaurantItemResponse>?>>(
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                'api/Restaurants/RestaurantPos/GetRestaurantItemsPOS',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<List<MenuItemModel>?> _value;
+    late BaseResponse<List<RestaurantItemResponse>?> _value;
     try {
-      _value = BaseResponse<List<MenuItemModel>?>.fromJson(
+      _value = BaseResponse<List<RestaurantItemResponse>?>.fromJson(
         _result.data!,
         (json) => json is List<dynamic>
             ? json
-                  .map<MenuItemModel>(
-                    (i) => MenuItemModel.fromJson(i as Map<String, dynamic>),
+                  .map<RestaurantItemResponse>(
+                    (i) => RestaurantItemResponse.fromJson(
+                      i as Map<String, dynamic>,
+                    ),
                   )
                   .toList()
             : List.empty(),
@@ -312,7 +317,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<List<FoodAdditiveModel>?>> getAllFoodAdditives({
+  Future<BaseResponse<List<AdditiveModel>?>> getAllFoodAdditives({
     int? pageNumber,
     int? pageSize,
     String? name,
@@ -328,7 +333,7 @@ class _ApiService implements ApiService {
     queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse<List<FoodAdditiveModel>?>>(
+    final _options = _setStreamType<BaseResponse<List<AdditiveModel>?>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -339,15 +344,14 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<List<FoodAdditiveModel>?> _value;
+    late BaseResponse<List<AdditiveModel>?> _value;
     try {
-      _value = BaseResponse<List<FoodAdditiveModel>?>.fromJson(
+      _value = BaseResponse<List<AdditiveModel>?>.fromJson(
         _result.data!,
         (json) => json is List<dynamic>
             ? json
-                  .map<FoodAdditiveModel>(
-                    (i) =>
-                        FoodAdditiveModel.fromJson(i as Map<String, dynamic>),
+                  .map<AdditiveModel>(
+                    (i) => AdditiveModel.fromJson(i as Map<String, dynamic>),
                   )
                   .toList()
             : List.empty(),

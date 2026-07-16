@@ -5,14 +5,13 @@ import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -24,7 +23,7 @@ class PosRepositoryImpl implements PosRepository {
   PosRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<ApiResult<BaseResponse<List<CategoryModel>?>>>
+  Future<ApiResult<BaseResponse<List<CategoryResponse>?>>>
   getMenuCategories() async {
     try {
       final response = await _remoteDataSource.getMenuCategories();
@@ -35,9 +34,8 @@ class PosRepositoryImpl implements PosRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<List<MenuItemModel>?>>> getMenuItemsByCategory(
-    GetItemsRequestModel? request,
-  ) async {
+  Future<ApiResult<BaseResponse<List<RestaurantItemResponse>?>>>
+  getMenuItemsByCategory(GetItemsRequestModel? request) async {
     try {
       final response = await _remoteDataSource.getMenuItemsByCategory(
         request: request,
@@ -65,7 +63,7 @@ class PosRepositoryImpl implements PosRepository {
     'items': order.items
         .map(
           (item) => {
-            'menu_item_id': item.menuItem.id,
+            'menu_item_id': item.menuItem.itemId,
             'quantity': item.quantity,
             'notes': item.notes,
             'addons': item.addons,
@@ -103,7 +101,7 @@ class PosRepositoryImpl implements PosRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<List<FoodAdditiveModel>?>>> getFoodAdditives(
+  Future<ApiResult<BaseResponse<List<AdditiveModel>?>>> getFoodAdditives(
     GetFoodAdditiveRequest? request,
   ) async {
     try {

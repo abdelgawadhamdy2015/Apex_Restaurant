@@ -1,14 +1,13 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 
@@ -20,11 +19,11 @@ abstract class PosRemoteDataSource {
     required GetTablesRequestModel request,
   });
 
-  Future<BaseResponse<List<FoodAdditiveModel>?>> getFoodAdditives({
+  Future<BaseResponse<List<AdditiveModel>?>> getFoodAdditives({
     GetFoodAdditiveRequest? request,
   });
-  Future<BaseResponse<List<CategoryModel>?>> getMenuCategories();
-  Future<BaseResponse<List<MenuItemModel>?>> getMenuItemsByCategory({
+  Future<BaseResponse<List<CategoryResponse>?>> getMenuCategories();
+  Future<BaseResponse<List<RestaurantItemResponse>?>> getMenuItemsByCategory({
     GetItemsRequestModel? request,
   });
   Future<void> submitOrder(Map<String, dynamic> orderData);
@@ -40,14 +39,14 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   PosRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<BaseResponse<List<CategoryModel>?>> getMenuCategories() async {
+  Future<BaseResponse<List<CategoryResponse>?>> getMenuCategories() async {
     return _apiService.getAllCategories().then((response) {
       return response;
     });
   }
 
   @override
-  Future<BaseResponse<List<MenuItemModel>?>> getMenuItemsByCategory({
+  Future<BaseResponse<List<RestaurantItemResponse>?>> getMenuItemsByCategory({
     GetItemsRequestModel? request,
   }) async {
     return await _apiService
@@ -56,9 +55,9 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
           pageSize: request?.pageSize,
           statues: request?.status,
           name: request?.name,
-          categories: request?.categories,
-          isRestaurantItem: request?.isRestaurantItem,
-          isRestaurantIngrediant: request?.isRestaurantIngrediant,
+          categoryId: request?.categoryId,
+          companyId: request?.companyId,
+          searchKey: request?.searchKey,
         )
         .then((response) {
           return response;
@@ -105,7 +104,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<List<FoodAdditiveModel>?>> getFoodAdditives({
+  Future<BaseResponse<List<AdditiveModel>?>> getFoodAdditives({
     GetFoodAdditiveRequest? request,
   }) {
     final respons = _apiService.getAllFoodAdditives(

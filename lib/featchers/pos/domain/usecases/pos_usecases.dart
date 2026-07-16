@@ -1,14 +1,13 @@
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/food_additive_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/menu_item_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -33,7 +32,7 @@ class GetTablesUseCase {
 class GetFoodAdditivesUseCase {
   final PosRepository _repository;
   GetFoodAdditivesUseCase(this._repository);
-  Future<ApiResult<BaseResponse<List<FoodAdditiveModel>?>>> call(
+  Future<ApiResult<BaseResponse<List<AdditiveModel>?>>> call(
     GetFoodAdditiveRequest? request,
   ) => _repository.getFoodAdditives(request);
 }
@@ -41,14 +40,14 @@ class GetFoodAdditivesUseCase {
 class GetMenuCategoriesUseCase {
   final PosRepository _repository;
   GetMenuCategoriesUseCase(this._repository);
-  Future<ApiResult<BaseResponse<List<CategoryModel>?>>> call() =>
+  Future<ApiResult<BaseResponse<List<CategoryResponse>?>>> call() =>
       _repository.getMenuCategories();
 }
 
 class GetMenuItemsByCategoryUseCase {
   final PosRepository _repository;
   GetMenuItemsByCategoryUseCase(this._repository);
-  Future<ApiResult<BaseResponse<List<MenuItemModel>?>>> call(
+  Future<ApiResult<BaseResponse<List<RestaurantItemResponse>?>>> call(
     GetItemsRequestModel? request,
   ) => _repository.getMenuItemsByCategory(request);
 }

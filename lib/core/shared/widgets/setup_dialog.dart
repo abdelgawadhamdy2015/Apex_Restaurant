@@ -3,7 +3,6 @@ import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
-import 'package:apex_restaurant/core/theme/app_theme.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:dio/dio.dart';
@@ -39,14 +38,22 @@ class _DialogConfig {
 }
 
 extension AppDialogTypeConfig on AppDialogType {
+  /// Maps each dialog type onto a real `ColorScheme` role instead of a fixed
+  /// hex value, so dialogs stay correct across light/dark and any seed color
+  /// change. `error`/`info` map cleanly onto `error`/`primary`. Material's
+  /// default `ColorScheme` has no dedicated "warning" or "success" role, so
+  /// those use `tertiary` and a plain `Colors.green` respectively — flagged
+  /// below with a TODO in case a themed role gets added later.
   _DialogConfig config(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     switch (this) {
       case AppDialogType.error:
         return _DialogConfig(
-          stripeColor: AppColors.error,
-          badgeColor: AppColors.errorLight,
-          iconBg: AppColors.errorLight,
-          iconColor: AppColors.error,
+          stripeColor: scheme.error,
+          badgeColor: scheme.errorContainer,
+          iconBg: scheme.errorContainer,
+          iconColor: scheme.error,
           badgeIcon: Icons.shield_outlined,
           badgeLabel: (_) => S.of(context).sessionExpired,
           icon: Icons.lock_open_outlined,
@@ -54,32 +61,34 @@ extension AppDialogTypeConfig on AppDialogType {
         );
       case AppDialogType.warning:
         return _DialogConfig(
-          stripeColor: const Color(0xFFBA7517),
-          badgeColor: const Color(0xFFFAEEDA),
-          iconBg: const Color(0xFFFAEEDA),
-          iconColor: const Color(0xFFBA7517),
+          stripeColor: scheme.tertiary,
+          badgeColor: scheme.tertiaryContainer,
+          iconBg: scheme.tertiaryContainer,
+          iconColor: scheme.tertiary,
           badgeIcon: Icons.info_outline,
           badgeLabel: (_) => S.of(context).confirm,
           icon: Icons.logout_outlined,
           confirmIcon: Icons.logout_outlined,
         );
       case AppDialogType.success:
-        return _DialogConfig(
-          stripeColor: AppColors.success,
-          badgeColor: AppColors.successLight,
-          iconBg: AppColors.successLight,
-          iconColor: AppColors.success,
+        // TODO: swap Colors.green for a themed "success" role if one gets
+        // added to the app's ColorScheme/theme extensions.
+        return const _DialogConfig(
+          stripeColor: Colors.green,
+          badgeColor: Color(0xFFE1F5E5),
+          iconBg: Color(0xFFE1F5E5),
+          iconColor: Colors.green,
           badgeIcon: Icons.check_circle_outline,
-          badgeLabel: (_) => S.of(context).verified,
+          badgeLabel: _successLabel,
           icon: Icons.fingerprint,
           confirmIcon: Icons.home_outlined,
         );
       case AppDialogType.info:
         return _DialogConfig(
-          stripeColor: AppColors.primary,
-          badgeColor: AppColors.selectedColor,
-          iconBg: AppColors.selectedColor,
-          iconColor: AppColors.primary,
+          stripeColor: scheme.primary,
+          badgeColor: scheme.primary.withValues(alpha: .1),
+          iconBg: scheme.primary.withValues(alpha: .1),
+          iconColor: scheme.primary,
           badgeIcon: Icons.send_outlined,
           badgeLabel: (_) => S.of(context).confirm,
           icon: Icons.send_outlined,
@@ -88,6 +97,8 @@ extension AppDialogTypeConfig on AppDialogType {
     }
   }
 }
+
+String _successLabel(BuildContext context) => S.of(context).verified;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CORE DIALOG WIDGET
@@ -121,55 +132,49 @@ class AppDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final config = type.config(context);
 
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.colorScheme.surface,
       child: SizedBox(
-        width: AppSizes.wFraction(0.6),
+        width: MediaQuery.sizeOf(context).width * 0.6,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ── Top colour stripe ──────────────────────────────────────────
-            Container(height: AppSizes.h4, color: config.stripeColor),
+            Container(height: 4, color: config.stripeColor),
 
             Padding(
-              padding: EdgeInsets.fromLTRB(
-                AppPadding.sm,
-                AppPadding.sm,
-                AppPadding.sm,
-                AppPadding.sm,
-              ),
+              padding: const EdgeInsets.all(8),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // ── Badge ────────────────────────────────────────────────
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppPadding.sm,
-                      vertical: AppPadding.md,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 12,
                     ),
                     decoration: BoxDecoration(
                       color: config.badgeColor,
-                      borderRadius: BorderRadius.circular(AppRadius.xl),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           config.badgeIcon,
-                          size: AppSizes.iconSm,
+                          size: 16,
                           color: config.iconColor,
                         ),
-                        SizedBox(width: AppSpacing.sm),
+                        const SizedBox(width: 8),
                         Text(
                           config.badgeLabel(context),
-                          style: AppFonts.titleMedium.copyWith(
+                          style: theme.textTheme.titleMedium?.copyWith(
                             color: config.iconColor,
                             fontWeight: FontWeight.w600,
                           ),
@@ -178,45 +183,41 @@ class AppDialog extends StatelessWidget {
                     ),
                   ),
 
-                  SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: 16),
 
                   // ── Icon circle ──────────────────────────────────────────
                   Container(
-                    width: AppSizes.buttonHeight,
-                    height: AppSizes.buttonHeight,
+                    width: 48,
+                    height: 48,
                     decoration: BoxDecoration(
                       color: config.iconBg,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      config.icon,
-                      size: AppSizes.iconMd,
-                      color: config.iconColor,
-                    ),
+                    child: Icon(config.icon, size: 20, color: config.iconColor),
                   ),
 
-                  SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: 16),
 
                   // ── Title ────────────────────────────────────────────────
                   Text(
                     title,
-                    style: AppFonts.titleMedium,
+                    style: theme.textTheme.titleMedium,
                     textAlign: TextAlign.center,
                   ),
 
-                  SizedBox(height: AppSpacing.lg),
+                  const SizedBox(height: 16),
 
                   // ── Message ──────────────────────────────────────────────
                   Text(
                     message,
-                    style: AppFonts.titleSmall.copyWith(
-                      color: AppColors.textSecondary,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
                       height: 1.6,
                     ),
                     textAlign: TextAlign.center,
                   ),
 
-                  SizedBox(height: AppSpacing.xl),
+                  const SizedBox(height: 20),
 
                   // ── Actions ──────────────────────────────────────────────
                   _buildActions(context, config),
@@ -241,7 +242,7 @@ class AppDialog extends StatelessWidget {
               onTap: onRetry ?? () => context.pop(),
             ),
           ),
-          SizedBox(width: AppSpacing.md),
+          const SizedBox(width: 12),
           Expanded(
             child: _FilledBtn(
               label: confirmLabel,
@@ -264,7 +265,7 @@ class AppDialog extends StatelessWidget {
               onTap: onCancel ?? () => context.pop(),
             ),
           ),
-          SizedBox(width: AppSpacing.md),
+          const SizedBox(width: 12),
           Expanded(
             child: _FilledBtn(
               label: confirmLabel,
@@ -306,25 +307,27 @@ class _FilledBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
-      height: AppSizes.buttonHeight,
+      height: 48,
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
         onPressed: onTap,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: AppSizes.iconSm),
-            SizedBox(width: AppSpacing.xl),
+            Icon(icon, size: 16),
+            const SizedBox(width: 20),
             Text(
               label,
-              style: AppFonts.titleLarge.copyWith(
-                color: AppColors.white,
+              style: theme.textTheme.titleLarge?.copyWith(
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -344,14 +347,16 @@ class _OutlineBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
-      height: AppSizes.buttonHeight,
+      height: 48,
       child: OutlinedButton(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.textSecondary,
-          side: BorderSide(color: AppColors.border),
+          foregroundColor: theme.colorScheme.onSurfaceVariant,
+          side: BorderSide(color: theme.dividerColor),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
         onPressed: onTap,
@@ -359,13 +364,13 @@ class _OutlineBtn extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: AppSizes.iconSm),
-              SizedBox(width: AppSpacing.sm),
+              Icon(icon, size: 16),
+              const SizedBox(width: 8),
             ],
             Text(
               label,
-              style: AppFonts.titleMedium.copyWith(
-                color: AppColors.textSecondary,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -478,60 +483,3 @@ void showLogOutDialogState(
     },
   );
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// REPLACEMENT FOR setupResendRequestDialogState()
-// ─────────────────────────────────────────────────────────────────────────────
-
-// void setupResendRequestDialogState(
-//   BuildContext context,
-//   String data,
-//   List<String> actions,
-//   Function() onOkPressed,
-//   Widget icon, {
-//   Function()? cancelClick,
-// }) {
-//   showAppDialog(
-//     context,
-//     type: AppDialogType.info,
-//     title: S.of(context).confirmAction,
-//     message: data,
-//     confirmLabel: actions[0],
-//     cancelLabel: actions.length > 1 ? actions[1] : null,
-//     onCancel: cancelClick ?? () => context.pop(),
-//     onConfirm: () {
-//       context.pop();
-//       onOkPressed();
-//     },
-//   );
-// }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// REPLACEMENT FOR showFingerprintDialog()
-// ─────────────────────────────────────────────────────────────────────────────
-
-// void showFingerprintDialog(
-//   BuildContext context, {
-//   bool success = true,
-//   required String data,
-//   required List<String> actions,
-//   Function()? onclick,
-// }) {
-//   showAppDialog(
-//     context,
-//     type: success ? AppDialogType.success : AppDialogType.error,
-//     title: success
-//         ? S.of(context).identityConfirmed
-//         : S.of(context).verificationFailed,
-//     message: data,
-//     confirmLabel: actions[0],
-//     retryLabel: !success && actions.length > 1 ? actions[1] : null,
-//     onRetry: onclick != null
-//         ? () {
-//             context.pop();
-//             onclick();
-//           }
-//         : null,
-//     onConfirm: () => context.pushReplacementNamed(Routes.homeScreen),
-//   );
-//}
