@@ -22,3 +22,12 @@ class SelectBranchEvent extends HomeEvent {
   @override
   List<Object?> get props => [branch];
 }
+
+class OpenRestaurantPosEvent extends HomeEvent {
+  const OpenRestaurantPosEvent();
+}
+
+class OpenRestaurantPosSessionEvent extends HomeEvent {
+  final double openingBalance;
+  const OpenRestaurantPosSessionEvent({required this.openingBalance});
+}

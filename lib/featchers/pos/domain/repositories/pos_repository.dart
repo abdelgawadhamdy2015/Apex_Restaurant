@@ -1,10 +1,10 @@
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -22,9 +22,10 @@ abstract class PosRepository {
   Future<ApiResult<BaseResponse<List<AdditiveModel>?>>> getFoodAdditives(
     GetFoodAdditiveRequest? request,
   );
-  Future<ApiResult<BaseResponse<List<CategoryResponse>?>>> getMenuCategories();
-  Future<ApiResult<BaseResponse<List<RestaurantItemResponse>?>>>
-  getMenuItemsByCategory(GetItemsRequestModel? request);
+  Future<ApiResult<BaseResponse<List<CategoryModel>?>>> getMenuCategories();
+  Future<ApiResult<BaseResponse<List<RestaurantItem>?>>> getMenuItemsByCategory(
+    GetItemsRequestModel? request,
+  );
   Future<void> submitOrder(Order order);
   Future<void> sendToKitchen(Order order);
 

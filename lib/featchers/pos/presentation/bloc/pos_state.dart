@@ -1,10 +1,10 @@
 import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:equatable/equatable.dart';
@@ -18,13 +18,13 @@ class PosState extends Equatable implements ErrorableState {
   final List<FloorModel> floors;
   final List<TableModel> tables;
   final List<AdditiveModel> additives;
-  final List<CategoryResponse> categories;
-  final CategoryResponse? selectedCategory;
+  final List<CategoryModel> categories;
+  final CategoryModel? selectedCategory;
 
   final List<DeliveryCompanyModel> deliveryCompanies;
   final DeliveryCompanyModel? selectedDeliveryCompany;
 
-  final List<RestaurantItemResponse> currentMenuItems;
+  final List<RestaurantItem> currentMenuItems;
   final OrderItem? selectedOrderItem;
 
   final Order currentOrder;
@@ -69,11 +69,11 @@ class PosState extends Equatable implements ErrorableState {
     List<FloorModel>? floors,
     List<TableModel>? tables,
     List<AdditiveModel>? additives,
-    List<CategoryResponse>? categories,
+    List<CategoryModel>? categories,
     List<DeliveryCompanyModel>? deliveryCompanies,
     DeliveryCompanyModel? selectedDeliveryCompany,
-    CategoryResponse? selectedCategory,
-    List<RestaurantItemResponse>? currentMenuItems,
+    CategoryModel? selectedCategory,
+    List<RestaurantItem>? currentMenuItems,
     OrderItem? selectedOrderItem,
     Order? currentOrder,
     String? errorMessage,

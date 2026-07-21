@@ -6,11 +6,10 @@ import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
 import 'package:apex_restaurant/core/shared/widgets/pos_toast.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
-import 'package:apex_restaurant/core/shared/widgets/toast_design.dart';
+import 'package:apex_restaurant/core/shared/widgets/toast_snack_bar.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -26,20 +25,11 @@ class HelperMethods {
   }
 
   static void massageForAlert(
-    String massage,
+    BuildContext context,
+    String message,
     bool failedData,
-    FToast fToast, [
-    String backPress = "",
-  ]) {
-    fToast.showToast(
-      child: ToastDesign(
-        massage: massage,
-        failedData: failedData,
-        backPress: backPress,
-      ),
-      gravity: backPress == "back" ? ToastGravity.BOTTOM : ToastGravity.TOP,
-      toastDuration: const Duration(seconds: 2),
-    );
+  ) {
+    TopSnackBar.show(context: context, message: message, isError: failedData);
   }
 
   // ── Auth ───────────────────────────────────────────────────────────────────

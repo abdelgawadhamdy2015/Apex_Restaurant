@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
+import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:equatable/equatable.dart';
 
@@ -9,6 +10,9 @@ enum HomeStatus {
   loading,
   userDataLoading,
   userDataLoaded,
+  openSessionLoading,
+  openSessionLoaded,
+
   loaded,
   error,
   submitting,
@@ -23,6 +27,7 @@ class HomeState extends Equatable implements ErrorableState {
   final String? errorMessage;
   final UserDataModel? userDataModel;
   final List<EmployeeBranch> branches;
+  final SessionModel? sessionModel;
 
   const HomeState({
     this.status = HomeStatus.initial,
@@ -31,6 +36,7 @@ class HomeState extends Equatable implements ErrorableState {
     this.errorMessage,
     this.branches = const [],
     this.userDataModel,
+    this.sessionModel,
   });
 
   factory HomeState.initial() => HomeState(status: HomeStatus.initial);
@@ -42,6 +48,7 @@ class HomeState extends Equatable implements ErrorableState {
     String? errorMessage,
     List<EmployeeBranch>? branches,
     UserDataModel? userDataModel,
+    SessionModel? sessionModel,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -51,6 +58,7 @@ class HomeState extends Equatable implements ErrorableState {
       errorMessage: errorMessage ?? this.errorMessage,
       branches: branches ?? this.branches,
       userDataModel: userDataModel ?? this.userDataModel,
+      sessionModel: sessionModel ?? this.sessionModel,
     );
   }
 
@@ -61,6 +69,7 @@ class HomeState extends Equatable implements ErrorableState {
     errorMessage,
     branches,
     userDataModel,
+    sessionModel,
   ];
 
   @override

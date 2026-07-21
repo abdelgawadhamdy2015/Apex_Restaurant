@@ -10,6 +10,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   static const _themeKey = 'settings.themeMode';
   static const _fontScaleKey = 'settings.fontScale';
   static const _accentColorKey = 'settings.accentColor';
+  static const _iconScaleKey = 'settings.iconScale';
   static const _uiScaleKey = 'settings.uiScale';
 
   final SharedPreferences prefs;
@@ -22,6 +23,8 @@ class SettingsCubit extends Cubit<SettingsState> {
     final themeIndex = prefs.getInt(_themeKey);
     final fontIndex = prefs.getInt(_fontScaleKey);
     final accentIndex = prefs.getInt(_accentColorKey);
+    final iconIndex = prefs.getInt(_iconScaleKey);
+    final uiIndex = prefs.getInt(_uiScaleKey);
 
     emit(
       state.copyWith(
@@ -43,6 +46,18 @@ class SettingsCubit extends Cubit<SettingsState> {
                 accentIndex < AppAccentColor.values.length
             ? AppAccentColor.values[accentIndex]
             : AppAccentColor.primary,
+        iconScale:
+            iconIndex != null &&
+                iconIndex >= 0 &&
+                iconIndex < AppIconScale.values.length
+            ? AppIconScale.values[iconIndex]
+            : AppIconScale.medium,
+        uiScale:
+            uiIndex != null &&
+                uiIndex >= 0 &&
+                uiIndex < AppUiScale.values.length
+            ? AppUiScale.values[uiIndex]
+            : AppUiScale.regular,
       ),
     );
   }
@@ -66,20 +81,28 @@ class SettingsCubit extends Cubit<SettingsState> {
     await prefs.setInt(_accentColorKey, accent.index);
   }
 
-  Future<void> reset() async {
-    const state = SettingsState();
-
-    emit(state);
-
-    await Future.wait([
-      prefs.setInt(_themeKey, state.themeMode.index),
-      prefs.setInt(_fontScaleKey, state.fontScale.index),
-      prefs.setInt(_accentColorKey, state.accentColor.index),
-    ]);
+  Future<void> setIconScale(AppIconScale scale) async {
+    emit(state.copyWith(iconScale: scale));
+    await prefs.setInt(_iconScaleKey, scale.index);
   }
 
+  /// Controls spacing/density between items and card padding app-wide.
   Future<void> setUiScale(AppUiScale scale) async {
     emit(state.copyWith(uiScale: scale));
-    await prefs.setDouble(_uiScaleKey, scale.scale);
+    await prefs.setInt(_uiScaleKey, scale.index);
+  }
+
+  Future<void> reset() async {
+    const resetState = SettingsState();
+
+    emit(resetState);
+
+    await Future.wait([
+      prefs.setInt(_themeKey, resetState.themeMode.index),
+      prefs.setInt(_fontScaleKey, resetState.fontScale.index),
+      prefs.setInt(_accentColorKey, resetState.accentColor.index),
+      prefs.setInt(_iconScaleKey, resetState.iconScale.index),
+      prefs.setInt(_uiScaleKey, resetState.uiScale.index),
+    ]);
   }
 }

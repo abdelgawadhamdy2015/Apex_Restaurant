@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/shared/widgets/auth_listener.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/layout/mobile_pos_layout.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +20,7 @@ class PosPage extends StatelessWidget {
         ..add(const LoadCategoriesEvent())
         ..add(const LoadFoodAdditivesEvent()),
       child: BlocErrorListener<PosBloc, PosState>(
-        child: MobilePosLayout(),
+        child: PosMenuScreen(changeLanguage: changeLanguage),
         // : TabletPosLayout(changeLanguage: changeLanguage, managerName: ""),
       ),
     );

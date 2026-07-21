@@ -3,6 +3,7 @@ import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/home/data/datasource/menu_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
+import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:apex_restaurant/featchers/home/domain/repo/home_repo.dart';
 
@@ -28,6 +29,27 @@ class HomeRepoImpl implements HomeRepository {
   }) async {
     try {
       final response = await _remoteDataSource.getUserData(id: id);
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<SessionModel?>>> openRestaurantPos() async {
+    try {
+      final response = await _remoteDataSource.openRestaurantPos();
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<SessionModel?>>>
+  openRestaurantPosSession() async {
+    try {
+      final response = await _remoteDataSource.openRestaurantPosSession();
       return ApiResult.success(response);
     } catch (error) {
       return ApiResult.failure(ErrorHandler.handle(error));
