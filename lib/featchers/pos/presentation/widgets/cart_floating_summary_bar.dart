@@ -1,9 +1,7 @@
-// lib/featchers/pos/presentation/widgets/cart_floating_summary_bar.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Floating pill shown above the bottom nav bar once the cart has items:
-/// item count + total, with a button to jump to the cart screen.
 class CartFloatingSummaryBar extends StatelessWidget {
   const CartFloatingSummaryBar({
     super.key,
@@ -21,6 +19,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       margin: EdgeInsets.all(spacing.md),
@@ -29,7 +28,6 @@ class CartFloatingSummaryBar extends StatelessWidget {
         vertical: spacing.sm,
       ),
       decoration: BoxDecoration(
-        // Was AppColors.primary.
         color: theme.colorScheme.primary,
         borderRadius: BorderRadius.circular(16),
       ),
@@ -44,8 +42,6 @@ class CartFloatingSummaryBar extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(spacing.xs),
                     decoration: BoxDecoration(
-                      // Was Colors.white.withOpacity(0.2) — onPrimary is
-                      // white in both your themes, kept semantic here.
                       color: theme.colorScheme.onPrimary.withOpacity(0.2),
                       shape: BoxShape.circle,
                     ),
@@ -60,7 +56,6 @@ class CartFloatingSummaryBar extends StatelessWidget {
                     right: -4,
                     child: CircleAvatar(
                       radius: 10,
-                      // Was AppColors.badgeOrange.
                       backgroundColor: theme.colorScheme.secondary,
                       child: Text(
                         '$itemCount',
@@ -79,14 +74,14 @@ class CartFloatingSummaryBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '$itemCount أصناف',
+                    lang.itemsCount(itemCount),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
-                    '${totalAmount.toStringAsFixed(2)} ر.س',
+                    '${totalAmount.toStringAsFixed(2)} ${lang.currencySar}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
@@ -99,9 +94,6 @@ class CartFloatingSummaryBar extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: onViewCartPressed,
             style: ElevatedButton.styleFrom(
-              // Was Colors.white / AppColors.primary — inverted so the
-              // button reads clearly on top of the primary-colored bar
-              // regardless of what the accent color is.
               backgroundColor: theme.colorScheme.onPrimary,
               foregroundColor: theme.colorScheme.primary,
               shape: RoundedRectangleBorder(
@@ -113,9 +105,9 @@ class CartFloatingSummaryBar extends StatelessWidget {
               ),
             ),
             icon: Icon(Icons.arrow_back, size: iconSizes.md),
-            label: const Text(
-              'عرض السلة',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            label: Text(
+              lang.viewCart,
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
         ],

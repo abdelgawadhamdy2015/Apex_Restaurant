@@ -1,9 +1,7 @@
-// lib/featchers/pos/presentation/widgets/discount_type_toggle.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Two-way toggle between percentage and fixed-amount discount, used in
-/// the item customization sheet.
 class DiscountTypeToggle extends StatelessWidget {
   const DiscountTypeToggle({
     super.key,
@@ -17,12 +15,13 @@ class DiscountTypeToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Row(
       children: [
         Expanded(
           child: _Option(
-            label: 'نسبة مئوية (%)',
+            label: lang.percentageDiscount,
             isSelected: isPercentage,
             onTap: () => onChanged(true),
           ),
@@ -30,7 +29,7 @@ class DiscountTypeToggle extends StatelessWidget {
         SizedBox(width: spacing.sm),
         Expanded(
           child: _Option(
-            label: 'قيمة ثابتة',
+            label: lang.fixedAmountDiscount,
             isSelected: !isPercentage,
             onTap: () => onChanged(false),
           ),
@@ -69,7 +68,6 @@ class _Option extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? theme.colorScheme.primary
-                // Was theme.dividerColor.withOpacity(0.1).
                 : theme.colorScheme.outlineVariant,
             width: 2,
           ),
@@ -81,7 +79,6 @@ class _Option extends StatelessWidget {
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
               color: isSelected
                   ? theme.colorScheme.primary
-                  // Was theme.hintColor.
                   : theme.colorScheme.onSurfaceVariant,
               size: iconSizes.md,
             ),

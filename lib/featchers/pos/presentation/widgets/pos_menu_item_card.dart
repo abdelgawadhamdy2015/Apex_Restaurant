@@ -1,10 +1,8 @@
-// lib/featchers/pos/presentation/widgets/pos_menu_item_card.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Single menu item tile shown in the POS menu grid: image, name (ar/en),
-/// price, and a quick-add button.
 class PosMenuItemCard extends StatelessWidget {
   const PosMenuItemCard({
     super.key,
@@ -20,6 +18,7 @@ class PosMenuItemCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -69,7 +68,7 @@ class PosMenuItemCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
                     ),
                     child: Text(
-                      item.isOffer ? 'عرض' : 'جديد',
+                      item.isOffer ? lang.badgeOffer : lang.badgeNew,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onTertiary,
                         fontWeight: FontWeight.bold,
@@ -91,7 +90,6 @@ class PosMenuItemCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    // Was AppColors.textPrimary.
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
@@ -101,7 +99,6 @@ class PosMenuItemCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    // Was AppColors.textSecondary.
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
@@ -110,10 +107,11 @@ class PosMenuItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${item.defaultPrice.toStringAsFixed(2)} ر.س',
+                      lang.priceWithCurrency(
+                        item.defaultPrice.toStringAsFixed(2),
+                      ),
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        // Was AppColors.primary.
                         color: theme.colorScheme.primary,
                       ),
                     ),
@@ -122,13 +120,11 @@ class PosMenuItemCard extends StatelessWidget {
                       child: Container(
                         padding: EdgeInsets.all(spacing.xxs),
                         decoration: BoxDecoration(
-                          // Was AppColors.primary.
                           color: theme.colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           Icons.add,
-                          // Was Colors.white.
                           color: theme.colorScheme.onPrimary,
                           size: iconSizes.md,
                         ),

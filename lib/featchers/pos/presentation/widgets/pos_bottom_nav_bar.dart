@@ -1,9 +1,7 @@
-// lib/featchers/pos/presentation/widgets/pos_bottom_nav_bar.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Bottom navigation bar for the POS menu screen (Settings / Cart /
-/// Orders / Menu).
 class PosBottomNavBar extends StatelessWidget {
   const PosBottomNavBar({
     super.key,
@@ -18,10 +16,10 @@ class PosBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       decoration: BoxDecoration(
-        // Was AppColors.surface.
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(spacing.radiusPill),
@@ -39,25 +37,24 @@ class PosBottomNavBar extends StatelessWidget {
         onTap: onTap,
         type: BottomNavigationBarType.fixed,
         backgroundColor: theme.colorScheme.surface,
-        // Was AppColors.badgeOrange / AppColors.textSecondary.
         selectedItemColor: theme.colorScheme.secondary,
         unselectedItemColor: theme.colorScheme.onSurfaceVariant,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: 'الإعدادات',
+            icon: const Icon(Icons.settings_outlined),
+            label: lang.navSettings,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: 'السلة',
+            icon: const Icon(Icons.shopping_cart_outlined),
+            label: lang.navCart,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            label: 'الطلبات',
+            icon: const Icon(Icons.receipt_long_outlined),
+            label: lang.navOrders,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_outlined),
-            label: 'القائمة',
+            icon: const Icon(Icons.restaurant_outlined),
+            label: lang.navMenu,
           ),
         ],
       ),

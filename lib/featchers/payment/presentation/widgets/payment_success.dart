@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class PaymentSuccess extends StatelessWidget {
@@ -11,6 +12,15 @@ class PaymentSuccess extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final l10n = S.of(context);
+
+    final String formattedDate = l10n.formattedDateTime(
+      model.transactionTime.year,
+      model.transactionTime.month.toString().padLeft(2, '0'),
+      model.transactionTime.day.toString().padLeft(2, '0'),
+      model.transactionTime.hour.toString().padLeft(2, '0'),
+      model.transactionTime.minute.toString().padLeft(2, '0'),
+    );
 
     return SingleChildScrollView(
       padding: EdgeInsets.all(spacing.lg),
@@ -30,7 +40,7 @@ class PaymentSuccess extends StatelessWidget {
           ),
           SizedBox(height: spacing.md),
           Text(
-            'تم الدفع بنجاح',
+            l10n.paymentSuccessful,
             textAlign: TextAlign.center,
             style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
@@ -39,7 +49,7 @@ class PaymentSuccess extends StatelessWidget {
           ),
           SizedBox(height: spacing.xs),
           Text(
-            'تمت معالجة الطلب بنجاح وإرساله للمطبخ',
+            l10n.orderProcessedSuccessfully,
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
@@ -72,7 +82,7 @@ class PaymentSuccess extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'رقم الطلب',
+                            l10n.orderNumber,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -90,7 +100,7 @@ class PaymentSuccess extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'رقم الفاتورة',
+                            l10n.invoiceNumber,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -114,21 +124,22 @@ class PaymentSuccess extends StatelessWidget {
                   child: Column(
                     children: [
                       _InfoRow(
-                        label: 'إجمالي المبلغ المدفوع',
-                        value: '${model.totalPaid.toStringAsFixed(2)} ر.س',
+                        label: l10n.totalPaid,
+                        value: l10n.priceWithCurrency(
+                          model.totalPaid.toStringAsFixed(2),
+                        ),
                         isBold: true,
                       ),
                       SizedBox(height: spacing.sm),
                       _InfoRow(
-                        label: 'طريقة الدفع',
+                        label: l10n.paymentMethod,
                         value: model.paymentMethodName,
                         icon: Icons.credit_card,
                       ),
                       SizedBox(height: spacing.sm),
                       _InfoRow(
-                        label: 'تاريخ العملية',
-                        value:
-                            '${model.transactionTime.year}/${model.transactionTime.month}/${model.transactionTime.day} - ${model.transactionTime.hour}:${model.transactionTime.minute}',
+                        label: l10n.transactionDate,
+                        value: formattedDate,
                       ),
                       Divider(
                         height: spacing.lg * 2,
@@ -139,7 +150,7 @@ class PaymentSuccess extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          'تفاصيل الطلب',
+                          l10n.orderDetails,
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -162,7 +173,7 @@ class PaymentSuccess extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    'الكمية: ${item.quantity}',
+                                    l10n.quantityWithCount(item.quantity),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: theme.colorScheme.onSurfaceVariant,
                                     ),
@@ -170,7 +181,9 @@ class PaymentSuccess extends StatelessWidget {
                                 ],
                               ),
                               Text(
-                                '${item.price.toStringAsFixed(2)} ر.س',
+                                l10n.priceWithCurrency(
+                                  item.price.toStringAsFixed(2),
+                                ),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -188,7 +201,7 @@ class PaymentSuccess extends StatelessWidget {
           SizedBox(height: spacing.xl),
 
           // Actions
-          _SuccessActionButtons(),
+          const _SuccessActionButtons(),
         ],
       ),
     );
@@ -202,58 +215,47 @@ class _SuccessActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Column(
       children: [
-        // طلب جديد (New Order - Primary Style)
         _CustomActionButton(
-          label: 'طلب جديد',
+          label: lang.btnNewOrder,
           icon: Icons.shopping_cart_outlined,
           backgroundColor: theme.colorScheme.primary,
           contentColor: theme.colorScheme.onPrimary,
           borderColor: theme.colorScheme.primary,
-          onTap: () {
-            // TODO: Handle new order
-          },
+          onTap: () {},
         ),
         SizedBox(height: spacing.xs),
 
-        // طباعة إيصال (Print Receipt)
         _CustomActionButton(
-          label: 'طباعة إيصال',
+          label: lang.btnPrintReceipt,
           icon: Icons.print_outlined,
           backgroundColor: Colors.transparent,
           contentColor: theme.colorScheme.primary,
           borderColor: theme.colorScheme.primary,
-          onTap: () {
-            // TODO: Handle print receipt
-          },
+          onTap: () {},
         ),
         SizedBox(height: spacing.xs),
 
-        // طباعة مطبخ (Print Kitchen)
         _CustomActionButton(
-          label: 'طباعة مطبخ',
+          label: lang.btnPrintKitchen,
           icon: Icons.soup_kitchen_outlined,
           backgroundColor: Colors.transparent,
           contentColor: theme.colorScheme.primary,
           borderColor: theme.colorScheme.primary,
-          onTap: () {
-            // TODO: Handle print kitchen
-          },
+          onTap: () {},
         ),
         SizedBox(height: spacing.xs),
 
-        // الطلبات السابقة (Previous Orders)
         _CustomActionButton(
-          label: 'الطلبات السابقة',
+          label: lang.btnPreviousOrders,
           icon: Icons.shopping_bag_outlined,
           backgroundColor: Colors.transparent,
           contentColor: theme.colorScheme.primary,
           borderColor: theme.colorScheme.primary,
-          onTap: () {
-            // TODO: Handle navigate to previous orders
-          },
+          onTap: () {},
         ),
       ],
     );
@@ -345,7 +347,7 @@ class _InfoRow extends StatelessWidget {
           children: [
             if (icon != null) ...[
               const SizedBox(width: 6),
-              Icon(icon, size: 18, color: Colors.orange),
+              Icon(icon, size: 18, color: theme.colorScheme.secondary),
             ],
             Text(
               value,

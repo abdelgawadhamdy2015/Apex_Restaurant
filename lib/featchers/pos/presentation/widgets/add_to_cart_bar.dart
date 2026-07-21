@@ -1,10 +1,8 @@
-// lib/featchers/pos/presentation/widgets/add_to_cart_bar.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/quantity_counter.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Fixed bottom panel of the item customization sheet: quantity stepper
-/// + confirm button showing the live total price.
 class AddToCartBar extends StatelessWidget {
   const AddToCartBar({
     super.key,
@@ -25,6 +23,7 @@ class AddToCartBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -57,7 +56,7 @@ class AddToCartBar extends StatelessWidget {
                   ),
                   onPressed: onConfirm,
                   child: Text(
-                    'أضف للسلة ${totalPrice.toStringAsFixed(2)} ر.س',
+                    lang.addToCartWithPrice(totalPrice.toStringAsFixed(2)),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,

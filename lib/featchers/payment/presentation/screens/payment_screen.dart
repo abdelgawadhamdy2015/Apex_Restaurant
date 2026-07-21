@@ -4,6 +4,7 @@ import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_state.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/widgets/payment_success.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,11 +15,12 @@ class PaymentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text('الدفع'),
+        title: Text(lang.payment),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -30,7 +32,7 @@ class PaymentScreen extends StatelessWidget {
           if (state.status == PaymentStatus.error) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'حدث خطأ ما'),
+                content: Text(state.errorMessage ?? lang.somethingWentWrong),
                 backgroundColor: theme.colorScheme.error,
               ),
             );
@@ -90,6 +92,7 @@ class _TotalAmountCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final state = context.watch<PaymentBloc>().state;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
@@ -104,7 +107,7 @@ class _TotalAmountCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'إجمالي المبلغ المطلوب',
+                lang.totalAmountRequired,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -120,7 +123,7 @@ class _TotalAmountCard extends StatelessWidget {
                   ),
                   SizedBox(width: spacing.xs),
                   Text(
-                    'ريال سعودي',
+                    lang.currencySar,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -129,7 +132,7 @@ class _TotalAmountCard extends StatelessWidget {
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Container(
             padding: EdgeInsets.all(spacing.sm),
             decoration: BoxDecoration(
@@ -155,6 +158,7 @@ class _PaymentMethodTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
     final selectedMethod = context.select(
       (PaymentBloc bloc) => bloc.state.selectedMethod,
     );
@@ -168,7 +172,7 @@ class _PaymentMethodTabs extends StatelessWidget {
       child: Row(
         children: [
           _TabItem(
-            label: 'نقدي',
+            label: lang.paymentMethodCash,
             icon: Icons.payments_outlined,
             isSelected: selectedMethod == PaymentMethodType.cash,
             onTap: () => context.read<PaymentBloc>().add(
@@ -176,7 +180,7 @@ class _PaymentMethodTabs extends StatelessWidget {
             ),
           ),
           _TabItem(
-            label: 'شبكة',
+            label: lang.paymentMethodCard,
             icon: Icons.credit_card,
             isSelected: selectedMethod == PaymentMethodType.card,
             onTap: () => context.read<PaymentBloc>().add(
@@ -184,7 +188,7 @@ class _PaymentMethodTabs extends StatelessWidget {
             ),
           ),
           _TabItem(
-            label: '... أخرى',
+            label: lang.paymentMethodOther,
             icon: Icons.more_horiz,
             isSelected: selectedMethod == PaymentMethodType.split,
             onTap: () => context.read<PaymentBloc>().add(
@@ -260,12 +264,13 @@ class _DueAmountCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final state = context.watch<PaymentBloc>().state;
+    final lang = S.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'المستحق',
+          lang.amountDue,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -289,7 +294,7 @@ class _DueAmountCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'ر.س',
+                lang.currencySarShort,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -310,12 +315,13 @@ class _PaidAmountInputField extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final state = context.watch<PaymentBloc>().state;
+    final lang = S.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'المسدد',
+          lang.amountPaid,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -345,7 +351,7 @@ class _PaidAmountInputField extends StatelessWidget {
                     border: InputBorder.none,
                     isDense: true,
                     suffix: Text(
-                      'ر.س',
+                      lang.currencySarShort,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -376,12 +382,13 @@ class _RemainingAmountCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final state = context.watch<PaymentBloc>().state;
+    final lang = S.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'المتبقي',
+          lang.amountRemaining,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -401,7 +408,7 @@ class _RemainingAmountCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'ر.س',
+                lang.currencySarShort,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -428,12 +435,13 @@ class _ReferenceNumberInputField extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'رقم المرجع',
+          lang.referenceNumber,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -442,7 +450,7 @@ class _ReferenceNumberInputField extends StatelessWidget {
         TextFormField(
           textAlign: TextAlign.right,
           decoration: InputDecoration(
-            hintText: 'ادخل رقم العملية .....',
+            hintText: lang.enterTransactionNumber,
             prefixIcon: Icon(
               Icons.subtitles_outlined,
               color: theme.colorScheme.onSurfaceVariant,
@@ -467,39 +475,44 @@ class _SplitMethodsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     final methods = [
       _SplitItemData(
-        title: 'نقدي',
+        title: lang.paymentMethodCash,
         icon: Icons.payments_outlined,
         color: Colors.orange,
       ),
       _SplitItemData(
-        title: 'شبكة',
+        title: lang.paymentMethodCard,
         icon: Icons.credit_card,
         color: Colors.blue,
       ),
       _SplitItemData(
-        title: 'فيزا',
+        title: lang.paymentMethodVisa,
         icon: Icons.account_balance,
         color: Colors.indigo,
       ),
       _SplitItemData(
-        title: 'تحويل بنكي',
+        title: lang.paymentMethodBankTransfer,
         icon: Icons.sync_alt,
         color: Colors.black87,
       ),
       _SplitItemData(
-        title: 'نقاط الولاء',
+        title: lang.paymentMethodLoyaltyPoints,
         icon: Icons.stars,
         color: Colors.indigo,
       ),
       _SplitItemData(
-        title: 'قسيمة شراء',
+        title: lang.paymentMethodVoucher,
         icon: Icons.confirmation_number_outlined,
         color: Colors.black87,
       ),
-      _SplitItemData(title: 'آجل', icon: Icons.history, color: Colors.black87),
+      _SplitItemData(
+        title: lang.paymentMethodCredit,
+        icon: Icons.history,
+        color: Colors.black87,
+      ),
     ];
 
     return Column(
@@ -551,7 +564,6 @@ class _SplitMethodRow extends StatelessWidget {
         children: [
           Icon(item.icon, color: item.color),
           SizedBox(width: spacing.sm),
-
           Text(
             item.title,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -590,6 +602,7 @@ class _BottomActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
@@ -629,7 +642,7 @@ class _BottomActionButtons extends StatelessWidget {
                       ),
                     )
                   : const Icon(Icons.check_circle_outline),
-              label: const Text('سداد'),
+              label: Text(lang.pay),
             ),
           ),
           SizedBox(width: spacing.md),
@@ -643,7 +656,7 @@ class _BottomActionButtons extends StatelessWidget {
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
               ),
-              child: const Text('إلغاء'),
+              child: Text(lang.cancel),
             ),
           ),
         ],

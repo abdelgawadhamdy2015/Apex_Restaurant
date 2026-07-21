@@ -1,4 +1,3 @@
-// lib/featchers/pos/presentation/widgets/item_customization_sheet.dart
 import 'dart:developer';
 
 import 'package:apex_restaurant/core/helpers/extensions.dart';
@@ -9,6 +8,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/widgets/discount_type
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_addon_tile.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_header.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_size_selector.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ItemCustomizationSheet extends StatefulWidget {
@@ -70,7 +70,7 @@ class ItemCustomizationSheet extends StatefulWidget {
 
 class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
   int _quantity = 1;
-  int _selectedSizeIndex = 0; // Default to Medium (وسط)
+  int _selectedSizeIndex = 0; // Default to Medium
   final Set<int> _selectedAddonIndices = {};
   bool _isPercentageDiscount = true;
   final TextEditingController _discountController = TextEditingController();
@@ -108,6 +108,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -125,13 +126,12 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
             imagePath: widget.item.imagePath,
           ),
           const Divider(height: 1),
-
           Expanded(
             child: ListView(
               padding: EdgeInsets.all(spacing.md),
               children: [
                 Text(
-                  'حجم المنتج',
+                  lang.productSize,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -144,9 +144,8 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                       setState(() => _selectedSizeIndex = index),
                 ),
                 SizedBox(height: spacing.xl),
-
                 Text(
-                  'الإضافات',
+                  lang.addons,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -172,9 +171,8 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                   );
                 }),
                 SizedBox(height: spacing.xl),
-
                 Text(
-                  'خصم خاص',
+                  lang.specialDiscount,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -190,16 +188,14 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                   controller: _discountController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    hintText: 'أدخل قيمة الخصم',
-
+                    hintText: lang.enterDiscountValue,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                   ),
                   onChanged: (value) => setState(() {}),
                 ),
                 SizedBox(height: spacing.xl),
-
                 Text(
-                  'ملاحظات خاصة',
+                  lang.specialNotes,
                   style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -209,7 +205,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                   controller: _notesController,
                   maxLines: 3,
                   decoration: InputDecoration(
-                    hintText: 'مثال: زيادة تسوية، وضع الصوص في علبة خارجية...',
+                    hintText: lang.specialNotesHint,
                     fillColor: theme.colorScheme.surfaceContainerHighest,
                   ),
                 ),
@@ -217,7 +213,6 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
               ],
             ),
           ),
-
           AddToCartBar(
             quantity: _quantity,
             onIncrement: () => setState(() => _quantity++),
