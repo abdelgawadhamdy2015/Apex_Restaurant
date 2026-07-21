@@ -1,3 +1,6 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
@@ -10,8 +13,10 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show Intl;
 
 class SideNav extends StatefulWidget {
-  const SideNav({super.key, required this.changeLanguage});
+  const SideNav({super.key, required this.changeLanguage, this.currentRoute});
+
   final Function(Locale) changeLanguage;
+  final String? currentRoute;
 
   @override
   State<SideNav> createState() => _SideNavState();
@@ -29,119 +34,195 @@ class _SideNavState extends State<SideNav> {
         : lang.english;
 
     final theme = Theme.of(context);
-    final avatarSize = MediaQuery.sizeOf(context).width * 0.1;
+    final size = MediaQuery.sizeOf(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
 
-    return Material(
-      child: Container(
-        width: MediaQuery.sizeOf(context).width * 0.4,
-        color: theme.scaffoldBackgroundColor,
-        child: Column(
-          children: [
-            const SizedBox(height: 32),
+    // Dynamic width calculation for drawer across Phone and Tablet
+    final drawerWidth = (size.width * 0.75).clamp(280.0, 360.0);
 
-            // User profile
-            Column(
-              children: [
-                CircleAvatar(
-                  radius: avatarSize / 2,
-                  child: ClipOval(
-                    child: Container(
-                      width: avatarSize,
-                      height: avatarSize,
-                      color: theme.colorScheme.onSurfaceVariant,
-                      child: Icon(
-                        Icons.person,
-                        size: 24,
-                        color: theme.colorScheme.surface,
-                      ),
-                    ),
-                  ),
+    return Drawer(
+      width: drawerWidth,
+      // Was AppColors.canvas — now follows the active ThemeData.
+      backgroundColor: theme.scaffoldBackgroundColor,
+      child: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: spacing.sm,
+                  horizontal: spacing.md,
                 ),
-                const SizedBox(height: 16),
-                BlocBuilder<HomeBloc, HomeState>(
-                  builder: (context, state) {
-                    return Column(
-                      children: [
-                        Text(
-                          state.userDataModel?.employees?.arabicName ?? "",
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          state.userDataModel?.isActive == true
-                              ? lang.active
-                              : lang.notActive,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: theme.colorScheme.secondary,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-
-            _NavItem(
-              icon: Icons.home_sharp,
-              label: lang.home,
-              onTap: () => context.goNamed(Routes.homeScreen),
-            ),
-            _NavItem(
-              icon: Icons.point_of_sale_outlined,
-              label: lang.pos,
-              onTap: () => context.goNamed(Routes.posScreen),
-            ),
-            _NavItem(
-              icon: Icons.list_alt_outlined,
-              label: lang.requests,
-              onTap: () {},
-            ),
-            _NavItem(
-              icon: Icons.table_restaurant_outlined,
-              label: lang.tables,
-              onTap: () {},
-            ),
-            _NavItem(
-              icon: Icons.bar_chart_outlined,
-              label: lang.reports,
-              onTap: () {},
-            ),
-            _NavItem(
-              icon: Icons.language_outlined,
-              label: selectedLanguage,
-              onTap: () => _showLanguageDialog(context),
-            ),
-
-            const Spacer(),
-
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24, right: 20, left: 20),
-              child: GestureDetector(
-                onTap: () => showLogOutDialogState(context, lang.logout, [
-                  lang.okDialog,
-                  lang.cancel,
-                ]),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
                   children: [
-                    Text(
-                      lang.logout,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.error,
+                    // User Avatar
+                    Container(
+                      width: spacing.xl * 2.5,
+                      height: spacing.xl * 2.5,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.person_rounded,
+                        size: iconSizes.lg,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      Icons.logout,
-                      color: theme.colorScheme.error,
-                      size: 24,
+                    SizedBox(height: spacing.sm),
+
+                    // User Details
+                    BlocBuilder<HomeBloc, HomeState>(
+                      builder: (context, state) {
+                        return Column(
+                          children: [
+                            Text(
+                              state.userDataModel?.employees?.arabicName ?? "",
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: spacing.xs / 2),
+                            Text(
+                              state.userDataModel?.isActive == true
+                                  ? lang.active
+                                  : lang.notActive,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                // Was AppColors.error for the inactive case.
+                                color: state.userDataModel?.isActive == true
+                                    ? theme.colorScheme.secondary
+                                    : theme.colorScheme.error,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
+              ),
+            ),
+
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: spacing.md),
+                child: Divider(
+                  height: 1,
+                  color: theme.colorScheme.outlineVariant,
+                ),
+              ),
+            ),
+
+            // Nav Items List
+            SliverPadding(
+              padding: EdgeInsets.symmetric(vertical: spacing.sm),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  _NavItem(
+                    icon: Icons.home_outlined,
+                    activeIcon: Icons.home_rounded,
+                    label: lang.home,
+                    isSelected: widget.currentRoute == Routes.homeScreen,
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.goNamed(Routes.homeScreen);
+                    },
+                  ),
+                  _NavItem(
+                    icon: Icons.point_of_sale_outlined,
+                    activeIcon: Icons.point_of_sale_rounded,
+                    label: lang.pos,
+                    isSelected: widget.currentRoute == Routes.posScreen,
+                    onTap: () {
+                      Navigator.pop(context);
+                      context.goNamed(Routes.posScreen);
+                    },
+                  ),
+                  _NavItem(
+                    icon: Icons.list_alt_outlined,
+                    label: lang.requests,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  _NavItem(
+                    icon: Icons.table_restaurant_outlined,
+                    label: lang.tables,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  _NavItem(
+                    icon: Icons.bar_chart_outlined,
+                    label: lang.reports,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  _NavItem(
+                    icon: Icons.language_outlined,
+                    label: selectedLanguage,
+                    onTap: () {
+                      Navigator.pop(context);
+                      _showLanguageDialog(context);
+                    },
+                  ),
+                ]),
+              ),
+            ),
+
+            // Bottom Logout Section anchored to end
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: spacing.md),
+                    child: Divider(
+                      height: 1,
+                      color: theme.colorScheme.outlineVariant,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(spacing.md),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(spacing.radiusMd),
+                      onTap: () => showLogOutDialogState(context, lang.logout, [
+                        lang.okDialog,
+                        lang.cancel,
+                      ]),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: spacing.sm,
+                          horizontal: spacing.md,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.error.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(spacing.radiusMd),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.logout_rounded,
+                              color: theme.colorScheme.error,
+                              size: iconSizes.sm,
+                            ),
+                            SizedBox(width: spacing.xs),
+                            Text(
+                              lang.logout,
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: theme.colorScheme.error,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -157,6 +238,67 @@ class _SideNavState extends State<SideNav> {
       builder: (_) => ChangeLanguageDialog(
         currentLocale: Locale(Intl.defaultLocale!),
         changeLanguage: widget.changeLanguage,
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  final IconData icon;
+  final IconData? activeIcon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    this.activeIcon,
+    required this.label,
+    this.isSelected = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: spacing.sm,
+        vertical: spacing.xs / 4,
+      ),
+      child: Material(
+        color: isSelected
+            ? theme.colorScheme.primary.withOpacity(0.12)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(spacing.radiusMd),
+        child: ListTile(
+          dense: true,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(spacing.radiusMd),
+          ),
+          leading: Icon(
+            isSelected ? (activeIcon ?? icon) : icon,
+            // Was AppColors.textSecondary.
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurfaceVariant,
+            size: iconSizes.sm,
+          ),
+          title: Text(
+            label,
+            style: theme.textTheme.titleSmall?.copyWith(
+              // Was AppColors.textPrimary.
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            ),
+          ),
+          onTap: onTap,
+        ),
       ),
     );
   }
@@ -208,15 +350,25 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
 
   void _showToast(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = context.spacing;
     final msg = _selected.languageCode == 'ar'
         ? 'تم تغيير اللغة إلى العربية ✓'
         : 'Language changed to English ✓';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, textAlign: TextAlign.center),
+        content: Text(
+          msg,
+          textAlign: TextAlign.center,
+          // Was implicitly white text on AppColors.textPrimary. Using the
+          // ColorScheme's inverse pairing keeps contrast correct in both
+          // light and dark mode instead of assuming a dark background.
+          style: TextStyle(color: theme.colorScheme.onInverseSurface),
+        ),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: theme.colorScheme.onSurface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(spacing.radiusMd),
+        ),
+        backgroundColor: theme.colorScheme.inverseSurface,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -226,14 +378,23 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
   Widget build(BuildContext context) {
     final strings = S.of(context);
     final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
 
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        backgroundColor: theme.colorScheme.surface,
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(spacing.radiusLg),
+      ),
+      // Was AppColors.surface.
+      backgroundColor: theme.colorScheme.surface,
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: spacing.lg,
+        vertical: spacing.lg,
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(spacing.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -241,24 +402,17 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
                 children: [
                   Text(strings.language, style: theme.textTheme.titleMedium),
                   const Spacer(),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.close_rounded,
-                        size: 20,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(Icons.close_rounded, size: iconSizes.sm),
+                    style: IconButton.styleFrom(
+                      // Was AppColors.canvas.
+                      backgroundColor: theme.scaffoldBackgroundColor,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: spacing.md),
               ..._languages.map(
                 (lang) => _LanguageTile(
                   option: lang,
@@ -267,46 +421,40 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
                   onTap: () => setState(() => _selected = lang.locale),
                 ),
               ),
-              const SizedBox(height: 4),
-              Divider(height: 24, color: theme.dividerColor),
+              SizedBox(height: spacing.xs),
+              Divider(height: 1, color: theme.colorScheme.outlineVariant),
+              SizedBox(height: spacing.md),
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: theme.colorScheme.onSurfaceVariant,
-                        side: BorderSide(color: theme.dividerColor),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        padding: EdgeInsets.symmetric(vertical: spacing.sm),
+                        side: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(spacing.radiusMd),
                         ),
                       ),
-                      child: Text(
-                        strings.cancel,
-                        style: theme.textTheme.titleLarge,
-                      ),
+                      child: Text(strings.cancel),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: spacing.sm),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _apply,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.secondary,
-                        foregroundColor: theme.colorScheme.onSecondary,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        padding: EdgeInsets.symmetric(vertical: spacing.sm),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(spacing.radiusMd),
                         ),
                         elevation: 0,
                       ),
-                      child: Text(
-                        strings.apply,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: theme.colorScheme.onSecondary,
-                        ),
-                      ),
+                      child: Text(strings.apply),
                     ),
                   ),
                 ],
@@ -333,81 +481,74 @@ class _LanguageTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        margin: EdgeInsets.only(bottom: spacing.xs),
+        padding: EdgeInsets.all(spacing.sm),
         decoration: BoxDecoration(
+          // Was AppColors.surface.
           color: isSelected
-              ? theme.colorScheme.primary.withValues(alpha: .08)
+              ? theme.colorScheme.primary.withOpacity(0.08)
               : theme.colorScheme.surface,
           border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
+            // Was AppColors.border.
+            color: isSelected
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outlineVariant,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(spacing.radiusMd),
         ),
         child: Row(
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 36 * spacing.md,
+              height: 36 * spacing.md,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? theme.colorScheme.primary.withValues(alpha: .15)
-                    : theme.colorScheme.surfaceContainerHighest,
+                // Was AppColors.canvas.
+                color: theme.scaffoldBackgroundColor,
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: Text(option.flag, style: theme.textTheme.titleLarge),
+                child: Text(option.flag, style: const TextStyle(fontSize: 18)),
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: spacing.sm),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     option.name,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w500,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      // Was AppColors.textPrimary.
                       color: isSelected
                           ? theme.colorScheme.primary
                           : theme.colorScheme.onSurface,
                     ),
                   ),
-                  const SizedBox(height: 4),
                   Text(
                     option.nativeName,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: isSelected
-                          ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      // Was AppColors.textSecondary.
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
               ),
             ),
-            AnimatedOpacity(
-              opacity: isSelected ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 180),
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.check_rounded,
-                  size: 16,
-                  color: theme.colorScheme.onPrimary,
-                ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle_rounded,
+                color: theme.colorScheme.primary,
+                size: iconSizes.sm,
               ),
-            ),
           ],
         ),
       ),
@@ -427,49 +568,4 @@ class _LanguageOption {
     required this.name,
     required this.nativeName,
   });
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        child: ListTile(
-          leading: Icon(
-            icon,
-            color: theme.colorScheme.onSurfaceVariant,
-            size: 20,
-          ),
-          title: Text(
-            label,
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          onTap: onTap,
-          hoverColor: theme.scaffoldBackgroundColor,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          minLeadingWidth: 20,
-        ),
-      ),
-    );
-  }
 }

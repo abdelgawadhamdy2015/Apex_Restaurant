@@ -5,6 +5,7 @@ import 'package:apex_restaurant/core/settings/app_accent_colors.dart';
 import 'package:apex_restaurant/core/settings/settings_cubit.dart';
 import 'package:apex_restaurant/core/settings/settings_state.dart';
 import 'package:apex_restaurant/core/themes/app_theme.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -22,8 +23,7 @@ class ApexRestaurantApp extends StatefulWidget {
   const ApexRestaurantApp({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _ApexRestaurantAppState createState() => _ApexRestaurantAppState();
+  State<ApexRestaurantApp> createState() => _ApexRestaurantAppState();
 }
 
 class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
@@ -51,6 +51,7 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<CartBloc>(create: (_) => getIt<CartBloc>()),
         BlocProvider<HomeBloc>(create: (_) => getIt<HomeBloc>()),
         BlocProvider<SettingsCubit>(create: (_) => getIt<SettingsCubit>()),
       ],
@@ -66,21 +67,23 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
                 debugShowCheckedModeBanner: false,
                 routerConfig: _appRouter.router,
 
-                // 🌗 THEME (FULLY DYNAMIC)
+                // 🌗 DYNAMIC THEME MODES & SCALING
+                themeMode: settings.themeMode,
                 theme: AppTheme.theme(
                   settings.fontScale.scale,
                   accent: settings.accentColor.color,
+                  spacingScale: settings.uiScale.scale,
+                  iconScale: settings.iconScale.scale,
                 ),
-
                 darkTheme: AppTheme.darkTheme(
                   settings.fontScale.scale,
                   accent: settings.accentColor.color,
+                  spacingScale: settings.uiScale.scale,
+                  iconScale: settings.iconScale.scale,
                 ),
-                themeMode: settings.themeMode,
 
-                // 🌍 LOCALE
+                // 🌍 LOCALE CONFIGURATION
                 locale: _locale,
-
                 localizationsDelegates: const [
                   S.delegate,
                   GlobalMaterialLocalizations.delegate,
@@ -88,11 +91,48 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
                   GlobalCupertinoLocalizations.delegate,
                 ],
                 supportedLocales: S.delegate.supportedLocales,
+
+                // 🔄 INJECT SETTINGS INTO CONTEXT FOR EXTENSIONS
+                // This ensures context.spacing and context.iconSizes rebuild automatically
+                builder: (context, child) {
+                  return MediaQuery(
+                    // Scales all system text natively based on fontScale setting
+                    data: MediaQuery.of(context).copyWith(
+                      textScaler: TextScaler.linear(settings.fontScale.scale),
+                    ),
+                    child: SettingsInheritedNotifier(
+                      settings: settings,
+                      child: child ?? const SizedBox.shrink(),
+                    ),
+                  );
+                },
               );
             },
           );
         },
       ),
     );
+  }
+}
+
+/// Helper InheritedWidget to make SettingsState easily accessible across extensions
+class SettingsInheritedNotifier extends InheritedWidget {
+  final SettingsState settings;
+
+  const SettingsInheritedNotifier({
+    super.key,
+    required this.settings,
+    required super.child,
+  });
+
+  static SettingsState of(BuildContext context) {
+    final result = context
+        .dependOnInheritedWidgetOfExactType<SettingsInheritedNotifier>();
+    return result?.settings ?? const SettingsState();
+  }
+
+  @override
+  bool updateShouldNotify(SettingsInheritedNotifier oldWidget) {
+    return settings != oldWidget.settings;
   }
 }

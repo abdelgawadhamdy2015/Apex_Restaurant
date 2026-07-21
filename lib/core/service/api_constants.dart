@@ -8,18 +8,28 @@ class ApiConstants {
   static const String getUserData = "api/General/UsersManager/getUserById";
 
   // Restaurants apis
+
+  static const String openRestaurantPos =
+      "api/Restaurants/RestaurantPos/OpenRestaurantPos";
+  static const String openRestaurantPosSession =
+      "api/Restaurants/RestaurantPos/OpenRestaurantPosSession";
   static const String getAllFloors = "api/Restaurants/Floors/GetAllFloors";
   static const String getAllFoodTables =
       "api/Restaurants/FoodTables/GetAllFoodTables";
   static const String getAllFoodAdditives =
       "api/Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS";
-  static const String getAllDeliveryCompany =
-      "api/Restaurants/DeliveryCompany/GetAllDeliveryCompany";
+
   static const String getAllCategoriesDropDown =
       "api/Restaurants/RestaurantPos/GetRestaurantCategoryPOS";
   static const String getAllItems =
       "api/Restaurants/RestaurantPos/GetRestaurantItemsPOS";
-
+  static const String getAllDeliveryAgents = '/api/DeliveryAgent/GetAll';
+  static const String getAllDeliveryCompany =
+      "api/Restaurants/DeliveryCompany/GetAllDeliveryCompany";
+  static const String getAllWaiters = '/api/Employee/GetWaiters';
+  static const String applyDiscountCode = '/api/Order/ApplyDiscount';
+  static const String holdOrder = '/api/Order/Hold';
+  static const String completePayment = '/api/Order/CompletePayment';
   // General apis
   static const String getEmployeeBranches =
       "api/Store/GeneralAPIs/getEmployeeBranchs";

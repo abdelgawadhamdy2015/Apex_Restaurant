@@ -1,10 +1,10 @@
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -40,14 +40,14 @@ class GetFoodAdditivesUseCase {
 class GetMenuCategoriesUseCase {
   final PosRepository _repository;
   GetMenuCategoriesUseCase(this._repository);
-  Future<ApiResult<BaseResponse<List<CategoryResponse>?>>> call() =>
+  Future<ApiResult<BaseResponse<List<CategoryModel>?>>> call() =>
       _repository.getMenuCategories();
 }
 
 class GetMenuItemsByCategoryUseCase {
   final PosRepository _repository;
   GetMenuItemsByCategoryUseCase(this._repository);
-  Future<ApiResult<BaseResponse<List<RestaurantItemResponse>?>>> call(
+  Future<ApiResult<BaseResponse<List<RestaurantItem>?>>> call(
     GetItemsRequestModel? request,
   ) => _repository.getMenuItemsByCategory(request);
 }

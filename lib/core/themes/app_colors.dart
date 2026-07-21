@@ -52,7 +52,7 @@ class AppColors {
 
   // Translucent / Opacity colors from your list
   static const Color shadowColor = Color(0xC1C6D533); // #C1C6D533
-  static const Color clearWhite = Color(0xFFFFFFFF01); // #FFFFFF01
+  static const Color clearWhite = Color(0xFFFFFF01); // #FFFFFF01
   static const Color primaryLightTranslucent = Color(0x0173DE1A); // #0173DE1A
   static const Color successTranslucent = Color(0x17BDAA4D); // #17BDAA4D
   static const Color successLightTranslucent = Color(0x17BDAA1A); // #17BDAA1A
@@ -60,6 +60,27 @@ class AppColors {
   static const Color purpleLightTranslucent = Color(0xA91CFF1A); // #A91CFF1A
   static const Color grayTranslucent = Color(0xC1C6D54D); // #C1C6D54D
   static const Color warningTranslucent = Color(0xFDA60733); // #FDA60733
-  static const Color whiteCc = Color(0xFFFFFFFFCC); // #FFFFFFCC
-  static const Color white33 = Color(0xFFFFFFFF33); // #FFFFFF33
+  static const Color whiteCc = Color(0xFFFFFFCC); // #FFFFFFCC
+  static const Color white33 = Color(0xFFFFFF33); // #FFFFFF33
+
+  // --- Cart Palette Additions ---
+  static const Color slate = Color(0xFF414753); // Muted body text
+  static const Color navyDark = Color(
+    0xFF0D1C2E,
+  ); // Selected chip background / Cart navy
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color blueDark = Color(0xFF005BB2); // Pressed/darker blue
+  static const Color blueTint = Color(0xFFEFF4FF); // Light blue surfaces
+  static const Color ink = Color(0xFF0F172A); // Near-black headings
+  static const Color amberAccent = Color(0xFFF8AD56); // Price / addon accent
+  static const Color blue = Color(0xFF0173DE); // Primary action / links
+  static const Color green = Color(0xFF14B51D); // Discount / success green
+  static const Color black = Color(0xFF000000);
+  static const Color blueAlpha20 = Color(0x330173DE); // Blue @ ~20% opacity
+  static const Color grey = Color(0xFF6B7280); // Secondary labels
+  static const Color greySubtle = Color(0xFF717784); // Captions / meta text
+  static const Color blueLight = Color(0xFFD5E3FC); // Unselected chip bg
+  static const Color cartCanvas = Color(
+    0xFFF8F9FF,
+  ); // Screen background override
 }

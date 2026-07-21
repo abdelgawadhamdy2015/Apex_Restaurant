@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'restaurant_item_response.g.dart';
+part 'restaurant_item.g.dart';
 
 @JsonSerializable()
-class RestaurantItemResponse {
+class RestaurantItem {
   final int itemId;
   final String itemCode;
   final String itemNameAr;
@@ -15,10 +15,10 @@ class RestaurantItemResponse {
   final int orderSerial;
   final int count;
   final List<dynamic> posTypes;
-  final List<ItemSizeResponse> sizes;
+  final List<ItemSize> sizes;
   final List<dynamic> offersItems;
 
-  const RestaurantItemResponse({
+  const RestaurantItem({
     required this.itemId,
     required this.itemCode,
     required this.itemNameAr,
@@ -34,23 +34,23 @@ class RestaurantItemResponse {
     required this.offersItems,
   });
 
-  factory RestaurantItemResponse.fromJson(Map<String, dynamic> json) =>
-      _$RestaurantItemResponseFromJson(json);
+  factory RestaurantItem.fromJson(Map<String, dynamic> json) =>
+      _$RestaurantItemFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RestaurantItemResponseToJson(this);
+  Map<String, dynamic> toJson() => _$RestaurantItemToJson(this);
 }
 
 @JsonSerializable()
-class ItemSizeResponse {
+class ItemSize {
   final int variantId;
   final int sizeId;
   final String sizeNameAr;
   final String sizeNameEn;
   final double price;
   final bool isActive;
-  final ItemDiscountResponse discount;
+  final ItemDiscount discount;
 
-  const ItemSizeResponse({
+  const ItemSize({
     required this.variantId,
     required this.sizeId,
     required this.sizeNameAr,
@@ -60,14 +60,14 @@ class ItemSizeResponse {
     required this.discount,
   });
 
-  factory ItemSizeResponse.fromJson(Map<String, dynamic> json) =>
-      _$ItemSizeResponseFromJson(json);
+  factory ItemSize.fromJson(Map<String, dynamic> json) =>
+      _$ItemSizeFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItemSizeResponseToJson(this);
+  Map<String, dynamic> toJson() => _$ItemSizeToJson(this);
 }
 
 @JsonSerializable()
-class ItemDiscountResponse {
+class ItemDiscount {
   final int id;
   final String? arabicName;
   final String? latinName;
@@ -77,7 +77,7 @@ class ItemDiscountResponse {
   final double minInvoiceNet;
   final bool includeFoodAdditions;
 
-  const ItemDiscountResponse({
+  const ItemDiscount({
     required this.id,
     this.arabicName,
     this.latinName,
@@ -88,8 +88,8 @@ class ItemDiscountResponse {
     required this.includeFoodAdditions,
   });
 
-  factory ItemDiscountResponse.fromJson(Map<String, dynamic> json) =>
-      _$ItemDiscountResponseFromJson(json);
+  factory ItemDiscount.fromJson(Map<String, dynamic> json) =>
+      _$ItemDiscountFromJson(json);
 
-  Map<String, dynamic> toJson() => _$ItemDiscountResponseToJson(this);
+  Map<String, dynamic> toJson() => _$ItemDiscountToJson(this);
 }

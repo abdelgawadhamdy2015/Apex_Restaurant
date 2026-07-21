@@ -1,6 +1,11 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
 import 'package:apex_restaurant/core/settings/settings_cubit.dart';
+import 'package:apex_restaurant/featchers/cart/data/datasource/carrt_remote_datasource.dart';
+import 'package:apex_restaurant/featchers/cart/data/repo/cart_repo_imp.dart';
+import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
+import 'package:apex_restaurant/featchers/cart/domain/usescase/cart_usescase.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/home/data/datasource/menu_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/home/data/repo_imp/home_repo_imp.dart';
 import 'package:apex_restaurant/featchers/home/domain/repo/home_repo.dart';
@@ -11,6 +16,11 @@ import 'package:apex_restaurant/featchers/login/data/repo_imp/login_repo.dart';
 import 'package:apex_restaurant/featchers/login/domain/repo/auth_repo.dart';
 import 'package:apex_restaurant/featchers/login/domain/usecases/auth_usecase.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
+import 'package:apex_restaurant/featchers/payment/data/datasource/payment_remote_data_source.dart';
+import 'package:apex_restaurant/featchers/payment/data/repo/payment_repository_impl.dart';
+import 'package:apex_restaurant/featchers/payment/domain/repo/payment_repository.dart';
+import 'package:apex_restaurant/featchers/payment/domain/usecase/process_payment_usecase.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/pos/data/repositories/pos_repository_impl.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
@@ -44,11 +54,24 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<AuthDatasource>(
     () => AuthDatasourceImp(getIt<ApiService>()),
   );
+
+  //HOME
   getIt.registerLazySingleton<HomeDatasource>(
     () => HomeDatasourceImpl(getIt<ApiService>()),
   );
+  //POS
   getIt.registerLazySingleton<PosRemoteDataSource>(
     () => PosRemoteDataSourceImpl(getIt<ApiService>()),
+  );
+
+  //Cart
+  getIt.registerLazySingleton<CartRemoteDataSource>(
+    () => CartRemoteDataSourceImpl(getIt<ApiService>()),
+  );
+
+  //Payment
+  getIt.registerLazySingleton<PaymentRemoteDataSource>(
+    () => PaymentRemoteDataSourceImpl(getIt<ApiService>()),
   );
 
   /// ─────────────────────────────────────────────────────────
@@ -70,6 +93,16 @@ Future<void> setupGetIt() async {
     () => PosRepositoryImpl(getIt<PosRemoteDataSource>()),
   );
 
+  // Cart
+  getIt.registerLazySingleton<CartRepository>(
+    () => CartRepositoryImpl(getIt<CartRemoteDataSource>()),
+  );
+
+  // Payment
+  getIt.registerLazySingleton<PaymentRepository>(
+    () => PaymentRepositoryImpl(getIt<PaymentRemoteDataSource>()),
+  );
+
   /// ─────────────────────────────────────────────────────────
   /// Use Cases
   /// ─────────────────────────────────────────────────────────
@@ -84,6 +117,14 @@ Future<void> setupGetIt() async {
 
   getIt.registerLazySingleton(
     () => GetUserDataUseCase(getIt<HomeRepository>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => OpenRestaurantPosUseCase(getIt<HomeRepository>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => OpenRestaurantPosSessionUseCase(getIt<HomeRepository>()),
   );
 
   //POS
@@ -107,6 +148,24 @@ Future<void> setupGetIt() async {
     () => GetAllDeliveryCompanyUseCase(getIt<PosRepository>()),
   );
 
+  // cart
+  getIt.registerLazySingleton(() => GetWaitersUseCase(getIt<CartRepository>()));
+  getIt.registerLazySingleton(
+    () => GetDeliveryAgentsUseCase(getIt<CartRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => ApplyDiscountUseCase(getIt<CartRepository>()),
+  );
+  getIt.registerLazySingleton(() => HoldOrderUseCase(getIt<CartRepository>()));
+  getIt.registerLazySingleton(
+    () => CompletePaymentUseCase(getIt<CartRepository>()),
+  );
+
+  // Payment
+  getIt.registerLazySingleton(
+    () => ProcessPaymentUseCase(getIt<PaymentRepository>()),
+  );
+
   /// ─────────────────────────────────────────────────────────
   /// BLoCs
   /// ─────────────────────────────────────────────────────────
@@ -121,6 +180,8 @@ Future<void> setupGetIt() async {
     () => HomeBloc(
       getUseDataUseCase: getIt<GetUserDataUseCase>(),
       getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>(),
+      openRestaurantPosSessionUseCase: getIt<OpenRestaurantPosSessionUseCase>(),
+      openRestaurantPosUseCase: getIt<OpenRestaurantPosUseCase>(),
     ),
   );
 
@@ -128,13 +189,24 @@ Future<void> setupGetIt() async {
   getIt.registerFactory(
     () => PosBloc(
       getMenuCategories: getIt<GetMenuCategoriesUseCase>(),
-      sendToKitchen: getIt<SendToKitchenUseCase>(),
-      submitOrder: getIt<SubmitOrderUseCase>(),
-      getFloors: getIt<GetFloorsUseCase>(),
-      getTables: getIt<GetTablesUseCase>(),
       getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
       itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),
-      getAllDeliveryCompanyUseCase: getIt<GetAllDeliveryCompanyUseCase>(),
     ),
+  );
+
+  // Cart
+  getIt.registerFactory(
+    () => CartBloc(
+      getDeliveryAgentsUseCase: getIt<GetDeliveryAgentsUseCase>(),
+      getWaitersUseCase: getIt<GetWaitersUseCase>(),
+      applyDiscountUseCase: getIt<ApplyDiscountUseCase>(),
+      holdOrderUseCase: getIt<HoldOrderUseCase>(),
+      completePaymentUseCase: getIt<CompletePaymentUseCase>(),
+    ),
+  );
+
+  // Payment
+  getIt.registerFactory<PaymentBloc>(
+    () => PaymentBloc(processPaymentUseCase: getIt<ProcessPaymentUseCase>()),
   );
 }

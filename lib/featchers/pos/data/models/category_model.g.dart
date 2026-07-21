@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'category_response.dart';
+part of 'category_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CategoryResponse _$CategoryResponseFromJson(Map<String, dynamic> json) =>
-    CategoryResponse(
+CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
+    CategoryModel(
       id: (json['id'] as num).toInt(),
       arabicName: json['arabicName'] as String,
       latinName: json['latinName'] as String,
@@ -22,7 +22,7 @@ CategoryResponse _$CategoryResponseFromJson(Map<String, dynamic> json) =>
           .toList(),
     );
 
-Map<String, dynamic> _$CategoryResponseToJson(CategoryResponse instance) =>
+Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'arabicName': instance.arabicName,

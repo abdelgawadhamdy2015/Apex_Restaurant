@@ -1,9 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'category_response.g.dart';
+part 'category_model.g.dart';
 
 @JsonSerializable()
-class CategoryResponse {
+class CategoryModel {
   final int id;
   final String arabicName;
   final String latinName;
@@ -15,7 +15,7 @@ class CategoryResponse {
   final String? imagePath;
   final List<AdditiveModel> additives;
 
-  const CategoryResponse({
+  const CategoryModel({
     required this.id,
     required this.arabicName,
     required this.latinName,
@@ -28,10 +28,10 @@ class CategoryResponse {
     required this.additives,
   });
 
-  factory CategoryResponse.fromJson(Map<String, dynamic> json) =>
-      _$CategoryResponseFromJson(json);
+  factory CategoryModel.fromJson(Map<String, dynamic> json) =>
+      _$CategoryModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CategoryResponseToJson(this);
+  Map<String, dynamic> toJson() => _$CategoryModelToJson(this);
 }
 
 @JsonSerializable()

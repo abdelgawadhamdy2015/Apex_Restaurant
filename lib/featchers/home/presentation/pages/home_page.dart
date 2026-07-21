@@ -1,5 +1,7 @@
+import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/permission_checker.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/auth_listener.dart';
 import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
@@ -9,10 +11,11 @@ import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/shift_start_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/home_tap_bar.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_app_bar.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.changeLanguage});
@@ -38,10 +41,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocErrorListener<HomeBloc, HomeState>(
       child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        drawer: SideNav(changeLanguage: widget.changeLanguage),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        drawer: SideNav(
+          changeLanguage: widget.changeLanguage,
+          currentRoute: Routes.homeScreen,
+        ),
         body: SafeArea(
           child: Column(
             children: [
@@ -54,12 +62,10 @@ class _HomePageState extends State<HomePage> {
                   if (current != null && state.selectedEmployeeBranch == null) {
                     context.read<HomeBloc>().add(SelectBranchEvent(current));
                   }
-                  return HomeTopBar(managerName: "");
+                  return const PosTopAppBar();
                 },
               ),
-              Expanded(
-                child: Row(children: [Expanded(child: _MainContent())]),
-              ),
+              const Expanded(child: _MainContent()),
             ],
           ),
         ),
@@ -68,43 +74,103 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// ignore: must_be_immutable
 class _MainContent extends StatelessWidget {
-  _MainContent();
-  late S lang;
+  const _MainContent();
 
   @override
   Widget build(BuildContext context) {
-    lang = S.of(context);
+    final lang = S.of(context);
     final theme = Theme.of(context);
+    final spacing = context.spacing;
 
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '${lang.welcome}، ${state.userDataModel?.employees?.arabicName}',
-                style: theme.textTheme.displayLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                ),
+    return BlocConsumer<HomeBloc, HomeState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status == HomeStatus.openSessionLoading) {
+          // Show non-dismissible loading indicator while checking session status
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const Center(child: CircularProgressIndicator()),
+          );
+        } else if (state.status == HomeStatus.openSessionLoaded) {
+          // Pop loading dialog if displayed
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          // Check session model to decide target screen / dialog
+          if (state.sessionModel != null && state.sessionModel!.id != 0) {
+            context.push(Routes.posScreen);
+          } else {
+            showDialog(
+              context: context,
+              builder: (_) => const ShiftStartDialog(),
+            );
+          }
+        } else if (state.status == HomeStatus.error) {
+          // Pop loading indicator on error
+          if (Navigator.of(context, rootNavigator: true).canPop()) {
+            Navigator.of(context, rootNavigator: true).pop();
+          }
+
+          if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: theme.colorScheme.error,
               ),
-              const SizedBox(height: 8),
-              Text(lang.homeSubtitle, style: theme.textTheme.bodyMedium),
-              const SizedBox(height: 32),
-              Expanded(
-                child: Row(
-                  children: [
-                    if (PermissionChecker(
-                      RestaurantConstants.permissions,
-                    ).hasAnyAccess(AppPermission.itemCardRestaurant))
-                      Expanded(
-                        child: _ActionCard(
+            );
+          }
+        }
+      },
+      builder: (context, state) {
+        final userName = state.userDataModel?.employees?.arabicName ?? '';
+
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final isTablet = constraints.maxWidth >= 600;
+            final horizontalPadding = isTablet ? spacing.xl : spacing.md;
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: spacing.lg,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    '${lang.welcome}، $userName',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                  SizedBox(height: spacing.xs),
+                  Text(
+                    lang.homeSubtitle,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  SizedBox(height: spacing.xl),
+
+                  // Action Cards Grid/List based on screen width
+                  if (PermissionChecker(
+                    RestaurantConstants.permissions,
+                  ).hasAnyAccess(AppPermission.itemCardRestaurant))
+                    GridView.count(
+                      crossAxisCount: isTablet ? 2 : 1,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: spacing.md,
+                      crossAxisSpacing: spacing.md,
+                      childAspectRatio: isTablet ? 1.4 : 1.6,
+                      children: [
+                        _ActionCard(
                           icon: Icons.point_of_sale,
                           iconColor: theme.colorScheme.onSurfaceVariant,
-                          iconBg: theme.colorScheme.surfaceContainerHighest,
+                          iconBg: theme.colorScheme.primary,
                           title: lang.salesScreen,
                           subtitle: lang.salesScreenSubtitle,
                           badge: _Badge(
@@ -114,19 +180,26 @@ class _MainContent extends StatelessWidget {
                             icon: Icons.alarm,
                             onTap: () {},
                           ),
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (_) => ShiftStartDialog(),
-                          ),
+                          onTap: () {
+                            if (state.sessionModel != null &&
+                                state.sessionModel!.id != 0) {
+                              context.push(Routes.posScreen);
+                            } else {
+                              context.read<HomeBloc>().add(
+                                OpenRestaurantPosEvent(),
+                              );
+                            }
+                          },
                         ),
-                      ),
-                  ],
-                ),
+                      ],
+                    ),
+
+                  SizedBox(height: spacing.lg),
+                  const _StatusBar(),
+                ],
               ),
-              const SizedBox(height: 24),
-              _StatusBar(),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -155,41 +228,47 @@ class _ActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
 
     return Material(
       color: theme.colorScheme.surface,
-      borderRadius: BorderRadius.circular(16),
+      elevation: 0,
+      borderRadius: BorderRadius.circular(spacing.radiusSm),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(spacing.radiusMd),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(spacing.radiusLg),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+          ),
+          padding: EdgeInsets.all(spacing.sm),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: iconBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 32, color: iconColor),
+              SizedBox(
+                width: spacing.sm,
+                height: spacing.sm,
+                child: Icon(icon, size: iconSizes.lg, color: iconColor),
               ),
-              const SizedBox(height: 24),
+              SizedBox(height: spacing.md),
               Text(
                 title,
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: spacing.xs),
               badge,
-              const SizedBox(height: 12),
+              SizedBox(height: spacing.xs),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodySmall?.copyWith(height: 1.6),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
               ),
             ],
           ),
@@ -217,6 +296,8 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
 
     if (isLink) {
       return GestureDetector(
@@ -234,18 +315,21 @@ class _Badge extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: EdgeInsets.symmetric(
+        horizontal: spacing.sm,
+        vertical: spacing.xs / 2,
+      ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .1),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: color.withValues(alpha: .25)),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(spacing.radiusPill),
+        border: Border.all(color: color.withOpacity(0.25)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 16, color: color),
-            const SizedBox(width: 4),
+            Icon(icon, size: iconSizes.sm, color: color),
+            SizedBox(width: spacing.xs / 2),
           ],
           Text(
             text,
@@ -261,31 +345,55 @@ class _Badge extends StatelessWidget {
 }
 
 class _StatusBar extends StatelessWidget {
+  const _StatusBar();
+
   @override
   Widget build(BuildContext context) {
     final lang = S.of(context);
     final theme = Theme.of(context);
+    final spacing = context.spacing;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      padding: EdgeInsets.symmetric(
+        horizontal: spacing.lg,
+        vertical: spacing.md,
+      ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(spacing.radiusMd),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: Row(
+      child: Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        runSpacing: spacing.sm,
+        spacing: spacing.md,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          Icon(Icons.circle, size: 16, color: theme.colorScheme.error),
-          const SizedBox(width: 8),
-          Text(
-            lang.currentStatusOffShift,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurface,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.circle, size: 12, color: theme.colorScheme.error),
+              SizedBox(width: spacing.xs),
+              Text(
+                lang.currentStatusOffShift,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-          const Spacer(),
-          _StatusItem(label: lang.lastCheckOut, value: lang.lastCheckOutValue),
-          const SizedBox(width: 24),
-          _StatusItem(label: lang.systemTime, value: '09:15 ص'),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _StatusItem(
+                label: lang.lastCheckOut,
+                value: lang.lastCheckOutValue,
+              ),
+              SizedBox(width: spacing.lg),
+              _StatusItem(label: lang.systemTime, value: '09:15 ص'),
+            ],
+          ),
         ],
       ),
     );
@@ -300,9 +408,10 @@ class _StatusItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final spacing = context.spacing;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
@@ -310,12 +419,12 @@ class _StatusItem extends StatelessWidget {
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 4),
+        SizedBox(height: spacing.xs / 4),
         Text(
           value,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],

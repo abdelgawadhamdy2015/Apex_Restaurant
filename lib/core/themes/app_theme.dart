@@ -1,29 +1,35 @@
 import 'package:apex_restaurant/core/themes/app_header_theme.dart';
+import 'package:apex_restaurant/core/themes/app_icon_theme.dart';
+import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
 import 'package:apex_restaurant/core/themes/app_status_theme.dart';
 import 'package:apex_restaurant/core/themes/app_text_style.dart';
 import 'package:apex_restaurant/core/themes/app_typography.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Added Google Fonts import
-import 'colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'app_colors.dart';
 
 class AppTheme {
-  static ThemeData theme(double fontScale, {Color accent = AppColors.primary}) {
+  static ThemeData theme(
+    double fontScale, {
+    Color accent = AppColors.primary,
+    double spacingScale = 1.0,
+    double iconScale = 1.0,
+  }) {
     final colorScheme = ColorScheme.light(
       primary: accent,
       onPrimary: Colors.white,
       secondary: AppColors.amber,
       error: AppColors.error,
       surface: AppColors.surface,
+      outlineVariant: AppColors.border,
     );
 
-    // Apply IBM Plex Sans Arabic to your custom typography base
     final baseTextTheme = AppTypography.textTheme(fontScale);
     final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(baseTextTheme);
 
     return ThemeData(
       useMaterial3: true,
-      fontFamily:
-          GoogleFonts.ibmPlexSansArabic().fontFamily, // Fallback font family
+      fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.canvas,
       colorScheme: colorScheme,
@@ -46,33 +52,35 @@ class AppTheme {
           accent: accent,
           onSurface: colorScheme.onSurface,
         ),
+        AppSpacing.build(scale: spacingScale),
+        AppIconSizes.build(scale: iconScale),
       ],
       textTheme: textTheme,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 16 * spacingScale,
+          vertical: 14 * spacingScale,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: BorderSide(color: accent, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         labelStyle: GoogleFonts.ibmPlexSansArabic(
@@ -90,6 +98,8 @@ class AppTheme {
   static ThemeData darkTheme(
     double fontScale, {
     Color accent = AppColors.primary,
+    double spacingScale = 1.0,
+    double iconScale = 1.0,
   }) {
     final colorScheme = ColorScheme.dark(
       primary: accent,
@@ -98,10 +108,10 @@ class AppTheme {
       error: AppColors.error,
       surface: const Color(0xFF1E293B),
       onSurface: Colors.white,
-      background: const Color(0xFF0F172A),
+      outlineVariant: AppColors.border,
+      secondaryContainer: const Color(0xFF0F172A),
     );
 
-    // Apply IBM Plex Sans Arabic and default dark text colors
     final baseTextTheme = AppTypography.textTheme(fontScale);
     final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(
       baseTextTheme,
@@ -132,33 +142,35 @@ class AppTheme {
           accent: accent,
           onSurface: colorScheme.onSurface,
         ),
+        AppSpacing.build(scale: spacingScale),
+        AppIconSizes.build(scale: iconScale),
       ],
       textTheme: textTheme,
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: const Color(0xFF1E293B),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 16 * spacingScale,
+          vertical: 14 * spacingScale,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: Color(0xFF334155)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: Color(0xFF334155)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: BorderSide(color: accent, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10 * spacingScale),
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         labelStyle: GoogleFonts.ibmPlexSansArabic(

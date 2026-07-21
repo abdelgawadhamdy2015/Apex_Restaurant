@@ -1,10 +1,10 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item_response.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -22,8 +22,8 @@ abstract class PosRemoteDataSource {
   Future<BaseResponse<List<AdditiveModel>?>> getFoodAdditives({
     GetFoodAdditiveRequest? request,
   });
-  Future<BaseResponse<List<CategoryResponse>?>> getMenuCategories();
-  Future<BaseResponse<List<RestaurantItemResponse>?>> getMenuItemsByCategory({
+  Future<BaseResponse<List<CategoryModel>?>> getMenuCategories();
+  Future<BaseResponse<List<RestaurantItem>?>> getMenuItemsByCategory({
     GetItemsRequestModel? request,
   });
   Future<void> submitOrder(Map<String, dynamic> orderData);
@@ -39,14 +39,14 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   PosRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<BaseResponse<List<CategoryResponse>?>> getMenuCategories() async {
+  Future<BaseResponse<List<CategoryModel>?>> getMenuCategories() async {
     return _apiService.getAllCategories().then((response) {
       return response;
     });
   }
 
   @override
-  Future<BaseResponse<List<RestaurantItemResponse>?>> getMenuItemsByCategory({
+  Future<BaseResponse<List<RestaurantItem>?>> getMenuItemsByCategory({
     GetItemsRequestModel? request,
   }) async {
     return await _apiService
