@@ -1,6 +1,7 @@
 // lib/featchers/cart/presentation/ui/widgets/cart_top_bar.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,6 +20,7 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       height: preferredSize.height,
@@ -34,17 +36,12 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           IconButton(
             onPressed: onBack ?? () => context.pop(),
-            icon: Icon(
-              Icons.arrow_back,
-              // Was AppColors.ink.
-              color: theme.colorScheme.onSurface,
-            ),
+            icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
           ),
           Text(
-            'سلة المشتريات',
+            lang.shoppingCart,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              // Was AppColors.ink.
               color: theme.colorScheme.onSurface,
             ),
           ),
@@ -55,7 +52,7 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             icon: Icon(Icons.delete_outline, size: iconSizes.sm),
             label: Text(
-              'مسح الكل',
+              lang.clearAll,
               style: textTheme.bodySmall?.copyWith(color: AppColors.error),
             ),
           ),

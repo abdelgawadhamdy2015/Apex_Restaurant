@@ -1,4 +1,3 @@
-// lib/featchers/pos/presentation/ui/pos_menu_screen.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
@@ -32,7 +31,7 @@ class PosMenuScreen extends StatefulWidget {
 
 class _PosMenuScreenState extends State<PosMenuScreen> {
   int _selectedFilterIndex = 0;
-  int _selectedNavIndex = 3; // "القائمة" active index
+  int _selectedNavIndex = 3;
 
   @override
   void initState() {
@@ -46,7 +45,6 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
     final spacing = context.spacing;
 
     return Scaffold(
-      // Was AppColors.canvas.
       backgroundColor: theme.scaffoldBackgroundColor,
       drawer: SideNav(
         changeLanguage: widget.changeLanguage,

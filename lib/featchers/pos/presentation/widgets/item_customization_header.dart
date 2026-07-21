@@ -1,9 +1,7 @@
-// lib/featchers/pos/presentation/widgets/item_customization_header.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Header row of the item customization sheet: close button, item name +
-/// subtitle, and a thumbnail (or placeholder icon) on the trailing side.
 class ItemCustomizationHeader extends StatelessWidget {
   const ItemCustomizationHeader({
     super.key,
@@ -20,6 +18,7 @@ class ItemCustomizationHeader extends StatelessWidget {
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final lang = S.of(context);
 
     return Padding(
       padding: EdgeInsets.all(spacing.md),
@@ -57,18 +56,14 @@ class ItemCustomizationHeader extends StatelessWidget {
               ),
               SizedBox(height: spacing.xxs),
               Text(
-                'اختر الحجم المناسب والإضافات المرغوبة',
+                lang.customizationSubtitle,
                 style: textTheme.bodySmall?.copyWith(
-                  // Was theme.hintColor — onSurfaceVariant matches the
-                  // "muted text" token used everywhere else in the app.
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
           ),
-
           const Spacer(),
-
           IconButton(
             icon: Icon(Icons.close, size: iconSizes.lg),
             onPressed: () => Navigator.pop(context),

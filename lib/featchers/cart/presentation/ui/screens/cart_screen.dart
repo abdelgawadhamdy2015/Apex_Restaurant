@@ -8,6 +8,7 @@ import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/cart_top_bar.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -122,6 +123,7 @@ class _HeaderInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -133,16 +135,16 @@ class _HeaderInfoCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _HeaderInfoItem(title: 'رقم الطلب', value: '#12345'),
+          _HeaderInfoItem(title: lang.orderNumber, value: '#12345'),
           _HeaderInfoItem(
-            title: 'رقم الفاتورة',
+            title: lang.invoiceNumber,
             value: 'INV-9876',
             isValueBlue: true,
           ),
-          _HeaderInfoItem(title: 'التاريخ', value: '10/07/2026'),
+          _HeaderInfoItem(title: lang.date, value: '10/07/2026'),
         ],
       ),
     );
@@ -193,6 +195,7 @@ class _OrderTypeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     context.select((CartBloc b) => b.state.selectedOrderType);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -201,18 +204,23 @@ class _OrderTypeSelector extends StatelessWidget {
           _buildChip(
             context,
             OrderType.takeaway,
-            'سفري',
+            lang.takeaway,
             Icons.shopping_bag_outlined,
           ),
           SizedBox(width: spacing.xs),
-          _buildChip(context, OrderType.dineIn, 'محلي', Icons.restaurant),
+          _buildChip(context, OrderType.dineIn, lang.dineIn, Icons.restaurant),
           SizedBox(width: spacing.xs),
-          _buildChip(context, OrderType.delivery, 'توصيل', Icons.two_wheeler),
+          _buildChip(
+            context,
+            OrderType.delivery,
+            lang.delivery,
+            Icons.two_wheeler,
+          ),
           SizedBox(width: spacing.xs),
           _buildChip(
             context,
             OrderType.deliveryCompany,
-            'شركات التوصيل',
+            lang.deliveryCompanies,
             Icons.storefront,
           ),
         ],
@@ -284,6 +292,7 @@ class _CustomerInfoCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final icons = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -315,7 +324,7 @@ class _CustomerInfoCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'عميل مسجل',
+                lang.registeredCustomer,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -331,7 +340,7 @@ class _CustomerInfoCard extends StatelessWidget {
               color: theme.colorScheme.primary,
             ),
             label: Text(
-              'إضافة عميل',
+              lang.addCustomer,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -352,6 +361,7 @@ class _DineInSelector extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final icons = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -364,7 +374,7 @@ class _DineInSelector extends StatelessWidget {
         children: [
           DropdownButtonFormField<String>(
             decoration: InputDecoration(
-              hintText: 'اختر الويتر',
+              hintText: lang.selectWaiter,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: spacing.sm,
                 vertical: spacing.xs,
@@ -389,7 +399,7 @@ class _DineInSelector extends StatelessWidget {
               size: icons.md,
             ),
             label: Text(
-              'اختيار الطاولة',
+              lang.selectTable,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.tertiary,
                 fontWeight: FontWeight.bold,
@@ -409,6 +419,7 @@ class _DeliveryAgentSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -419,7 +430,7 @@ class _DeliveryAgentSelector extends StatelessWidget {
       ),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
-          hintText: 'اختر عامل التوصيل',
+          hintText: lang.selectDeliveryAgent,
           prefixIcon: Icon(
             Icons.two_wheeler,
             color: theme.colorScheme.primary,
@@ -440,6 +451,7 @@ class _DeliveryCompanySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -450,7 +462,7 @@ class _DeliveryCompanySelector extends StatelessWidget {
       ),
       child: DropdownButtonFormField<String>(
         decoration: InputDecoration(
-          hintText: 'بيانات شركة التوصيل',
+          hintText: lang.deliveryCompanyDetails,
           prefixIcon: Icon(
             Icons.storefront,
             color: theme.colorScheme.primary,
@@ -475,6 +487,7 @@ class _CartItemTile extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final icons = context.iconSizes;
+    final lang = S.of(context);
 
     final sizeName = item.selectedSize?.sizeNameAr ?? '';
     final addonsText = item.addons.map((a) => a.arabicName).join(', ');
@@ -506,7 +519,6 @@ class _CartItemTile extends StatelessWidget {
             ),
           ),
           SizedBox(width: spacing.sm),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -524,7 +536,7 @@ class _CartItemTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${item.totalPrice.toStringAsFixed(2)} ر.س',
+                      '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySar}',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,
@@ -535,7 +547,7 @@ class _CartItemTile extends StatelessWidget {
                 if (sizeName.isNotEmpty) ...[
                   SizedBox(height: spacing.xxs),
                   Text(
-                    'الحجم: $sizeName',
+                    lang.sizeWithVal(sizeName),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -544,7 +556,7 @@ class _CartItemTile extends StatelessWidget {
                 if (addonsText.isNotEmpty) ...[
                   SizedBox(height: spacing.xxs),
                   Text(
-                    'الإضافات: $addonsText',
+                    lang.addonsWithVal(addonsText),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.tertiary,
                     ),
@@ -553,7 +565,7 @@ class _CartItemTile extends StatelessWidget {
                 if (item.notes != null && item.notes!.isNotEmpty) ...[
                   SizedBox(height: spacing.xxs),
                   Text(
-                    'ملاحظات: ${item.notes}',
+                    lang.notesWithVal(item.notes!),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                       fontStyle: FontStyle.italic,
@@ -573,7 +585,6 @@ class _CartItemTile extends StatelessWidget {
                           context.read<CartBloc>().add(RemoveItemEvent(index)),
                     ),
                     const Spacer(),
-
                     Container(
                       height: spacing.xxl,
                       decoration: BoxDecoration(
@@ -630,6 +641,7 @@ class _DiscountSection extends StatelessWidget {
     );
     final spacing = context.spacing;
     final icons = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -654,7 +666,7 @@ class _DiscountSection extends StatelessWidget {
                 },
               ),
               Text(
-                'كوبون',
+                lang.coupon,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -671,7 +683,7 @@ class _DiscountSection extends StatelessWidget {
                 },
               ),
               Text(
-                'خصم مباشر',
+                lang.directDiscount,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -684,7 +696,7 @@ class _DiscountSection extends StatelessWidget {
               Expanded(
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'أدخل كود الخصم',
+                    hintText: lang.enterDiscountCode,
                     prefixIcon: Icon(
                       Icons.local_offer_outlined,
                       color: theme.colorScheme.tertiary,
@@ -710,7 +722,7 @@ class _DiscountSection extends StatelessWidget {
                 ),
                 onPressed: () {},
                 child: Text(
-                  'تطبيق',
+                  lang.apply,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.primary,
@@ -733,6 +745,7 @@ class _OrderSummaryCard extends StatelessWidget {
     final theme = Theme.of(context);
     final state = context.watch<CartBloc>().state;
     final spacing = context.spacing;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
@@ -745,14 +758,14 @@ class _OrderSummaryCard extends StatelessWidget {
         children: [
           _summaryRow(
             context,
-            'المجموع الفرعي',
-            '${state.subtotal.toStringAsFixed(2)} ر.س',
+            lang.subtotal,
+            '${state.subtotal.toStringAsFixed(2)} ${lang.currencySar}',
           ),
           SizedBox(height: spacing.xs),
           _summaryRow(
             context,
-            'الخصم (كوبون)',
-            '-${state.discountAmount.toStringAsFixed(2)} ر.س',
+            lang.discountCoupon,
+            '-${state.discountAmount.toStringAsFixed(2)} ${lang.currencySar}',
             isSuccess: true,
           ),
           if (state.selectedOrderType == OrderType.delivery ||
@@ -760,28 +773,28 @@ class _OrderSummaryCard extends StatelessWidget {
             SizedBox(height: spacing.xs),
             _summaryRow(
               context,
-              'رسوم التوصيل',
-              '${state.deliveryFee.toStringAsFixed(2)} ر.س',
+              lang.deliveryFee,
+              '${state.deliveryFee.toStringAsFixed(2)} ${lang.currencySar}',
             ),
           ],
           SizedBox(height: spacing.xs),
           _summaryRow(
             context,
-            'ضريبة القيمة المضافة (15%)',
-            '${state.vatAmount.toStringAsFixed(2)} ر.س',
+            lang.vat15,
+            '${state.vatAmount.toStringAsFixed(2)} ${lang.currencySar}',
           ),
           Divider(height: spacing.xl, color: theme.colorScheme.outlineVariant),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'الإجمالي النهائي',
+                lang.grandTotal,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                '${state.grandTotal.toStringAsFixed(2)} ر.س',
+                '${state.grandTotal.toStringAsFixed(2)} ${lang.currencySar}',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,
@@ -832,6 +845,7 @@ class _BottomActionBar extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final icons = context.iconSizes;
+    final lang = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
@@ -865,7 +879,7 @@ class _BottomActionBar extends StatelessWidget {
               onPressed: () => context.pushNamed(Routes.paymentScreen),
               icon: Icon(Icons.payments_outlined, size: icons.md),
               label: Text(
-                'إتمام الدفع',
+                lang.checkout,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
@@ -874,7 +888,6 @@ class _BottomActionBar extends StatelessWidget {
             ),
           ),
           SizedBox(width: spacing.sm),
-
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               padding: EdgeInsets.symmetric(
@@ -894,7 +907,7 @@ class _BottomActionBar extends StatelessWidget {
               size: icons.md,
             ),
             label: Text(
-              'تعليق الطلب',
+              lang.holdOrder,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface,
                 fontWeight: FontWeight.bold,

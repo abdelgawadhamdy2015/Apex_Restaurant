@@ -1,9 +1,6 @@
-// lib/featchers/pos/presentation/widgets/quantity_counter.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:flutter/material.dart';
 
-/// Compact +/- quantity stepper used at the bottom of the item
-/// customization sheet.
 class QuantityCounter extends StatelessWidget {
   const QuantityCounter({
     super.key,
@@ -23,19 +20,12 @@ class QuantityCounter extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        // Was a manual `theme.brightness == Brightness.light ? ... : ...`
-        // check with two hardcoded hex colors. surfaceContainerHighest is
-        // the M3 token for exactly this "slightly raised chip" background,
-        // and it already resolves correctly per theme on its own.
         color: theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: onIncrement,
-          ),
+          IconButton(icon: const Icon(Icons.add), onPressed: onIncrement),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: spacing.md),
             child: Text(
@@ -45,10 +35,7 @@ class QuantityCounter extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.remove),
-            onPressed: onDecrement,
-          ),
+          IconButton(icon: const Icon(Icons.remove), onPressed: onDecrement),
         ],
       ),
     );

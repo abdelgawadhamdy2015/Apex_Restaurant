@@ -1,10 +1,8 @@
-// lib/featchers/pos/presentation/widgets/item_size_selector.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Row of selectable size options (small/medium/large) shown in the item
-/// customization sheet.
 class ItemSizeSelector extends StatelessWidget {
   const ItemSizeSelector({
     super.key,
@@ -23,6 +21,7 @@ class ItemSizeSelector extends StatelessWidget {
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final lang = S.of(context);
 
     return Row(
       children: List.generate(sizes.length, (index) {
@@ -42,7 +41,6 @@ class ItemSizeSelector extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? theme.colorScheme.primary
-                      // Was theme.dividerColor.withOpacity(0.1).
                       : theme.colorScheme.outlineVariant,
                   width: 2,
                 ),
@@ -66,7 +64,6 @@ class ItemSizeSelector extends StatelessWidget {
                             : Icons.radio_button_off,
                         color: isSelected
                             ? theme.colorScheme.primary
-                            // Was theme.hintColor.withOpacity(0.5).
                             : theme.colorScheme.onSurfaceVariant.withOpacity(
                                 0.5,
                               ),
@@ -76,12 +73,11 @@ class ItemSizeSelector extends StatelessWidget {
                   ),
                   SizedBox(height: spacing.xs),
                   Text(
-                    '${size.price} ريال',
+                    lang.priceWithCurrency(size.price.toStringAsFixed(2)),
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isSelected
                           ? theme.colorScheme.primary
-                          // Was theme.hintColor.
                           : theme.colorScheme.onSurfaceVariant,
                     ),
                   ),

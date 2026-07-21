@@ -1,10 +1,8 @@
-// lib/featchers/pos/presentation/widgets/item_addon_tile.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-/// Single addon row in the item customization sheet, with a "popular"
-/// badge and a toggle button to add/remove it.
 class ItemAddonTile extends StatelessWidget {
   const ItemAddonTile({
     super.key,
@@ -23,6 +21,7 @@ class ItemAddonTile extends StatelessWidget {
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final lang = S.of(context);
 
     return Column(
       children: [
@@ -50,7 +49,7 @@ class ItemAddonTile extends StatelessWidget {
                     ),
                     SizedBox(width: spacing.xxs / 2),
                     Text(
-                      'شائع',
+                      lang.popular,
                       style: textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.secondary,
                         fontWeight: FontWeight.bold,
@@ -62,9 +61,10 @@ class ItemAddonTile extends StatelessWidget {
             ],
           ),
           subtitle: Text(
-            addon.price > 0 ? '+${addon.price} ر.س' : 'مجاناً',
+            addon.price > 0
+                ? lang.plusPriceWithCurrency(addon.price.toStringAsFixed(2))
+                : lang.free,
             style: textTheme.bodyMedium?.copyWith(
-              // Was theme.hintColor.
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
