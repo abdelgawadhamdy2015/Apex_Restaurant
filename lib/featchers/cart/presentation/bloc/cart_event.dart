@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:equatable/equatable.dart';
 
@@ -90,7 +90,7 @@ class RemoveItemEvent extends CartEvent {
 }
 
 class LoadFloorsEvent extends CartEvent {
-  final GetFloorsRequestModel request;
+  final GetFloorsRequest request;
   const LoadFloorsEvent({required this.request});
 
   @override
@@ -98,7 +98,7 @@ class LoadFloorsEvent extends CartEvent {
 }
 
 class LoadTablesEvent extends CartEvent {
-  final GetTablesRequestModel request;
+  final GetTablesRequest request;
   const LoadTablesEvent({required this.request});
 
   @override

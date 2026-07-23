@@ -9,11 +9,11 @@ import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_floor_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_table_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
 
@@ -35,7 +35,7 @@ class PosRepositoryImpl implements PosRepository {
 
   @override
   Future<ApiResult<BaseResponse<List<RestaurantItem>?>>> getMenuItemsByCategory(
-    GetItemsRequestModel? request,
+    GetItemsRequest? request,
   ) async {
     try {
       final response = await _remoteDataSource.getMenuItemsByCategory(
@@ -78,7 +78,7 @@ class PosRepositoryImpl implements PosRepository {
 
   @override
   Future<ApiResult<BaseResponse<List<FloorModel>?>>> getFloors({
-    required GetFloorsRequestModel request,
+    required GetFloorsRequest request,
   }) async {
     try {
       final response = await _remoteDataSource.getFloors(request: request);
@@ -90,7 +90,7 @@ class PosRepositoryImpl implements PosRepository {
 
   @override
   Future<ApiResult<BaseResponse<List<TableModel>?>>> getTables({
-    required GetTablesRequestModel request,
+    required GetTablesRequest request,
   }) async {
     try {
       final response = await _remoteDataSource.getTables(request: request);
@@ -103,7 +103,7 @@ class PosRepositoryImpl implements PosRepository {
 
   @override
   Future<ApiResult<BaseResponse<List<AdditiveModel>?>>> getFoodAdditives(
-    GetFoodAdditiveRequest? request,
+    GetFoodAdditivesRequest? request,
   ) async {
     try {
       final response = await _remoteDataSource.getFoodAdditives(

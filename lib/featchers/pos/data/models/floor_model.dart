@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'floor_model.g.dart';
@@ -68,6 +69,21 @@ class FloorModel {
       uTime: uTime ?? this.uTime,
       canDelete: canDelete ?? this.canDelete,
       canEdit: canEdit ?? this.canEdit,
+    );
+  }
+
+  FloorEntity toEntity() {
+    return FloorEntity(
+      id: id ?? '',
+      code: code ?? 0,
+      arabicName: arabicName ?? '',
+      latinName: latinName ?? '',
+      notes: notes,
+      status: status ?? 0,
+      tableCount: tableCount ?? 0,
+      branchId: branchId ?? 0,
+      branchNameAr: branchNameAr ?? '',
+      branchNameEn: branchNameEn ?? '',
     );
   }
 }

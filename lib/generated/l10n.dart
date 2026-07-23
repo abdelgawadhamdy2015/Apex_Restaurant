@@ -2516,6 +2516,376 @@ class S {
       args: [],
     );
   }
+
+  /// `Previous Orders`
+  String get previousOrders {
+    return Intl.message(
+      'Previous Orders',
+      name: 'previousOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Held Orders`
+  String get heldOrders {
+    return Intl.message('Held Orders', name: 'heldOrders', desc: '', args: []);
+  }
+
+  /// `Invoice Number`
+  String get invoiceNumberLabel {
+    return Intl.message(
+      'Invoice Number',
+      name: 'invoiceNumberLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Ex: INV-1024`
+  String get invoiceNumberHint {
+    return Intl.message(
+      'Ex: INV-1024',
+      name: 'invoiceNumberHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer Name`
+  String get customerNameLabel {
+    return Intl.message(
+      'Customer Name',
+      name: 'customerNameLabel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer Name or Mobile`
+  String get customerNameHint {
+    return Intl.message(
+      'Customer Name or Mobile',
+      name: 'customerNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `mm/dd/yyyy`
+  String get datePlaceholder {
+    return Intl.message(
+      'mm/dd/yyyy',
+      name: 'datePlaceholder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search`
+  String get search {
+    return Intl.message('Search', name: 'search', desc: '', args: []);
+  }
+
+  /// `Customer`
+  String get customer {
+    return Intl.message('Customer', name: 'customer', desc: '', args: []);
+  }
+
+  /// `Preview`
+  String get preview {
+    return Intl.message('Preview', name: 'preview', desc: '', args: []);
+  }
+
+  /// `Print`
+  String get print {
+    return Intl.message('Print', name: 'print', desc: '', args: []);
+  }
+
+  /// `Total Held Orders`
+  String get totalHeldOrders {
+    return Intl.message(
+      'Total Held Orders',
+      name: 'totalHeldOrders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Orders`
+  String ordersCount(Object count) {
+    return Intl.message(
+      '$count Orders',
+      name: 'ordersCount',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `1 Item`
+  String get singleItemCount {
+    return Intl.message('1 Item', name: 'singleItemCount', desc: '', args: []);
+  }
+
+  /// `Restore Order`
+  String get restoreOrder {
+    return Intl.message(
+      'Restore Order',
+      name: 'restoreOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delete Order`
+  String get deleteOrder {
+    return Intl.message(
+      'Delete Order',
+      name: 'deleteOrder',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reservations`
+  String get reservations {
+    return Intl.message(
+      'Reservations',
+      name: 'reservations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Table Arrangement`
+  String get tableArrangement {
+    return Intl.message(
+      'Table Arrangement',
+      name: 'tableArrangement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `1st Floor`
+  String get firstFloor {
+    return Intl.message('1st Floor', name: 'firstFloor', desc: '', args: []);
+  }
+
+  /// `2nd Floor`
+  String get secondFloor {
+    return Intl.message('2nd Floor', name: 'secondFloor', desc: '', args: []);
+  }
+
+  /// `Indoor Terrace`
+  String get indoorTerrace {
+    return Intl.message(
+      'Indoor Terrace',
+      name: 'indoorTerrace',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Outdoor Area`
+  String get outdoorArea {
+    return Intl.message(
+      'Outdoor Area',
+      name: 'outdoorArea',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Pending`
+  String get pending {
+    return Intl.message('Pending', name: 'pending', desc: '', args: []);
+  }
+
+  /// `Confirmed`
+  String get confirmed {
+    return Intl.message('Confirmed', name: 'confirmed', desc: '', args: []);
+  }
+
+  /// `Cancelled`
+  String get cancelled {
+    return Intl.message('Cancelled', name: 'cancelled', desc: '', args: []);
+  }
+
+  /// `Available`
+  String get available {
+    return Intl.message('Available', name: 'available', desc: '', args: []);
+  }
+
+  /// `Reserved`
+  String get reserved {
+    return Intl.message('Reserved', name: 'reserved', desc: '', args: []);
+  }
+
+  /// `seats`
+  String get seats {
+    return Intl.message('seats', name: 'seats', desc: '', args: []);
+  }
+
+  /// `Add New Reservation`
+  String get addNewReservation {
+    return Intl.message(
+      'Add New Reservation',
+      name: 'addNewReservation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Floor`
+  String get floor {
+    return Intl.message('Floor', name: 'floor', desc: '', args: []);
+  }
+
+  /// `Customer Name`
+  String get customerName {
+    return Intl.message(
+      'Customer Name',
+      name: 'customerName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `mm/dd/yyyy`
+  String get dateFormatHint {
+    return Intl.message(
+      'mm/dd/yyyy',
+      name: 'dateFormatHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `hh:mm`
+  String get timeFormatHint {
+    return Intl.message('hh:mm', name: 'timeFormatHint', desc: '', args: []);
+  }
+
+  /// `No reservations found`
+  String get noReservations {
+    return Intl.message(
+      'No reservations found',
+      name: 'noReservations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Seats / Duration`
+  String get seatsAndDurationHeader {
+    return Intl.message(
+      'Seats / Duration',
+      name: 'seatsAndDurationHeader',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `hour`
+  String get hour {
+    return Intl.message('hour', name: 'hour', desc: '', args: []);
+  }
+
+  /// `Edit`
+  String get edit {
+    return Intl.message('Edit', name: 'edit', desc: '', args: []);
+  }
+
+  /// `Enter customer name`
+  String get enterCustomerNameHint {
+    return Intl.message(
+      'Enter customer name',
+      name: 'enterCustomerNameHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select table`
+  String get selectTableHint {
+    return Intl.message(
+      'Select table',
+      name: 'selectTableHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Time`
+  String get time {
+    return Intl.message('Time', name: 'time', desc: '', args: []);
+  }
+
+  /// `Number of Guests`
+  String get guestsCount {
+    return Intl.message(
+      'Number of Guests',
+      name: 'guestsCount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g. 3`
+  String get guestsCountHint {
+    return Intl.message('e.g. 3', name: 'guestsCountHint', desc: '', args: []);
+  }
+
+  /// `Additional Notes`
+  String get additionalNotes {
+    return Intl.message(
+      'Additional Notes',
+      name: 'additionalNotes',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Write operation details here...`
+  String get additionalNotesHint {
+    return Intl.message(
+      'Write operation details here...',
+      name: 'additionalNotesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Reservation`
+  String get confirmReservation {
+    return Intl.message(
+      'Confirm Reservation',
+      name: 'confirmReservation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Walk-in Customer`
+  String get cashCustomer {
+    return Intl.message(
+      'Walk-in Customer',
+      name: 'cashCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No Tables Available`
+  String get noTablesAvailable {
+    return Intl.message(
+      'No Tables Available',
+      name: 'noTablesAvailable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

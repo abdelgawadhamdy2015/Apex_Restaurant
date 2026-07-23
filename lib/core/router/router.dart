@@ -7,10 +7,14 @@ import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart
 import 'package:apex_restaurant/featchers/login/presentation/pages/forget_password_page.dart';
 import 'package:apex_restaurant/featchers/login/presentation/pages/login_page.dart';
 import 'package:apex_restaurant/featchers/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/pages/orders_screen.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/screens/payment_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/pages/tables_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -92,6 +96,28 @@ class AppRouter {
           return BlocProvider(
             create: (context) => getIt<PaymentBloc>(),
             child: PaymentScreen(),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: Routes.ordersScreen,
+        name: Routes.ordersScreen,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => getIt<OrdersBloc>(),
+            child: OrdersScreen(),
+          );
+        },
+      ),
+      GoRoute(
+        path: Routes.tableScreen,
+        name: Routes.tableScreen,
+        builder: (context, state) {
+          final branchId = state.extra as int;
+          return BlocProvider(
+            create: (context) => getIt<TablesBloc>(),
+            child: TablesScreen(branchId: branchId),
           );
         },
       ),
