@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 /// instead of writing `Icon(x, size: 18)` anywhere in the app.
 @immutable
 class AppIconSizes extends ThemeExtension<AppIconSizes> {
+  final double xs; // 16 - inline row icons (qty +/-)
+
   final double sm; // 16 - inline row icons (qty +/-)
   final double md; // 20 - default action icons
   final double lg; // 24 - primary buttons / avatars
@@ -16,11 +18,13 @@ class AppIconSizes extends ThemeExtension<AppIconSizes> {
     required this.md,
     required this.lg,
     required this.xl,
+    required this.xs,
   });
 
   /// [scale] comes from Settings (AppIconScale.scale).
   factory AppIconSizes.build({required double scale}) {
     return AppIconSizes(
+      xs: 12 * scale,
       sm: 16 * scale,
       md: 20 * scale,
       lg: 24 * scale,
@@ -29,8 +33,15 @@ class AppIconSizes extends ThemeExtension<AppIconSizes> {
   }
 
   @override
-  AppIconSizes copyWith({double? sm, double? md, double? lg, double? xl}) {
+  AppIconSizes copyWith({
+    double? xs,
+    double? sm,
+    double? md,
+    double? lg,
+    double? xl,
+  }) {
     return AppIconSizes(
+      xs: xs ?? this.xs,
       sm: sm ?? this.sm,
       md: md ?? this.md,
       lg: lg ?? this.lg,
@@ -42,6 +53,8 @@ class AppIconSizes extends ThemeExtension<AppIconSizes> {
   AppIconSizes lerp(ThemeExtension<AppIconSizes>? other, double t) {
     if (other is! AppIconSizes) return this;
     return AppIconSizes(
+      xs: lerpDouble(xs, other.xs, t)!,
+
       sm: lerpDouble(sm, other.sm, t)!,
       md: lerpDouble(md, other.md, t)!,
       lg: lerpDouble(lg, other.lg, t)!,

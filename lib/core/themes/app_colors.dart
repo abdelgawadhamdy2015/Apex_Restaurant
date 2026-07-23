@@ -38,6 +38,7 @@ class AppColors {
   static const Color error = Color(
     0xFFFF3636,
   ); // Updated to requested vibrant red
+  static const Color errorContainer = Color(0xFFBA1A1A);
   static const Color success = Color(
     0xFF17BDAA,
   ); // Updated to requested mint/teal green

@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/service/api_constants.dart';
+import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/delivery_agent_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
@@ -14,6 +15,13 @@ import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart'
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/reservations_data.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 part 'api_service.g.dart';
@@ -35,30 +43,40 @@ abstract class ApiService {
   @GET(ApiConstants.getAllCategoriesDropDown)
   Future<BaseResponse<List<CategoryModel>?>> getAllCategories();
 
+  @GET(ApiConstants.getAllFloors)
+  Future<BaseResponse<List<FloorModel>?>> getAllFloors(
+    @Queries() GetFloorsRequest request,
+  );
+
+  @GET(ApiConstants.getAllFoodTables)
+  Future<BaseResponse<List<TableModel>?>> getAllFoodTables(
+    @Queries() GetTablesRequest request,
+  );
+
   @GET(ApiConstants.getAllItems)
-  Future<BaseResponse<List<RestaurantItem>?>> getItemsByCategory({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("statues") int? statues,
-    @Query("name") String? name,
-    @Query("CategoryId") int? categoryId,
-    @Query("CompanyId") int? companyId,
-    @Query("SearchKey") String? searchKey,
-  });
+  Future<BaseResponse<List<RestaurantItem>?>> getItemsByCategory(
+    @Queries() GetItemsRequest request,
+  );
+
+  @GET(ApiConstants.getAllFoodAdditives)
+  Future<BaseResponse<List<AdditiveModel>?>> getAllFoodAdditives(
+    @Queries() GetFoodAdditivesRequest request,
+  );
 
   @GET(ApiConstants.getAllDeliveryAgents)
-  Future<BaseResponse<List<DeliveryAgentModel>?>> getAllDeliveryAgents({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("name") String? name,
-  });
+  Future<BaseResponse<List<DeliveryAgentModel>?>> getAllDeliveryAgents(
+    @Queries() BaseRequest request,
+  );
 
   @GET(ApiConstants.getAllWaiters)
-  Future<BaseResponse<List<WaiterModel>?>> getAllWaiters({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("name") String? name,
-  });
+  Future<BaseResponse<List<WaiterModel>?>> getAllWaiters(
+    @Queries() BaseRequest request,
+  );
+
+  @GET(ApiConstants.getAllDeliveryCompany)
+  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany(
+    @Queries() BaseRequest request,
+  );
 
   @POST(ApiConstants.applyDiscountCode)
   Future<BaseResponse<DiscountResultModel?>> applyDiscountCode(
@@ -72,39 +90,25 @@ abstract class ApiService {
   Future<BaseResponse<dynamic>> completePayment(
     @Body() Map<String, dynamic> body,
   );
-  @GET(ApiConstants.getAllFloors)
-  Future<BaseResponse<List<FloorModel>?>> getAllFloors({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("id") String? id,
-    @Query("name") String? name,
-    @Query("branchID") int? branchId,
-  });
 
-  @GET(ApiConstants.getAllFoodTables)
-  Future<BaseResponse<List<TableModel>?>> getAllFoodTables({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("id") String? id,
-    @Query("name") String? name,
-    @Query("floorID") String? floorID,
-    @Query("forPOS") bool? forPOS,
-  });
+  @GET(ApiConstants.getAllReservations)
+  Future<BaseResponse<ReservationsData>> getAllReservation(
+    @Queries() GetReservationRequest request,
+  );
+  @POST(ApiConstants.reserveFoodTable)
+  Future<BaseResponse<void>> reserveFoodTable(
+    @Body() ReserveFoodTableRequest request,
+  );
 
-  @GET(ApiConstants.getAllFoodAdditives)
-  Future<BaseResponse<List<AdditiveModel>?>> getAllFoodAdditives({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("name") String? name,
-    @Query("categoryID") int? categoryID,
-  });
+  @POST(ApiConstants.cancelReserveFoodTable)
+  Future<BaseResponse<void>> cancelReserveFoodTable(
+    @Body() CancelReserveFoodTableRequest request,
+  );
 
-  @GET(ApiConstants.getAllDeliveryCompany)
-  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
-    @Query("pageNumber") int? pageNumber,
-    @Query("pageSize") int? pageSize,
-    @Query("name") String? name,
-  });
+  @POST(ApiConstants.editReserveFoodTable)
+  Future<BaseResponse<void>> editReserveFoodTable(
+    @Body() EditReserveFoodTableRequest request,
+  );
 
   @POST("api/payments/process")
   Future<BaseResponse<PaymentSuccessModel>> processPayment(

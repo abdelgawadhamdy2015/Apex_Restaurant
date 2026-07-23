@@ -44,10 +44,10 @@ class PosBottomNavBar extends StatelessWidget {
             icon: const Icon(Icons.settings_outlined),
             label: lang.navSettings,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.shopping_cart_outlined),
-            label: lang.navCart,
-          ),
+          // BottomNavigationBarItem(
+          //   icon: const Icon(Icons.shopping_cart_outlined),
+          //   label: lang.navCart,
+          // ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.receipt_long_outlined),
             label: lang.navOrders,

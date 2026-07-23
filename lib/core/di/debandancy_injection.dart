@@ -16,6 +16,11 @@ import 'package:apex_restaurant/featchers/login/data/repo_imp/login_repo.dart';
 import 'package:apex_restaurant/featchers/login/domain/repo/auth_repo.dart';
 import 'package:apex_restaurant/featchers/login/domain/usecases/auth_usecase.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
+import 'package:apex_restaurant/featchers/orders/data/datasource/orders_remote_data_source.dart';
+import 'package:apex_restaurant/featchers/orders/data/repo/order_repository_imp.dart';
+import 'package:apex_restaurant/featchers/orders/domain/repo/orders_repository.dart';
+import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/data/datasource/payment_remote_data_source.dart';
 import 'package:apex_restaurant/featchers/payment/data/repo/payment_repository_impl.dart';
 import 'package:apex_restaurant/featchers/payment/domain/repo/payment_repository.dart';
@@ -26,6 +31,11 @@ import 'package:apex_restaurant/featchers/pos/data/repositories/pos_repository_i
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
 import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/tables/data/datasource/tables_remote_data_source.dart';
+import 'package:apex_restaurant/featchers/tables/data/repo/tables_repository_impl.dart';
+import 'package:apex_restaurant/featchers/tables/domain/repo/tables_repository.dart';
+import 'package:apex_restaurant/featchers/tables/domain/usescase/get_reservations_usecase.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,6 +84,16 @@ Future<void> setupGetIt() async {
     () => PaymentRemoteDataSourceImpl(getIt<ApiService>()),
   );
 
+  //Orders
+  getIt.registerLazySingleton<OrdersRemoteDataSource>(
+    () => OrdersRemoteDataSourceImpl(getIt<ApiService>()),
+  );
+
+  // Tables
+  getIt.registerLazySingleton<TablesRemoteDataSource>(
+    () => TablesRemoteDataSourceImpl(getIt<ApiService>()),
+  );
+
   /// ─────────────────────────────────────────────────────────
   /// Repositories
   /// ─────────────────────────────────────────────────────────
@@ -101,6 +121,16 @@ Future<void> setupGetIt() async {
   // Payment
   getIt.registerLazySingleton<PaymentRepository>(
     () => PaymentRepositoryImpl(getIt<PaymentRemoteDataSource>()),
+  );
+
+  // Orders
+  getIt.registerLazySingleton<OrdersRepository>(
+    () => OrdersRepositoryImpl(getIt<OrdersRemoteDataSource>()),
+  );
+
+  // Tables
+  getIt.registerLazySingleton<TablesRepository>(
+    () => TablesRepositoryImpl(getIt<TablesRemoteDataSource>()),
   );
 
   /// ─────────────────────────────────────────────────────────
@@ -139,8 +169,6 @@ Future<void> setupGetIt() async {
     () => SendToKitchenUseCase(getIt<PosRepository>()),
   );
   getIt.registerLazySingleton(() => SubmitOrderUseCase(getIt<PosRepository>()));
-  getIt.registerLazySingleton(() => GetFloorsUseCase(getIt<PosRepository>()));
-  getIt.registerLazySingleton(() => GetTablesUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(
     () => GetFoodAdditivesUseCase(getIt<PosRepository>()),
   );
@@ -164,6 +192,37 @@ Future<void> setupGetIt() async {
   // Payment
   getIt.registerLazySingleton(
     () => ProcessPaymentUseCase(getIt<PaymentRepository>()),
+  );
+
+  // Orders
+  getIt.registerLazySingleton(
+    () => GetPreviousOrdersUseCase(getIt<OrdersRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetHeldOrdersUseCase(getIt<OrdersRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => RestoreHeldOrderUseCase(getIt<OrdersRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => DeleteHeldOrderUseCase(getIt<OrdersRepository>()),
+  );
+
+  // Tables
+  getIt.registerLazySingleton(
+    () => GetFloorsUseCase(getIt<TablesRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetTablesUseCase(getIt<TablesRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetReservationsUseCase(getIt<TablesRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => CreateReservationUseCase(getIt<TablesRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => CancelReservationUseCase(getIt<TablesRepository>()),
   );
 
   /// ─────────────────────────────────────────────────────────
@@ -208,5 +267,26 @@ Future<void> setupGetIt() async {
   // Payment
   getIt.registerFactory<PaymentBloc>(
     () => PaymentBloc(processPaymentUseCase: getIt<ProcessPaymentUseCase>()),
+  );
+
+  // Orders
+  getIt.registerFactory(
+    () => OrdersBloc(
+      getPreviousOrdersUseCase: getIt<GetPreviousOrdersUseCase>(),
+      getHeldOrdersUseCase: getIt<GetHeldOrdersUseCase>(),
+      restoreHeldOrderUseCase: getIt<RestoreHeldOrderUseCase>(),
+      deleteHeldOrderUseCase: getIt<DeleteHeldOrderUseCase>(),
+    ),
+  );
+
+  // Tables
+  getIt.registerFactory(
+    () => TablesBloc(
+      getReservationsUseCase: getIt<GetReservationsUseCase>(),
+      createReservationUseCase: getIt<CreateReservationUseCase>(),
+      cancelReservationUseCase: getIt<CancelReservationUseCase>(),
+      getFloorsUseCase: getIt<GetFloorsUseCase>(),
+      getTablesUseCase: getIt<GetTablesUseCase>(),
+    ),
   );
 }

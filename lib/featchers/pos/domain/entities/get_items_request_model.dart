@@ -1,44 +1,30 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 
-class GetItemsRequestModel extends BaseRequest {
-  final int? status;
-  final String? id;
-
+class GetItemsRequest extends BaseRequest {
+  final int? statues;
   final int? categoryId;
   final int? companyId;
   final String? searchKey;
 
-  const GetItemsRequestModel({
-    super.pageNumber,
-    super.pageSize,
-    this.status,
-    this.id,
+  const GetItemsRequest({
+    super.pageNumber = 1,
+    super.pageSize = 50,
+    this.statues,
     super.name,
     this.categoryId,
     this.companyId,
     this.searchKey,
   });
 
-  @override
-  GetItemsRequestModel copyWith({
-    int? pageNumber,
-    int? pageSize,
-    int? status,
-    String? id,
-    String? name,
-    int? categoryId,
-    int? companyId,
-    String? searchKey,
-  }) {
-    return GetItemsRequestModel(
-      pageNumber: pageNumber ?? super.pageNumber,
-      pageSize: pageSize ?? super.pageSize,
-      status: status ?? this.status,
-      id: id ?? this.id,
-      name: name ?? super.name,
-      categoryId: categoryId ?? this.categoryId,
-      companyId: companyId ?? this.companyId,
-      searchKey: searchKey ?? this.searchKey,
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'pageNumber': pageNumber,
+      'pageSize': pageSize,
+      if (statues != null) 'statues': statues,
+      if (name != null) 'name': name,
+      if (categoryId != null) 'CategoryId': categoryId,
+      if (companyId != null) 'CompanyId': companyId,
+      if (searchKey != null) 'SearchKey': searchKey,
+    };
   }
 }

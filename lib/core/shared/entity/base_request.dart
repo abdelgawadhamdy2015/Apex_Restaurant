@@ -1,4 +1,9 @@
-class BaseRequest {
+import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+part 'base_request.g.dart';
+
+@JsonSerializable()
+class BaseRequest extends Equatable {
   final String? name;
   final int pageNumber;
   final int pageSize;
@@ -12,4 +17,11 @@ class BaseRequest {
       pageSize: pageSize ?? this.pageSize,
     );
   }
+
+  factory BaseRequest.fromJson(Map<String, dynamic> json) =>
+      _$BaseRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$BaseRequestToJson(this);
+
+  @override
+  List<Object?> get props => [name, pageNumber, pageSize];
 }

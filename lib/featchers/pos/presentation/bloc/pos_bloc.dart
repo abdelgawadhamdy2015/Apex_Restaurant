@@ -67,7 +67,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             if (firstCategory != null) {
               add(
                 LoadItemsEvent(
-                  GetItemsRequestModel(
+                  GetItemsRequest(
                     categoryId: firstCategory.id,
                     pageNumber: 1,
                     pageSize: 50,
@@ -217,7 +217,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
     add(
       LoadItemsEvent(
-        GetItemsRequestModel(
+        GetItemsRequest(
           categoryId: event.category.id,
           pageNumber: 1,
           pageSize: 50,

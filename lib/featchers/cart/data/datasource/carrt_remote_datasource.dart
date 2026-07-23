@@ -38,36 +38,35 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   Future<BaseResponse<List<DeliveryAgentModel>?>> getDeliveryAgents({
     BaseRequest? request,
   }) {
-    // NOTE: requires `getAllDeliveryAgents` added to ApiService — see
-    // api_additions/api_service_additions.dart.
-    return _apiService.getAllDeliveryAgents(
-      pageNumber: request?.pageNumber,
-      pageSize: request?.pageSize,
+    final queryRequest = BaseRequest(
+      pageNumber: request?.pageNumber ?? 1,
+      pageSize: request?.pageSize ?? 50,
       name: request?.name,
     );
+
+    return _apiService.getAllDeliveryAgents(queryRequest);
   }
 
   @override
   Future<BaseResponse<List<WaiterModel>?>> getWaiters({BaseRequest? request}) {
-    // NOTE: requires `getAllWaiters` added to ApiService.
-    return _apiService.getAllWaiters(
-      pageNumber: request?.pageNumber,
-      pageSize: request?.pageSize,
+    final queryRequest = BaseRequest(
+      pageNumber: request?.pageNumber ?? 1,
+      pageSize: request?.pageSize ?? 50,
       name: request?.name,
     );
+
+    return _apiService.getAllWaiters(queryRequest);
   }
 
   @override
   Future<BaseResponse<DiscountResultModel?>> applyDiscount(
     ApplyDiscountRequestModel request,
   ) {
-    // NOTE: requires `applyDiscountCode` added to ApiService.
     return _apiService.applyDiscountCode(request.toJson());
   }
 
   @override
   Future<BaseResponse<dynamic>> holdOrder(Order order) {
-    // NOTE: requires `holdOrder` added to ApiService.
     return _apiService.holdOrder({
       'items': order.items
           .map((i) => {'itemId': i.menuItem.itemId, 'quantity': i.quantity})
@@ -80,7 +79,6 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   Future<BaseResponse<dynamic>> completePayment(
     CompletePaymentRequestModel request,
   ) {
-    // NOTE: requires `completePayment` added to ApiService.
     return _apiService.completePayment(request.toJson());
   }
 }

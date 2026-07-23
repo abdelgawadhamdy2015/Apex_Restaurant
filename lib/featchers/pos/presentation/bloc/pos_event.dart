@@ -19,7 +19,7 @@ class LoadCategoriesEvent extends PosEvent {
 }
 
 class LoadItemsEvent extends PosEvent {
-  final GetItemsRequestModel? requestModel;
+  final GetItemsRequest? requestModel;
   const LoadItemsEvent(this.requestModel);
 
   @override
@@ -27,7 +27,7 @@ class LoadItemsEvent extends PosEvent {
 }
 
 class LoadFoodAdditivesEvent extends PosEvent {
-  final GetFoodAdditiveRequest? requestModel;
+  final GetFoodAdditivesRequest? requestModel;
   const LoadFoodAdditivesEvent({this.requestModel});
 
   @override

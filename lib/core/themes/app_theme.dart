@@ -20,6 +20,7 @@ class AppTheme {
       onPrimary: Colors.white,
       secondary: AppColors.amber,
       error: AppColors.error,
+      errorContainer: AppColors.errorContainer,
       surface: AppColors.surface,
       outlineVariant: AppColors.border,
     );
@@ -106,6 +107,8 @@ class AppTheme {
       onPrimary: Colors.white,
       secondary: AppColors.amber,
       error: AppColors.error,
+      errorContainer: AppColors.errorContainer,
+
       surface: const Color(0xFF1E293B),
       onSurface: Colors.white,
       outlineVariant: AppColors.border,

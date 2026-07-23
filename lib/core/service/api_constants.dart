@@ -16,6 +16,15 @@ class ApiConstants {
   static const String getAllFloors = "api/Restaurants/Floors/GetAllFloors";
   static const String getAllFoodTables =
       "api/Restaurants/FoodTables/GetAllFoodTables";
+  static const String getAllReservations =
+      "api/Restaurants/FoodTables/GetAllReservations";
+  static const String reserveFoodTable =
+      "api/Restaurants/FoodTables/ReserveFoodTable";
+  static const String cancelReserveFoodTable =
+      "api/Restaurants/FoodTables/CancelReserveFoodTable";
+  static const String editReserveFoodTable =
+      "api/Restaurants/FoodTables/EditReserveFoodTable";
+
   static const String getAllFoodAdditives =
       "api/Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS";
 

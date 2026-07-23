@@ -5,6 +5,7 @@ import 'package:apex_restaurant/core/settings/app_font_scale.dart';
 import 'package:apex_restaurant/core/settings/settings_cubit.dart';
 import 'package:apex_restaurant/core/settings/settings_state.dart';
 import 'package:apex_restaurant/core/shared/enums/ui_enum.dart';
+import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,17 +22,9 @@ class SettingsScreen extends StatelessWidget {
         // Was hardcoded AppColors.canvas — now follows the active
         // ThemeData (light/dark) set in AppTheme.
         backgroundColor: theme.scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: theme.colorScheme.surface,
-          elevation: 0,
-          foregroundColor: theme.colorScheme.onSurface,
-          title: Text(
-            'الإعدادات',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
+        appBar: const CustomAppBar(
+          title: 'الإعدادات',
+          showBackButton: false, // Hides the back button completely
         ),
         body: BlocBuilder<SettingsCubit, SettingsState>(
           builder: (context, state) {
