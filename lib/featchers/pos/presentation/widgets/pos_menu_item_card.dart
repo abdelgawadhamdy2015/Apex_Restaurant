@@ -107,9 +107,7 @@ class PosMenuItemCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      lang.priceWithCurrency(
-                        item.defaultPrice.toStringAsFixed(2),
-                      ),
+                      lang.priceWithCurrency(item.sizes.first.price),
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,

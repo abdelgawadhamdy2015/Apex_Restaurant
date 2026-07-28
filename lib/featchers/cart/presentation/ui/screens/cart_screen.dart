@@ -3,6 +3,8 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
@@ -10,13 +12,36 @@ import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/cart_top_
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/tables_screen_arg.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
+
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CartBloc>().add(LoadCartDataEvent());
+      context.read<CartBloc>().add(
+        LoadPersonsData(
+          request: GetClientsRequest(
+            isSupplier: false,
+            pageNumber: 1,
+            pageSize: 50,
+          ),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +49,12 @@ class CartScreen extends StatelessWidget {
     final spacing = context.spacing;
 
     return Scaffold(
+      appBar: CartTopBar(
+        onClearAll: () {
+          context.read<CartBloc>().add(ClearCartEvent());
+        },
+      ),
+
       backgroundColor: theme.colorScheme.surface,
       body: BlocConsumer<CartBloc, CartState>(
         listener: (context, state) {
@@ -65,12 +96,18 @@ class CartScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              const CartTopBar(),
                               const _HeaderInfoCard(),
                               SizedBox(height: spacing.sm),
                               const _OrderTypeSelector(),
                               SizedBox(height: spacing.sm),
-                              const _CustomerInfoCard(),
+                              _CustomerInfoCard(
+                                persons: state.persons,
+                                selectedPerson:
+                                    state.selectedPerson ??
+                                    (state.persons.isNotEmpty
+                                        ? state.persons.first
+                                        : null),
+                              ),
                               SizedBox(height: spacing.sm),
                               _buildDynamicTypeSelection(state),
                               SizedBox(height: spacing.md),
@@ -103,7 +140,7 @@ class CartScreen extends StatelessWidget {
   Widget _buildDynamicTypeSelection(CartState state) {
     switch (state.selectedOrderType) {
       case OrderType.dineIn:
-        return const _DineInSelector();
+        return _DineInSelector(persons: state.persons);
       case OrderType.delivery:
         return const _DeliveryAgentSelector();
       case OrderType.deliveryCompany:
@@ -287,7 +324,22 @@ class _OrderTypeSelector extends StatelessWidget {
 }
 
 class _CustomerInfoCard extends StatelessWidget {
-  const _CustomerInfoCard();
+  const _CustomerInfoCard({required this.persons, this.selectedPerson});
+  final List<PosClientModel> persons;
+  final PosClientModel? selectedPerson;
+
+  Future<void> _openPicker(BuildContext context) async {
+    final cartBloc = context.read<CartBloc>();
+    final picked = await showModalBottomSheet<PosClientModel>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => _CustomerPickerSheet(persons: persons),
+    );
+    if (picked != null) {
+      cartBloc.add(SelectPersonEvent(picked));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -315,38 +367,55 @@ class _CustomerInfoCard extends StatelessWidget {
             ),
           ),
           SizedBox(width: spacing.sm),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'أحمد محمود',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
-                ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _openPicker(context),
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    selectedPerson?.arabicName ?? lang.noCustomerSelected,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  if (selectedPerson != null &&
+                      selectedPerson!.personPhones.isNotEmpty)
+                    Text(
+                      selectedPerson?.personPhones.first.phoneNumber
+                              .toString() ??
+                          "",
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                ],
               ),
-              Text(
-                lang.registeredCustomer,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+            ),
           ),
-          const Spacer(),
-          TextButton.icon(
-            onPressed: () {},
+          IconButton(
+            onPressed: () {
+              context.pushNamed(Routes.addCustomerScreen);
+            },
             icon: Icon(
               Icons.person_add_outlined,
-              size: icons.sm,
+              size: icons.lg,
               color: theme.colorScheme.primary,
             ),
-            label: Text(
-              lang.addCustomer,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.pushNamed(
+                Routes.addCustomerScreen,
+                extra: selectedPerson,
+              );
+            },
+            icon: Icon(
+              Icons.edit,
+              size: icons.lg,
+              color: theme.colorScheme.primary,
             ),
           ),
         ],
@@ -355,9 +424,240 @@ class _CustomerInfoCard extends StatelessWidget {
   }
 }
 
-class _DineInSelector extends StatelessWidget {
-  const _DineInSelector();
+// -----------------------------------------------------------------------------
+// Customer picker — bottom sheet
+//
 
+class _CustomerPickerSheet extends StatefulWidget {
+  const _CustomerPickerSheet({required this.persons});
+  final List<PosClientModel> persons;
+
+  @override
+  State<_CustomerPickerSheet> createState() => _CustomerPickerSheetState();
+}
+
+class _CustomerPickerSheetState extends State<_CustomerPickerSheet> {
+  final _searchController = TextEditingController();
+  late List<PosClientModel> _filtered = widget.persons;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    final normalized = query.trim().toLowerCase();
+    setState(() {
+      _filtered = normalized.isEmpty
+          ? widget.persons
+          : widget.persons.where((p) {
+              final name = (p.arabicName).toLowerCase();
+              final phone = (p.phone ?? '').toLowerCase();
+              return name.contains(normalized) || phone.contains(normalized);
+            }).toList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final icons = context.iconSizes;
+    final lang = S.of(context);
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
+    return DraggableScrollableSheet(
+      initialChildSize: 0.75,
+      minChildSize: 0.5,
+      maxChildSize: 0.92,
+      expand: false,
+      builder: (context, scrollController) {
+        return Container(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(spacing.radiusXl),
+              topRight: Radius.circular(spacing.radiusXl),
+            ),
+          ),
+          child: Column(
+            children: [
+              SizedBox(height: spacing.sm),
+              // Drag handle
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.outlineVariant,
+                  borderRadius: BorderRadius.circular(spacing.radiusPill),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  spacing.md,
+                  spacing.md,
+                  spacing.md,
+                  0,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Search field
+                    TextField(
+                      controller: _searchController,
+                      onChanged: _onSearchChanged,
+                      decoration: InputDecoration(
+                        hintText: lang.searchCustomerHint,
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: theme.colorScheme.tertiary,
+                        ),
+                        filled: true,
+                        fillColor: theme.colorScheme.surfaceContainerHighest
+                            .withOpacity(0.4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(spacing.radiusLg),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: spacing.sm,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: spacing.sm),
+                    // Add new customer button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          padding: EdgeInsets.symmetric(
+                            vertical: spacing.sm + spacing.xxs,
+                          ),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              spacing.radiusLg,
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          context.pushNamed(Routes.addCustomerScreen);
+                        },
+                        icon: Icon(Icons.person_add_alt_1, size: icons.sm),
+                        label: Text(
+                          lang.addNewCustomer,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: spacing.sm),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: _filtered.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: spacing.lg),
+                          child: Text(
+                            lang.noResultsFound,
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.separated(
+                        controller: scrollController,
+                        padding: EdgeInsets.symmetric(horizontal: spacing.md),
+                        itemCount: _filtered.length,
+                        separatorBuilder: (_, __) => Divider(
+                          height: 1,
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                        itemBuilder: (context, index) {
+                          final person = _filtered[index];
+                          return _CustomerPickerRow(
+                            person: person,
+                            onTap: () => Navigator.pop(context, person),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CustomerPickerRow extends StatelessWidget {
+  const _CustomerPickerRow({required this.person, required this.onTap});
+
+  final PosClientModel person;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final icons = context.iconSizes;
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: spacing.sm + spacing.xxs / 2),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    person.arabicName,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  if (person.personPhones.isNotEmpty) ...[
+                    SizedBox(height: spacing.xxs / 2),
+                    Text(
+                      person.personPhones.first.phoneNumber!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                      textDirection: TextDirection.ltr,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_left,
+              color: theme.colorScheme.outline,
+              size: icons.md,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DineInSelector extends StatelessWidget {
+  const _DineInSelector({required this.persons});
+  final List<PosClientModel> persons;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -399,7 +699,10 @@ class _DineInSelector extends StatelessWidget {
                 onPressed: () {
                   context.pushNamed(
                     Routes.tableScreen,
-                    extra: state.selectedEmployeeBranch?.branchId ?? 0,
+                    extra: TablesScreenArgs(
+                      branchId: state.selectedEmployeeBranch?.branchId ?? 0,
+                      personList: persons,
+                    ),
                   );
                 },
                 icon: Icon(
@@ -493,6 +796,17 @@ class _CartItemTile extends StatelessWidget {
 
   const _CartItemTile({required this.index, required this.item});
 
+  List<String> _getFormattedAddons() {
+    final Map<String, int> addonCounts = {};
+    for (var addon in item.addons) {
+      final name = addon.arabicName;
+      addonCounts[name] = (addonCounts[name] ?? 0) + 1;
+    }
+    return addonCounts.entries
+        .map((entry) => '+ ${entry.key} ${entry.value}x')
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -501,142 +815,163 @@ class _CartItemTile extends StatelessWidget {
     final lang = S.of(context);
 
     final sizeName = item.selectedSize?.sizeNameAr ?? '';
-    final addonsText = item.addons.map((a) => a.arabicName).join(', ');
+    final formattedAddons = _getFormattedAddons();
 
-    return Container(
-      margin: EdgeInsets.only(bottom: spacing.sm),
-      padding: EdgeInsets.all(spacing.sm),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(spacing.radiusLg),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(spacing.radiusMd),
-            child: Container(
-              width: icons.xl * 2.2,
-              height: icons.xl * 2.2,
-              color: theme.colorScheme.surfaceContainerHighest,
-              child: item.menuItem.imagePath != null
-                  ? Image.network(item.menuItem.imagePath!, fit: BoxFit.cover)
-                  : Icon(
-                      Icons.fastfood,
-                      color: theme.colorScheme.onSurfaceVariant,
-                      size: icons.lg,
-                    ),
-            ),
-          ),
-          SizedBox(width: spacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.menuItem.itemNameAr,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: theme.colorScheme.onSurface,
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: spacing.sm),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(spacing.radiusLg),
+                child: Container(
+                  width: 80,
+                  height: 80,
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  child: item.menuItem.imagePath != null
+                      ? Image.network(
+                          item.menuItem.imagePath!,
+                          fit: BoxFit.cover,
+                        )
+                      : Icon(
+                          Icons.fastfood,
+                          color: theme.colorScheme.onSurfaceVariant,
+                          size: icons.lg,
                         ),
-                      ),
-                    ),
-                    Text(
-                      '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySar}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ],
                 ),
-                if (sizeName.isNotEmpty) ...[
-                  SizedBox(height: spacing.xxs),
-                  Text(
-                    lang.sizeWithVal(sizeName),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-                if (addonsText.isNotEmpty) ...[
-                  SizedBox(height: spacing.xxs),
-                  Text(
-                    lang.addonsWithVal(addonsText),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.tertiary,
-                    ),
-                  ),
-                ],
-                if (item.notes != null && item.notes!.isNotEmpty) ...[
-                  SizedBox(height: spacing.xxs),
-                  Text(
-                    lang.notesWithVal(item.notes!),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-                SizedBox(height: spacing.xs),
-                Row(
+              ),
+              SizedBox(width: spacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.delete_sharp,
-                        color: theme.colorScheme.error,
-                        size: icons.lg,
-                      ),
-                      onPressed: () =>
-                          context.read<CartBloc>().add(RemoveItemEvent(index)),
-                    ),
-                    const Spacer(),
-                    Container(
-                      height: spacing.xxl,
-                      decoration: BoxDecoration(
-                        color: AppColors.border,
-                        borderRadius: BorderRadius.circular(spacing.radiusSm),
-                        border: Border.all(
-                          color: theme.colorScheme.outlineVariant,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.remove, size: icons.sm),
-                            color: theme.colorScheme.onSurface,
-                            onPressed: () => context.read<CartBloc>().add(
-                              UpdateItemQuantityEvent(index, -1),
-                            ),
-                          ),
-                          Text(
-                            '${item.quantity}',
-                            style: theme.textTheme.bodyMedium?.copyWith(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.menuItem.itemNameAr,
+                            textAlign: TextAlign.right,
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: theme.colorScheme.onSurface,
                             ),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.add, size: icons.sm),
-                            color: theme.colorScheme.onSurface,
-                            onPressed: () => context.read<CartBloc>().add(
-                              UpdateItemQuantityEvent(index, 1),
-                            ),
+                        ),
+                        SizedBox(width: spacing.xs),
+                        Text(
+                          '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySar}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary,
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    if (sizeName.isNotEmpty) ...[
+                      SizedBox(height: spacing.xxs),
+                      Text(
+                        lang.sizeWithVal(sizeName) + (" | ${item.notes}"),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
                       ),
+                    ],
+                    if (formattedAddons.isNotEmpty) ...[
+                      SizedBox(height: spacing.xxs),
+                      ...formattedAddons.map(
+                        (addonText) => Padding(
+                          padding: EdgeInsets.only(top: spacing.xxs / 2),
+                          child: Text(
+                            addonText,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.secondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (item.notes != null && item.notes!.isNotEmpty) ...[
+                      SizedBox(height: spacing.xxs),
+                      Text(
+                        item.notes!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    SizedBox(height: spacing.sm),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.delete_outline_rounded,
+                            color: theme.colorScheme.error,
+                            size: icons.md,
+                          ),
+                          onPressed: () => context.read<CartBloc>().add(
+                            RemoveItemEvent(index),
+                          ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(
+                              spacing.radiusMd,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.add, size: 18),
+                                color: theme.colorScheme.onSurface,
+                                onPressed: () => context.read<CartBloc>().add(
+                                  UpdateItemQuantityEvent(index, 1),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: spacing.xs,
+                                ),
+                                child: Text(
+                                  '${item.quantity}',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.remove, size: 18),
+                                color: theme.colorScheme.onSurface,
+                                onPressed: () => context.read<CartBloc>().add(
+                                  UpdateItemQuantityEvent(index, -1),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: spacing.md),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Divider(
+          height: 1,
+          thickness: 0.8,
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
+      ],
     );
   }
 }

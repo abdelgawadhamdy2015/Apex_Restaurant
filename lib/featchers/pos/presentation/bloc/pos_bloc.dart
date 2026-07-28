@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -231,16 +232,45 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     Emitter<PosState> emit,
   ) {
     try {
-      final updatedItems = state.currentOrder.items.map((item) {
-        if (item.menuItem.itemId == event.item.menuItem.itemId) {
-          return item.copyWith(addons: event.addons);
-        }
-        return item;
-      }).toList();
+      final currentItems = List<OrderItem>.from(state.currentOrder.items);
+
+      // 1. Find the target item index to update
+      final targetIndex = currentItems.indexWhere(
+        (item) => item.menuItem.itemId == event.item.menuItem.itemId,
+      );
+
+      if (targetIndex == -1) return;
+
+      // 2. Create the updated item with the new addons
+      final updatedItem = currentItems[targetIndex].copyWith(
+        addons: event.addons,
+      );
+
+      // 3. Remove the target item temporarily from the list to check for existing duplicates
+      currentItems.removeAt(targetIndex);
+
+      // 4. Look for an existing item that matches itemId, size, AND the new addons
+      final duplicateIndex = currentItems.indexWhere(
+        (i) =>
+            i.menuItem.itemId == updatedItem.menuItem.itemId &&
+            i.selectedSize?.sizeId == updatedItem.selectedSize?.sizeId &&
+            _areAddonsEqual(i.addons, updatedItem.addons),
+      );
+
+      if (duplicateIndex >= 0) {
+        // Match found: Merge quantity into the existing matching item
+        currentItems[duplicateIndex] = currentItems[duplicateIndex].copyWith(
+          quantity:
+              currentItems[duplicateIndex].quantity + updatedItem.quantity,
+        );
+      } else {
+        // No match found: Re-insert the updated item at its original position
+        currentItems.insert(targetIndex, updatedItem);
+      }
 
       emit(
         state.copyWith(
-          currentOrder: state.currentOrder.copyWith(items: updatedItems),
+          currentOrder: state.currentOrder.copyWith(items: currentItems),
         ),
       );
     } catch (e) {
@@ -251,23 +281,55 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   void _onAddItem(AddItemToOrderEvent event, Emitter<PosState> emit) {
     try {
       final existingItems = List<OrderItem>.from(state.currentOrder.items);
-
-      // Match item by ID, selected size, and selected addons
-      final existingIndex = existingItems.indexWhere(
+      log(
+        "${event.item.menuItem.itemId.toString()} ${event.item.menuItem.sizes.length}",
+      );
+      // 1. Look for an exact match (Same Item ID, Same Size, and Exact Same Addons)
+      final exactMatchIndex = existingItems.indexWhere(
         (i) =>
             i.menuItem.itemId == event.item.menuItem.itemId &&
             i.selectedSize?.sizeId == event.item.selectedSize?.sizeId &&
             _areAddonsEqual(i.addons, event.item.addons),
       );
 
-      if (existingIndex >= 0) {
-        existingItems[existingIndex] = existingItems[existingIndex].copyWith(
-          quantity: existingItems[existingIndex].quantity + event.item.quantity,
-        );
+      if (exactMatchIndex >= 0) {
+        // Exact match found: Simply increase the quantity
+        existingItems[exactMatchIndex] = existingItems[exactMatchIndex]
+            .copyWith(
+              quantity:
+                  existingItems[exactMatchIndex].quantity + event.item.quantity,
+            );
       } else {
-        existingItems.add(event.item);
+        // 2. Look for a partial match (Same Item ID & Same Size, but different/new addons)
+        final partialMatchIndex = existingItems.indexWhere(
+          (i) =>
+              i.menuItem.itemId == event.item.menuItem.itemId &&
+              i.selectedSize?.sizeId == event.item.selectedSize?.sizeId,
+        );
+
+        if (partialMatchIndex >= 0) {
+          // Merge unique addons from both items
+          final mergedAddons = HelperMethods.mergeAddons(
+            existingItems[partialMatchIndex].addons,
+            event.item.addons,
+          );
+
+          // Update existing item with merged addons and increased quantity
+          existingItems[partialMatchIndex] = existingItems[partialMatchIndex]
+              .copyWith(
+                quantity:
+                    existingItems[partialMatchIndex].quantity +
+                    event.item.quantity,
+                addons: mergedAddons,
+              );
+        } else {
+          // 3. Completely new item/variant: Add as a new entry
+          existingItems.add(event.item);
+        }
       }
+
       log("existingItems : ${existingItems.length}");
+
       emit(
         state.copyWith(
           currentOrder: state.currentOrder.copyWith(items: existingItems),

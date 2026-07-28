@@ -41,13 +41,13 @@ class PosBottomNavBar extends StatelessWidget {
         unselectedItemColor: theme.colorScheme.onSurfaceVariant,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings_outlined),
-            label: lang.navSettings,
+            icon: const Icon(Icons.more_horiz),
+            label: lang.more,
           ),
-          // BottomNavigationBarItem(
-          //   icon: const Icon(Icons.shopping_cart_outlined),
-          //   label: lang.navCart,
-          // ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.person),
+            label: lang.customers,
+          ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.receipt_long_outlined),
             label: lang.navOrders,

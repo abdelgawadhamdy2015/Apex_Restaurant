@@ -1,4 +1,5 @@
 // cart_state.dart
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart'; // Holds OrderItem
 import 'package:equatable/equatable.dart';
@@ -7,12 +8,17 @@ enum OrderType { takeaway, dineIn, delivery, deliveryCompany }
 
 enum DiscountType { coupon, direct }
 
+enum AddPersonStatus { initial, loading, success, failure }
+
 class CartState extends Equatable {
   final OrderType selectedOrderType;
+  final AddPersonStatus status;
   final DiscountType selectedDiscountType;
   final List<OrderItem> items;
   final List<dynamic> waiters;
   final List<dynamic> deliveryAgents;
+  final List<PosClientModel> persons;
+  final PosClientModel? selectedPerson;
   final List<DeliveryCompanyModel> deliveryCompanies;
   final DeliveryCompanyModel? selectedDeliveryCompany;
   final String? selectedWaiterId;
@@ -28,9 +34,11 @@ class CartState extends Equatable {
   const CartState({
     this.selectedOrderType = OrderType.dineIn,
     this.selectedDiscountType = DiscountType.coupon,
+    this.status = AddPersonStatus.initial,
     this.items = const [],
     this.waiters = const [],
     this.deliveryAgents = const [],
+    this.persons = const [],
     this.deliveryCompanies = const [],
     this.selectedDeliveryCompany,
     this.selectedWaiterId,
@@ -42,6 +50,7 @@ class CartState extends Equatable {
     this.isSubmitting = false,
     this.errorMessage,
     this.successMessage,
+    this.selectedPerson,
   });
 
   double get subtotal => items.fold(0.0, (sum, item) => sum + item.totalPrice);
@@ -61,9 +70,12 @@ class CartState extends Equatable {
   CartState copyWith({
     OrderType? selectedOrderType,
     DiscountType? selectedDiscountType,
+    AddPersonStatus? status,
     List<OrderItem>? items,
     List<dynamic>? waiters,
     List<dynamic>? deliveryAgents,
+    List<PosClientModel>? persons,
+    PosClientModel? selectedPerson,
     List<DeliveryCompanyModel>? deliveryCompanies,
     DeliveryCompanyModel? selectedDeliveryCompany,
     String? selectedWaiterId,
@@ -79,8 +91,11 @@ class CartState extends Equatable {
     return CartState(
       selectedOrderType: selectedOrderType ?? this.selectedOrderType,
       selectedDiscountType: selectedDiscountType ?? this.selectedDiscountType,
+      status: status ?? this.status,
       items: items ?? this.items,
       waiters: waiters ?? this.waiters,
+      persons: persons ?? this.persons,
+      selectedPerson: selectedPerson ?? this.selectedPerson,
       deliveryAgents: deliveryAgents ?? this.deliveryAgents,
       deliveryCompanies: deliveryCompanies ?? this.deliveryCompanies,
       selectedDeliveryCompany:
@@ -101,9 +116,12 @@ class CartState extends Equatable {
   List<Object?> get props => [
     selectedOrderType,
     selectedDiscountType,
+    status,
     items,
     waiters,
     deliveryAgents,
+    persons,
+    selectedPerson,
     deliveryCompanies,
     selectedDeliveryCompany,
     selectedWaiterId,

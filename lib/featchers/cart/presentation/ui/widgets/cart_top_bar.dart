@@ -22,41 +22,43 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
 
-    return Container(
-      height: preferredSize.height,
-      padding: EdgeInsets.symmetric(horizontal: spacing.md),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+    return SafeArea(
+      child: Container(
+        height: preferredSize.height,
+        padding: EdgeInsets.symmetric(horizontal: spacing.md),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(
+            bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-            onPressed: onBack ?? () => context.pop(),
-            icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
-          ),
-          Text(
-            lang.shoppingCart,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: theme.colorScheme.onSurface,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              onPressed: onBack ?? () => context.pop(),
+              icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
             ),
-          ),
-          TextButton.icon(
-            onPressed: onClearAll,
-            style: TextButton.styleFrom(
-              foregroundColor: theme.colorScheme.error,
+            Text(
+              lang.shoppingCart,
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
-            icon: Icon(Icons.delete_outline, size: iconSizes.sm),
-            label: Text(
-              lang.clearAll,
-              style: textTheme.bodySmall?.copyWith(color: AppColors.error),
+            TextButton.icon(
+              onPressed: onClearAll,
+              style: TextButton.styleFrom(
+                foregroundColor: theme.colorScheme.error,
+              ),
+              icon: Icon(Icons.delete_outline, size: iconSizes.sm),
+              label: Text(
+                lang.clearAll,
+                style: textTheme.bodySmall?.copyWith(color: AppColors.error),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

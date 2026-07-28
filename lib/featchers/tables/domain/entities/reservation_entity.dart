@@ -8,7 +8,7 @@ class ReservationEntity extends Equatable {
   final String customerName;
   final DateTime dateTime;
   final int seatsCount;
-  final int durationHours;
+  final int durationMinutes;
   final ReservationStatus status;
   final String? notes;
 
@@ -18,7 +18,7 @@ class ReservationEntity extends Equatable {
     required this.customerName,
     required this.dateTime,
     required this.seatsCount,
-    required this.durationHours,
+    required this.durationMinutes,
     required this.status,
     this.notes,
   });
@@ -30,7 +30,7 @@ class ReservationEntity extends Equatable {
     customerName,
     dateTime,
     seatsCount,
-    durationHours,
+    durationMinutes,
     status,
     notes,
   ];

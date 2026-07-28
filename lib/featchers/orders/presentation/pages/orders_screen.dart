@@ -1,9 +1,9 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_state.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/custom_pos_app_bar.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,10 +37,19 @@ class _OrdersScreenState extends State<OrdersScreen> {
     final lang = S.of(context);
 
     return Scaffold(
-      appBar: CustomAppBar(
-        title: lang.navOrders,
-        showBackButton: false, // Hides the back button completely
+      appBar: CustomPosAppBar(
+        title: S.of(context).orders,
+        onMenuPressed: () {
+          // Handle menu tap
+        },
+        onSearchPressed: () {
+          // Handle search tap
+        },
+        onNotificationPressed: () {
+          // Handle notifications tap
+        },
       ),
+
       backgroundColor: theme.colorScheme.surfaceContainerLowest,
       body: BlocBuilder<OrdersBloc, OrdersState>(
         builder: (context, state) {

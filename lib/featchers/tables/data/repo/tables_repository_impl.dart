@@ -48,19 +48,10 @@ class TablesRepositoryImpl implements TablesRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<void>>> createReservation(
-    ReservationEntity reservation,
+  Future<ApiResult<BaseResponse<dynamic>>> createReservation(
+    ReserveFoodTableRequest request,
   ) async {
     try {
-      final request = ReserveFoodTableRequest(
-        foodTablesId: reservation.tableNumber,
-        customerId: int.tryParse(reservation.customerName) ?? 0,
-        reservationDate: reservation.dateTime.toIso8601String(),
-        reservationPeriod: reservation.durationHours * 60, // mapped to minutes
-        seatsCount: reservation.seatsCount,
-        notes: reservation.notes,
-      );
-
       final response = await remoteDataSource.addReservation(request);
       return ApiResult.success(response);
     } catch (error) {
@@ -78,7 +69,7 @@ class TablesRepositoryImpl implements TablesRepository {
         foodTablesId: reservation.tableNumber,
         customerId: int.tryParse(reservation.customerName) ?? 0,
         reservationDate: reservation.dateTime.toIso8601String(),
-        reservationPeriod: reservation.durationHours * 60,
+        reservationPeriod: reservation.durationMinutes * 60,
         seatsCount: reservation.seatsCount,
         notes: reservation.notes,
       );

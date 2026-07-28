@@ -20,6 +20,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
   final double radiusMd; // 10 - buttons, cards
   final double radiusLg; // 12 - cards, sheets
   final double radiusPill; // 24 - pill/segmented chips
+  final double radiusXl; // 24 - pill/segmented chips
 
   const AppSpacing({
     required this.xxs,
@@ -33,6 +34,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
     required this.radiusMd,
     required this.radiusLg,
     required this.radiusPill,
+    required this.radiusXl,
   });
 
   /// [scale] comes from Settings (AppUiScale.scale), so users can pick
@@ -50,6 +52,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
       radiusMd: 10 * scale,
       radiusLg: 12 * scale,
       radiusPill: 24 * scale,
+      radiusXl: 35 * scale,
     );
   }
 
@@ -66,6 +69,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
     double? radiusMd,
     double? radiusLg,
     double? radiusPill,
+    double? radiusXl,
   }) {
     return AppSpacing(
       xxs: xxs ?? this.xxs,
@@ -79,6 +83,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
       radiusMd: radiusMd ?? this.radiusMd,
       radiusLg: radiusLg ?? this.radiusLg,
       radiusPill: radiusPill ?? this.radiusPill,
+      radiusXl: radiusXl ?? this.radiusXl,
     );
   }
 
@@ -97,6 +102,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
       radiusMd: lerpDouble(radiusMd, other.radiusMd, t)!,
       radiusLg: lerpDouble(radiusLg, other.radiusLg, t)!,
       radiusPill: lerpDouble(radiusPill, other.radiusPill, t)!,
+      radiusXl: lerpDouble(radiusLg, other.radiusXl, t)!,
     );
   }
 }

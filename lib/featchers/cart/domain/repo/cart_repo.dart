@@ -2,7 +2,10 @@ import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/complete_payment_request_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 import '../../data/models/delivery_agent_model.dart';
@@ -27,4 +30,14 @@ abstract class CartRepository {
   Future<ApiResult<BaseResponse<dynamic>>> completePayment(
     CompletePaymentRequestModel request,
   );
+  Future<ApiResult<BaseResponse<List<PosClientModel>?>>> getPosClients({
+    required GetClientsRequest request,
+  });
+
+  Future<ApiResult<BaseResponse<dynamic>>> addPosClient({
+    required ClientRequestModel request,
+  });
+  Future<ApiResult<BaseResponse<dynamic>>> updatePosClient({
+    required ClientRequestModel request,
+  });
 }

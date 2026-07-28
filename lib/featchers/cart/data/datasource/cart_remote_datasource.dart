@@ -2,7 +2,10 @@ import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/complete_payment_request_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 import '../models/delivery_agent_model.dart';
@@ -18,6 +21,9 @@ abstract class CartRemoteDataSource {
   });
 
   Future<BaseResponse<List<WaiterModel>?>> getWaiters({BaseRequest? request});
+  Future<BaseResponse<List<PosClientModel>?>> getPersons({
+    required GetClientsRequest request,
+  });
 
   Future<BaseResponse<DiscountResultModel?>> applyDiscount(
     ApplyDiscountRequestModel request,
@@ -28,6 +34,13 @@ abstract class CartRemoteDataSource {
   Future<BaseResponse<dynamic>> completePayment(
     CompletePaymentRequestModel request,
   );
+  Future<BaseResponse<dynamic>> updatePosClient({
+    required ClientRequestModel request,
+  });
+
+  Future<BaseResponse<dynamic>> addPosClient({
+    required ClientRequestModel request,
+  });
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
@@ -80,5 +93,26 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
     CompletePaymentRequestModel request,
   ) {
     return _apiService.completePayment(request.toJson());
+  }
+
+  @override
+  Future<BaseResponse<List<PosClientModel>?>> getPersons({
+    required GetClientsRequest request,
+  }) {
+    return _apiService.getAllPersons(request);
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> updatePosClient({
+    required ClientRequestModel request,
+  }) {
+    return _apiService.updatePosClient(request);
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> addPosClient({
+    required ClientRequestModel request,
+  }) {
+    return _apiService.addPosClient(request);
   }
 }

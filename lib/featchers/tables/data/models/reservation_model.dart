@@ -85,7 +85,7 @@ class ReservationModel {
       customerName: (isAr ? customerNameAr : customerNameEn) ?? '',
       dateTime: parsedDate,
       seatsCount: seatsCount ?? 1,
-      durationHours: (duration ?? 30) ~/ 60 > 0 ? (duration! ~/ 60) : 1,
+      durationMinutes: duration ?? 30,
       status: mappedStatus,
       notes: notes ?? '',
     );

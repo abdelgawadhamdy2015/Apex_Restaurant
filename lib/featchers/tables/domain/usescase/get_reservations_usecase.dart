@@ -3,9 +3,9 @@ import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_data_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
 import 'package:apex_restaurant/featchers/tables/domain/repo/tables_repository.dart';
 
@@ -21,24 +21,24 @@ class GetReservationsUseCase {
   }
 }
 
-// domain/usecases/create_reservation_usecase.dart
 class CreateReservationUseCase {
   final TablesRepository repository;
 
   CreateReservationUseCase(this.repository);
 
-  Future<void> call(ReservationEntity reservation) async {
+  Future<ApiResult<BaseResponse<dynamic>>> call(
+    ReserveFoodTableRequest reservation,
+  ) async {
     return await repository.createReservation(reservation);
   }
 }
 
-// domain/usecases/cancel_reservation_usecase.dart
 class CancelReservationUseCase {
   final TablesRepository repository;
 
   CancelReservationUseCase(this.repository);
 
-  Future<void> call(String id) async {
+  Future<ApiResult<BaseResponse<dynamic>>> call(String id) async {
     return await repository.cancelReservation(id);
   }
 }
