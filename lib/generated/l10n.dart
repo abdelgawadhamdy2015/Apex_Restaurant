@@ -3501,6 +3501,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Open Invoice`
+  String get openInvoice {
+    return Intl.message(
+      'Open Invoice',
+      name: 'openInvoice',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

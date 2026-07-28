@@ -428,6 +428,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notice": MessageLookupByLibrary.simpleMessage("تنبيه"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "okDialog": MessageLookupByLibrary.simpleMessage("موافق"),
+    "openInvoice": MessageLookupByLibrary.simpleMessage("فتح فاتورة"),
     "openSetting": MessageLookupByLibrary.simpleMessage("فتح الإعدادات"),
     "openingCash": MessageLookupByLibrary.simpleMessage("العهدة الافتتاحية"),
     "openingCustody": MessageLookupByLibrary.simpleMessage("افتتاح عهدة"),

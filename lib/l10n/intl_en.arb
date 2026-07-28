@@ -441,5 +441,6 @@
     "isDefaultAddress": "Is Default Address",
     "branches": "Branches",
     "customers": "Customers",
-    "customerSelection": "Customer Selection"
+    "customerSelection": "Customer Selection",
+    "openInvoice": "Open Invoice"
 }

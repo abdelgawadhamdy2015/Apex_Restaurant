@@ -442,5 +442,6 @@
     "isDefaultAddress": "العنوان الافتراضي",
     "branches": "الفروع",
     "customers": "العملاء",
-    "customerSelection": "اختيار العميل"
+    "customerSelection": "اختيار العميل",
+    "openInvoice": "فتح فاتورة"
 }

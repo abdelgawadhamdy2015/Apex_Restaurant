@@ -1,13 +1,82 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/widgets/add_reservation_bottom_sheet.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
-class TableCard extends StatelessWidget {
+class TableCard extends StatefulWidget {
   const TableCard({super.key, required this.table});
-
   final TableEntity table;
+
+  @override
+  State<TableCard> createState() => _TableCardState();
+}
+
+class _TableCardState extends State<TableCard> {
+  OverlayEntry? _overlayEntry;
+
+  bool _isOpen = false;
+
+  void _openMenu(BuildContext context) {
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+    setState(() => _isOpen = true);
+  }
+
+  void _closeMenu() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    if (mounted) setState(() => _isOpen = false);
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    final renderBox = context.findRenderObject() as RenderBox;
+    final size = renderBox.size;
+    final offset = renderBox.localToGlobal(Offset.zero);
+
+    // Store the outer parent context that has access to the BLoC tree
+    final parentContext = context;
+
+    return OverlayEntry(
+      builder: (overlayContext) {
+        return Stack(
+          children: [
+            GestureDetector(
+              onTap: _closeMenu,
+              behavior: HitTestBehavior.translucent,
+              child: const SizedBox.expand(),
+            ),
+            Positioned(
+              left: offset.dx,
+              top: offset.dy + size.height / 2,
+              width: size.width,
+              child: Material(
+                elevation: 8,
+                borderRadius: BorderRadius.circular(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        _closeMenu();
+                        AddReservationBottomSheet.show(parentContext, [], []);
+                      },
+                      child: Text(S.of(parentContext).addNewReservation),
+                    ),
+                    TextButton(
+                      onPressed: () {},
+                      child: Text(S.of(parentContext).openInvoice),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,72 +84,77 @@ class TableCard extends StatelessWidget {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final l10n = S.of(context);
-    final isAvailable = table.status == TableStatus.available;
+    final isAvailable = widget.table.status == TableStatus.available;
 
-    return Container(
-      padding: EdgeInsets.all(spacing.sm),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(spacing.radiusLg),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Container(
-            height: 60,
-            width: 90,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(spacing.radiusSm),
-              border: Border.all(
-                color: isAvailable
-                    ? Colors.blue.shade300
-                    : Colors.purple.shade200,
-                width: 2,
-              ),
-            ),
-          ),
-          Text(
-            '${l10n.table} ${table.arabicName}',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.people_outline,
-                size: iconSizes.xs,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-              SizedBox(width: spacing.xxs),
-              Text(
-                '${table.seatNumbers} ${l10n.seats}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+    return InkWell(
+      onTap: () {
+        _isOpen ? _closeMenu() : _openMenu(context);
+      },
+      child: Container(
+        padding: EdgeInsets.all(spacing.sm),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(spacing.radiusLg),
+          border: Border.all(color: theme.colorScheme.outlineVariant),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              height: 60,
+              width: 90,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(spacing.radiusSm),
+                border: Border.all(
+                  color: isAvailable
+                      ? Colors.blue.shade300
+                      : Colors.purple.shade200,
+                  width: 2,
                 ),
               ),
-            ],
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.sm,
-              vertical: spacing.xxs,
             ),
-            decoration: BoxDecoration(
-              color: isAvailable ? Colors.green.shade50 : Colors.red.shade50,
-              borderRadius: BorderRadius.circular(spacing.radiusLg),
-            ),
-            child: Text(
-              isAvailable ? l10n.available : l10n.reserved,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: isAvailable ? Colors.green : Colors.red,
+            Text(
+              '${l10n.table} ${widget.table.arabicName}',
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.people_outline,
+                  size: iconSizes.xs,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                SizedBox(width: spacing.xxs),
+                Text(
+                  '${widget.table.seatNumbers} ${l10n.seats}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.sm,
+                vertical: spacing.xxs,
+              ),
+              decoration: BoxDecoration(
+                color: isAvailable ? Colors.green.shade50 : Colors.red.shade50,
+                borderRadius: BorderRadius.circular(spacing.radiusLg),
+              ),
+              child: Text(
+                isAvailable ? l10n.available : l10n.reserved,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: isAvailable ? Colors.green : Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
