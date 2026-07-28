@@ -27,7 +27,7 @@ class ReservationCardsList extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: reservations.length,
-      separatorBuilder: (_, __) => SizedBox(height: spacing.md),
+      separatorBuilder: (_, _) => SizedBox(height: spacing.md),
       itemBuilder: (context, index) =>
           ReservationItemCard(reservation: reservations[index]),
     );

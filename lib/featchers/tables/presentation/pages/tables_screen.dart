@@ -138,15 +138,11 @@ class _TablesScreenState extends State<TablesScreen> {
                   ),
                   SizedBox(height: spacing.md),
                   ReservationSearchFilterCard(
-                    floors: state.floors,
-                    onSearch: () {
+                    tables: state.tables,
+                    clients: widget.personList,
+                    onSearch: (GetReservationRequest request) {
                       context.read<TablesBloc>().add(
-                        FetchReservationsEvent(
-                          const GetReservationRequest(
-                            pageSize: 20,
-                            pageNumber: 1,
-                          ),
-                        ),
+                        FetchReservationsEvent(request),
                       );
                     },
                   ),

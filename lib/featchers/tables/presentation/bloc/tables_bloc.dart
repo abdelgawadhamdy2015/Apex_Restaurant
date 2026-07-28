@@ -29,9 +29,6 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<FetchTablesEvent>(_onFetchTables);
   }
 
-  /// Runs [call], and routes the ApiResult through [onSuccess] /
-  /// the shared failure handling. Centralizes the try/catch +
-  /// success-flag + error-message logic used by every handler below.
   Future<void> _handleApiCall<T>({
     required Emitter<TablesState> emit,
     required Future<ApiResult<T>> Function() call,
@@ -53,6 +50,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
             emit(
               state.copyWith(
                 status: TablesStatus.failure,
+                reservations: [],
                 errorMessage: errorMessage(data),
               ),
             );
@@ -90,7 +88,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       onSuccess: (data) => emit(
         state.copyWith(
           status: TablesStatus.success,
-          reservations: (data.data?.data ?? const []).cast(),
+          reservations: data.data?.data,
         ),
       ),
     );

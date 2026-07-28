@@ -448,6 +448,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notice": MessageLookupByLibrary.simpleMessage("Notice"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "okDialog": MessageLookupByLibrary.simpleMessage("OK"),
+    "openInvoice": MessageLookupByLibrary.simpleMessage("Open Invoice"),
     "openSetting": MessageLookupByLibrary.simpleMessage("Open Settings"),
     "openingCash": MessageLookupByLibrary.simpleMessage("Opening Cash"),
     "openingCustody": MessageLookupByLibrary.simpleMessage("Opening Custody"),
