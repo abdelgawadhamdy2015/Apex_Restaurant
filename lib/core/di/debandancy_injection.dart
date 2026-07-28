@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/service/dio_factory.dart';
 import 'package:apex_restaurant/core/settings/settings_cubit.dart';
-import 'package:apex_restaurant/featchers/cart/data/datasource/carrt_remote_datasource.dart';
+import 'package:apex_restaurant/featchers/cart/data/datasource/cart_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/cart/data/repo/cart_repo_imp.dart';
 import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
 import 'package:apex_restaurant/featchers/cart/domain/usescase/cart_usescase.dart';
@@ -188,6 +188,15 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => CompletePaymentUseCase(getIt<CartRepository>()),
   );
+  getIt.registerLazySingleton(
+    () => GetAllPosClientsUseCase(getIt<CartRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => AddPosClientUseCase(getIt<CartRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => UpdatePosClientUseCase(getIt<CartRepository>()),
+  );
 
   // Payment
   getIt.registerLazySingleton(
@@ -261,6 +270,9 @@ Future<void> setupGetIt() async {
       applyDiscountUseCase: getIt<ApplyDiscountUseCase>(),
       holdOrderUseCase: getIt<HoldOrderUseCase>(),
       completePaymentUseCase: getIt<CompletePaymentUseCase>(),
+      getAllPersonsUseCase: getIt<GetAllPosClientsUseCase>(),
+      addPosClientUseCase: getIt<AddPosClientUseCase>(),
+      updatePosClientUseCase: getIt<UpdatePosClientUseCase>(),
     ),
   );
 

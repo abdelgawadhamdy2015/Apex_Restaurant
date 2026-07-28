@@ -1,4 +1,7 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
@@ -16,12 +19,27 @@ abstract class CartEvent extends Equatable {
 
 class LoadCartDataEvent extends CartEvent {}
 
+class LoadPersonsData extends CartEvent {
+  final GetClientsRequest request;
+  const LoadPersonsData({required this.request});
+  @override
+  List<Object?> get props => [request];
+}
+
 class SyncCartItemsEvent extends CartEvent {
   final List<OrderItem> items;
   const SyncCartItemsEvent(this.items);
 
   @override
   List<Object?> get props => [items];
+}
+
+class SelectPersonEvent extends CartEvent {
+  final PosClientModel? person;
+  const SelectPersonEvent(this.person);
+
+  @override
+  List<Object?> get props => [person];
 }
 
 class ChangeOrderTypeEvent extends CartEvent {
@@ -123,4 +141,22 @@ class SelectDeliveryCompanyEvent extends CartEvent {
 
 class HoldOrderSubmittedEvent extends CartEvent {}
 
+class ClearCartEvent extends CartEvent {}
+
 class CompletePaymentSubmittedEvent extends CartEvent {}
+
+class AddPosClientEvent extends CartEvent {
+  final ClientRequestModel request;
+  const AddPosClientEvent({required this.request});
+
+  @override
+  List<Object?> get props => [request];
+}
+
+class UpdatePosClientEvent extends CartEvent {
+  final ClientRequestModel request;
+  const UpdatePosClientEvent({required this.request});
+
+  @override
+  List<Object?> get props => [request];
+}

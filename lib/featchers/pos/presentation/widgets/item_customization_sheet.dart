@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
@@ -71,7 +69,10 @@ class ItemCustomizationSheet extends StatefulWidget {
 class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
   int _quantity = 1;
   int _selectedSizeIndex = 0; // Default to Medium
-  final Set<int> _selectedAddonIndices = {};
+
+  // Tracks quantities per additive index: { additiveIndex: quantity }
+  final Map<int, int> _addonQuantities = {};
+
   bool _isPercentageDiscount = true;
   final TextEditingController _discountController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
@@ -80,9 +81,9 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
 
   double get _totalPrice {
     double addonsTotal = 0.0;
-    for (var index in _selectedAddonIndices) {
-      addonsTotal += widget.additives[index].price;
-    }
+    _addonQuantities.forEach((index, qty) {
+      addonsTotal += widget.additives[index].price * qty;
+    });
 
     double itemTotal = (_currentBasePrice + addonsTotal) * _quantity;
 
@@ -94,6 +95,16 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     }
 
     return itemTotal;
+  }
+
+  List<AdditiveModel> _getSelectedAddonsList() {
+    final List<AdditiveModel> selectedList = [];
+    _addonQuantities.forEach((index, qty) {
+      for (int i = 0; i < qty; i++) {
+        selectedList.add(widget.additives[index]);
+      }
+    });
+    return selectedList;
   }
 
   @override
@@ -153,19 +164,23 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                 SizedBox(height: spacing.xs),
                 ...List.generate(widget.additives.length, (index) {
                   final addon = widget.additives[index];
-                  final isSelected = _selectedAddonIndices.contains(index);
+                  final currentQty = _addonQuantities[index] ?? 0;
+
                   return ItemAddonTile(
                     addon: addon,
-                    isSelected: isSelected,
-                    onToggle: () {
+                    quantity: currentQty,
+                    onDecrement: () {
                       setState(() {
-                        if (isSelected) {
-                          log("remove");
-                          _selectedAddonIndices.remove(index);
+                        if (currentQty > 1) {
+                          _addonQuantities[index] = currentQty - 1;
                         } else {
-                          log("add");
-                          _selectedAddonIndices.add(index);
+                          _addonQuantities.remove(index);
                         }
+                      });
+                    },
+                    onIncrement: () {
+                      setState(() {
+                        _addonQuantities[index] = currentQty + 1;
                       });
                     },
                   );
@@ -226,9 +241,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                 widget.item,
                 widget.additives,
                 selectedSize: widget.item.sizes[_selectedSizeIndex],
-                selectedAddons: _selectedAddonIndices
-                    .map((i) => widget.additives[i])
-                    .toList(),
+                selectedAddons: _getSelectedAddonsList(),
                 discount: double.tryParse(_discountController.text) ?? 0.0,
                 isPercentageDiscount: _isPercentageDiscount,
                 notes: _notesController.text,

@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class TablesEvent extends Equatable {
@@ -27,7 +27,7 @@ class SwitchMainTabEvent extends TablesEvent {
 }
 
 class AddReservationEvent extends TablesEvent {
-  final ReservationEntity reservation;
+  final ReserveFoodTableRequest reservation;
   const AddReservationEvent(this.reservation);
 
   @override

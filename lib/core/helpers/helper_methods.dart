@@ -8,6 +8,7 @@ import 'package:apex_restaurant/core/shared/widgets/pos_toast.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/core/shared/widgets/toast_snack_bar.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -16,15 +17,25 @@ import 'package:intl/intl.dart';
 import '../../generated/l10n.dart';
 
 class HelperMethods {
+  /// Helper method to merge two lists of addons without duplicating identical ones
+  static List<AdditiveModel> mergeAddons(
+    List<AdditiveModel> existingAddons,
+    List<AdditiveModel> newAddons,
+  ) {
+    final List<AdditiveModel> merged = List.from(existingAddons);
+
+    for (final addon in newAddons) {
+      // Avoid duplicate addon entries
+      if (!merged.contains(addon)) {
+        merged.add(addon);
+      }
+    }
+
+    return merged;
+  }
   // ── Snackbar / Toast ───────────────────────────────────────────────────────
 
-  static void showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
-    );
-  }
-
-  static void massageForAlert(
+  static void showSnackBar(
     BuildContext context,
     String message,
     bool failedData,

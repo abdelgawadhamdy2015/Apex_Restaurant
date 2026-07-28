@@ -67,7 +67,7 @@ class ReservationItemCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 label: lang.seatsAndDurationHeader,
                 value:
-                    '${reservation.seatsCount} ${lang.seats} / ${reservation.durationHours} ${lang.hour}',
+                    '${reservation.seatsCount} ${lang.seats} / ${reservation.durationMinutes} ${lang.minutes}',
               ),
             ],
           ),

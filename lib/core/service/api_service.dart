@@ -3,6 +3,9 @@ import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/delivery_agent_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
@@ -72,7 +75,16 @@ abstract class ApiService {
   Future<BaseResponse<List<WaiterModel>?>> getAllWaiters(
     @Queries() BaseRequest request,
   );
-
+  @GET(ApiConstants.getAllPersons)
+  Future<BaseResponse<List<PosClientModel>?>> getAllPersons(
+    @Queries() GetClientsRequest request,
+  );
+  @POST(ApiConstants.addPosClient)
+  Future<BaseResponse<dynamic>> addPosClient(@Body() ClientRequestModel body);
+  @POST(ApiConstants.updatePosClient)
+  Future<BaseResponse<dynamic>> updatePosClient(
+    @Body() ClientRequestModel body,
+  );
   @GET(ApiConstants.getAllDeliveryCompany)
   Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany(
     @Queries() BaseRequest request,
@@ -96,17 +108,17 @@ abstract class ApiService {
     @Queries() GetReservationRequest request,
   );
   @POST(ApiConstants.reserveFoodTable)
-  Future<BaseResponse<void>> reserveFoodTable(
+  Future<BaseResponse<dynamic>> reserveFoodTable(
     @Body() ReserveFoodTableRequest request,
   );
 
   @POST(ApiConstants.cancelReserveFoodTable)
-  Future<BaseResponse<void>> cancelReserveFoodTable(
+  Future<BaseResponse<dynamic>> cancelReserveFoodTable(
     @Body() CancelReserveFoodTableRequest request,
   );
 
   @POST(ApiConstants.editReserveFoodTable)
-  Future<BaseResponse<void>> editReserveFoodTable(
+  Future<BaseResponse<dynamic>> editReserveFoodTable(
     @Body() EditReserveFoodTableRequest request,
   );
 

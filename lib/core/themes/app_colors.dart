@@ -61,6 +61,8 @@ class AppColors {
   static const Color purpleLightTranslucent = Color(0xA91CFF1A); // #A91CFF1A
   static const Color grayTranslucent = Color(0xC1C6D54D); // #C1C6D54D
   static const Color warningTranslucent = Color(0xFDA60733); // #FDA60733
+  static const Color logOutIconColor = Color(0xFFD88992);
+  static const Color onErrorContainer = Color(0xFFFFD2CE);
   static const Color whiteCc = Color(0xFFFFFFCC); // #FFFFFFCC
   static const Color white33 = Color(0xFFFFFF33); // #FFFFFF33
 

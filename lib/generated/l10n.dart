@@ -2886,6 +2886,621 @@ class S {
       args: [],
     );
   }
+
+  /// `More`
+  String get more {
+    return Intl.message('More', name: 'more', desc: '', args: []);
+  }
+
+  /// `Cashier Custody`
+  String get cashierCustody {
+    return Intl.message(
+      'Cashier Custody',
+      name: 'cashierCustody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Returns`
+  String get returns {
+    return Intl.message('Returns', name: 'returns', desc: '', args: []);
+  }
+
+  /// `Close Custody`
+  String get closeCustody {
+    return Intl.message(
+      'Close Custody',
+      name: 'closeCustody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Suspend Session`
+  String get suspendSession {
+    return Intl.message(
+      'Suspend Session',
+      name: 'suspendSession',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close Session`
+  String get closeSession {
+    return Intl.message(
+      'Close Session',
+      name: 'closeSession',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Menu`
+  String get menu {
+    return Intl.message('Menu', name: 'menu', desc: '', args: []);
+  }
+
+  /// `Cart`
+  String get cart {
+    return Intl.message('Cart', name: 'cart', desc: '', args: []);
+  }
+
+  /// `Orders`
+  String get orders {
+    return Intl.message('Orders', name: 'orders', desc: '', args: []);
+  }
+
+  /// `Custody Log`
+  String get custodyLog {
+    return Intl.message('Custody Log', name: 'custodyLog', desc: '', args: []);
+  }
+
+  /// `Recent Transactions Summary`
+  String get recentTransactionsSummary {
+    return Intl.message(
+      'Recent Transactions Summary',
+      name: 'recentTransactionsSummary',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Balance`
+  String get addBalance {
+    return Intl.message('Add Balance', name: 'addBalance', desc: '', args: []);
+  }
+
+  /// `Expense Withdrawal`
+  String get withdrawExpenses {
+    return Intl.message(
+      'Expense Withdrawal',
+      name: 'withdrawExpenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{minutes} min ago`
+  String minutesAgo(Object minutes) {
+    return Intl.message(
+      '$minutes min ago',
+      name: 'minutesAgo',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `{hours} hours ago`
+  String hoursAgo(Object hours) {
+    return Intl.message(
+      '$hours hours ago',
+      name: 'hoursAgo',
+      desc: '',
+      args: [hours],
+    );
+  }
+
+  /// `View Full Custody Log`
+  String get viewFullCustodyLog {
+    return Intl.message(
+      'View Full Custody Log',
+      name: 'viewFullCustodyLog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Custody`
+  String get addCustody {
+    return Intl.message('Add Custody', name: 'addCustody', desc: '', args: []);
+  }
+
+  /// `Withdraw Custody`
+  String get withdrawCustody {
+    return Intl.message(
+      'Withdraw Custody',
+      name: 'withdrawCustody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Amount`
+  String get amount {
+    return Intl.message('Amount', name: 'amount', desc: '', args: []);
+  }
+
+  /// `Operation Reason`
+  String get operationReason {
+    return Intl.message(
+      'Operation Reason',
+      name: 'operationReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select reason`
+  String get selectReason {
+    return Intl.message(
+      'Select reason',
+      name: 'selectReason',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opening Custody`
+  String get openingCustody {
+    return Intl.message(
+      'Opening Custody',
+      name: 'openingCustody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Expense Reimbursement`
+  String get expenseReimbursement {
+    return Intl.message(
+      'Expense Reimbursement',
+      name: 'expenseReimbursement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Other`
+  String get other {
+    return Intl.message('Other', name: 'other', desc: '', args: []);
+  }
+
+  /// `Enter operation details here...`
+  String get writeOperationDetailsHint {
+    return Intl.message(
+      'Enter operation details here...',
+      name: 'writeOperationDetailsHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Attach Receipt or Invoice`
+  String get attachReceiptOrInvoice {
+    return Intl.message(
+      'Attach Receipt or Invoice',
+      name: 'attachReceiptOrInvoice',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Click to upload file`
+  String get clickToUploadFile {
+    return Intl.message(
+      'Click to upload file',
+      name: 'clickToUploadFile',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `(JPG, PNG, PDF max size 5MB)`
+  String get maxFileSizeHint {
+    return Intl.message(
+      '(JPG, PNG, PDF max size 5MB)',
+      name: 'maxFileSizeHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Confirm Transaction`
+  String get confirmTransaction {
+    return Intl.message(
+      'Confirm Transaction',
+      name: 'confirmTransaction',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Current Available Balance`
+  String get currentAvailableBalance {
+    return Intl.message(
+      'Current Available Balance',
+      name: 'currentAvailableBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Withdrawals`
+  String get totalWithdrawals {
+    return Intl.message(
+      'Total Withdrawals',
+      name: 'totalWithdrawals',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Total Additions`
+  String get totalAdditions {
+    return Intl.message(
+      'Total Additions',
+      name: 'totalAdditions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additions`
+  String get additions {
+    return Intl.message('Additions', name: 'additions', desc: '', args: []);
+  }
+
+  /// `Withdrawals`
+  String get withdrawals {
+    return Intl.message('Withdrawals', name: 'withdrawals', desc: '', args: []);
+  }
+
+  /// `Export CSV`
+  String get exportCsv {
+    return Intl.message('Export CSV', name: 'exportCsv', desc: '', args: []);
+  }
+
+  /// `Transaction Log`
+  String get transactionLog {
+    return Intl.message(
+      'Transaction Log',
+      name: 'transactionLog',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opening Custody`
+  String get openingCustodyTitle {
+    return Intl.message(
+      'Opening Custody',
+      name: 'openingCustodyTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Petty Expenses`
+  String get pettyExpenses {
+    return Intl.message(
+      'Petty Expenses',
+      name: 'pettyExpenses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Transfer from Management`
+  String get transferFromManagement {
+    return Intl.message(
+      'Transfer from Management',
+      name: 'transferFromManagement',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Supplier Payment`
+  String get supplierPayment {
+    return Intl.message(
+      'Supplier Payment',
+      name: 'supplierPayment',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Addition`
+  String get additionTag {
+    return Intl.message('Addition', name: 'additionTag', desc: '', args: []);
+  }
+
+  /// `Withdrawal`
+  String get withdrawalTag {
+    return Intl.message(
+      'Withdrawal',
+      name: 'withdrawalTag',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `e.g., INV-1024`
+  String get invoiceNumberExample {
+    return Intl.message(
+      'e.g., INV-1024',
+      name: 'invoiceNumberExample',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} Item`
+  String itemCountSingle(Object count) {
+    return Intl.message(
+      '$count Item',
+      name: 'itemCountSingle',
+      desc: '',
+      args: [count],
+    );
+  }
+
+  /// `Full Return`
+  String get fullReturn {
+    return Intl.message('Full Return', name: 'fullReturn', desc: '', args: []);
+  }
+
+  /// `Partial Return`
+  String get partialReturn {
+    return Intl.message(
+      'Partial Return',
+      name: 'partialReturn',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reservation Period`
+  String get reservationPeriod {
+    return Intl.message(
+      'Reservation Period',
+      name: 'reservationPeriod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Reservation Period`
+  String get selectReservationPeriod {
+    return Intl.message(
+      'Select Reservation Period',
+      name: 'selectReservationPeriod',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reservation Period ({minutes} min)`
+  String reservationPeriodInMinutes(Object minutes) {
+    return Intl.message(
+      'Reservation Period ($minutes min)',
+      name: 'reservationPeriodInMinutes',
+      desc: '',
+      args: [minutes],
+    );
+  }
+
+  /// `Please select both date and time`
+  String get selectDateAndTimeError {
+    return Intl.message(
+      'Please select both date and time',
+      name: 'selectDateAndTimeError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reservation added successfully`
+  String get reservationSuccess {
+    return Intl.message(
+      'Reservation added successfully',
+      name: 'reservationSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Minutes`
+  String get minutes {
+    return Intl.message('Minutes', name: 'minutes', desc: '', args: []);
+  }
+
+  /// `Add New Customer`
+  String get addNewCustomer {
+    return Intl.message(
+      'Add New Customer',
+      name: 'addNewCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Full Name`
+  String get fullName {
+    return Intl.message('Full Name', name: 'fullName', desc: '', args: []);
+  }
+
+  /// `Phone`
+  String get phone {
+    return Intl.message('Phone', name: 'phone', desc: '', args: []);
+  }
+
+  /// `Alternate Phone (optional)`
+  String get alternatePhoneOptional {
+    return Intl.message(
+      'Alternate Phone (optional)',
+      name: 'alternatePhoneOptional',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Customer Addresses`
+  String get customerAddresses {
+    return Intl.message(
+      'Customer Addresses',
+      name: 'customerAddresses',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You can add more than one address for the customer`
+  String get addMoreAddressesHint {
+    return Intl.message(
+      'You can add more than one address for the customer',
+      name: 'addMoreAddressesHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `City`
+  String get city {
+    return Intl.message('City', name: 'city', desc: '', args: []);
+  }
+
+  /// `District`
+  String get district {
+    return Intl.message('District', name: 'district', desc: '', args: []);
+  }
+
+  /// `Street Name`
+  String get streetName {
+    return Intl.message('Street Name', name: 'streetName', desc: '', args: []);
+  }
+
+  /// `Building Number`
+  String get buildingNumber {
+    return Intl.message(
+      'Building Number',
+      name: 'buildingNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Apartment Number`
+  String get apartmentNumber {
+    return Intl.message(
+      'Apartment Number',
+      name: 'apartmentNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Another Address`
+  String get addAnotherAddress {
+    return Intl.message(
+      'Add Another Address',
+      name: 'addAnotherAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No customer selected`
+  String get noCustomerSelected {
+    return Intl.message(
+      'No customer selected',
+      name: 'noCustomerSelected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Customer`
+  String get selectCustomer {
+    return Intl.message(
+      'Select Customer',
+      name: 'selectCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Search by name or phone`
+  String get searchCustomerHint {
+    return Intl.message(
+      'Search by name or phone',
+      name: 'searchCustomerHint',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No results found`
+  String get noResultsFound {
+    return Intl.message(
+      'No results found',
+      name: 'noResultsFound',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Customer`
+  String get editCustomer {
+    return Intl.message(
+      'Edit Customer',
+      name: 'editCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Is Default Address`
+  String get isDefaultAddress {
+    return Intl.message(
+      'Is Default Address',
+      name: 'isDefaultAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Branches`
+  String get branches {
+    return Intl.message('Branches', name: 'branches', desc: '', args: []);
+  }
+
+  /// `Customers`
+  String get customers {
+    return Intl.message('Customers', name: 'customers', desc: '', args: []);
+  }
+
+  /// `Customer Selection`
+  String get customerSelection {
+    return Intl.message(
+      'Customer Selection',
+      name: 'customerSelection',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

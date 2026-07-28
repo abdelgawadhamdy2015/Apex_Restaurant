@@ -1,5 +1,4 @@
 // presentation/bloc/tables_bloc.dart
-import 'dart:developer';
 
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
@@ -30,99 +29,31 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<FetchTablesEvent>(_onFetchTables);
   }
 
-  Future<void> _onFetchReservations(
-    FetchReservationsEvent event,
-    Emitter<TablesState> emit,
-  ) async {
-    emit(state.copyWith(status: TablesStatus.loading));
+  /// Runs [call], and routes the ApiResult through [onSuccess] /
+  /// the shared failure handling. Centralizes the try/catch +
+  /// success-flag + error-message logic used by every handler below.
+  Future<void> _handleApiCall<T>({
+    required Emitter<TablesState> emit,
+    required Future<ApiResult<T>> Function() call,
+    required bool Function(T data) isSuccessful,
+    required void Function(T data) onSuccess,
+    required String? Function(T data) errorMessage,
+    bool emitLoading = false,
+  }) async {
+    if (emitLoading) {
+      emit(state.copyWith(status: TablesStatus.loading));
+    }
     try {
-      final response = await getReservationsUseCase(event.request);
-
+      final response = await call();
       response.when(
         success: (data) {
-          emit(
-            state.copyWith(
-              status: TablesStatus.success,
-              reservations: (data.data?.data ?? const []).cast(),
-            ),
-          );
-        },
-        failure: (errorHandler) {
-          emit(
-            state.copyWith(
-              status: TablesStatus.failure,
-              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: TablesStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  void _onSwitchMainTab(SwitchMainTabEvent event, Emitter<TablesState> emit) {
-    emit(state.copyWith(activeTab: event.tabIndex));
-  }
-
-  Future<void> _onAddReservation(
-    AddReservationEvent event,
-    Emitter<TablesState> emit,
-  ) async {
-    try {
-      await createReservationUseCase(event.reservation);
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: TablesStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onCancelReservation(
-    CancelReservationEvent event,
-    Emitter<TablesState> emit,
-  ) async {
-    try {
-      await cancelReservationUseCase(event.id);
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: TablesStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
-
-  Future<void> _onFetchFloors(
-    FetchFloorsEvent event,
-    Emitter<TablesState> emit,
-  ) async {
-    emit(state.copyWith(status: TablesStatus.loading));
-    try {
-      final response = await getFloorsUseCase(request: event.request);
-      response.when(
-        success: (data) {
-          final floorsList = data.data ?? [];
-          log("Floors count: ${floorsList.length}");
-
-          emit(
-            state.copyWith(status: TablesStatus.success, floors: floorsList),
-          );
-
-          // Delegate fetching tables to FetchTablesEvent to prevent state clobbering
-          if (floorsList.isNotEmpty) {
-            add(
-              FetchTablesEvent(
-                GetTablesRequest(floorID: floorsList.first.id, forPOS: true),
+          if (isSuccessful(data)) {
+            onSuccess(data);
+          } else {
+            emit(
+              state.copyWith(
+                status: TablesStatus.failure,
+                errorMessage: errorMessage(data),
               ),
             );
           }
@@ -146,39 +77,93 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     }
   }
 
+  Future<void> _onFetchReservations(
+    FetchReservationsEvent event,
+    Emitter<TablesState> emit,
+  ) {
+    return _handleApiCall(
+      emit: emit,
+      emitLoading: true,
+      call: () => getReservationsUseCase(event.request),
+      isSuccessful: (data) => data.result == 1,
+      errorMessage: (data) => data.errorMessageAr,
+      onSuccess: (data) => emit(
+        state.copyWith(
+          status: TablesStatus.success,
+          reservations: (data.data?.data ?? const []).cast(),
+        ),
+      ),
+    );
+  }
+
+  void _onSwitchMainTab(SwitchMainTabEvent event, Emitter<TablesState> emit) {
+    emit(state.copyWith(activeTab: event.tabIndex));
+  }
+
+  Future<void> _onAddReservation(
+    AddReservationEvent event,
+    Emitter<TablesState> emit,
+  ) {
+    return _handleApiCall(
+      emit: emit,
+      emitLoading: true,
+      call: () => createReservationUseCase(event.reservation),
+      isSuccessful: (data) => data.result == 1,
+      errorMessage: (data) => data.errorMessageAr,
+      onSuccess: (_) => emit(state.copyWith(status: TablesStatus.success)),
+    );
+  }
+
+  Future<void> _onCancelReservation(
+    CancelReservationEvent event,
+    Emitter<TablesState> emit,
+  ) {
+    return _handleApiCall(
+      emit: emit,
+      call: () => cancelReservationUseCase(event.id),
+      isSuccessful: (data) => data.result == 1,
+      errorMessage: (data) => data.errorMessageAr,
+      onSuccess: (_) => emit(state.copyWith(status: TablesStatus.success)),
+    );
+  }
+
+  Future<void> _onFetchFloors(
+    FetchFloorsEvent event,
+    Emitter<TablesState> emit,
+  ) {
+    return _handleApiCall(
+      emit: emit,
+      emitLoading: true,
+      call: () => getFloorsUseCase(request: event.request),
+      isSuccessful: (data) => data.result == 1,
+      errorMessage: (data) => data.errorMessageAr,
+      onSuccess: (data) {
+        final floorsList = data.data ?? [];
+        emit(state.copyWith(status: TablesStatus.success, floors: floorsList));
+        if (floorsList.isNotEmpty) {
+          add(
+            FetchTablesEvent(
+              GetTablesRequest(floorID: floorsList.first.id, forPOS: true),
+            ),
+          );
+        }
+      },
+    );
+  }
+
   Future<void> _onFetchTables(
     FetchTablesEvent event,
     Emitter<TablesState> emit,
-  ) async {
-    emit(state.copyWith(status: TablesStatus.loading));
-    try {
-      final response = await getTablesUseCase(request: event.request);
-      response.when(
-        success: (data) {
-          log("Tables count: ${data.data?.length}");
-          emit(
-            state.copyWith(
-              status: TablesStatus.success,
-              tables: data.data ?? [],
-            ),
-          );
-        },
-        failure: (errorHandler) {
-          emit(
-            state.copyWith(
-              status: TablesStatus.failure,
-              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          status: TablesStatus.failure,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
+  ) {
+    return _handleApiCall(
+      emit: emit,
+      emitLoading: true,
+      call: () => getTablesUseCase(request: event.request),
+      isSuccessful: (data) => data.result == 1,
+      errorMessage: (data) => data.errorMessageAr,
+      onSuccess: (data) => emit(
+        state.copyWith(status: TablesStatus.success, tables: data.data ?? []),
+      ),
+    );
   }
 }

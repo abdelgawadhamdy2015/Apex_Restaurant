@@ -80,7 +80,7 @@ class _ShiftStartDialogState extends State<ShiftStartDialog> {
           context.push(Routes.posScreen);
         } else if (state.status == HomeStatus.error) {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-            HelperMethods.massageForAlert(context, state.errorMessage!, true);
+            HelperMethods.showSnackBar(context, state.errorMessage!, true);
           }
         }
       },

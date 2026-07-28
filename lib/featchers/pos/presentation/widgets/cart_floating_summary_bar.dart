@@ -22,7 +22,10 @@ class CartFloatingSummaryBar extends StatelessWidget {
     final lang = S.of(context);
 
     return Container(
-      margin: EdgeInsets.all(spacing.md),
+      margin: EdgeInsets.symmetric(
+        horizontal: spacing.md,
+        vertical: spacing.xs,
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: spacing.md,
         vertical: spacing.sm,

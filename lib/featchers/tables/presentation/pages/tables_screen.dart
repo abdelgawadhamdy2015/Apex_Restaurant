@@ -1,4 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
@@ -20,8 +22,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TablesScreen extends StatefulWidget {
-  const TablesScreen({super.key, required this.branchId});
+  const TablesScreen({
+    super.key,
+    required this.branchId,
+    required this.personList,
+  });
   final int branchId;
+  final List<PosClientModel> personList;
 
   @override
   State<TablesScreen> createState() => _TablesScreenState();
@@ -35,7 +42,9 @@ class _TablesScreenState extends State<TablesScreen> {
   void initState() {
     super.initState();
     final bloc = context.read<TablesBloc>();
-    bloc.add(FetchFloorsEvent(GetFloorsRequest(branchId: widget.branchId)));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.add(FetchFloorsEvent(GetFloorsRequest(branchId: widget.branchId)));
+    });
   }
 
   List<ReservationEntity> _filterReservations(
@@ -65,7 +74,6 @@ class _TablesScreenState extends State<TablesScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
-    final iconSizes = context.iconSizes;
     final l10n = S.of(context);
 
     return BlocConsumer<TablesBloc, TablesState>(
@@ -89,22 +97,9 @@ class _TablesScreenState extends State<TablesScreen> {
 
         return Scaffold(
           backgroundColor: theme.colorScheme.surfaceContainerLowest,
-          appBar: AppBar(
-            backgroundColor: theme.colorScheme.surface,
-            elevation: 0,
-            title: Text(
-              state.activeTab == 0 ? l10n.tables : l10n.reservations,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(Icons.arrow_forward, size: iconSizes.sm),
-                onPressed: () => Navigator.of(context).maybePop(),
-              ),
-            ],
-            automaticallyImplyLeading: false,
+          appBar: CustomAppBar(
+            title: state.activeTab == 0 ? l10n.tables : l10n.reservations,
+            onBackPressed: () => Navigator.of(context).maybePop(),
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(spacing.md),
@@ -135,7 +130,11 @@ class _TablesScreenState extends State<TablesScreen> {
                     TablesGrid(tables: state.tables),
                 ] else ...[
                   AddReservationButton(
-                    onPressed: () => AddReservationBottomSheet.show(context),
+                    onPressed: () => AddReservationBottomSheet.show(
+                      context,
+                      state.tables,
+                      widget.personList,
+                    ),
                   ),
                   SizedBox(height: spacing.md),
                   ReservationSearchFilterCard(
