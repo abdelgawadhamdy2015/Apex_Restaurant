@@ -4,53 +4,46 @@ import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioFactory {
-  /// private constructor as I don't want to allow creating an instance of this class
   DioFactory._();
 
-  static Dio? dio;
+  static final Dio dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+      headers: {'Accept': 'application/json'},
+      validateStatus: (status) =>
+          status != null && status >= 200 && status < 500,
+    ),
+  );
 
-  static Dio getDio() {
-    Duration timeOut = const Duration(seconds: 10);
+  static Future<Dio> getDio() async {
+    final token = await SharedPrefHelper.getString(RestaurantConstants.myToken);
 
-    if (dio == null) {
-      dio = Dio();
-      dio!
-        ..options.connectTimeout = timeOut
-        ..options.receiveTimeout = timeOut
-        ..options.validateStatus = (status) =>
-            status != null && status >= 200 && status < 500;
-
-      addDioHeaders();
-      addDioInterceptor();
-      return dio!;
+    if (token.isNotEmpty) {
+      dio.options.headers['Authorization'] = 'Bearer $token';
     } else {
-      return dio!;
+      dio.options.headers.remove('Authorization');
     }
-  }
 
-  static void addDioHeaders() async {
-    dio?.options.headers = {
-      'Accept': 'application/json',
-      'Authorization':
-          'Bearer ${await SharedPrefHelper.getString(RestaurantConstants.myToken)}',
-    };
-  }
-
-  static void setTokenToHeaderAfterLogin(String token) {
-    dio?.options.headers = {'Authorization': 'Bearer $token'};
-  }
-
-  static void deletTokenHeaderAfterLogOut() {
-    dio?.options.headers = {'Authorization': ''};
-  }
-
-  static void addDioInterceptor() {
-    dio?.interceptors.add(
+    // if (dio.interceptors.isEmpty) {
+    dio.interceptors.add(
       PrettyDioLogger(
-        requestBody: true,
         requestHeader: true,
+        requestBody: true,
         responseHeader: true,
+        responseBody: true,
       ),
     );
+    //  }
+
+    return dio;
+  }
+
+  static void setToken(String token) {
+    dio.options.headers['Authorization'] = 'Bearer $token';
+  }
+
+  static void clearToken() {
+    dio.options.headers.remove('Authorization');
   }
 }

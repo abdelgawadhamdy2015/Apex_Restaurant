@@ -78,6 +78,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addMoreAddressesHint": MessageLookupByLibrary.simpleMessage(
       "You can add more than one address for the customer",
     ),
+    "addNewAddress": MessageLookupByLibrary.simpleMessage("Add new address"),
     "addNewCustomer": MessageLookupByLibrary.simpleMessage("Add New Customer"),
     "addNewReservation": MessageLookupByLibrary.simpleMessage(
       "Add New Reservation",
@@ -178,6 +179,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cart": MessageLookupByLibrary.simpleMessage("Cart"),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("Walk-in Customer"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("Cashier Custody"),
+    "changeAddress": MessageLookupByLibrary.simpleMessage("Change address"),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "Please check your email for password reset instructions.",
     ),
@@ -621,6 +623,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectTableHint": MessageLookupByLibrary.simpleMessage("Select table"),
     "selectWaiter": MessageLookupByLibrary.simpleMessage("Select Waiter"),
     "selected": MessageLookupByLibrary.simpleMessage("Selected"),
+    "selectedTable": MessageLookupByLibrary.simpleMessage("Selected Table"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sessionExpired": MessageLookupByLibrary.simpleMessage("Session Expired"),
     "shift": MessageLookupByLibrary.simpleMessage("Shift"),

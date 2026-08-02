@@ -1,11 +1,16 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
 
 import 'cart_state.dart';
@@ -18,6 +23,47 @@ abstract class CartEvent extends Equatable {
 }
 
 class LoadCartDataEvent extends CartEvent {}
+
+class ChangeAddressEvent extends CartEvent {
+  final ClientAddressModel address;
+  const ChangeAddressEvent(this.address);
+}
+
+/// Fired when the user confirms changes inside ItemCustomizationSheet while
+/// editing an item that's already in the cart (as opposed to adding a new
+/// one from the POS grid).
+class EditCartItemEvent extends CartEvent {
+  final int index;
+  final ItemSize selectedSize;
+  final List<AdditiveModel> selectedAddons;
+  final double discount;
+  final bool isPercentageDiscount;
+  final String notes;
+  final int quantity;
+
+  const EditCartItemEvent({
+    required this.index,
+    required this.selectedSize,
+    required this.selectedAddons,
+    required this.discount,
+    required this.isPercentageDiscount,
+    required this.notes,
+    required this.quantity,
+  });
+
+  @override
+  List<Object?> get props => [
+    index,
+    selectedSize,
+    selectedAddons,
+    discount,
+    isPercentageDiscount,
+    notes,
+    quantity,
+  ];
+}
+
+class LoadDynamicDiscountsEvent extends CartEvent {}
 
 class LoadPersonsData extends CartEvent {
   final GetClientsRequest request;
@@ -34,6 +80,22 @@ class SyncCartItemsEvent extends CartEvent {
   List<Object?> get props => [items];
 }
 
+class SelectWaiterEvent extends CartEvent {
+  final WaiterModel? waiter;
+  const SelectWaiterEvent(this.waiter);
+
+  @override
+  List<Object?> get props => [waiter];
+}
+
+class SelectDeliveryManEvent extends CartEvent {
+  final WaiterModel? deliveryMan;
+  const SelectDeliveryManEvent(this.deliveryMan);
+
+  @override
+  List<Object?> get props => [deliveryMan];
+}
+
 class SelectPersonEvent extends CartEvent {
   final PosClientModel? person;
   const SelectPersonEvent(this.person);
@@ -42,28 +104,28 @@ class SelectPersonEvent extends CartEvent {
   List<Object?> get props => [person];
 }
 
+class SelectCartTableEvent extends CartEvent {
+  final TableEntity table;
+  const SelectCartTableEvent({required this.table});
+
+  @override
+  List<Object?> get props => [table];
+}
+
+class SelectDeliveryCompanyEvent extends CartEvent {
+  final DeliveryCompanyModel deliveryCompanyModel;
+  const SelectDeliveryCompanyEvent({required this.deliveryCompanyModel});
+
+  @override
+  List<Object?> get props => [deliveryCompanyModel];
+}
+
 class ChangeOrderTypeEvent extends CartEvent {
   final OrderType orderType;
   const ChangeOrderTypeEvent(this.orderType);
 
   @override
   List<Object?> get props => [orderType];
-}
-
-class SelectWaiterEvent extends CartEvent {
-  final String? waiterId;
-  const SelectWaiterEvent(this.waiterId);
-
-  @override
-  List<Object?> get props => [waiterId];
-}
-
-class SelectDeliveryAgentEvent extends CartEvent {
-  final String? agentId;
-  const SelectDeliveryAgentEvent(this.agentId);
-
-  @override
-  List<Object?> get props => [agentId];
 }
 
 class ChangeDiscountTypeEvent extends CartEvent {
@@ -75,8 +137,16 @@ class ChangeDiscountTypeEvent extends CartEvent {
 }
 
 class ApplyDiscountEvent extends CartEvent {
+  final SaveDiscountModel? saveDiscountModel;
+  const ApplyDiscountEvent({this.saveDiscountModel});
+
+  @override
+  List<Object?> get props => [saveDiscountModel];
+}
+
+class ApplyCouponDiscountEvent extends CartEvent {
   final String code;
-  const ApplyDiscountEvent(this.code);
+  const ApplyCouponDiscountEvent({required this.code});
 
   @override
   List<Object?> get props => [code];
@@ -129,14 +199,6 @@ class LoadDeliveryCompaniesEvent extends CartEvent {
 
   @override
   List<Object?> get props => [request];
-}
-
-class SelectDeliveryCompanyEvent extends CartEvent {
-  final DeliveryCompanyModel deliveryCompanyModel;
-  const SelectDeliveryCompanyEvent({required this.deliveryCompanyModel});
-
-  @override
-  List<Object?> get props => [deliveryCompanyModel];
 }
 
 class HoldOrderSubmittedEvent extends CartEvent {}

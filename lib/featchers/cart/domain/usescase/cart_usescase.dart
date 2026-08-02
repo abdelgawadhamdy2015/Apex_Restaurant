@@ -3,9 +3,8 @@ import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/complete_payment_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/delivery_agent_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
@@ -27,7 +26,7 @@ class GetDeliveryAgentsUseCase {
   final CartRepository repository;
   GetDeliveryAgentsUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<List<DeliveryAgentModel>?>>> call({
+  Future<ApiResult<BaseResponse<List<WaiterModel>?>>> call({
     BaseRequest? request,
   }) {
     return repository.getDeliveryAgents(request: request);
@@ -87,13 +86,11 @@ class HoldOrderUseCase {
   }
 }
 
-class CompletePaymentUseCase {
+class GetDynamicInvoiceDiscountUseCase {
   final CartRepository repository;
-  CompletePaymentUseCase(this.repository);
+  GetDynamicInvoiceDiscountUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<dynamic>>> call(
-    CompletePaymentRequestModel request,
-  ) {
-    return repository.completePayment(request);
+  Future<ApiResult<BaseResponse<List<DynamicDiscountModel>?>>> call() {
+    return repository.getDynamicInvoiceDiscount();
   }
 }

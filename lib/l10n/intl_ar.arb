@@ -443,5 +443,8 @@
     "branches": "الفروع",
     "customers": "العملاء",
     "customerSelection": "اختيار العميل",
-    "openInvoice": "فتح فاتورة"
+    "openInvoice": "فتح فاتورة",
+    "changeAddress": "تغيير العنوان",
+    "addNewAddress": "إضافة عنوان جديد",
+    "selectedTable": "الطاولة المحددة"
 }

@@ -442,5 +442,8 @@
     "branches": "Branches",
     "customers": "Customers",
     "customerSelection": "Customer Selection",
-    "openInvoice": "Open Invoice"
+    "openInvoice": "Open Invoice",
+    "changeAddress": "Change address",
+    "addNewAddress": "Add new address",
+    "selectedTable": "Selected Table"
 }

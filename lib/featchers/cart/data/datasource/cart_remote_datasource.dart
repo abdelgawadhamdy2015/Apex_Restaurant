@@ -3,20 +3,16 @@ import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/complete_payment_request_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
-import '../models/delivery_agent_model.dart';
 import '../models/discount_result_model.dart';
 import '../models/waiter_model.dart';
 
-/// Talks directly to `ApiService`. Throws on failure (DioException or
-/// otherwise) — the repository layer is responsible for catching that and
-/// converting it to an [ApiResult.failure] via [ErrorHandler].
 abstract class CartRemoteDataSource {
-  Future<BaseResponse<List<DeliveryAgentModel>?>> getDeliveryAgents({
+  Future<BaseResponse<List<WaiterModel>?>> getDeliveryAgents({
     BaseRequest? request,
   });
 
@@ -31,9 +27,6 @@ abstract class CartRemoteDataSource {
 
   Future<BaseResponse<dynamic>> holdOrder(Order order);
 
-  Future<BaseResponse<dynamic>> completePayment(
-    CompletePaymentRequestModel request,
-  );
   Future<BaseResponse<dynamic>> updatePosClient({
     required ClientRequestModel request,
   });
@@ -41,6 +34,7 @@ abstract class CartRemoteDataSource {
   Future<BaseResponse<dynamic>> addPosClient({
     required ClientRequestModel request,
   });
+  Future<BaseResponse<List<DynamicDiscountModel>?>> getDynamicInvoiceDiscount();
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
@@ -48,7 +42,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   CartRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<BaseResponse<List<DeliveryAgentModel>?>> getDeliveryAgents({
+  Future<BaseResponse<List<WaiterModel>?>> getDeliveryAgents({
     BaseRequest? request,
   }) {
     final queryRequest = BaseRequest(
@@ -57,7 +51,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
       name: request?.name,
     );
 
-    return _apiService.getAllDeliveryAgents(queryRequest);
+    return _apiService.getListOfDeliveryMen(queryRequest);
   }
 
   @override
@@ -89,13 +83,6 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<dynamic>> completePayment(
-    CompletePaymentRequestModel request,
-  ) {
-    return _apiService.completePayment(request.toJson());
-  }
-
-  @override
   Future<BaseResponse<List<PosClientModel>?>> getPersons({
     required GetClientsRequest request,
   }) {
@@ -114,5 +101,11 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
     required ClientRequestModel request,
   }) {
     return _apiService.addPosClient(request);
+  }
+
+  @override
+  Future<BaseResponse<List<DynamicDiscountModel>?>>
+  getDynamicInvoiceDiscount() async {
+    return await _apiService.getDynamicInvoiceDiscounts();
   }
 }

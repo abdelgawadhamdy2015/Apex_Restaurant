@@ -76,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "addMoreAddressesHint": MessageLookupByLibrary.simpleMessage(
       "يمكن إضافة أكثر من عنوان للعميل",
     ),
+    "addNewAddress": MessageLookupByLibrary.simpleMessage("إضافة عنوان جديد"),
     "addNewCustomer": MessageLookupByLibrary.simpleMessage("إضافة عميل جديد"),
     "addNewReservation": MessageLookupByLibrary.simpleMessage("إضافة حجز جديد"),
     "addNotesHint": MessageLookupByLibrary.simpleMessage("أضف ملاحظاتك هنا..."),
@@ -170,6 +171,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cart": MessageLookupByLibrary.simpleMessage("السلة"),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("عميل نقدي"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("عهدة الكاشير"),
+    "changeAddress": MessageLookupByLibrary.simpleMessage("تغيير العنوان"),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "يرجى التحقق من بريدك الإلكتروني لتعليمات إعادة تعيين كلمة المرور.",
     ),
@@ -589,6 +591,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectTableHint": MessageLookupByLibrary.simpleMessage("اختر الطاولة"),
     "selectWaiter": MessageLookupByLibrary.simpleMessage("اختر الويتر"),
     "selected": MessageLookupByLibrary.simpleMessage("محدد"),
+    "selectedTable": MessageLookupByLibrary.simpleMessage("الطاولة المحددة"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sessionExpired": MessageLookupByLibrary.simpleMessage("انتهت الجلسة"),
     "shift": MessageLookupByLibrary.simpleMessage("الدوام"),

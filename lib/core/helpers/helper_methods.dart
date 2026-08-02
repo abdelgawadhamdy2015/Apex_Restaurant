@@ -7,16 +7,53 @@ import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
 import 'package:apex_restaurant/core/shared/widgets/pos_toast.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/core/shared/widgets/toast_snack_bar.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../generated/l10n.dart';
 
 class HelperMethods {
+  static Future<void> openPicker(
+    BuildContext context,
+    List<PosClientModel> persons,
+  ) async {
+    final cartBloc = context.read<CartBloc>();
+    final picked = await showModalBottomSheet<PosClientModel>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => CustomerPickerSheet(persons: persons),
+    );
+    if (picked != null) {
+      cartBloc.add(SelectPersonEvent(picked));
+    }
+  }
+
+  static String getInitials(String? name) {
+    if (name == null || name.trim().isEmpty) return '?';
+
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    if (parts.length == 1) {
+      return parts.first[0].toUpperCase();
+    }
+
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+
   /// Helper method to merge two lists of addons without duplicating identical ones
   static List<AdditiveModel> mergeAddons(
     List<AdditiveModel> existingAddons,
@@ -47,7 +84,7 @@ class HelperMethods {
 
   static Future<void> logOut(BuildContext context) async {
     await SharedPrefHelper.setData(RestaurantConstants.myToken, "");
-    DioFactory.deletTokenHeaderAfterLogOut();
+    DioFactory.clearToken();
     RestaurantConstants.image = null;
     if (!context.mounted) return;
     context.pushReplacementNamed(

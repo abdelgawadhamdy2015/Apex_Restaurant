@@ -1,5 +1,7 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
@@ -30,23 +32,40 @@ class _MenuScreenState extends State<MenuScreen> {
   int _selectedFilterIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
+      context.read<CartBloc>().add(
+        LoadPersonsData(
+          request: GetClientsRequest(
+            pageNumber: 1,
+            pageSize: 100,
+            isSupplier: false,
+          ),
+        ),
+      );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
 
     return Scaffold(
       appBar: const PosTopAppBar(),
       bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          if (state.items.isEmpty) return const SizedBox.shrink();
+        builder: (context, cartState) {
+          if (cartState.items.isEmpty) return const SizedBox.shrink();
 
-          final totalItems = state.items.fold<int>(
+          final totalItems = cartState.items.fold<int>(
             0,
             (sum, item) => sum + item.quantity,
           );
 
           return CartFloatingSummaryBar(
             itemCount: totalItems,
-            totalAmount: state.subtotal,
+            totalAmount: cartState.subtotal,
             onViewCartPressed: () => context.pushNamed(Routes.cartScreen),
           );
         },
@@ -64,6 +83,7 @@ class _MenuScreenState extends State<MenuScreen> {
           }
         },
         builder: (context, state) {
+          final cartState = context.watch<CartBloc>().state;
           return Column(
             children: [
               PosCategoriesBar(
@@ -87,8 +107,11 @@ class _MenuScreenState extends State<MenuScreen> {
                         state.currentMenuItems.isEmpty
                     ? const Center(child: CircularProgressIndicator())
                     : _buildItemsGrid(
+                        context,
+                        state.selectedCategory?.id, // Pass key identifier
                         state.currentMenuItems,
                         state.selectedCategory?.additives ?? [],
+                        cartState,
                       ),
               ),
             ],
@@ -99,12 +122,21 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   Widget _buildItemsGrid(
+    BuildContext parentContext,
+    dynamic categoryId,
     List<RestaurantItem> items,
     List<AdditiveModel> additives,
+    CartState cartState,
   ) {
     final spacing = context.spacing;
 
+    if (items.isEmpty) {
+      return const Center(child: Text("No items found"));
+    }
+
     return GridView.builder(
+      // Key forces GridView to completely re-render when category updates
+      key: ValueKey(categoryId),
       padding: EdgeInsets.symmetric(
         horizontal: spacing.md,
         vertical: spacing.xs,
@@ -121,39 +153,45 @@ class _MenuScreenState extends State<MenuScreen> {
         return PosMenuItemCard(
           item: item,
           onAddPressed: () {
-            if (item.sizes.length > 1 || additives.isNotEmpty) {
-              ItemCustomizationSheet.show(context, item, additives, (
-                customItem,
-                returnedAdditives, {
-                required selectedSize,
-                required selectedAddons,
-                required discount,
-                required isPercentageDiscount,
-                required notes,
-                required quantity,
-              }) {
+            if (cartState.selectedPerson == null) {
+              HelperMethods.openPicker(context, cartState.persons);
+            } else {
+              if (item.sizes.length > 1 || additives.isNotEmpty) {
+                ItemCustomizationSheet.show(context, item, additives, (
+                  customItem,
+                  returnedAdditives, {
+                  required selectedSize,
+                  required selectedAddons,
+                  required discount,
+                  required isPercentageDiscount,
+                  required notes,
+                  required quantity,
+                }) {
+                  final orderItem = OrderItem(
+                    menuItem: customItem,
+                    selectedSize: selectedSize,
+                    addons: selectedAddons,
+                    quantity: quantity,
+                    notes: notes,
+                    discount: discount,
+                    isPercentageDiscount: isPercentageDiscount,
+                  );
+
+                  parentContext.read<CartBloc>().add(
+                    AddOrderItemToCartEvent(orderItem),
+                  );
+                });
+              } else {
                 final orderItem = OrderItem(
-                  menuItem: customItem,
-                  selectedSize: selectedSize,
-                  addons: selectedAddons,
-                  quantity: quantity,
-                  notes: notes,
-                  discount: discount,
-                  isPercentageDiscount: isPercentageDiscount,
+                  menuItem: item,
+                  selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
+                  quantity: 1,
                 );
 
-                context.read<CartBloc>().add(
+                parentContext.read<CartBloc>().add(
                   AddOrderItemToCartEvent(orderItem),
                 );
-              });
-            } else {
-              final orderItem = OrderItem(
-                menuItem: item,
-                selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
-                quantity: 1,
-              );
-
-              context.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+              }
             }
           },
         );

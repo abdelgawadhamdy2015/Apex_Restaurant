@@ -442,7 +442,7 @@ void showDialogState(
       if (isAuthError) {
         ApiConstants.dioExceptionType = DioExceptionType.unknown;
         await SharedPrefHelper.setData(RestaurantConstants.myToken, "");
-        DioFactory.deletTokenHeaderAfterLogOut();
+        DioFactory.clearToken();
         if (!context.mounted) return;
         context.pushReplacementNamed(Routes.loginScreen);
       } else if (route != null &&
@@ -476,7 +476,7 @@ void showLogOutDialogState(
     onConfirm: () async {
       context.pop();
       await SharedPrefHelper.setData(RestaurantConstants.myToken, "");
-      DioFactory.deletTokenHeaderAfterLogOut();
+      DioFactory.clearToken();
       if (!context.mounted) return;
       context.pushReplacementNamed(Routes.loginScreen);
       mySignalRService.stopConnection();

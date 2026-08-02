@@ -7,6 +7,7 @@ import 'package:apex_restaurant/core/settings/settings_state.dart';
 import 'package:apex_restaurant/core/themes/app_theme.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,6 +54,8 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
       providers: [
         BlocProvider<CartBloc>(create: (_) => getIt<CartBloc>()),
         BlocProvider<HomeBloc>(create: (_) => getIt<HomeBloc>()),
+        BlocProvider<PosBloc>(create: (_) => getIt<PosBloc>()),
+
         BlocProvider<SettingsCubit>(create: (_) => getIt<SettingsCubit>()),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(

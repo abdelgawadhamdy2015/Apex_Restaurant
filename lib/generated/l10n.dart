@@ -3511,6 +3511,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Change address`
+  String get changeAddress {
+    return Intl.message(
+      'Change address',
+      name: 'changeAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add new address`
+  String get addNewAddress {
+    return Intl.message(
+      'Add new address',
+      name: 'addNewAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Selected Table`
+  String get selectedTable {
+    return Intl.message(
+      'Selected Table',
+      name: 'selectedTable',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

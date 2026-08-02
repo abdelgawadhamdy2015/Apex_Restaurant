@@ -1,9 +1,10 @@
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/delivery_agent_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
@@ -12,7 +13,6 @@ import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
-import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
@@ -66,13 +66,16 @@ abstract class ApiService {
     @Queries() GetFoodAdditivesRequest request,
   );
 
-  @GET(ApiConstants.getAllDeliveryAgents)
-  Future<BaseResponse<List<DeliveryAgentModel>?>> getAllDeliveryAgents(
+  @GET(ApiConstants.getListOfWaiters)
+  Future<BaseResponse<List<WaiterModel>?>> getAllWaiters(
     @Queries() BaseRequest request,
   );
-
-  @GET(ApiConstants.getAllWaiters)
-  Future<BaseResponse<List<WaiterModel>?>> getAllWaiters(
+  @GET(ApiConstants.getListOfDeliveryMen)
+  Future<BaseResponse<List<WaiterModel>?>> getListOfDeliveryMen(
+    @Queries() BaseRequest request,
+  );
+  @GET(ApiConstants.getAllDeliveryCompany)
+  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany(
     @Queries() BaseRequest request,
   );
   @GET(ApiConstants.getAllPersons)
@@ -85,10 +88,6 @@ abstract class ApiService {
   Future<BaseResponse<dynamic>> updatePosClient(
     @Body() ClientRequestModel body,
   );
-  @GET(ApiConstants.getAllDeliveryCompany)
-  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany(
-    @Queries() BaseRequest request,
-  );
 
   @POST(ApiConstants.applyDiscountCode)
   Future<BaseResponse<DiscountResultModel?>> applyDiscountCode(
@@ -97,11 +96,6 @@ abstract class ApiService {
 
   @POST(ApiConstants.holdOrder)
   Future<BaseResponse<dynamic>> holdOrder(@Body() Map<String, dynamic> body);
-
-  @POST(ApiConstants.completePayment)
-  Future<BaseResponse<dynamic>> completePayment(
-    @Body() Map<String, dynamic> body,
-  );
 
   @GET(ApiConstants.getAllReservations)
   Future<BaseResponse<ReservationsData>> getAllReservation(
@@ -122,8 +116,12 @@ abstract class ApiService {
     @Body() EditReserveFoodTableRequest request,
   );
 
-  @POST("api/payments/process")
-  Future<BaseResponse<PaymentSuccessModel>> processPayment(
-    @Body() Map<String, dynamic> body,
+  @POST(ApiConstants.saveRestaurantPosInvoice)
+  Future<BaseResponse<dynamic>> saveRestaurantPosInvoice(
+    @Body() SaveInvoiceRequestModel request,
   );
+
+  @GET(ApiConstants.getDynamicInvoiceDiscounts)
+  Future<BaseResponse<List<DynamicDiscountModel>?>>
+  getDynamicInvoiceDiscounts();
 }

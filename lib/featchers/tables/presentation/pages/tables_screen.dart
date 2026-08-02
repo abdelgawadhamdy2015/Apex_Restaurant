@@ -26,9 +26,11 @@ class TablesScreen extends StatefulWidget {
     super.key,
     required this.branchId,
     required this.personList,
+    required this.inCartScreen,
   });
   final int branchId;
   final List<PosClientModel> personList;
+  final bool inCartScreen;
 
   @override
   State<TablesScreen> createState() => _TablesScreenState();
@@ -127,14 +129,19 @@ class _TablesScreenState extends State<TablesScreen> {
                       child: Center(child: CircularProgressIndicator()),
                     )
                   else
-                    TablesGrid(tables: state.tables),
+                    TablesGrid(
+                      tables: state.tables,
+                      inCartScreen: widget.inCartScreen,
+                    ),
                 ] else ...[
                   AddReservationButton(
-                    onPressed: () => AddReservationBottomSheet.show(
-                      context,
-                      state.tables,
-                      widget.personList,
-                    ),
+                    onPressed: () {
+                      AddReservationBottomSheet.show(
+                        context,
+                        state.tables,
+                        widget.personList,
+                      );
+                    },
                   ),
                   SizedBox(height: spacing.md),
                   ReservationSearchFilterCard(

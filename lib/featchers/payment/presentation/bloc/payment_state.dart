@@ -10,15 +10,17 @@ class PaymentState extends Equatable {
   final double paidAmount;
   final PaymentMethodType selectedMethod;
   final String referenceNumber;
+  final Map<int, double> splitAmounts;
   final PaymentSuccessModel? successModel;
   final String? errorMessage;
 
   const PaymentState({
     this.status = PaymentStatus.initial,
-    this.totalAmount = 207.00,
-    this.paidAmount = 210.00,
+    this.totalAmount = 0.0,
+    this.paidAmount = 0.0,
     this.selectedMethod = PaymentMethodType.cash,
     this.referenceNumber = '',
+    this.splitAmounts = const {},
     this.successModel,
     this.errorMessage,
   });
@@ -32,6 +34,7 @@ class PaymentState extends Equatable {
     double? paidAmount,
     PaymentMethodType? selectedMethod,
     String? referenceNumber,
+    Map<int, double>? splitAmounts,
     PaymentSuccessModel? successModel,
     String? errorMessage,
   }) {
@@ -41,6 +44,7 @@ class PaymentState extends Equatable {
       paidAmount: paidAmount ?? this.paidAmount,
       selectedMethod: selectedMethod ?? this.selectedMethod,
       referenceNumber: referenceNumber ?? this.referenceNumber,
+      splitAmounts: splitAmounts ?? this.splitAmounts,
       successModel: successModel ?? this.successModel,
       errorMessage: errorMessage ?? this.errorMessage,
     );
@@ -53,6 +57,7 @@ class PaymentState extends Equatable {
     paidAmount,
     selectedMethod,
     referenceNumber,
+    splitAmounts,
     successModel,
     errorMessage,
   ];

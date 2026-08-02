@@ -121,7 +121,7 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
     RestaurantConstants.image = data.authToken?.userInfo?.imageUrl;
     ApiConstants.userId = int.parse(userInfo?.userId ?? '0');
     ApiConstants.empId = userInfo?.employeesId;
-    DioFactory.setTokenToHeaderAfterLogin(token);
+    DioFactory.setToken(token);
 
     log('Login success — userId: ${ApiConstants.userId}');
 

@@ -7,10 +7,12 @@ class DiscountTypeToggle extends StatelessWidget {
     super.key,
     required this.isPercentage,
     required this.onChanged,
+    required this.enabled,
   });
 
   final bool isPercentage;
   final ValueChanged<bool> onChanged;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class DiscountTypeToggle extends StatelessWidget {
           child: _Option(
             label: lang.percentageDiscount,
             isSelected: isPercentage,
-            onTap: () => onChanged(true),
+            onTap: enabled ? () => onChanged(true) : null,
           ),
         ),
         SizedBox(width: spacing.sm),
@@ -31,7 +33,7 @@ class DiscountTypeToggle extends StatelessWidget {
           child: _Option(
             label: lang.fixedAmountDiscount,
             isSelected: !isPercentage,
-            onTap: () => onChanged(false),
+            onTap: enabled ? () => onChanged(false) : null,
           ),
         ),
       ],
@@ -40,33 +42,31 @@ class DiscountTypeToggle extends StatelessWidget {
 }
 
 class _Option extends StatelessWidget {
-  const _Option({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _Option({required this.label, required this.isSelected, this.onTap});
 
   final String label;
   final bool isSelected;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final isEnabled = onTap != null;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: spacing.sm),
         decoration: BoxDecoration(
-          color: isSelected
+          color: isSelected && isEnabled
               ? theme.colorScheme.primary.withOpacity(0.04)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
           border: Border.all(
-            color: isSelected
+            // Check both isSelected and isEnabled!
+            color: isSelected && isEnabled
                 ? theme.colorScheme.primary
                 : theme.colorScheme.outlineVariant,
             width: 2,
@@ -77,13 +77,22 @@ class _Option extends StatelessWidget {
           children: [
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected
+              color: isSelected && isEnabled
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant,
+                  : theme.colorScheme.onSurfaceVariant.withOpacity(
+                      isEnabled ? 1.0 : 0.5,
+                    ),
               size: iconSizes.md,
             ),
             SizedBox(width: spacing.xs),
-            Text(label, style: theme.textTheme.bodyMedium),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: isEnabled
+                    ? null
+                    : theme.colorScheme.onSurface.withOpacity(0.38),
+              ),
+            ),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
 import 'package:equatable/equatable.dart';
 
@@ -6,6 +7,14 @@ abstract class PaymentEvent extends Equatable {
 
   @override
   List<Object?> get props => [];
+}
+
+class InitializePaymentEvent extends PaymentEvent {
+  final double totalAmount;
+  const InitializePaymentEvent({required this.totalAmount});
+
+  @override
+  List<Object?> get props => [totalAmount];
 }
 
 class ChangePaymentMethodEvent extends PaymentEvent {
@@ -32,10 +41,23 @@ class UpdateReferenceNumberEvent extends PaymentEvent {
   List<Object?> get props => [refNumber];
 }
 
-class SubmitPaymentEvent extends PaymentEvent {
-  final String orderId;
-  const SubmitPaymentEvent(this.orderId);
+class UpdateSplitAmountEvent extends PaymentEvent {
+  final int paymentMethodId;
+  final double amount;
+
+  const UpdateSplitAmountEvent({
+    required this.paymentMethodId,
+    required this.amount,
+  });
 
   @override
-  List<Object?> get props => [orderId];
+  List<Object?> get props => [paymentMethodId, amount];
+}
+
+class SubmitPaymentEvent extends PaymentEvent {
+  final SaveInvoiceRequestModel invoiceRequest;
+  const SubmitPaymentEvent(this.invoiceRequest);
+
+  @override
+  List<Object?> get props => [invoiceRequest];
 }

@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import 'table_card.dart';
 
 class TablesGrid extends StatelessWidget {
-  const TablesGrid({super.key, required this.tables});
+  const TablesGrid({
+    super.key,
+    required this.tables,
+    required this.inCartScreen,
+  });
 
   final List<TableEntity> tables;
-
+  final bool inCartScreen;
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -38,7 +42,8 @@ class TablesGrid extends StatelessWidget {
         mainAxisSpacing: spacing.md,
         childAspectRatio: 0.85,
       ),
-      itemBuilder: (context, index) => TableCard(table: tables[index]),
+      itemBuilder: (context, index) =>
+          TableCard(table: tables[index], inCartScreen: inCartScreen),
     );
   }
 }
