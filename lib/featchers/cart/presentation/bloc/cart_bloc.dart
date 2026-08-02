@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:apex_restaurant/core/service/api_result.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
 import 'package:apex_restaurant/featchers/cart/domain/usescase/cart_usescase.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
@@ -16,34 +18,41 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final GetDeliveryAgentsUseCase getDeliveryAgentsUseCase;
   final ApplyDiscountUseCase applyDiscountUseCase;
   final HoldOrderUseCase holdOrderUseCase;
-  final CompletePaymentUseCase completePaymentUseCase;
   final GetAllPosClientsUseCase getAllPersonsUseCase;
   final AddPosClientUseCase addPosClientUseCase;
   final UpdatePosClientUseCase updatePosClientUseCase;
+  final GetDynamicInvoiceDiscountUseCase getDynamicInvoiceDiscountUseCase;
 
   CartBloc({
     required this.getWaitersUseCase,
     required this.getDeliveryAgentsUseCase,
     required this.applyDiscountUseCase,
     required this.holdOrderUseCase,
-    required this.completePaymentUseCase,
     required this.getAllPersonsUseCase,
     required this.addPosClientUseCase,
     required this.updatePosClientUseCase,
+    required this.getDynamicInvoiceDiscountUseCase,
   }) : super(const CartState()) {
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
-    on<SelectDeliveryCompanyEvent>(_onSelectDeliveryCompany);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SelectPersonEvent>(_onSelectPerson);
-
+    on<SelectCartTableEvent>(
+      (event, emit) => emit(state.copyWith(selectedTable: event.table)),
+    );
     on<ChangeOrderTypeEvent>(_onChangeOrderType);
     on<SelectWaiterEvent>(
-      (event, emit) => emit(state.copyWith(selectedWaiterId: event.waiterId)),
+      (event, emit) => emit(state.copyWith(selectedWaiter: event.waiter)),
     );
-    on<SelectDeliveryAgentEvent>(
-      (event, emit) => emit(state.copyWith(selectedAgentId: event.agentId)),
+    on<SelectDeliveryManEvent>(
+      (event, emit) =>
+          emit(state.copyWith(selectedDeliveryMan: event.deliveryMan)),
+    );
+    on<SelectDeliveryCompanyEvent>(
+      (event, emit) => emit(
+        state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel),
+      ),
     );
     on<ChangeDiscountTypeEvent>(
       (event, emit) =>
@@ -52,10 +61,46 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<UpdateItemQuantityEvent>(_onUpdateItemQuantity);
     on<RemoveItemEvent>(_onRemoveItem);
     on<HoldOrderSubmittedEvent>(_onHoldOrder);
-    on<CompletePaymentSubmittedEvent>(_onCompletePayment);
     on<ClearCartEvent>(_onClearCartEvent);
     on<AddPosClientEvent>(_addPosClient);
     on<UpdatePosClientEvent>(_updatePosClient);
+    on<LoadDynamicDiscountsEvent>(_onLoadDynamicDiscounts);
+    on<ChangeAddressEvent>(_onChangeAddress);
+    on<EditCartItemEvent>(_onEditCartItem);
+    on<ApplyDiscountEvent>(_onApplyDiscount);
+    on<ApplyCouponDiscountEvent>(_onApplyCouponDiscount);
+  }
+
+  void _onChangeAddress(ChangeAddressEvent event, Emitter<CartState> emit) {
+    emit(state.copyWith(selectedAddress: event.address));
+  }
+
+  void _onEditCartItem(EditCartItemEvent event, Emitter<CartState> emit) {
+    final items = List<OrderItem>.from(state.items);
+    final old = items[event.index];
+
+    double addonsTotal = 0.0;
+    for (final addon in event.selectedAddons) {
+      addonsTotal += addon.price;
+    }
+    double lineTotal =
+        (event.selectedSize.price + addonsTotal) * event.quantity;
+    if (event.isPercentageDiscount) {
+      lineTotal = lineTotal * (1 - (event.discount / 100));
+    } else {
+      lineTotal = (lineTotal - event.discount).clamp(0.0, double.infinity);
+    }
+
+    items[event.index] = old.copyWith(
+      selectedSize: event.selectedSize,
+      addons: event.selectedAddons,
+      quantity: event.quantity,
+      notes: event.notes,
+      discount: event.discount,
+      isPercentageDiscount: event.isPercentageDiscount,
+    );
+
+    emit(state.copyWith(items: items));
   }
 
   Future<void> _onLoadCartData(
@@ -66,8 +111,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     final waitersRes = await getWaitersUseCase();
     final agentsRes = await getDeliveryAgentsUseCase();
-    List<dynamic> waitersList = [];
-    List<dynamic> agentsList = [];
+    List<WaiterModel> waitersList = [];
+    List<WaiterModel> agentsList = [];
 
     waitersRes.when(
       success: (data) => waitersList = data.data ?? [],
@@ -92,8 +137,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     LoadPersonsData event,
     Emitter<CartState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true));
-
     final personsRes = await getAllPersonsUseCase(request: event.request);
 
     List<PosClientModel> personsList = [];
@@ -102,7 +145,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       success: (data) => personsList = data.data ?? [],
       failure: (_) {},
     );
-    emit(state.copyWith(isLoading: false, persons: personsList));
+    log("bloc Persons : ${personsList.length}");
+    emit(state.copyWith(persons: personsList));
   }
 
   void _onSyncCartItems(SyncCartItemsEvent event, Emitter<CartState> emit) {
@@ -136,7 +180,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       existingItems.add(event.item);
     }
 
-    log("updatedList: ${existingItems.length}");
     emit(state.copyWith(items: existingItems));
   }
 
@@ -151,17 +194,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     return true;
   }
 
-  void _onSelectDeliveryCompany(
-    SelectDeliveryCompanyEvent event,
-    Emitter<CartState> emit,
-  ) {
-    emit(state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel));
-    log('Selected Company: ${event.deliveryCompanyModel.arabicName}');
-  }
-
   void _onSelectPerson(SelectPersonEvent event, Emitter<CartState> emit) {
     emit(state.copyWith(selectedPerson: event.person));
-    log('Selected Company: ${event.person?.arabicName}');
   }
 
   void _onChangeOrderType(ChangeOrderTypeEvent event, Emitter<CartState> emit) {
@@ -219,40 +253,26 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
-  Future<void> _onCompletePayment(
-    CompletePaymentSubmittedEvent event,
-    Emitter<CartState> emit,
-  ) async {
-    emit(state.copyWith(isSubmitting: true));
-    await Future.delayed(const Duration(seconds: 1));
-    emit(
-      state.copyWith(
-        isSubmitting: false,
-        successMessage: 'تم إتمام عملية الدفع بنجاح',
-      ),
-    );
-  }
-
   Future<void> _addPosClient(
     AddPosClientEvent event,
     Emitter<CartState> emit,
   ) async {
     try {
-      emit(state.copyWith(status: AddPersonStatus.loading));
+      emit(state.copyWith(status: CartStatus.loading));
       final response = await addPosClientUseCase(request: event.request);
       response.when(
         success: (data) {
           if (data.result == 1) {
             emit(
               state.copyWith(
-                status: AddPersonStatus.success,
+                status: CartStatus.success,
                 successMessage: data.errorMessageAr,
               ),
             );
           } else {
             emit(
               state.copyWith(
-                status: AddPersonStatus.failure,
+                status: CartStatus.failure,
                 errorMessage: data.errorMessageAr,
               ),
             );
@@ -261,7 +281,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         failure: (errorHandler) {
           emit(
             state.copyWith(
-              status: AddPersonStatus.failure,
+              status: CartStatus.failure,
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
             ),
           );
@@ -269,10 +289,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       );
     } catch (e) {
       emit(
-        state.copyWith(
-          status: AddPersonStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
       );
     }
   }
@@ -282,21 +299,21 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     try {
-      emit(state.copyWith(status: AddPersonStatus.loading));
+      emit(state.copyWith(status: CartStatus.loading));
       final response = await updatePosClientUseCase(request: event.request);
       response.when(
         success: (data) {
           if (data.result == 1) {
             emit(
               state.copyWith(
-                status: AddPersonStatus.success,
+                status: CartStatus.success,
                 successMessage: data.errorMessageAr,
               ),
             );
           } else {
             emit(
               state.copyWith(
-                status: AddPersonStatus.failure,
+                status: CartStatus.failure,
                 errorMessage: data.errorMessageAr,
               ),
             );
@@ -305,7 +322,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         failure: (errorHandler) {
           emit(
             state.copyWith(
-              status: AddPersonStatus.failure,
+              status: CartStatus.failure,
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
             ),
           );
@@ -313,11 +330,112 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       );
     } catch (e) {
       emit(
-        state.copyWith(
-          status: AddPersonStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
       );
     }
+  }
+
+  FutureOr<void> _onLoadDynamicDiscounts(
+    LoadDynamicDiscountsEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      final response = await getDynamicInvoiceDiscountUseCase();
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            final activeDiscountModel = checkAvailability(data.data);
+
+            emit(
+              state.copyWith(
+                discounts: data.data,
+                dynamicDiscountIsActive: activeDiscountModel != null,
+                activeDiscountModel: activeDiscountModel,
+              ),
+            );
+          } else {
+            emit(state.copyWith(errorMessage: data.errorMessageAr));
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(state.copyWith(errorMessage: e.toString()));
+    }
+  }
+
+  DynamicDiscountModel? checkAvailability(List<DynamicDiscountModel>? data) {
+    if (data == null || data.isEmpty) return null;
+    DynamicDiscountModel? activDiscountModel;
+    final now = DateTime.now();
+    data.any((d) {
+      final discount = d.discount;
+      if (discount == null) return false;
+
+      final startDate = discount.startDate;
+      final endDate = discount.endDate;
+
+      if (startDate != null && endDate != null) {
+        final today = DateTime(now.year, now.month, now.day);
+        final start = DateTime(startDate.year, startDate.month, startDate.day);
+        final end = DateTime(endDate.year, endDate.month, endDate.day);
+
+        if (today.isBefore(start) || today.isAfter(end)) {
+          return false;
+        }
+      }
+
+      final startTime = discount.startTime;
+      final endTime = discount.endTime;
+
+      if (startTime != null && endTime != null) {
+        final currentMinutes = now.hour * 60 + now.minute;
+        final startMinutes = startTime.hour * 60 + startTime.minute;
+        final endMinutes = endTime.hour * 60 + endTime.minute;
+
+        if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
+          return false;
+        }
+      }
+      activDiscountModel = d;
+      return true;
+    });
+    return activDiscountModel;
+  }
+
+  Future<void> _onApplyDiscount(
+    ApplyDiscountEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        saveDiscountModel: event.saveDiscountModel,
+        couponDiscountvalue: 0.0, // Reset coupon discount
+        selectedDiscountType: DiscountType.direct,
+        dynamicDiscountIsActive: false,
+      ),
+    );
+  }
+
+  Future<void> _onApplyCouponDiscount(
+    ApplyCouponDiscountEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    final double discountVal = double.tryParse(event.code) ?? 0.0;
+
+    emit(
+      state.copyWith(
+        couponDiscountvalue: discountVal,
+        saveDiscountModel: null, // Reset direct discount
+        selectedDiscountType: DiscountType.coupon,
+        dynamicDiscountIsActive: false,
+      ),
+    );
   }
 }

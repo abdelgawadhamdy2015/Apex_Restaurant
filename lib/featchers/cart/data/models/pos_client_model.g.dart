@@ -41,25 +41,27 @@ PosClientModel _$PosClientModelFromJson(Map<String, dynamic> json) =>
       salesPriceId: (json['salesPriceId'] as num).toInt(),
       lessSalesPriceId: (json['lessSalesPriceId'] as num).toInt(),
       canDelete: json['canDelete'] as bool,
-      buildingNumber: json['buildingNumber'] as String,
-      streetName: json['streetName'] as String,
-      neighborhood: json['neighborhood'] as String,
-      city: json['city'] as String,
-      country: json['country'] as String,
-      postalNumber: json['postalNumber'] as String,
-      financialAccountId: FinancialAccountModel.fromJson(
-        json['financialAccountId'] as Map<String, dynamic>,
-      ),
-      statusAr: json['statusAr'] as String,
-      statusEn: json['statusEn'] as String,
-      typeAr: json['typeAr'] as String,
-      typeEn: json['typeEn'] as String,
+      buildingNumber: json['buildingNumber'] as String?,
+      streetName: json['streetName'] as String?,
+      neighborhood: json['neighborhood'] as String?,
+      city: json['city'] as String?,
+      country: json['country'] as String?,
+      postalNumber: json['postalNumber'] as String?,
+      financialAccountId: json['financialAccountId'] == null
+          ? null
+          : FinancialAccountModel.fromJson(
+              json['financialAccountId'] as Map<String, dynamic>,
+            ),
+      statusAr: json['statusAr'] as String?,
+      statusEn: json['statusEn'] as String?,
+      typeAr: json['typeAr'] as String?,
+      typeEn: json['typeEn'] as String?,
       isUsedInInvoices: json['isUsedInInvoices'] as bool,
-      personAddress: (json['personAddress'] as List<dynamic>)
-          .map((e) => ClientAddressModel.fromJson(e as Map<String, dynamic>))
+      personAddress: (json['personAddress'] as List<dynamic>?)
+          ?.map((e) => ClientAddressModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      personPhones: (json['personPhones'] as List<dynamic>)
-          .map((e) => ClientPhoneModel.fromJson(e as Map<String, dynamic>))
+      personPhones: (json['personPhones'] as List<dynamic>?)
+          ?.map((e) => ClientPhoneModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -100,14 +102,14 @@ Map<String, dynamic> _$PosClientModelToJson(PosClientModel instance) =>
       'city': instance.city,
       'country': instance.country,
       'postalNumber': instance.postalNumber,
-      'financialAccountId': instance.financialAccountId.toJson(),
+      'financialAccountId': instance.financialAccountId?.toJson(),
       'statusAr': instance.statusAr,
       'statusEn': instance.statusEn,
       'typeAr': instance.typeAr,
       'typeEn': instance.typeEn,
       'isUsedInInvoices': instance.isUsedInInvoices,
-      'personAddress': instance.personAddress.map((e) => e.toJson()).toList(),
-      'personPhones': instance.personPhones.map((e) => e.toJson()).toList(),
+      'personAddress': instance.personAddress?.map((e) => e.toJson()).toList(),
+      'personPhones': instance.personPhones?.map((e) => e.toJson()).toList(),
     };
 
 FinancialAccountModel _$FinancialAccountModelFromJson(

@@ -35,13 +35,19 @@ class ApiConstants {
   static const String getAllDeliveryAgents = '/api/DeliveryAgent/GetAll';
   static const String getAllDeliveryCompany =
       "api/Restaurants/DeliveryCompany/GetAllDeliveryCompany";
-  static const String getAllWaiters = '/api/Employee/GetWaiters';
-  static const String applyDiscountCode = '/api/Order/ApplyDiscount';
-  static const String holdOrder = '/api/Order/Hold';
-  static const String completePayment = '/api/Order/CompletePayment';
+  static const String getListOfWaiters = 'api/Store/Employee/GetListOfWaiter';
+  static const String getListOfDeliveryMen =
+      'api/Store/Employee/GetListOfDeliveryMen';
+  static const String applyDiscountCode = 'api/Order/ApplyDiscount';
+  static const String holdOrder = 'api/Order/Hold';
+
   static const String getAllPersons = "api/Store/Persons/GetListOfPersons";
   static const String updatePosClient = "api/Store/Persons/UpdatePosClient";
   static const String addPosClient = "api/Store/Persons/AddPosClient";
+  static const String saveRestaurantPosInvoice =
+      "api/Restaurants/RestaurantPos/SaveRestaurantPosInvoice";
+  static const String getDynamicInvoiceDiscounts =
+      "api/Restaurants/ItemDiscounts/GetInvoiceDiscounts";
 
   // General apis
   static const String getEmployeeBranches =

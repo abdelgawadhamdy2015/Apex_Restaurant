@@ -8,7 +8,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/screens/menu_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/more_options.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_bottom_nav_bar.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/select_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -62,15 +61,14 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
     switch (_selectedNavIndex) {
       case 0:
         return MoreOptions();
+
       case 1:
-        return SelectCustomerWidget();
-      case 2:
         return BlocProvider(
           child: OrdersScreen(),
           create: (context) => getIt<OrdersBloc>(),
         );
 
-      case 3:
+      case 2:
         return MenuScreen();
       default:
         return MenuScreen();

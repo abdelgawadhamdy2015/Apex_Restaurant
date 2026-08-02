@@ -1,19 +1,33 @@
 import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
+import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
 import 'package:apex_restaurant/featchers/payment/domain/usecase/process_payment_usecase.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  final ProcessPaymentUseCase processPaymentUseCase;
+  final SaveRestaurantPosInvoice processPaymentUseCase;
 
   PaymentBloc({required this.processPaymentUseCase})
     : super(const PaymentState()) {
+    on<InitializePaymentEvent>(_onInitializePayment);
     on<ChangePaymentMethodEvent>(_onChangePaymentMethod);
     on<UpdatePaidAmountEvent>(_onUpdatePaidAmount);
     on<UpdateReferenceNumberEvent>(_onUpdateReferenceNumber);
+    on<UpdateSplitAmountEvent>(_onUpdateSplitAmount);
     on<SubmitPaymentEvent>(_onSubmitPayment);
+  }
+
+  void _onInitializePayment(
+    InitializePaymentEvent event,
+    Emitter<PaymentState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        totalAmount: event.totalAmount,
+        paidAmount: event.totalAmount,
+      ),
+    );
   }
 
   void _onChangePaymentMethod(
@@ -37,29 +51,38 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     emit(state.copyWith(referenceNumber: event.refNumber));
   }
 
+  void _onUpdateSplitAmount(
+    UpdateSplitAmountEvent event,
+    Emitter<PaymentState> emit,
+  ) {
+    final updatedMap = Map<int, double>.from(state.splitAmounts);
+    updatedMap[event.paymentMethodId] = event.amount;
+    emit(state.copyWith(splitAmounts: updatedMap));
+  }
+
   Future<void> _onSubmitPayment(
     SubmitPaymentEvent event,
     Emitter<PaymentState> emit,
   ) async {
     emit(state.copyWith(status: PaymentStatus.loading));
 
-    final request = ProcessPaymentRequest(
-      orderId: event.orderId,
-      totalAmount: state.totalAmount,
-      paidAmount: state.paidAmount,
-      paymentMethods: [
-        PaymentMethodAmount(
-          method: state.selectedMethod,
-          amount: state.paidAmount,
-          referenceNumber: state.referenceNumber,
-        ),
-      ],
-    );
-
-    final result = await processPaymentUseCase(request);
+    // Submit complete SaveInvoiceRequestModel to UseCase
+    final result = await processPaymentUseCase(event.invoiceRequest);
 
     result.when(
       success: (response) {
+        PaymentSuccessModel(
+          orderNumber: response.result?.toString() ?? '',
+          invoiceNumber: "",
+          totalPaid: event.invoiceRequest.invoice?.paidAmount ?? 0,
+          paymentMethodName:
+              event.invoiceRequest.payments?.first.paymentMethodId.toString() ??
+              '',
+          transactionTime: DateTime.now(),
+          items: event.invoiceRequest.items!
+              .map((item) => OrderItemModel(name: "", quantity: 1, price: 0.0))
+              .toList(),
+        );
         emit(
           state.copyWith(
             status: PaymentStatus.success,
@@ -71,7 +94,9 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         emit(
           state.copyWith(
             status: PaymentStatus.error,
-            errorMessage: 'فشلت عملية الدفع. يرجى المحاولة مرة أخرى.',
+            errorMessage:
+                error.apiErrorModel.errorMessageAr ??
+                'فشلت عملية الدفع. يرجى المحاولة مرة أخرى.',
           ),
         );
       },

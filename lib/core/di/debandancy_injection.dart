@@ -45,7 +45,7 @@ Future<void> setupGetIt() async {
   /// Core
   /// ─────────────────────────────────────────────────────────
 
-  final dio = DioFactory.getDio();
+  final dio = await DioFactory.getDio();
 
   getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
 
@@ -185,9 +185,7 @@ Future<void> setupGetIt() async {
     () => ApplyDiscountUseCase(getIt<CartRepository>()),
   );
   getIt.registerLazySingleton(() => HoldOrderUseCase(getIt<CartRepository>()));
-  getIt.registerLazySingleton(
-    () => CompletePaymentUseCase(getIt<CartRepository>()),
-  );
+
   getIt.registerLazySingleton(
     () => GetAllPosClientsUseCase(getIt<CartRepository>()),
   );
@@ -197,10 +195,13 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => UpdatePosClientUseCase(getIt<CartRepository>()),
   );
+  getIt.registerLazySingleton(
+    () => GetDynamicInvoiceDiscountUseCase(getIt<CartRepository>()),
+  );
 
   // Payment
   getIt.registerLazySingleton(
-    () => ProcessPaymentUseCase(getIt<PaymentRepository>()),
+    () => SaveRestaurantPosInvoice(getIt<PaymentRepository>()),
   );
 
   // Orders
@@ -254,7 +255,7 @@ Future<void> setupGetIt() async {
   );
 
   //POS
-  getIt.registerFactory(
+  getIt.registerLazySingleton<PosBloc>(
     () => PosBloc(
       getMenuCategories: getIt<GetMenuCategoriesUseCase>(),
       getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
@@ -263,22 +264,23 @@ Future<void> setupGetIt() async {
   );
 
   // Cart
-  getIt.registerFactory(
+  getIt.registerLazySingleton<CartBloc>(
     () => CartBloc(
       getDeliveryAgentsUseCase: getIt<GetDeliveryAgentsUseCase>(),
       getWaitersUseCase: getIt<GetWaitersUseCase>(),
       applyDiscountUseCase: getIt<ApplyDiscountUseCase>(),
       holdOrderUseCase: getIt<HoldOrderUseCase>(),
-      completePaymentUseCase: getIt<CompletePaymentUseCase>(),
       getAllPersonsUseCase: getIt<GetAllPosClientsUseCase>(),
       addPosClientUseCase: getIt<AddPosClientUseCase>(),
       updatePosClientUseCase: getIt<UpdatePosClientUseCase>(),
+      getDynamicInvoiceDiscountUseCase:
+          getIt<GetDynamicInvoiceDiscountUseCase>(),
     ),
   );
 
   // Payment
   getIt.registerFactory<PaymentBloc>(
-    () => PaymentBloc(processPaymentUseCase: getIt<ProcessPaymentUseCase>()),
+    () => PaymentBloc(processPaymentUseCase: getIt<SaveRestaurantPosInvoice>()),
   );
 
   // Orders

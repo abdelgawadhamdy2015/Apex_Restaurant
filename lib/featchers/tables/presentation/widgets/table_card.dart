@@ -1,14 +1,18 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/widgets/add_reservation_bottom_sheet.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class TableCard extends StatefulWidget {
-  const TableCard({super.key, required this.table});
+  const TableCard({super.key, required this.table, required this.inCartScreen});
   final TableEntity table;
-
+  final bool inCartScreen;
   @override
   State<TableCard> createState() => _TableCardState();
 }
@@ -88,7 +92,14 @@ class _TableCardState extends State<TableCard> {
 
     return InkWell(
       onTap: () {
-        _isOpen ? _closeMenu() : _openMenu(context);
+        if (widget.inCartScreen) {
+          context.read<CartBloc>().add(
+            SelectCartTableEvent(table: widget.table),
+          );
+          context.pop();
+        } else {
+          _isOpen ? _closeMenu() : _openMenu(context);
+        }
       },
       child: Container(
         padding: EdgeInsets.all(spacing.sm),

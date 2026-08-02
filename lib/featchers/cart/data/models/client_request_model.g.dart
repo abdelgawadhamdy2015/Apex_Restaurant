@@ -8,7 +8,7 @@ part of 'client_request_model.dart';
 
 ClientRequestModel _$ClientRequestModelFromJson(Map<String, dynamic> json) =>
     ClientRequestModel(
-      id: (json['Id'] as num?)?.toInt() ?? 0,
+      id: (json['Id'] as num?)?.toInt(),
       name: json['Name'] as String?,
       addresses: (json['Addresses'] as List<dynamic>?)
           ?.map(
@@ -28,7 +28,7 @@ ClientRequestModel _$ClientRequestModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ClientRequestModelToJson(ClientRequestModel instance) =>
     <String, dynamic>{
-      'Id': instance.id ?? 0,
+      'Id': instance.id,
       'Name': instance.name,
       'Addresses': instance.addresses?.map((e) => e.toJson()).toList(),
       'Phones': instance.phones?.map((e) => e.toJson()).toList(),
@@ -52,7 +52,7 @@ ClientRequestAddressModel _$ClientRequestAddressModelFromJson(
 Map<String, dynamic> _$ClientRequestAddressModelToJson(
   ClientRequestAddressModel instance,
 ) => <String, dynamic>{
-  'Id': instance.id ?? 0,
+  'Id': instance.id,
   'City': instance.city,
   'Street': instance.street,
   'District': instance.district,
@@ -75,8 +75,8 @@ ClientRequestPhoneModel _$ClientRequestPhoneModelFromJson(
 Map<String, dynamic> _$ClientRequestPhoneModelToJson(
   ClientRequestPhoneModel instance,
 ) => <String, dynamic>{
-  'Id': instance.id ?? 0,
+  'Id': instance.id,
   'PhoneNumber': instance.phoneNumber,
   'IsDefault': instance.isDefault,
-  'PersonsId': instance.personsId ?? 0,
+  'PersonsId': instance.personsId,
 };

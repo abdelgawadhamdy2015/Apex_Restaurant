@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
@@ -213,6 +211,8 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       state.copyWith(
         selectedCategory: event.category,
         additives: event.category.additives,
+        currentMenuItems:
+            const [], // Optional: Clear old category items while fetching
       ),
     );
 
@@ -281,10 +281,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   void _onAddItem(AddItemToOrderEvent event, Emitter<PosState> emit) {
     try {
       final existingItems = List<OrderItem>.from(state.currentOrder.items);
-      log(
-        "${event.item.menuItem.itemId.toString()} ${event.item.menuItem.sizes.length}",
-      );
-      // 1. Look for an exact match (Same Item ID, Same Size, and Exact Same Addons)
+
       final exactMatchIndex = existingItems.indexWhere(
         (i) =>
             i.menuItem.itemId == event.item.menuItem.itemId &&
@@ -293,7 +290,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       );
 
       if (exactMatchIndex >= 0) {
-        // Exact match found: Simply increase the quantity
         existingItems[exactMatchIndex] = existingItems[exactMatchIndex]
             .copyWith(
               quantity:
@@ -327,8 +323,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
           existingItems.add(event.item);
         }
       }
-
-      log("existingItems : ${existingItems.length}");
 
       emit(
         state.copyWith(

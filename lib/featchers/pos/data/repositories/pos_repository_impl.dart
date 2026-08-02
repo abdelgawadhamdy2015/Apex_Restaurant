@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
@@ -96,7 +94,6 @@ class PosRepositoryImpl implements PosRepository {
       final response = await _remoteDataSource.getTables(request: request);
       return ApiResult.success(response);
     } catch (e) {
-      log(e.toString());
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }

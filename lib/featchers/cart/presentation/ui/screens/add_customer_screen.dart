@@ -49,16 +49,16 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         _selectedBranchIds = person.branches;
       }
       // Safe phone number population
-      if (person.personPhones.isNotEmpty) {
-        _phoneController.text = person.personPhones.first.phoneNumber ?? '';
-        if (person.personPhones.length > 1) {
-          _altPhoneController.text = person.personPhones[1].phoneNumber ?? '';
+      if (person.personPhones?.isNotEmpty == true) {
+        _phoneController.text = person.personPhones!.first.phoneNumber ?? '';
+        if (person.personPhones!.length > 1) {
+          _altPhoneController.text = person.personPhones![1].phoneNumber ?? '';
         }
       }
 
       // Safe address population
-      if (person.personAddress.isNotEmpty) {
-        for (var addr in person.personAddress) {
+      if (person.personAddress?.isNotEmpty == true) {
+        for (var addr in person.personAddress!) {
           _addresses.add(_AddressFormData.fromModel(addr));
         }
       } else {
@@ -97,8 +97,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     if (_phoneController.text.trim().isNotEmpty) {
       phones.add(
         ClientRequestPhoneModel(
-          id: (_isEditMode && widget.selectedPerson!.personPhones.isNotEmpty)
-              ? widget.selectedPerson!.personPhones.first.id
+          id:
+              (_isEditMode &&
+                  widget.selectedPerson!.personPhones?.isNotEmpty == true)
+              ? widget.selectedPerson!.personPhones!.first.id
               : null,
           phoneNumber: _phoneController.text.trim(),
           isDefault: true,
@@ -110,8 +112,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     if (_altPhoneController.text.trim().isNotEmpty) {
       phones.add(
         ClientRequestPhoneModel(
-          id: (_isEditMode && widget.selectedPerson!.personPhones.length > 1)
-              ? widget.selectedPerson!.personPhones[1].id
+          id: (_isEditMode && widget.selectedPerson!.personPhones?.length == 2)
+              ? widget.selectedPerson!.personPhones![1].id
               : null,
           phoneNumber: _altPhoneController.text.trim(),
           isDefault: false,
@@ -161,7 +163,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     return BlocListener<CartBloc, CartState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
-        if (state.status == AddPersonStatus.success) {
+        if (state.status == CartStatus.success) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.successMessage ?? 'Saved successfully'),
@@ -178,7 +180,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             ),
           );
           Navigator.pop(context, true);
-        } else if (state.status == AddPersonStatus.failure) {
+        } else if (state.status == CartStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage ?? 'An error occurred'),

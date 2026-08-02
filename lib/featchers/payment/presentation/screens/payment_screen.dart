@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
@@ -9,7 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentScreen extends StatelessWidget {
-  const PaymentScreen({super.key});
+  const PaymentScreen({super.key, required this.invoiceRequestModel});
+
+  final SaveInvoiceRequestModel invoiceRequestModel;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +77,10 @@ class PaymentScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                _BottomActionButtons(state: state),
+                _BottomActionButtons(
+                  state: state,
+                  invoiceRequestModel: invoiceRequestModel,
+                ),
               ],
             ),
           );
@@ -479,38 +485,27 @@ class _SplitMethodsList extends StatelessWidget {
 
     final methods = [
       _SplitItemData(
+        paymentMethodId: 1, // Cash
         title: lang.paymentMethodCash,
         icon: Icons.payments_outlined,
         color: Colors.orange,
       ),
       _SplitItemData(
+        paymentMethodId: 2, // Card
         title: lang.paymentMethodCard,
         icon: Icons.credit_card,
         color: Colors.blue,
       ),
       _SplitItemData(
+        paymentMethodId: 3, // Visa
         title: lang.paymentMethodVisa,
         icon: Icons.account_balance,
         color: Colors.indigo,
       ),
       _SplitItemData(
+        paymentMethodId: 4, // Bank Transfer
         title: lang.paymentMethodBankTransfer,
         icon: Icons.sync_alt,
-        color: Colors.black87,
-      ),
-      _SplitItemData(
-        title: lang.paymentMethodLoyaltyPoints,
-        icon: Icons.stars,
-        color: Colors.indigo,
-      ),
-      _SplitItemData(
-        title: lang.paymentMethodVoucher,
-        icon: Icons.confirmation_number_outlined,
-        color: Colors.black87,
-      ),
-      _SplitItemData(
-        title: lang.paymentMethodCredit,
-        icon: Icons.history,
         color: Colors.black87,
       ),
     ];
@@ -529,11 +524,13 @@ class _SplitMethodsList extends StatelessWidget {
 }
 
 class _SplitItemData {
+  final int paymentMethodId;
   final String title;
   final IconData icon;
   final Color color;
 
   _SplitItemData({
+    required this.paymentMethodId,
     required this.title,
     required this.icon,
     required this.color,
@@ -585,6 +582,15 @@ class _SplitMethodRow extends StatelessWidget {
                 ),
               ),
               keyboardType: TextInputType.number,
+              onChanged: (val) {
+                final amount = double.tryParse(val) ?? 0.0;
+                context.read<PaymentBloc>().add(
+                  UpdateSplitAmountEvent(
+                    paymentMethodId: item.paymentMethodId,
+                    amount: amount,
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -595,8 +601,34 @@ class _SplitMethodRow extends StatelessWidget {
 
 class _BottomActionButtons extends StatelessWidget {
   final PaymentState state;
+  final SaveInvoiceRequestModel invoiceRequestModel;
 
-  const _BottomActionButtons({required this.state});
+  const _BottomActionButtons({
+    required this.state,
+    required this.invoiceRequestModel,
+  });
+
+  /// Resolves selected payment methods into SavePaymentModel list
+  List<SavePaymentModel> _buildPayments() {
+    if (state.selectedMethod == PaymentMethodType.split) {
+      // Return split method entries that have an amount > 0
+      return state.splitAmounts.entries
+          .where((e) => e.value > 0)
+          .map((e) => SavePaymentModel(paymentMethodId: e.key, amount: e.value))
+          .toList();
+    } else {
+      // 1 = Cash, 2 = Card/POS Terminal
+      final int methodId = state.selectedMethod == PaymentMethodType.cash
+          ? 1
+          : 2;
+      return [
+        SavePaymentModel(
+          paymentMethodId: methodId,
+          amount: state.paidAmount > 0 ? state.paidAmount : state.totalAmount,
+        ),
+      ];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -620,8 +652,20 @@ class _BottomActionButtons extends StatelessWidget {
               onPressed: state.status == PaymentStatus.loading
                   ? null
                   : () {
+                      // 1. Build payment methods list based on current selection
+                      final paymentsList = _buildPayments();
+
+                      // 2. Combine invoiceRequestModel + mapped payment methods
+                      final finalInvoiceRequest = SaveInvoiceRequestModel(
+                        invoice: invoiceRequestModel.invoice,
+                        items: invoiceRequestModel.items,
+                        payments: paymentsList,
+                        gediaKey: state.referenceNumber,
+                      );
+
+                      // 3. Trigger submit payment event with complete payload
                       context.read<PaymentBloc>().add(
-                        const SubmitPaymentEvent('12345'),
+                        SubmitPaymentEvent(finalInvoiceRequest),
                       );
                     },
               style: ElevatedButton.styleFrom(

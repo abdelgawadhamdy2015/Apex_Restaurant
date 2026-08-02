@@ -1,22 +1,25 @@
-/// A waiter/server that can be assigned to a dine-in order.
+import 'package:json_annotation/json_annotation.dart';
+
+part 'waiter_model.g.dart';
+
+@JsonSerializable()
 class WaiterModel {
-  const WaiterModel({required this.id, this.arabicName, this.englishName});
-
-  final int id;
+  final int? id;
   final String? arabicName;
-  final String? englishName;
+  final String? latinName;
+  final int? status;
+  final int? code;
 
-  factory WaiterModel.fromJson(Map<String, dynamic> json) {
-    return WaiterModel(
-      id: json['id'] as int,
-      arabicName: json['arabicName'] as String?,
-      englishName: json['englishName'] as String?,
-    );
-  }
+  const WaiterModel({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.status,
+    this.code,
+  });
 
-  Map<String, dynamic> toJson() => {
-    'id': id,
-    'arabicName': arabicName,
-    'englishName': englishName,
-  };
+  factory WaiterModel.fromJson(Map<String, dynamic> json) =>
+      _$WaiterModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WaiterModelToJson(this);
 }

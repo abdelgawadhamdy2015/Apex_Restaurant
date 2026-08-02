@@ -49,7 +49,12 @@ ItemSize _$ItemSizeFromJson(Map<String, dynamic> json) => ItemSize(
   sizeNameEn: json['sizeNameEn'] as String,
   price: (json['price'] as num).toDouble(),
   isActive: json['isActive'] as bool,
-  discount: ItemDiscount.fromJson(json['discount'] as Map<String, dynamic>),
+  discount: (json['discount'] as List<dynamic>?)
+      ?.map(
+        (e) =>
+            e == null ? null : ItemDiscount.fromJson(e as Map<String, dynamic>),
+      )
+      .toList(),
 );
 
 Map<String, dynamic> _$ItemSizeToJson(ItemSize instance) => <String, dynamic>{

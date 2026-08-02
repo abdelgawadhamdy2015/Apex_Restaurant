@@ -48,7 +48,7 @@ class ItemSize {
   final String sizeNameEn;
   final double price;
   final bool isActive;
-  final ItemDiscount discount;
+  final List<ItemDiscount?>? discount;
 
   const ItemSize({
     required this.variantId,

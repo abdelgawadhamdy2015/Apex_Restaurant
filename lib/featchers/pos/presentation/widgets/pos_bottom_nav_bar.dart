@@ -44,10 +44,7 @@ class PosBottomNavBar extends StatelessWidget {
             icon: const Icon(Icons.more_horiz),
             label: lang.more,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            label: lang.customers,
-          ),
+
           BottomNavigationBarItem(
             icon: const Icon(Icons.receipt_long_outlined),
             label: lang.navOrders,

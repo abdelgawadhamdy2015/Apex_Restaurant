@@ -33,20 +33,20 @@ class PosClientModel {
   final int salesPriceId;
   final int lessSalesPriceId;
   final bool canDelete;
-  final String buildingNumber;
-  final String streetName;
-  final String neighborhood;
-  final String city;
-  final String country;
-  final String postalNumber;
-  final FinancialAccountModel financialAccountId;
-  final String statusAr;
-  final String statusEn;
-  final String typeAr;
-  final String typeEn;
+  final String? buildingNumber;
+  final String? streetName;
+  final String? neighborhood;
+  final String? city;
+  final String? country;
+  final String? postalNumber;
+  final FinancialAccountModel? financialAccountId;
+  final String? statusAr;
+  final String? statusEn;
+  final String? typeAr;
+  final String? typeEn;
   final bool isUsedInInvoices;
-  final List<ClientAddressModel> personAddress;
-  final List<ClientPhoneModel> personPhones;
+  final List<ClientAddressModel>? personAddress;
+  final List<ClientPhoneModel>? personPhones;
 
   const PosClientModel({
     required this.id,
@@ -146,6 +146,17 @@ class ClientAddressModel {
       _$ClientAddressModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ClientAddressModelToJson(this);
+
+  String get fullAddress {
+    final addressParts = [
+      buildingNo,
+      street,
+      district,
+      city,
+    ].where((part) => part != null && part.isNotEmpty).toList();
+
+    return addressParts.join(', ');
+  }
 }
 
 @JsonSerializable()

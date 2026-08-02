@@ -30,6 +30,7 @@ class MoreOptions extends StatelessWidget {
       extra: TablesScreenArgs(
         branchId: homeState.selectedEmployeeBranch?.branchId ?? 0,
         personList: cartBloc.state.persons,
+        inCartScreen: false,
       ),
     );
   }

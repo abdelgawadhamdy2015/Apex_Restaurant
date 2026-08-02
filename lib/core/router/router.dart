@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/add_customer_screen.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/cart_screen.dart';
@@ -15,6 +16,7 @@ import 'package:apex_restaurant/featchers/onboarding/presentation/pages/onboardi
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/orders_screen.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/screens/payment_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
@@ -107,9 +109,17 @@ class AppRouter {
         path: Routes.paymentScreen,
         name: Routes.paymentScreen,
         builder: (context, state) {
+          final saveInvoiceRequestModel =
+              state.extra as SaveInvoiceRequestModel;
           return BlocProvider(
-            create: (context) => getIt<PaymentBloc>(),
-            child: PaymentScreen(),
+            create: (context) => getIt<PaymentBloc>()
+              ..add(
+                InitializePaymentEvent(
+                  totalAmount:
+                      saveInvoiceRequestModel.invoice?.totalInvoicePrice ?? 0.0,
+                ),
+              ),
+            child: PaymentScreen(invoiceRequestModel: saveInvoiceRequestModel),
           );
         },
       ),
@@ -135,6 +145,7 @@ class AppRouter {
             child: TablesScreen(
               branchId: args.branchId,
               personList: args.personList,
+              inCartScreen: args.inCartScreen,
             ),
           );
         },
