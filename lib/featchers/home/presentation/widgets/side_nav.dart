@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
@@ -349,29 +350,10 @@ class _ChangeLanguageDialogState extends State<ChangeLanguageDialog> {
   }
 
   void _showToast(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
     final msg = _selected.languageCode == 'ar'
         ? 'تم تغيير اللغة إلى العربية ✓'
         : 'Language changed to English ✓';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          msg,
-          textAlign: TextAlign.center,
-          // Was implicitly white text on AppColors.textPrimary. Using the
-          // ColorScheme's inverse pairing keeps contrast correct in both
-          // light and dark mode instead of assuming a dark background.
-          style: TextStyle(color: theme.colorScheme.onInverseSurface),
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(spacing.radiusMd),
-        ),
-        backgroundColor: theme.colorScheme.inverseSurface,
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    HelperMethods.showSnackBar(context: context, message: msg, isError: false);
   }
 
   @override

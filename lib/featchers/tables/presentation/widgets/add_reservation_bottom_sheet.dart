@@ -120,7 +120,11 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
 
   void _submit(S lang) {
     if (_selectedDate == null || _selectedTime == null) {
-      HelperMethods.showSnackBar(context, lang.selectDateAndTimeError, false);
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.selectDateAndTimeError,
+        isError: false,
+      );
       return;
     }
 
@@ -318,12 +322,16 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
       listener: (context, state) {
         if (state.status == TablesStatus.success) {
           Navigator.pop(context);
-          HelperMethods.showSnackBar(context, lang.reservationSuccess, false);
+          HelperMethods.showSnackBar(
+            context: context,
+            message: lang.reservationSuccess,
+            isError: false,
+          );
         } else if (state.status == TablesStatus.failure) {
           HelperMethods.showSnackBar(
-            context,
-            state.errorMessage ?? lang.unexpectedError,
-            true,
+            context: context,
+            message: state.errorMessage ?? lang.unexpectedError,
+            isError: true,
           );
         }
       },
@@ -356,6 +364,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
               ),
               SizedBox(height: spacing.sm),
               DateTextField(
+                type: DateTextFieldType.date,
                 label: lang.date,
                 controller: _dateController,
                 onTap: _pickDate,
@@ -365,7 +374,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                 label: lang.time,
                 controller: _timeController,
                 onTap: _pickTime,
-                isDate: false,
+                type: DateTextFieldType.time,
               ),
               SizedBox(height: spacing.sm),
               _labeledField(

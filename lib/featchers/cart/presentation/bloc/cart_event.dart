@@ -80,6 +80,14 @@ class SyncCartItemsEvent extends CartEvent {
   List<Object?> get props => [items];
 }
 
+class UpdateTakeawayDateTimeEvent extends CartEvent {
+  final DateTime takeawayDateTime;
+  const UpdateTakeawayDateTimeEvent({required this.takeawayDateTime});
+
+  @override
+  List<Object?> get props => [takeawayDateTime];
+}
+
 class SelectWaiterEvent extends CartEvent {
   final WaiterModel? waiter;
   const SelectWaiterEvent(this.waiter);

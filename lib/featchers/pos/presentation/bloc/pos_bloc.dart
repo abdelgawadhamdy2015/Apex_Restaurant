@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
@@ -34,7 +36,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<CancelOrderEvent>(_onCancelOrder);
     on<ShowToastEvent>(_onShowToast);
     on<DismissToastEvent>(_onDismissToast);
-    on<ChangeOrderTypeEvent>(_onChangeOrderType);
     on<SelectTableEvent>(_onSelectTable);
   }
 
@@ -64,12 +65,13 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             );
 
             if (firstCategory != null) {
+              add(SelectCategoryEvent(firstCategory));
               add(
                 LoadItemsEvent(
                   GetItemsRequest(
                     categoryId: firstCategory.id,
                     pageNumber: 1,
-                    pageSize: 50,
+                    pageSize: 20,
                   ),
                 ),
               );
@@ -118,6 +120,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       response.when(
         success: (data) {
           if (data.result == 1) {
+            log("Food Additives Loaded: ${data.data?.length ?? 0}");
             emit(
               state.copyWith(
                 status: PosStatus.loaded,
@@ -135,6 +138,10 @@ class PosBloc extends Bloc<PosEvent, PosState> {
           }
         },
         failure: (errorHandler) {
+          log(
+            "errorHandler: ${errorHandler.apiErrorModel.errorMessageAr ?? 0}",
+          );
+
           emit(
             state.copyWith(
               status: PosStatus.error,
@@ -146,6 +153,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         },
       );
     } catch (e) {
+      log("error: ${e.toString()}");
       emit(
         state.copyWith(
           status: PosStatus.error,
@@ -207,12 +215,14 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   }
 
   void _onSelectCategory(SelectCategoryEvent event, Emitter<PosState> emit) {
+    log(
+      "Selected Category: ${event.category.arabicName} (ID: ${event.category.id})",
+    );
     emit(
       state.copyWith(
         selectedCategory: event.category,
         additives: event.category.additives,
-        currentMenuItems:
-            const [], // Optional: Clear old category items while fetching
+        currentMenuItems: const [],
       ),
     );
 
@@ -221,7 +231,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         GetItemsRequest(
           categoryId: event.category.id,
           pageNumber: 1,
-          pageSize: 50,
+          pageSize: 20,
         ),
       ),
     );
@@ -412,10 +422,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
   void _onDismissToast(DismissToastEvent event, Emitter<PosState> emit) {
     emit(state.copyWith(clearToast: true));
-  }
-
-  void _onChangeOrderType(ChangeOrderTypeEvent event, Emitter<PosState> emit) {
-    emit(state.copyWith(orderType: event.type));
   }
 
   void _onSelectTable(SelectTableEvent event, Emitter<PosState> emit) {

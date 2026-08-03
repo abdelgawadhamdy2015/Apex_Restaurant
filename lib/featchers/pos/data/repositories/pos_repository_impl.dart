@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
@@ -107,7 +109,8 @@ class PosRepositoryImpl implements PosRepository {
         request: request,
       );
       return ApiResult.success(response);
-    } catch (e) {
+    } catch (e, s) {
+      log("Error in getFoodAdditives: ${e.toString()} \nStackTrace: $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }

@@ -84,7 +84,7 @@
 //     if (didPop) {
 //       HelperMethods.exitApp(context);
 //     } else {
-//       ScaffoldMessenger.of(context).showSnackBar(
+//        HelperMethods.showSnackBar(
 //         SnackBar(
 //             content: Text(S.of(context).exitApp),
 //             duration: const Duration(seconds: 1)),

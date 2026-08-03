@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
@@ -92,11 +93,10 @@ class _ReservationSearchFilterCardState
     final toDate = _parseDate(_toDateController.text);
 
     if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('"To date" cannot be before "From date".'),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
+      HelperMethods.showSnackBar(
+        context: context,
+        message: 'End date cannot be before Start date.',
+        isError: true,
       );
       return;
     }

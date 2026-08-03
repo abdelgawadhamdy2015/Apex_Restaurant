@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
@@ -105,14 +104,6 @@ class ShowToastEvent extends PosEvent {
 
 class DismissToastEvent extends PosEvent {
   const DismissToastEvent();
-}
-
-class ChangeOrderTypeEvent extends PosEvent {
-  final PosOrderType type;
-  const ChangeOrderTypeEvent(this.type);
-
-  @override
-  List<Object?> get props => [type];
 }
 
 class SelectTableEvent extends PosEvent {

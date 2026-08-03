@@ -1,7 +1,12 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class PaymentSuccess extends StatelessWidget {
   final PaymentSuccessModel model;
@@ -225,7 +230,11 @@ class _SuccessActionButtons extends StatelessWidget {
           backgroundColor: theme.colorScheme.primary,
           contentColor: theme.colorScheme.onPrimary,
           borderColor: theme.colorScheme.primary,
-          onTap: () {},
+          onTap: () {
+            final cartBloc = context.read<CartBloc>();
+            cartBloc.add(ClearCartEvent());
+            context.goNamed(Routes.posScreen);
+          },
         ),
         SizedBox(height: spacing.xs),
 
@@ -255,7 +264,11 @@ class _SuccessActionButtons extends StatelessWidget {
           backgroundColor: Colors.transparent,
           contentColor: theme.colorScheme.primary,
           borderColor: theme.colorScheme.primary,
-          onTap: () {},
+          onTap: () {
+            final cartBloc = context.read<CartBloc>();
+            cartBloc.add(ClearCartEvent());
+            context.goNamed(Routes.ordersScreen);
+          },
         ),
       ],
     );

@@ -21,7 +21,7 @@ class CartState extends Equatable {
   final DiscountType selectedDiscountType;
   final ClientAddressModel? selectedAddress;
   final TableEntity? selectedTable;
-
+  final DateTime? takeawayDateTime;
   final List<OrderItem> items;
   final List<DynamicDiscountModel> discounts;
   final SaveDiscountModel? saveDiscountModel;
@@ -50,6 +50,7 @@ class CartState extends Equatable {
     this.status = CartStatus.initial,
     this.items = const [],
     this.couponDiscountvalue,
+    this.takeawayDateTime,
     this.waiters = const [],
     this.deliveryAgents = const [],
     this.persons = const [],
@@ -126,7 +127,10 @@ class CartState extends Equatable {
             : null,
         additives: item.addons
             .map(
-              (addon) => SaveAdditiveModel(additiveId: addon.id, quantity: 1.0),
+              (addon) => SaveAdditiveModel(
+                additiveId: int.tryParse(addon.id) ?? 0,
+                quantity: 1.0,
+              ),
             )
             .toList(),
       );
@@ -135,11 +139,12 @@ class CartState extends Equatable {
     // 4. Build SaveInvoiceModel
     final invoiceModel = SaveInvoiceModel(
       postype: posTypeInt,
-      foodTableId: 3, // int.tryParse(selectedTable?.id ?? ''),
+      foodTableId: int.tryParse(selectedTable?.id ?? ''),
       waiterId: int.tryParse(selectedWaiter?.id?.toString() ?? ''),
       deliveryManId: int.tryParse(selectedDeliveryMan?.id?.toString() ?? ''),
       deliveryCompanyId: selectedDeliveryCompany?.id,
       clientId: selectedPerson?.id,
+      takeawayDateTime: takeawayDateTime,
       discount: appliedDiscount,
       paidAmount: grandTotal,
       totalInvoicePrice: grandTotal,
@@ -238,6 +243,7 @@ class CartState extends Equatable {
     String? errorMessage,
     String? successMessage,
     TableEntity? selectedTable,
+    DateTime? takeawayDateTime,
   }) {
     return CartState(
       selectedOrderType: selectedOrderType ?? this.selectedOrderType,
@@ -268,6 +274,7 @@ class CartState extends Equatable {
       successMessage: successMessage,
       saveDiscountModel: saveDiscountModel ?? this.saveDiscountModel,
       selectedTable: selectedTable ?? this.selectedTable,
+      takeawayDateTime: takeawayDateTime ?? this.takeawayDateTime,
     );
   }
 
@@ -291,6 +298,7 @@ class CartState extends Equatable {
     selectedDeliveryCompany,
     selectedWaiter,
     selectedDeliveryMan,
+    takeawayDateTime,
     discountAmount,
     deliveryFee,
     vatPercentage,

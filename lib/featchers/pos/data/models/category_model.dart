@@ -35,7 +35,7 @@ class CategoryModel {
 
 @JsonSerializable()
 class AdditiveModel {
-  final int id;
+  final String id;
   final String arabicName;
   final String latinName;
   final double price;

@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/permission_checker.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
@@ -115,11 +116,10 @@ class _MainContent extends StatelessWidget {
           }
 
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage!),
-                backgroundColor: theme.colorScheme.error,
-              ),
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.errorMessage ?? 'An error occurred',
+              isError: true,
             );
           }
         }

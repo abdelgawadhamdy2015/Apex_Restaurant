@@ -47,6 +47,10 @@ class RestaurantConstants {
     "dd/MM/yyyy",
     RestaurantConstants.english,
   );
+  static DateFormat dateTimeFormat = DateFormat(
+    " hh:mm a  dd/MM/yyyy ",
+    // RestaurantConstants.english,
+  );
   static DateFormat dateFormatwithDash = DateFormat(
     "d-M-yyyy",
     RestaurantConstants.english,

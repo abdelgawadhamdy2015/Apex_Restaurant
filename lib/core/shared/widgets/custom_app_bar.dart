@@ -6,13 +6,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
   final VoidCallback? onBackPressed;
   final List<Widget>? actions;
-
+  final bool? centerTitle;
   const CustomAppBar({
     super.key,
     required this.title,
     this.showBackButton = true,
     this.onBackPressed,
     this.actions,
+    this.centerTitle,
   });
 
   @override
@@ -25,7 +26,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       automaticallyImplyLeading: false,
       foregroundColor: theme.colorScheme.onSurface,
-      centerTitle: false,
+      centerTitle: centerTitle ?? false,
       title: Text(
         title,
         style: theme.textTheme.titleLarge?.copyWith(

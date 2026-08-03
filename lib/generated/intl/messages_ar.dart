@@ -169,6 +169,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage(" إلغاء"),
     "cancelled": MessageLookupByLibrary.simpleMessage("ملغي"),
     "cart": MessageLookupByLibrary.simpleMessage("السلة"),
+    "cartIsEmpty": MessageLookupByLibrary.simpleMessage("السلة فارغة."),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("عميل نقدي"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("عهدة الكاشير"),
     "changeAddress": MessageLookupByLibrary.simpleMessage("تغيير العنوان"),
@@ -403,6 +404,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "هل أنت متأكد أنك بحاجة إلى تسجيل الخروج",
     ),
     "noAddons": MessageLookupByLibrary.simpleMessage("بدون إضافات"),
+    "noAddonsAvailable": MessageLookupByLibrary.simpleMessage(
+      "لا توجد إضافات متاحة",
+    ),
     "noCustomerSelected": MessageLookupByLibrary.simpleMessage(
       "لم يتم اختيار عميل",
     ),
@@ -490,6 +494,24 @@ class MessageLookup extends MessageLookupByLibrary {
       "يرجى تسجيل الحضور أولاً",
     ),
     "pleaseFill": MessageLookupByLibrary.simpleMessage("يرجى ملء"),
+    "pleaseSelectValidCustomer": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار عميل صالح.",
+    ),
+    "pleaseSelectValidDeliveryCompany": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار شركة توصيل صالحة.",
+    ),
+    "pleaseSelectValidDeliveryManAndAddress":
+        MessageLookupByLibrary.simpleMessage(
+          "يرجى اختيار مندوب توصيل وعنوان صالحين.",
+        ),
+    "pleaseSelectValidDineInTableandWaiter":
+        MessageLookupByLibrary.simpleMessage("يرجى اختيار طاولة ونادل صالحين."),
+    "pleaseSelectValidSize": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار حجم صالح.",
+    ),
+    "pleaseSelectValidTakeawayDateTime": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار تاريخ ووقت صالحين للاستلام.",
+    ),
     "plusPriceWithCurrency": m9,
     "pm": MessageLookupByLibrary.simpleMessage("مساءً"),
     "popular": MessageLookupByLibrary.simpleMessage("شائع"),
@@ -648,6 +670,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "task": MessageLookupByLibrary.simpleMessage("المهمة"),
     "tax": MessageLookupByLibrary.simpleMessage("الضريبة"),
     "temporary": MessageLookupByLibrary.simpleMessage("مؤقت"),
+    "thisItemHasNoValidSize": MessageLookupByLibrary.simpleMessage(
+      "لا يحتوي هذا الصنف على حجم صالح.",
+    ),
     "time": MessageLookupByLibrary.simpleMessage("الوقت"),
     "timeFormatHint": MessageLookupByLibrary.simpleMessage("hh:mm"),
     "timesOfWork": MessageLookupByLibrary.simpleMessage("مواعيد الدوام"),

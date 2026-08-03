@@ -71,22 +71,39 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
     result.when(
       success: (response) {
-        PaymentSuccessModel(
-          orderNumber: response.result?.toString() ?? '',
-          invoiceNumber: "",
-          totalPaid: event.invoiceRequest.invoice?.paidAmount ?? 0,
-          paymentMethodName:
-              event.invoiceRequest.payments?.first.paymentMethodId.toString() ??
-              '',
-          transactionTime: DateTime.now(),
-          items: event.invoiceRequest.items!
-              .map((item) => OrderItemModel(name: "", quantity: 1, price: 0.0))
-              .toList(),
-        );
+        if (response.result != 1) {
+          emit(
+            state.copyWith(
+              status: PaymentStatus.error,
+              errorMessage:
+                  response.errorMessageAr ??
+                  'فشلت عملية الدفع. يرجى المحاولة مرة أخرى.',
+            ),
+          );
+          return;
+        }
         emit(
           state.copyWith(
             status: PaymentStatus.success,
-            successModel: response.data,
+            successModel: PaymentSuccessModel(
+              orderNumber: response.result?.toString() ?? '',
+              invoiceNumber: "",
+              totalPaid: event.invoiceRequest.invoice?.paidAmount ?? 0,
+              paymentMethodName:
+                  event.invoiceRequest.payments?.first.paymentMethodId
+                      .toString() ??
+                  '',
+              transactionTime: DateTime.now(),
+              items: event.invoiceRequest.items!
+                  .map(
+                    (item) => OrderItemModel(
+                      name: item.itemId.toString(),
+                      quantity: 1,
+                      price: 0.0,
+                    ),
+                  )
+                  .toList(),
+            ),
           ),
         );
       },

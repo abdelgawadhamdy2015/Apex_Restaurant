@@ -177,6 +177,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
     "cart": MessageLookupByLibrary.simpleMessage("Cart"),
+    "cartIsEmpty": MessageLookupByLibrary.simpleMessage("Your cart is empty."),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("Walk-in Customer"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("Cashier Custody"),
     "changeAddress": MessageLookupByLibrary.simpleMessage("Change address"),
@@ -423,6 +424,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Are you shure you need log signOut? ",
     ),
     "noAddons": MessageLookupByLibrary.simpleMessage("No Add-ons"),
+    "noAddonsAvailable": MessageLookupByLibrary.simpleMessage(
+      "No Add-ons Available",
+    ),
     "noCustomerSelected": MessageLookupByLibrary.simpleMessage(
       "No customer selected",
     ),
@@ -514,6 +518,26 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please check in first",
     ),
     "pleaseFill": MessageLookupByLibrary.simpleMessage("please fill "),
+    "pleaseSelectValidCustomer": MessageLookupByLibrary.simpleMessage(
+      "Please select a valid customer.",
+    ),
+    "pleaseSelectValidDeliveryCompany": MessageLookupByLibrary.simpleMessage(
+      "Please select a valid delivery company.",
+    ),
+    "pleaseSelectValidDeliveryManAndAddress":
+        MessageLookupByLibrary.simpleMessage(
+          "Please select a valid delivery person and address.",
+        ),
+    "pleaseSelectValidDineInTableandWaiter":
+        MessageLookupByLibrary.simpleMessage(
+          "Please select a valid table and waiter.",
+        ),
+    "pleaseSelectValidSize": MessageLookupByLibrary.simpleMessage(
+      "Please select a valid size.",
+    ),
+    "pleaseSelectValidTakeawayDateTime": MessageLookupByLibrary.simpleMessage(
+      "Please select a valid takeaway date and time.",
+    ),
     "plusPriceWithCurrency": m9,
     "pm": MessageLookupByLibrary.simpleMessage("P.M"),
     "popular": MessageLookupByLibrary.simpleMessage("Popular"),
@@ -684,6 +708,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "task": MessageLookupByLibrary.simpleMessage("Task"),
     "tax": MessageLookupByLibrary.simpleMessage("Tax"),
     "temporary": MessageLookupByLibrary.simpleMessage("Temp"),
+    "thisItemHasNoValidSize": MessageLookupByLibrary.simpleMessage(
+      "This item has no valid size.",
+    ),
     "time": MessageLookupByLibrary.simpleMessage("Time"),
     "timeFormatHint": MessageLookupByLibrary.simpleMessage("hh:mm"),
     "timesOfWork": MessageLookupByLibrary.simpleMessage("Times of work"),

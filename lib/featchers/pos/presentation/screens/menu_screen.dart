@@ -40,7 +40,7 @@ class _MenuScreenState extends State<MenuScreen> {
         LoadPersonsData(
           request: GetClientsRequest(
             pageNumber: 1,
-            pageSize: 100,
+            pageSize: 20,
             isSupplier: false,
           ),
         ),
@@ -73,12 +73,12 @@ class _MenuScreenState extends State<MenuScreen> {
       body: BlocConsumer<PosBloc, PosState>(
         listener: (context, state) {
           if (state.toastMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.toastMessage!),
-                duration: const Duration(seconds: 2),
-              ),
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.toastMessage!,
+              isError: false,
             );
+
             context.read<PosBloc>().add(const DismissToastEvent());
           }
         },
@@ -135,7 +135,6 @@ class _MenuScreenState extends State<MenuScreen> {
     }
 
     return GridView.builder(
-      // Key forces GridView to completely re-render when category updates
       key: ValueKey(categoryId),
       padding: EdgeInsets.symmetric(
         horizontal: spacing.md,
@@ -152,50 +151,59 @@ class _MenuScreenState extends State<MenuScreen> {
         final item = items[index];
         return PosMenuItemCard(
           item: item,
-          onAddPressed: () {
-            if (cartState.selectedPerson == null) {
-              HelperMethods.openPicker(context, cartState.persons);
-            } else {
-              if (item.sizes.length > 1 || additives.isNotEmpty) {
-                ItemCustomizationSheet.show(context, item, additives, (
-                  customItem,
-                  returnedAdditives, {
-                  required selectedSize,
-                  required selectedAddons,
-                  required discount,
-                  required isPercentageDiscount,
-                  required notes,
-                  required quantity,
-                }) {
-                  final orderItem = OrderItem(
-                    menuItem: customItem,
-                    selectedSize: selectedSize,
-                    addons: selectedAddons,
-                    quantity: quantity,
-                    notes: notes,
-                    discount: discount,
-                    isPercentageDiscount: isPercentageDiscount,
-                  );
-
-                  parentContext.read<CartBloc>().add(
-                    AddOrderItemToCartEvent(orderItem),
-                  );
-                });
-              } else {
-                final orderItem = OrderItem(
-                  menuItem: item,
-                  selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
-                  quantity: 1,
-                );
-
-                parentContext.read<CartBloc>().add(
-                  AddOrderItemToCartEvent(orderItem),
-                );
-              }
-            }
-          },
+          onAddPressed: () =>
+              _onAddPressed(parentContext, item, additives, cartState),
         );
       },
     );
+  }
+
+  void _onAddPressed(
+    BuildContext parentContext,
+    RestaurantItem item,
+    List<AdditiveModel> additives,
+    CartState cartState,
+  ) {
+    if (cartState.selectedPerson == null) {
+      HelperMethods.openPicker(parentContext, cartState.persons);
+      return;
+    }
+
+    final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
+
+    if (!needsCustomization) {
+      final orderItem = OrderItem(
+        menuItem: item,
+        selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
+        quantity: 1,
+      );
+      parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+      return;
+    }
+
+    final posBloc = parentContext.read<PosBloc>();
+
+    ItemCustomizationSheet.show(parentContext, item, posBloc, (
+      customItem,
+      returnedAdditives, {
+      required selectedSize,
+      required selectedAddons,
+      required discount,
+      required isPercentageDiscount,
+      required notes,
+      required quantity,
+    }) {
+      final orderItem = OrderItem(
+        menuItem: customItem,
+        selectedSize: selectedSize,
+        addons: selectedAddons,
+        quantity: quantity,
+        notes: notes,
+        discount: discount,
+        isPercentageDiscount: isPercentageDiscount,
+      );
+
+      parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+    });
   }
 }

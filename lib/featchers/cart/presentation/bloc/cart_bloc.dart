@@ -45,6 +45,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<SelectWaiterEvent>(
       (event, emit) => emit(state.copyWith(selectedWaiter: event.waiter)),
     );
+    on<UpdateTakeawayDateTimeEvent>(
+      (event, emit) =>
+          emit(state.copyWith(takeawayDateTime: event.takeawayDateTime)),
+    );
     on<SelectDeliveryManEvent>(
       (event, emit) =>
           emit(state.copyWith(selectedDeliveryMan: event.deliveryMan)),
@@ -54,6 +58,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel),
       ),
     );
+
     on<ChangeDiscountTypeEvent>(
       (event, emit) =>
           emit(state.copyWith(selectedDiscountType: event.discountType)),

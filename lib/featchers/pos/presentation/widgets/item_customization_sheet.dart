@@ -1,271 +1,13 @@
-// import 'package:apex_restaurant/core/helpers/extensions.dart';
-// import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-// import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-// import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-// import 'package:apex_restaurant/featchers/pos/presentation/widgets/add_to_cart_bar.dart';
-// import 'package:apex_restaurant/featchers/pos/presentation/widgets/discount_type_toggle.dart';
-// import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_addon_tile.dart';
-// import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_header.dart';
-// import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_size_selector.dart';
-// import 'package:apex_restaurant/generated/l10n.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
 
-// class ItemCustomizationSheet extends StatefulWidget {
-//   final RestaurantItem item;
-//   final List<AdditiveModel> additives;
-//   final Function(
-//     RestaurantItem item,
-//     List<AdditiveModel> additives, {
-//     required ItemSize selectedSize,
-//     required List<AdditiveModel> selectedAddons,
-//     required double discount,
-//     required bool isPercentageDiscount,
-//     required String notes,
-//     required int quantity,
-//   })
-//   onConfirm;
-
-//   const ItemCustomizationSheet({
-//     super.key,
-//     required this.item,
-//     required this.onConfirm,
-//     required this.additives,
-//   });
-
-//   static void show(
-//     BuildContext context,
-//     RestaurantItem item,
-//     List<AdditiveModel> additives,
-//     final Function(
-//       RestaurantItem item,
-//       List<AdditiveModel> additives, {
-//       required dynamic selectedSize,
-//       required List<AdditiveModel> selectedAddons,
-//       required double discount,
-//       required bool isPercentageDiscount,
-//       required String notes,
-//       required int quantity,
-//     })
-//     onConfirm,
-//   ) {
-//     showModalBottomSheet(
-//       context: context,
-//       isScrollControlled: true,
-//       backgroundColor: Colors.transparent,
-//       builder: (context) => Directionality(
-//         textDirection: TextDirection.rtl,
-//         child: ItemCustomizationSheet(
-//           item: item,
-//           onConfirm: onConfirm,
-//           additives: additives,
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   State<ItemCustomizationSheet> createState() => _ItemCustomizationSheetState();
-// }
-
-// class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
-//   int _quantity = 1;
-//   int _selectedSizeIndex = 0; // Default to Medium
-
-//   // Tracks quantities per additive index: { additiveIndex: quantity }
-//   final Map<int, int> _addonQuantities = {};
-
-//   bool _isPercentageDiscount = true;
-//   final TextEditingController _discountController = TextEditingController();
-//   final TextEditingController _notesController = TextEditingController();
-
-//   double get _currentBasePrice => widget.item.sizes[_selectedSizeIndex].price;
-
-//   double get _totalPrice {
-//     double addonsTotal = 0.0;
-//     _addonQuantities.forEach((index, qty) {
-//       addonsTotal += widget.additives[index].price * qty;
-//     });
-
-//     double itemTotal = (_currentBasePrice + addonsTotal) * _quantity;
-
-//     double discountVal = double.tryParse(_discountController.text) ?? 0.0;
-//     if (_isPercentageDiscount) {
-//       itemTotal = itemTotal * (1 - (discountVal / 100));
-//     } else {
-//       itemTotal = (itemTotal - discountVal).clamp(0.0, double.infinity);
-//     }
-
-//     return itemTotal;
-//   }
-
-//   List<AdditiveModel> _getSelectedAddonsList() {
-//     final List<AdditiveModel> selectedList = [];
-//     _addonQuantities.forEach((index, qty) {
-//       for (int i = 0; i < qty; i++) {
-//         selectedList.add(widget.additives[index]);
-//       }
-//     });
-//     return selectedList;
-//   }
-
-//   @override
-//   void dispose() {
-//     _discountController.dispose();
-//     _notesController.dispose();
-//     super.dispose();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final theme = Theme.of(context);
-//     final textTheme = theme.textTheme;
-//     final spacing = context.spacing;
-//     final lang = S.of(context);
-//     final dyanmicDiscountisActive = context
-//         .read<CartBloc>()
-//         .state
-//         .dynamicDiscountIsActive;
-//     return Container(
-//       decoration: BoxDecoration(
-//         color: theme.colorScheme.surface,
-//         borderRadius: BorderRadius.vertical(
-//           top: Radius.circular(spacing.radiusPill),
-//         ),
-//       ),
-//       height: MediaQuery.of(context).size.height * 0.9,
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           ItemCustomizationHeader(
-//             itemNameAr: widget.item.itemNameAr,
-//             imagePath: widget.item.imagePath,
-//           ),
-//           const Divider(height: 1),
-//           Expanded(
-//             child: ListView(
-//               padding: EdgeInsets.all(spacing.md),
-//               children: [
-//                 Text(
-//                   lang.productSize,
-//                   style: textTheme.titleMedium?.copyWith(
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 SizedBox(height: spacing.sm),
-//                 ItemSizeSelector(
-//                   sizes: widget.item.sizes,
-//                   selectedIndex: _selectedSizeIndex,
-//                   onSelected: (index) =>
-//                       setState(() => _selectedSizeIndex = index),
-//                 ),
-//                 SizedBox(height: spacing.xl),
-//                 Text(
-//                   lang.addons,
-//                   style: textTheme.titleMedium?.copyWith(
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 SizedBox(height: spacing.xs),
-//                 ...List.generate(widget.additives.length, (index) {
-//                   final addon = widget.additives[index];
-//                   final currentQty = _addonQuantities[index] ?? 0;
-
-//                   return ItemAddonTile(
-//                     addon: addon,
-//                     quantity: currentQty,
-//                     onDecrement: () {
-//                       setState(() {
-//                         if (currentQty > 1) {
-//                           _addonQuantities[index] = currentQty - 1;
-//                         } else {
-//                           _addonQuantities.remove(index);
-//                         }
-//                       });
-//                     },
-//                     onIncrement: () {
-//                       setState(() {
-//                         _addonQuantities[index] = currentQty + 1;
-//                       });
-//                     },
-//                   );
-//                 }),
-//                 SizedBox(height: spacing.xl),
-//                 Text(
-//                   lang.specialDiscount,
-//                   style: textTheme.titleMedium?.copyWith(
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 SizedBox(height: spacing.sm),
-//                 DiscountTypeToggle(
-//                   enabled: !dyanmicDiscountisActive,
-//                   isPercentage: _isPercentageDiscount,
-//                   onChanged: (value) =>
-//                       setState(() => _isPercentageDiscount = value),
-//                 ),
-//                 SizedBox(height: spacing.sm),
-//                 TextField(
-//                   enabled: !dyanmicDiscountisActive,
-//                   controller: _discountController,
-//                   keyboardType: TextInputType.number,
-//                   decoration: InputDecoration(
-//                     hintText: lang.enterDiscountValue,
-//                     fillColor: theme.colorScheme.surfaceContainerHighest,
-//                   ),
-//                   onChanged: (value) => setState(() {}),
-//                 ),
-//                 SizedBox(height: spacing.xl),
-//                 Text(
-//                   lang.specialNotes,
-//                   style: textTheme.titleMedium?.copyWith(
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 SizedBox(height: spacing.sm),
-//                 TextField(
-//                   controller: _notesController,
-//                   maxLines: 3,
-//                   decoration: InputDecoration(
-//                     hintText: lang.specialNotesHint,
-//                     fillColor: theme.colorScheme.surfaceContainerHighest,
-//                   ),
-//                 ),
-//                 SizedBox(height: spacing.xl),
-//               ],
-//             ),
-//           ),
-//           AddToCartBar(
-//             quantity: _quantity,
-//             onIncrement: () => setState(() => _quantity++),
-//             onDecrement: () {
-//               if (_quantity > 1) setState(() => _quantity--);
-//             },
-//             totalPrice: _totalPrice,
-//             onConfirm: () {
-//               Navigator.pop(context);
-//               widget.onConfirm(
-//                 widget.item,
-//                 widget.additives,
-//                 selectedSize: widget.item.sizes[_selectedSizeIndex],
-//                 selectedAddons: _getSelectedAddonsList(),
-//                 discount: double.tryParse(_discountController.text) ?? 0.0,
-//                 isPercentageDiscount: _isPercentageDiscount,
-//                 notes: _notesController.text,
-//                 quantity: _quantity,
-//               );
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/add_to_cart_bar.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/discount_type_toggle.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_addon_tile.dart';
@@ -275,17 +17,11 @@ import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// ASSUMPTION: the cart's line-item model lives at
-// featchers/cart/domain/entities/order_item.dart and is called `OrderItem`,
-// matching how it's used in cart_screen.dart (`item.menuItem`, `item.addons`,
-// `item.selectedSize`, `item.quantity`, `item.notes`, `item.totalPrice`).
-// Fix this import path if your real one differs. It also assumes OrderItem
-// exposes `discount` (double) and `isPercentageDiscount` (bool) — see the
-// prefill method below for where those are read.
-
 class ItemCustomizationSheet extends StatefulWidget {
   final RestaurantItem item;
-  final List<AdditiveModel> additives;
+
+  final PosBloc posBloc;
+
   final Function(
     RestaurantItem item,
     List<AdditiveModel> additives, {
@@ -298,21 +34,14 @@ class ItemCustomizationSheet extends StatefulWidget {
   })
   onConfirm;
 
-  /// When non-null, the sheet opens in "edit" mode: size, addons, quantity,
-  /// notes, and discount are prefilled from this existing cart line.
   final OrderItem? existingItem;
-
-  /// Index of [existingItem] inside CartState.items. The sheet itself
-  /// doesn't need this to render — it's just carried through so the caller
-  /// building the onConfirm closure has it in scope without a separate
-  /// captured variable.
   final int? cartIndex;
 
   const ItemCustomizationSheet({
     super.key,
     required this.item,
+    required this.posBloc,
     required this.onConfirm,
-    required this.additives,
     this.existingItem,
     this.cartIndex,
   });
@@ -320,7 +49,7 @@ class ItemCustomizationSheet extends StatefulWidget {
   static void show(
     BuildContext context,
     RestaurantItem item,
-    List<AdditiveModel> additives,
+    PosBloc posBloc,
     final Function(
       RestaurantItem item,
       List<AdditiveModel> additives, {
@@ -343,8 +72,8 @@ class ItemCustomizationSheet extends StatefulWidget {
         textDirection: TextDirection.rtl,
         child: ItemCustomizationSheet(
           item: item,
+          posBloc: posBloc,
           onConfirm: onConfirm,
-          additives: additives,
           existingItem: existingItem,
           cartIndex: cartIndex,
         ),
@@ -358,10 +87,14 @@ class ItemCustomizationSheet extends StatefulWidget {
 
 class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
   int _quantity = 1;
-  int _selectedSizeIndex = 0; // Default to Medium
+  int _selectedSizeIndex = 0;
 
-  // Tracks quantities per additive index: { additiveIndex: quantity }
   final Map<int, int> _addonQuantities = {};
+
+  bool _addonsPrefilled = false;
+
+  bool _isLoadingAdditives = true;
+  StreamSubscription<PosState>? _posSubscription;
 
   bool _isPercentageDiscount = true;
   final TextEditingController _discountController = TextEditingController();
@@ -371,10 +104,12 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
 
   double get _currentBasePrice => widget.item.sizes[_selectedSizeIndex].price;
 
-  double get _totalPrice {
+  double _totalPrice(List<AdditiveModel> additives) {
     double addonsTotal = 0.0;
     _addonQuantities.forEach((index, qty) {
-      addonsTotal += widget.additives[index].price * qty;
+      if (index < additives.length) {
+        addonsTotal += additives[index].price * qty;
+      }
     });
 
     double itemTotal = (_currentBasePrice + addonsTotal) * _quantity;
@@ -389,11 +124,13 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     return itemTotal;
   }
 
-  List<AdditiveModel> _getSelectedAddonsList() {
+  List<AdditiveModel> _getSelectedAddonsList(List<AdditiveModel> additives) {
     final List<AdditiveModel> selectedList = [];
     _addonQuantities.forEach((index, qty) {
-      for (int i = 0; i < qty; i++) {
-        selectedList.add(widget.additives[index]);
+      if (index < additives.length) {
+        for (int i = 0; i < qty; i++) {
+          selectedList.add(additives[index]);
+        }
       }
     });
     return selectedList;
@@ -402,29 +139,30 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
   @override
   void initState() {
     super.initState();
-    _prefillFromExistingItemIfAny();
+    _prefillSizeAndFieldsFromExistingItemIfAny();
+
+    if ((widget.posBloc.state.additives ?? []).isNotEmpty ||
+        widget.posBloc.state.status != PosStatus.loading) {
+      _isLoadingAdditives = false;
+    }
+
+    _posSubscription = widget.posBloc.stream.listen((state) {
+      if (state.status != PosStatus.loading && _isLoadingAdditives && mounted) {
+        setState(() => _isLoadingAdditives = false);
+      }
+    });
   }
 
-  void _prefillFromExistingItemIfAny() {
+  void _prefillSizeAndFieldsFromExistingItemIfAny() {
     final existing = widget.existingItem;
     if (existing == null) return;
 
-    // 1) Size
     final existingSize = existing.selectedSize;
     if (existingSize != null) {
       final idx = widget.item.sizes.indexWhere(
         (s) => s.sizeNameAr == existingSize.sizeNameAr,
       );
       if (idx != -1) _selectedSizeIndex = idx;
-    }
-
-    for (final addon in existing.addons) {
-      final idx = widget.additives.indexWhere(
-        (a) => a.arabicName == addon.arabicName,
-      );
-      if (idx != -1) {
-        _addonQuantities[idx] = (_addonQuantities[idx] ?? 0) + 1;
-      }
     }
 
     _quantity = existing.quantity;
@@ -436,8 +174,26 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     }
   }
 
+  void _prefillAddonsOnceIfNeeded(List<AdditiveModel> additives) {
+    if (_addonsPrefilled || additives.isEmpty) return;
+    final existing = widget.existingItem;
+    if (existing != null) {
+      _addonQuantities.clear();
+      for (final addon in existing.addons) {
+        final idx = additives.indexWhere(
+          (a) => a.arabicName == addon.arabicName,
+        );
+        if (idx != -1) {
+          _addonQuantities[idx] = (_addonQuantities[idx] ?? 0) + 1;
+        }
+      }
+    }
+    _addonsPrefilled = true;
+  }
+
   @override
   void dispose() {
+    _posSubscription?.cancel();
     _discountController.dispose();
     _notesController.dispose();
     super.dispose();
@@ -453,6 +209,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
         .read<CartBloc>()
         .state
         .dynamicDiscountIsActive;
+
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -461,132 +218,178 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
         ),
       ),
       height: MediaQuery.of(context).size.height * 0.9,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ItemCustomizationHeader(
-            itemNameAr: widget.item.itemNameAr,
-            imagePath: widget.item.imagePath,
-          ),
-          const Divider(height: 1),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(spacing.md),
-              children: [
-                Text(
-                  lang.productSize,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: spacing.sm),
-                ItemSizeSelector(
-                  sizes: widget.item.sizes,
-                  selectedIndex: _selectedSizeIndex,
-                  onSelected: (index) =>
-                      setState(() => _selectedSizeIndex = index),
-                ),
-                SizedBox(height: spacing.xl),
-                Text(
-                  lang.addons,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: spacing.xs),
-                ...List.generate(widget.additives.length, (index) {
-                  final addon = widget.additives[index];
-                  final currentQty = _addonQuantities[index] ?? 0;
+      child: BlocBuilder<PosBloc, PosState>(
+        bloc: widget.posBloc,
+        builder: (context, posState) {
+          final additives = posState.additives ?? [];
+          final isLoadingAddons = _isLoadingAdditives && additives.isEmpty;
 
-                  return ItemAddonTile(
-                    addon: addon,
-                    quantity: currentQty,
-                    onDecrement: () {
-                      setState(() {
-                        if (currentQty > 1) {
-                          _addonQuantities[index] = currentQty - 1;
-                        } else {
-                          _addonQuantities.remove(index);
-                        }
-                      });
-                    },
-                    onIncrement: () {
-                      setState(() {
-                        _addonQuantities[index] = currentQty + 1;
-                      });
-                    },
-                  );
-                }),
-                SizedBox(height: spacing.xl),
-                Text(
-                  lang.specialDiscount,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+          _prefillAddonsOnceIfNeeded(additives);
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ItemCustomizationHeader(
+                itemNameAr: widget.item.itemNameAr,
+                imagePath: widget.item.imagePath,
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.all(spacing.md),
+                  children: [
+                    Text(
+                      lang.productSize,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: spacing.sm),
+                    ItemSizeSelector(
+                      sizes: widget.item.sizes,
+                      selectedIndex: _selectedSizeIndex,
+                      onSelected: (index) =>
+                          setState(() => _selectedSizeIndex = index),
+                    ),
+                    SizedBox(height: spacing.xl),
+                    Text(
+                      lang.addons,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: spacing.xs),
+                    if (isLoadingAddons)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: spacing.lg),
+                        child: const Center(child: CircularProgressIndicator()),
+                      )
+                    else if (additives.isEmpty)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: spacing.sm),
+                        child: Text(
+                          'لا توجد إضافات متاحة',
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      )
+                    else
+                      ...List.generate(additives.length, (index) {
+                        final addon = additives[index];
+                        final currentQty = _addonQuantities[index] ?? 0;
+
+                        return ItemAddonTile(
+                          addon: addon,
+                          quantity: currentQty,
+                          onDecrement: () {
+                            setState(() {
+                              if (currentQty > 1) {
+                                _addonQuantities[index] = currentQty - 1;
+                              } else {
+                                _addonQuantities.remove(index);
+                              }
+                            });
+                          },
+                          onIncrement: () {
+                            setState(() {
+                              _addonQuantities[index] = currentQty + 1;
+                            });
+                          },
+                        );
+                      }),
+                    SizedBox(height: spacing.xl),
+                    Text(
+                      lang.specialDiscount,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: spacing.sm),
+                    DiscountTypeToggle(
+                      enabled: !dyanmicDiscountisActive,
+                      isPercentage: _isPercentageDiscount,
+                      onChanged: (value) =>
+                          setState(() => _isPercentageDiscount = value),
+                    ),
+                    SizedBox(height: spacing.sm),
+                    TextField(
+                      enabled: !dyanmicDiscountisActive,
+                      controller: _discountController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: lang.enterDiscountValue,
+                        fillColor: theme.colorScheme.surfaceContainerHighest,
+                      ),
+                      onChanged: (value) => setState(() {}),
+                    ),
+                    SizedBox(height: spacing.xl),
+                    Text(
+                      lang.specialNotes,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: spacing.sm),
+                    TextField(
+                      controller: _notesController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: lang.specialNotesHint,
+                        fillColor: theme.colorScheme.surfaceContainerHighest,
+                      ),
+                    ),
+                    SizedBox(height: spacing.xl),
+                  ],
                 ),
-                SizedBox(height: spacing.sm),
-                DiscountTypeToggle(
-                  enabled: !dyanmicDiscountisActive,
-                  isPercentage: _isPercentageDiscount,
-                  onChanged: (value) =>
-                      setState(() => _isPercentageDiscount = value),
-                ),
-                SizedBox(height: spacing.sm),
-                TextField(
-                  enabled: !dyanmicDiscountisActive,
-                  controller: _discountController,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    hintText: lang.enterDiscountValue,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                  ),
-                  onChanged: (value) => setState(() {}),
-                ),
-                SizedBox(height: spacing.xl),
-                Text(
-                  lang.specialNotes,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: spacing.sm),
-                TextField(
-                  controller: _notesController,
-                  maxLines: 3,
-                  decoration: InputDecoration(
-                    hintText: lang.specialNotesHint,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
-                  ),
-                ),
-                SizedBox(height: spacing.xl),
-              ],
-            ),
-          ),
-          AddToCartBar(
-            quantity: _quantity,
-            onIncrement: () => setState(() => _quantity++),
-            onDecrement: () {
-              if (_quantity > 1) setState(() => _quantity--);
-            },
-            totalPrice: _totalPrice,
-            // If AddToCartBar supports a label override, swap the confirm
-            // button's text in edit mode, e.g.:
-            // confirmLabel: _isEditMode ? lang.saveChanges : lang.addToCart,
-            onConfirm: () {
-              Navigator.pop(context);
-              widget.onConfirm(
-                widget.item,
-                widget.additives,
-                selectedSize: widget.item.sizes[_selectedSizeIndex],
-                selectedAddons: _getSelectedAddonsList(),
-                discount: double.tryParse(_discountController.text) ?? 0.0,
-                isPercentageDiscount: _isPercentageDiscount,
-                notes: _notesController.text,
+              ),
+              AddToCartBar(
                 quantity: _quantity,
-              );
-            },
-          ),
-        ],
+                onIncrement: () => setState(() => _quantity++),
+                onDecrement: () {
+                  if (_quantity > 1) setState(() => _quantity--);
+                },
+                totalPrice: _totalPrice(additives),
+                onConfirm: () {
+                  if (widget.item.sizes[_selectedSizeIndex].sizeId <= 0 &&
+                      widget.item.sizes.length == 1) {
+                    {
+                      HelperMethods.showSnackBar(
+                        context: context,
+                        message: S.of(context).thisItemHasNoValidSize,
+                        isError: true,
+                      );
+                      return;
+                    }
+                  }
+
+                  if (widget.item.sizes[_selectedSizeIndex].sizeId <= 0 &&
+                      widget.item.sizes.length > 1) {
+                    {
+                      HelperMethods.showSnackBar(
+                        context: context,
+                        message: S.of(context).pleaseSelectValidSize,
+                        isError: true,
+                      );
+                      return;
+                    }
+                  }
+                  Navigator.pop(context);
+                  widget.onConfirm(
+                    widget.item,
+                    additives,
+                    selectedSize: widget.item.sizes[_selectedSizeIndex],
+                    selectedAddons: _getSelectedAddonsList(additives),
+                    discount: double.tryParse(_discountController.text) ?? 0.0,
+                    isPercentageDiscount: _isPercentageDiscount,
+                    notes: _notesController.text,
+                    quantity: _quantity,
+                  );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }

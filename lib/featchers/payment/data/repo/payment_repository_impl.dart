@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
@@ -18,7 +19,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
       );
       return ApiResult.success(response);
     } catch (e) {
-      return ApiResult.failure(e as dynamic);
+      return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
 }
