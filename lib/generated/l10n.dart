@@ -3541,6 +3541,96 @@ class S {
       args: [],
     );
   }
+
+  /// `No Add-ons Available`
+  String get noAddonsAvailable {
+    return Intl.message(
+      'No Add-ons Available',
+      name: 'noAddonsAvailable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a valid delivery company.`
+  String get pleaseSelectValidDeliveryCompany {
+    return Intl.message(
+      'Please select a valid delivery company.',
+      name: 'pleaseSelectValidDeliveryCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a valid delivery person and address.`
+  String get pleaseSelectValidDeliveryManAndAddress {
+    return Intl.message(
+      'Please select a valid delivery person and address.',
+      name: 'pleaseSelectValidDeliveryManAndAddress',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a valid table and waiter.`
+  String get pleaseSelectValidDineInTableandWaiter {
+    return Intl.message(
+      'Please select a valid table and waiter.',
+      name: 'pleaseSelectValidDineInTableandWaiter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a valid takeaway date and time.`
+  String get pleaseSelectValidTakeawayDateTime {
+    return Intl.message(
+      'Please select a valid takeaway date and time.',
+      name: 'pleaseSelectValidTakeawayDateTime',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a valid customer.`
+  String get pleaseSelectValidCustomer {
+    return Intl.message(
+      'Please select a valid customer.',
+      name: 'pleaseSelectValidCustomer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Your cart is empty.`
+  String get cartIsEmpty {
+    return Intl.message(
+      'Your cart is empty.',
+      name: 'cartIsEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please select a valid size.`
+  String get pleaseSelectValidSize {
+    return Intl.message(
+      'Please select a valid size.',
+      name: 'pleaseSelectValidSize',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `This item has no valid size.`
+  String get thisItemHasNoValidSize {
+    return Intl.message(
+      'This item has no valid size.',
+      name: 'thisItemHasNoValidSize',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

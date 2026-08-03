@@ -1,4 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
@@ -22,22 +24,18 @@ class PaymentScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(lang.payment),
+      appBar: CustomAppBar(
+        title: lang.payment,
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        showBackButton: false,
       ),
       body: BlocConsumer<PaymentBloc, PaymentState>(
         listener: (context, state) {
           if (state.status == PaymentStatus.error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ?? lang.somethingWentWrong),
-                backgroundColor: theme.colorScheme.error,
-              ),
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.errorMessage ?? lang.somethingWentWrong,
+              isError: true,
             );
           }
         },

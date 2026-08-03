@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
@@ -164,11 +165,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
         if (state.status == CartStatus.success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.successMessage ?? 'Saved successfully'),
-              backgroundColor: Colors.green,
-            ),
+          HelperMethods.showSnackBar(
+            context: context,
+            message: state.successMessage ?? 'Saved successfully',
+            isError: false,
           );
           context.read<CartBloc>().add(
             LoadPersonsData(
@@ -181,11 +181,10 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           );
           Navigator.pop(context, true);
         } else if (state.status == CartStatus.failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage ?? 'An error occurred'),
-              backgroundColor: theme.colorScheme.error,
-            ),
+          HelperMethods.showSnackBar(
+            context: context,
+            message: state.errorMessage ?? 'An error occurred',
+            isError: true,
           );
         }
       },

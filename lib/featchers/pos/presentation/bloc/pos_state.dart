@@ -19,7 +19,7 @@ class PosState extends Equatable implements ErrorableState {
   final List<TableModel> tables;
   final List<CategoryModel> categories;
   final CategoryModel? selectedCategory;
-
+  final List<AdditiveModel>? additives;
   final List<DeliveryCompanyModel> deliveryCompanies;
   final DeliveryCompanyModel? selectedDeliveryCompany;
 
@@ -51,6 +51,7 @@ class PosState extends Equatable implements ErrorableState {
     this.selectedTable,
     this.floors = const [],
     this.tables = const [],
+    this.additives,
   });
 
   // ── ErrorableState contract ──
@@ -101,6 +102,7 @@ class PosState extends Equatable implements ErrorableState {
       selectedFloor: selectedFloor ?? this.selectedFloor,
       floors: floors ?? this.floors,
       tables: tables ?? this.tables,
+      additives: additives ?? this.additives,
     );
   }
 

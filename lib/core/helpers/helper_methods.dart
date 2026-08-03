@@ -72,12 +72,12 @@ class HelperMethods {
   }
   // ── Snackbar / Toast ───────────────────────────────────────────────────────
 
-  static void showSnackBar(
-    BuildContext context,
-    String message,
-    bool failedData,
-  ) {
-    TopSnackBar.show(context: context, message: message, isError: failedData);
+  static void showSnackBar({
+    required BuildContext context,
+    required String message,
+    required bool isError,
+  }) {
+    TopSnackBar.show(context: context, message: message, isError: isError);
   }
 
   // ── Auth ───────────────────────────────────────────────────────────────────

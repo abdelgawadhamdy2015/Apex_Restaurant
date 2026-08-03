@@ -35,7 +35,7 @@ class SaveInvoiceModel {
   final double? totalInvoicePrice;
   final int? clientId;
   final int? invoiceDiscountId;
-
+  final DateTime? takeawayDateTime;
   const SaveInvoiceModel({
     this.postype,
     this.foodTableId,
@@ -48,6 +48,7 @@ class SaveInvoiceModel {
     this.totalInvoicePrice,
     this.clientId,
     this.invoiceDiscountId,
+    this.takeawayDateTime,
   });
 
   factory SaveInvoiceModel.fromJson(Map<String, dynamic> json) =>

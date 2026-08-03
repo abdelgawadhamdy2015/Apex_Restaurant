@@ -445,5 +445,14 @@
     "openInvoice": "Open Invoice",
     "changeAddress": "Change address",
     "addNewAddress": "Add new address",
-    "selectedTable": "Selected Table"
+    "selectedTable": "Selected Table",
+    "noAddonsAvailable": "No Add-ons Available",
+    "pleaseSelectValidDeliveryCompany": "Please select a valid delivery company.",
+    "pleaseSelectValidDeliveryManAndAddress": "Please select a valid delivery person and address.",
+    "pleaseSelectValidDineInTableandWaiter": "Please select a valid table and waiter.",
+    "pleaseSelectValidTakeawayDateTime": "Please select a valid takeaway date and time.",
+    "pleaseSelectValidCustomer": "Please select a valid customer.",
+    "cartIsEmpty": "Your cart is empty.",
+    "pleaseSelectValidSize": "Please select a valid size.",
+    "thisItemHasNoValidSize": "This item has no valid size."
 }

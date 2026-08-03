@@ -79,11 +79,10 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     if (didPop) {
       HelperMethods.exitApp();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(S.of(context).exitApp),
-          duration: const Duration(seconds: 1),
-        ),
+      HelperMethods.showSnackBar(
+        context: context,
+        message: S.of(context).exitApp,
+        isError: false,
       );
       setState(() => finish = true);
       Future.delayed(

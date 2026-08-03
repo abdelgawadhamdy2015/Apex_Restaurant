@@ -446,5 +446,14 @@
     "openInvoice": "فتح فاتورة",
     "changeAddress": "تغيير العنوان",
     "addNewAddress": "إضافة عنوان جديد",
-    "selectedTable": "الطاولة المحددة"
+    "selectedTable": "الطاولة المحددة",
+    "noAddonsAvailable": "لا توجد إضافات متاحة",
+    "pleaseSelectValidDeliveryCompany": "يرجى اختيار شركة توصيل صالحة.",
+    "pleaseSelectValidDeliveryManAndAddress": "يرجى اختيار مندوب توصيل وعنوان صالحين.",
+    "pleaseSelectValidDineInTableandWaiter": "يرجى اختيار طاولة ونادل صالحين.",
+    "pleaseSelectValidTakeawayDateTime": "يرجى اختيار تاريخ ووقت صالحين للاستلام.",
+    "pleaseSelectValidCustomer": "يرجى اختيار عميل صالح.",
+    "cartIsEmpty": "السلة فارغة.",
+    "pleaseSelectValidSize": "يرجى اختيار حجم صالح.",
+    "thisItemHasNoValidSize": "لا يحتوي هذا الصنف على حجم صالح."
 }

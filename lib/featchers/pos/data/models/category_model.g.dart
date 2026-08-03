@@ -38,7 +38,7 @@ Map<String, dynamic> _$CategoryModelToJson(CategoryModel instance) =>
 
 AdditiveModel _$AdditiveModelFromJson(Map<String, dynamic> json) =>
     AdditiveModel(
-      id: (json['id'] as num).toInt(),
+      id: json['id'] as String,
       arabicName: json['arabicName'] as String,
       latinName: json['latinName'] as String,
       price: (json['price'] as num).toDouble(),

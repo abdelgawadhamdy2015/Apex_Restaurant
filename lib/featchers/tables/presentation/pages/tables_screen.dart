@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
@@ -86,11 +87,10 @@ class _TablesScreenState extends State<TablesScreen> {
         if (state.status == TablesStatus.failure &&
             state.errorMessage != null &&
             state.errorMessage!.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: theme.colorScheme.error,
-            ),
+          HelperMethods.showSnackBar(
+            context: context,
+            message: state.errorMessage!,
+            isError: true,
           );
         }
       },
