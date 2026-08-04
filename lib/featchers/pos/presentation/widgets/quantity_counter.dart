@@ -25,7 +25,11 @@ class QuantityCounter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          IconButton(icon: const Icon(Icons.add), onPressed: onIncrement),
+          IconButton(
+            icon: const Icon(Icons.add),
+            color: theme.colorScheme.onSecondary,
+            onPressed: onIncrement,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: spacing.md),
             child: Text(
@@ -35,7 +39,11 @@ class QuantityCounter extends StatelessWidget {
               ),
             ),
           ),
-          IconButton(icon: const Icon(Icons.remove), onPressed: onDecrement),
+          IconButton(
+            icon: const Icon(Icons.remove),
+            color: theme.colorScheme.onSecondary,
+            onPressed: onDecrement,
+          ),
         ],
       ),
     );

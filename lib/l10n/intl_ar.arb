@@ -455,5 +455,7 @@
     "pleaseSelectValidCustomer": "يرجى اختيار عميل صالح.",
     "cartIsEmpty": "السلة فارغة.",
     "pleaseSelectValidSize": "يرجى اختيار حجم صالح.",
-    "thisItemHasNoValidSize": "لا يحتوي هذا الصنف على حجم صالح."
+    "thisItemHasNoValidSize": "لا يحتوي هذا الصنف على حجم صالح.",
+    "fromBranch": "من الفرع",
+    "pleaseSelectValidFromBranchDateTime": "يرجى اختيار فرع وتاريخ/وقت صالحين."
 }

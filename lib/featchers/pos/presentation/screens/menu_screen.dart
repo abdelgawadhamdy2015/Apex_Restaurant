@@ -14,7 +14,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/cart_floating_summary_bar.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_sheet.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_categories_bar.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_filters_bar.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_menu_item_card.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_app_bar.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +28,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  int _selectedFilterIndex = 0;
+  // int _selectedFilterIndex = 0;
 
   @override
   void initState() {
@@ -86,6 +85,7 @@ class _MenuScreenState extends State<MenuScreen> {
           final cartState = context.watch<CartBloc>().state;
           return Column(
             children: [
+              Divider(),
               PosCategoriesBar(
                 categories: state.categories,
                 selectedCategoryId: state.selectedCategory?.id,
@@ -93,12 +93,12 @@ class _MenuScreenState extends State<MenuScreen> {
                     context.read<PosBloc>().add(SelectCategoryEvent(cat)),
               ),
               SizedBox(height: spacing.sm),
-
-              PosFiltersBar(
-                selectedIndex: _selectedFilterIndex,
-                onSelected: (index) =>
-                    setState(() => _selectedFilterIndex = index),
-              ),
+              Divider(),
+              // PosFiltersBar(
+              //   selectedIndex: _selectedFilterIndex,
+              //   onSelected: (index) =>
+              //       setState(() => _selectedFilterIndex = index),
+              // ),
               SizedBox(height: spacing.sm),
 
               Expanded(

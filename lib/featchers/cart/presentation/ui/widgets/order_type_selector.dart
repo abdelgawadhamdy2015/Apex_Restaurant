@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,25 +21,32 @@ class OrderTypeSelector extends StatelessWidget {
       child: Row(
         children: [
           _OrderTypeChip(
-            type: OrderType.takeaway,
+            type: CartOrderType.TAKEAWAY,
             label: lang.takeaway,
             icon: Icons.shopping_bag_outlined,
           ),
           SizedBox(width: spacing.xs),
+
           _OrderTypeChip(
-            type: OrderType.dineIn,
-            label: lang.dineIn,
-            icon: Icons.restaurant,
-          ),
-          SizedBox(width: spacing.xs),
-          _OrderTypeChip(
-            type: OrderType.delivery,
+            type: CartOrderType.DELIVERY,
             label: lang.delivery,
             icon: Icons.two_wheeler,
           ),
           SizedBox(width: spacing.xs),
           _OrderTypeChip(
-            type: OrderType.deliveryCompany,
+            type: CartOrderType.DINE_IN,
+            label: lang.dineIn,
+            icon: Icons.restaurant,
+          ),
+          SizedBox(width: spacing.xs),
+          _OrderTypeChip(
+            type: CartOrderType.FROMBRANCH,
+            label: lang.fromBranch,
+            icon: Icons.store,
+          ),
+          SizedBox(width: spacing.xs),
+          _OrderTypeChip(
+            type: CartOrderType.DELIVERY_COMPANY,
             label: lang.deliveryCompanies,
             icon: Icons.storefront,
           ),
@@ -56,7 +63,7 @@ class _OrderTypeChip extends StatelessWidget {
     required this.icon,
   });
 
-  final OrderType type;
+  final CartOrderType type;
   final String label;
   final IconData icon;
 
@@ -71,8 +78,8 @@ class _OrderTypeChip extends StatelessWidget {
 
     final activeColor = theme.colorScheme.primary;
     final inactiveColor = theme.colorScheme.surfaceContainerHighest;
-    final activeTextColor = theme.colorScheme.onPrimary;
-    final inactiveTextColor = theme.colorScheme.onSurfaceVariant;
+    final activeTextColor = Colors.white;
+    final inactiveTextColor = theme.colorScheme.onPrimary;
 
     return InkWell(
       onTap: () => context.read<CartBloc>().add(ChangeOrderTypeEvent(type)),

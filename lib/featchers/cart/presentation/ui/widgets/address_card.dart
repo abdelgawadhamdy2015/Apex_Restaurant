@@ -37,7 +37,7 @@ class AddressCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -50,18 +50,19 @@ class AddressCard extends StatelessWidget {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    '${lang.address}: ${selectedAddress?.id.toString() ?? ''}',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  SizedBox(width: spacing.xxs),
                   Icon(
                     Icons.location_on_outlined,
                     size: icons.sm,
                     color: theme.colorScheme.primary,
+                  ),
+                  SizedBox(width: spacing.xxs),
+
+                  Text(
+                    '${lang.address}: ${selectedAddress?.id.toString() ?? ''}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -76,18 +77,21 @@ class AddressCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.chevron_left,
-                        size: icons.sm,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      SizedBox(width: spacing.xxs),
                       Text(
                         lang.changeAddress,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          decorationColor: theme.colorScheme.primary,
                         ),
+                      ),
+                      SizedBox(width: spacing.xxs),
+
+                      Icon(
+                        Icons.chevron_right,
+                        size: icons.sm,
+                        color: theme.colorScheme.primary,
                       ),
                     ],
                   ),
@@ -101,7 +105,7 @@ class AddressCard extends StatelessWidget {
               selectedAddress!.fullAddress,
               textAlign: TextAlign.right,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+                color: theme.colorScheme.onSecondary,
               ),
             ),
           ],

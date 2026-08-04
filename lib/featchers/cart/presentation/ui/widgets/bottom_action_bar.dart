@@ -1,10 +1,10 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,19 +33,20 @@ class BottomActionBar extends StatelessWidget {
       return;
     }
     if (context.read<CartBloc>().state.selectedOrderType ==
-            OrderType.takeaway &&
-        (context.read<CartBloc>().state.takeawayDateTime == null ||
-            context.read<CartBloc>().state.takeawayDateTime!.isBefore(
+            CartOrderType.FROMBRANCH &&
+        (context.read<CartBloc>().state.fromBranchDateTime == null ||
+            context.read<CartBloc>().state.fromBranchDateTime!.isBefore(
               DateTime.now(),
             ))) {
       HelperMethods.showSnackBar(
         context: context,
-        message: S.of(context).pleaseSelectValidTakeawayDateTime,
+        message: S.of(context).pleaseSelectValidFromBranchDateTime,
         isError: true,
       );
       return;
     }
-    if (context.read<CartBloc>().state.selectedOrderType == OrderType.dineIn &&
+    if (context.read<CartBloc>().state.selectedOrderType ==
+            CartOrderType.DINE_IN &&
         (context.read<CartBloc>().state.selectedTable == null ||
             context.read<CartBloc>().state.selectedWaiter == null)) {
       {
@@ -59,7 +60,7 @@ class BottomActionBar extends StatelessWidget {
     }
 
     if (context.read<CartBloc>().state.selectedOrderType ==
-            OrderType.delivery &&
+            CartOrderType.DELIVERY &&
         (context.read<CartBloc>().state.selectedDeliveryMan == null ||
             context.read<CartBloc>().state.selectedAddress == null)) {
       {
@@ -73,7 +74,7 @@ class BottomActionBar extends StatelessWidget {
     }
 
     if (context.read<CartBloc>().state.selectedOrderType ==
-            OrderType.deliveryCompany &&
+            CartOrderType.DELIVERY_COMPANY &&
         context.read<CartBloc>().state.selectedDeliveryCompany == null) {
       {
         HelperMethods.showSnackBar(
@@ -120,7 +121,7 @@ class BottomActionBar extends StatelessWidget {
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
+                foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(
                   vertical: spacing.sm + spacing.xxs / 2,
                 ),
@@ -133,8 +134,8 @@ class BottomActionBar extends StatelessWidget {
               label: Text(
                 lang.checkout,
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: theme.colorScheme.onPrimary,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -146,7 +147,8 @@ class BottomActionBar extends StatelessWidget {
                 horizontal: spacing.md,
                 vertical: spacing.sm + spacing.xxs / 2,
               ),
-              side: BorderSide(color: theme.colorScheme.outline),
+              backgroundColor: theme.colorScheme.onSurface,
+              side: BorderSide(color: theme.colorScheme.outlineVariant),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(spacing.radiusMd),
               ),
@@ -155,13 +157,13 @@ class BottomActionBar extends StatelessWidget {
                 context.read<CartBloc>().add(HoldOrderSubmittedEvent()),
             icon: Icon(
               Icons.pause_circle_outline,
-              color: theme.colorScheme.onSurface,
+              color: theme.colorScheme.onPrimary,
               size: icons.md,
             ),
             label: Text(
               lang.holdOrder,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final iconSizes = context.iconSizes;
 
     return AppBar(
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: theme.colorScheme.onSurface,
       elevation: 0,
       automaticallyImplyLeading: false,
       foregroundColor: theme.colorScheme.onSurface,
@@ -31,12 +31,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         title,
         style: theme.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.bold,
-          color: theme.colorScheme.onSurface,
         ),
       ),
       leading: showBackButton
           ? IconButton(
-              icon: Icon(Icons.arrow_back, size: iconSizes.lg),
+              icon: Icon(
+                Icons.arrow_back,
+                color: theme.colorScheme.onSecondary,
+                size: iconSizes.lg,
+              ),
               onPressed:
                   onBackPressed ?? () => Navigator.of(context).maybePop(),
             )

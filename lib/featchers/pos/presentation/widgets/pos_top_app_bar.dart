@@ -19,7 +19,7 @@ class PosTopAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: Container(
         height: preferredSize.height,
         padding: EdgeInsets.symmetric(horizontal: spacing.md),
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -29,9 +29,7 @@ class PosTopAppBar extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundColor: theme.colorScheme.primary.withOpacity(
-                      0.12,
-                    ),
+                    backgroundColor: theme.colorScheme.primary.withOpacity(0.4),
                     child: Icon(Icons.person, color: theme.colorScheme.primary),
                   ),
                   SizedBox(width: spacing.xs),
@@ -39,7 +37,7 @@ class PosTopAppBar extends StatelessWidget implements PreferredSizeWidget {
                     lang.restaurantManager,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -50,7 +48,7 @@ class PosTopAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: Icon(
                 Icons.search,
                 size: iconSizes.xl,
-                color: theme.colorScheme.onSurface,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
           ],

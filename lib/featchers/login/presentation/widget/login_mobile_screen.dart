@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
@@ -18,6 +19,7 @@ import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -63,8 +65,9 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       canPop: finish,
       onPopInvokedWithResult: _handlePop,
       child: Scaffold(
-        body: GradientContainer(
+        body: SafeArea(
           child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: context.spacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [_buildHeader(context), _buildLoginForm(context)],
@@ -108,99 +111,97 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           Center(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: Assets.images.logo.image(
+              child: Assets.images.apexLogo.image(
                 width: logoW,
-                color: theme.colorScheme.onPrimary,
+                // color: theme.colorScheme.onPrimary,
                 cacheWidth: (logoW * dpr).round(),
                 cacheHeight: (logoH * dpr).round(),
               ),
             ),
           ),
           const SizedBox(width: 24),
-          _buildLanguageDropdown(context),
+          // _buildLanguageDropdown(context),
         ],
       ),
     );
   }
 
-  Widget _buildLanguageDropdown(BuildContext context) {
-    final theme = Theme.of(context);
+  // Widget _buildLanguageDropdown(BuildContext context) {
+  //   final theme = Theme.of(context);
 
-    return DropdownButton<String>(
-      value: selectedLanguage,
-      icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onPrimary),
-      dropdownColor: Colors.transparent,
-      borderRadius: BorderRadius.circular(12),
-      underline: const SizedBox(),
-      onChanged: (String? newValue) {
-        if (newValue != null) {
-          setState(() {
-            selectedLanguage = newValue;
-            widget.changeLanguage(
-              selectedLanguage == lang.arabic
-                  ? const Locale("ar")
-                  : const Locale("en"),
-            );
-          });
-        }
-      },
-      items: [S.of(context).english, lang.arabic].map((value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(
-            value,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
+  //   return DropdownButton<String>(
+  //     value: selectedLanguage,
+  //     icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onPrimary),
+  //     dropdownColor: Colors.transparent,
+  //     borderRadius: BorderRadius.circular(12),
+  //     underline: const SizedBox(),
+  //     onChanged: (String? newValue) {
+  //       if (newValue != null) {
+  //         setState(() {
+  //           selectedLanguage = newValue;
+  //           widget.changeLanguage(
+  //             selectedLanguage == lang.arabic
+  //                 ? const Locale("ar")
+  //                 : const Locale("en"),
+  //           );
+  //         });
+  //       }
+  //     },
+  //     items: [S.of(context).english, lang.arabic].map((value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(
+  //           value,
+  //           style: theme.textTheme.titleMedium?.copyWith(
+  //             color: theme.colorScheme.onPrimary,
+  //             fontWeight: FontWeight.bold,
+  //           ),
+  //         ),
+  //       );
+  //     }).toList(),
+  //   );
+  // }
 
   Widget _buildLoginForm(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
     return SizedBox(
       height: mediaQuery.size.height * 0.8,
-      child: BodyContainer(
-        child: SingleChildScrollView(
-          child: SafeArea(
-            top: false,
-            child: Form(
-              key: context.read<AuthBloc>().formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 16),
-                  _buildLoginTitle(context),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    context,
-                    lang.dbName,
-                    context.read<AuthBloc>().dbController,
-                    lang.insertDBName,
-                  ),
-                  _buildTextField(
-                    context,
-                    lang.email,
-                    context.read<AuthBloc>().emailController,
-                    lang.insertEmail,
-                  ),
-                  _buildTextField(
-                    context,
-                    lang.insertPassword,
-                    context.read<AuthBloc>().passwordController,
-                    lang.password,
-                    obsecure: true,
-                  ),
-                  _buildRememberAndForget(context),
-                  const SizedBox(height: 8),
-                  _buildLoginButton(context),
-                  AuthBlocListener(rememberMe: rememberMe),
-                ],
-              ),
+      child: SingleChildScrollView(
+        child: SafeArea(
+          top: false,
+          child: Form(
+            key: context.read<AuthBloc>().formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 16),
+                _buildLoginTitle(context),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  context,
+                  lang.dbName,
+                  context.read<AuthBloc>().dbController,
+                  lang.insertDBName,
+                ),
+                _buildTextField(
+                  context,
+                  lang.email,
+                  context.read<AuthBloc>().emailController,
+                  lang.insertEmail,
+                ),
+                _buildTextField(
+                  context,
+                  lang.insertPassword,
+                  context.read<AuthBloc>().passwordController,
+                  lang.password,
+                  obsecure: true,
+                ),
+                //   _buildRememberAndForget(context),
+                const SizedBox(height: 8),
+                _buildLoginButton(context),
+                AuthBlocListener(rememberMe: rememberMe),
+              ],
             ),
           ),
         ),

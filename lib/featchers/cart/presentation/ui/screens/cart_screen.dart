@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
@@ -94,23 +95,27 @@ class _CartContent extends StatelessWidget {
 
   Widget _orderTypeSpecificSection(CartState state) {
     switch (state.selectedOrderType) {
-      case OrderType.dineIn:
-        return DineInSelector(persons: state.persons, waiters: state.waiters);
-      case OrderType.delivery:
+      case CartOrderType.TAKEAWAY:
+        return SizedBox.shrink();
+      case CartOrderType.DELIVERY:
         return DeliveryAgentSelector(deliveryMens: state.deliveryAgents);
-      case OrderType.deliveryCompany:
-        return DeliveryCompanySelector(
-          deliveryCompanies: state.deliveryCompanies,
-        );
-      case OrderType.takeaway:
+
+      case CartOrderType.DINE_IN:
+        return DineInSelector(persons: state.persons, waiters: state.waiters);
+
+      case CartOrderType.FROMBRANCH:
         return TakeawaySection(
           controller: TextEditingController(
-            text: state.takeawayDateTime != null
+            text: state.fromBranchDateTime != null
                 ? RestaurantConstants.dateTimeFormat.format(
-                    state.takeawayDateTime!,
+                    state.fromBranchDateTime!,
                   )
                 : '',
           ),
+        );
+      case CartOrderType.DELIVERY_COMPANY:
+        return DeliveryCompanySelector(
+          deliveryCompanies: state.deliveryCompanies,
         );
     }
   }
@@ -123,7 +128,8 @@ class _CartContent extends StatelessWidget {
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 700;
         final contentWidth = isWide ? 700.0 : constraints.maxWidth;
-        final showAddressCard = state.selectedOrderType == OrderType.delivery;
+        final showAddressCard =
+            state.selectedOrderType == CartOrderType.DELIVERY;
         final selectedPerson =
             state.selectedPerson ??
             (state.persons.isNotEmpty ? state.persons.first : null);

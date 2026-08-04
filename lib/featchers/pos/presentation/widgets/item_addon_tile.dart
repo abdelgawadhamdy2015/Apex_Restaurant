@@ -48,46 +48,8 @@ class ItemAddonTile extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // 1. Quantity Stepper Counter (- 0 +)
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEF2FF), // Soft light blue/grey background
-              borderRadius: BorderRadius.circular(spacing.radiusSm),
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.xs,
-              vertical: spacing.xxs,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildStepperButton(
-                  icon: Icons.remove,
-                  onTap: onDecrement,
-                  theme: theme,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: spacing.md),
-                  child: Text(
-                    '$quantity',
-                    style: textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-                _buildStepperButton(
-                  icon: Icons.add,
-                  onTap: onIncrement,
-                  theme: theme,
-                ),
-              ],
-            ),
-          ),
-
-          // 2. Addon Info (Name, Tag, Price)
           Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
@@ -100,9 +62,8 @@ class ItemAddonTile extends StatelessWidget {
                         vertical: spacing.xxs / 2,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(
-                          0xFFFFEAEA,
-                        ), // Light red badge background
+                        color: const Color(0xFFFFEAEA), //
+
                         borderRadius: BorderRadius.circular(spacing.radiusLg),
                       ),
                       child: Row(
@@ -130,7 +91,7 @@ class ItemAddonTile extends StatelessWidget {
                     addon.arabicName,
                     style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
                 ],
@@ -141,10 +102,46 @@ class ItemAddonTile extends StatelessWidget {
                     ? '+${addon.price.toStringAsFixed(2)} ${lang.currencySar}'
                     : lang.free,
                 style: textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade600,
+                  color: theme.colorScheme.onSecondary,
                 ),
               ),
             ],
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onSurface,
+              borderRadius: BorderRadius.circular(spacing.radiusSm),
+              border: Border.all(color: theme.colorScheme.outlineVariant),
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.xs,
+              vertical: spacing.xxs,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildStepperButton(
+                  icon: Icons.remove,
+                  onTap: onDecrement,
+                  theme: theme,
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: spacing.md),
+                  child: Text(
+                    '$quantity',
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+                _buildStepperButton(
+                  icon: Icons.add,
+                  onTap: onIncrement,
+                  theme: theme,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -161,7 +158,7 @@ class ItemAddonTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(4),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant),
+        child: Icon(icon, size: 18, color: theme.colorScheme.onSecondary),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,13 +17,14 @@ class OrderSummaryCard extends StatelessWidget {
     final state = context.watch<CartBloc>().state;
     final spacing = context.spacing;
     final lang = S.of(context);
-    final showDeliveryFee = state.selectedOrderType == OrderType.delivery ||
-        state.selectedOrderType == OrderType.deliveryCompany;
+    final showDeliveryFee =
+        state.selectedOrderType == CartOrderType.DELIVERY ||
+        state.selectedOrderType == CartOrderType.DELIVERY_COMPANY;
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -44,7 +45,8 @@ class OrderSummaryCard extends StatelessWidget {
             SizedBox(height: spacing.xs),
             _SummaryRow(
               title: lang.deliveryFee,
-              value: '${state.deliveryFee.toStringAsFixed(2)} ${lang.currencySar}',
+              value:
+                  '${state.deliveryFee.toStringAsFixed(2)} ${lang.currencySar}',
             ),
           ],
           SizedBox(height: spacing.xs),
@@ -99,14 +101,14 @@ class _SummaryRow extends StatelessWidget {
         Text(
           title,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: color ?? theme.colorScheme.onSurfaceVariant,
+            color: color ?? theme.colorScheme.onPrimary,
           ),
         ),
         Text(
           value,
           style: theme.textTheme.bodySmall?.copyWith(
             fontWeight: FontWeight.bold,
-            color: color ?? theme.colorScheme.onSurface,
+            color: color ?? theme.colorScheme.onSecondary,
           ),
         ),
       ],

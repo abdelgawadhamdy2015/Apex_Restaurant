@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
@@ -129,7 +130,7 @@ class SelectDeliveryCompanyEvent extends CartEvent {
 }
 
 class ChangeOrderTypeEvent extends CartEvent {
-  final OrderType orderType;
+  final CartOrderType orderType;
   const ChangeOrderTypeEvent(this.orderType);
 
   @override

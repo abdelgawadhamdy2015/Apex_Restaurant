@@ -315,6 +315,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "formattedDateTime": m2,
     "free": MessageLookupByLibrary.simpleMessage("مجاناً"),
     "from": MessageLookupByLibrary.simpleMessage("من"),
+    "fromBranch": MessageLookupByLibrary.simpleMessage("من الفرع"),
     "fromDate": MessageLookupByLibrary.simpleMessage("من تاريخ"),
     "fullDay": MessageLookupByLibrary.simpleMessage("يومى"),
     "fullName": MessageLookupByLibrary.simpleMessage("الاسم بالكامل"),
@@ -506,6 +507,9 @@ class MessageLookup extends MessageLookupByLibrary {
         ),
     "pleaseSelectValidDineInTableandWaiter":
         MessageLookupByLibrary.simpleMessage("يرجى اختيار طاولة ونادل صالحين."),
+    "pleaseSelectValidFromBranchDateTime": MessageLookupByLibrary.simpleMessage(
+      "يرجى اختيار فرع وتاريخ/وقت صالحين.",
+    ),
     "pleaseSelectValidSize": MessageLookupByLibrary.simpleMessage(
       "يرجى اختيار حجم صالح.",
     ),

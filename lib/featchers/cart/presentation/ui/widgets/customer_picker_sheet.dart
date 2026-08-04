@@ -60,7 +60,7 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
         return Container(
           padding: EdgeInsets.only(bottom: bottomInset),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.onSurface,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(spacing.radiusXl),
               topRight: Radius.circular(spacing.radiusXl),
@@ -94,13 +94,13 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                       onChanged: _onSearchChanged,
                       decoration: InputDecoration(
                         hintText: lang.searchCustomerHint,
+                        hintStyle: theme.textTheme.bodyMedium,
                         prefixIcon: Icon(
                           Icons.search,
                           color: theme.colorScheme.tertiary,
                         ),
                         filled: true,
-                        fillColor: theme.colorScheme.surfaceContainerHighest
-                            .withOpacity(0.4),
+                        fillColor: theme.colorScheme.surface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(spacing.radiusLg),
                           borderSide: BorderSide.none,
@@ -155,7 +155,7 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                             lang.noResultsFound,
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: theme.colorScheme.onPrimary,
                             ),
                           ),
                         ),
@@ -200,7 +200,10 @@ class _CustomerPickerRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: spacing.sm + spacing.xxs / 2),
+        padding: EdgeInsets.symmetric(
+          vertical: spacing.sm + spacing.xxs / 2,
+          horizontal: spacing.sm,
+        ),
         child: Row(
           children: [
             Expanded(
@@ -211,16 +214,13 @@ class _CustomerPickerRow extends StatelessWidget {
                     person.arabicName,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   if (person.personPhones?.isNotEmpty == true) ...[
                     SizedBox(height: spacing.xxs / 2),
                     Text(
                       person.personPhones!.first.phoneNumber!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(),
                       textDirection: TextDirection.ltr,
                     ),
                   ],
@@ -228,8 +228,8 @@ class _CustomerPickerRow extends StatelessWidget {
               ),
             ),
             Icon(
-              Icons.chevron_left,
-              color: theme.colorScheme.outline,
+              Icons.chevron_right,
+              color: theme.colorScheme.onSecondary,
               size: icons.md,
             ),
           ],

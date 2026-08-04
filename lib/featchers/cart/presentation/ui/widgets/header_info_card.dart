@@ -19,24 +19,36 @@ class HeaderInfoCard extends StatelessWidget {
         vertical: spacing.sm,
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          HeaderInfoItem(title: lang.orderNumber, value: '#12345'),
-          HeaderInfoItem(
-            title: lang.invoiceNumber,
-            value: 'INV-9876',
-            isValueBlue: true,
-          ),
-          HeaderInfoItem(
-            title: lang.date,
-            value: DateTime.now().toString().split(' ').first,
-          ),
-        ],
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            HeaderInfoItem(title: lang.orderNumber, value: '#12345'),
+            VerticalDivider(
+              color: theme.colorScheme.outlineVariant,
+              width: 2,
+              thickness: 1,
+            ),
+            HeaderInfoItem(
+              title: lang.invoiceNumber,
+              value: 'INV-9876',
+              isValueBlue: true,
+            ),
+            VerticalDivider(
+              color: theme.colorScheme.outlineVariant,
+              width: 2,
+              thickness: 1,
+            ),
+            HeaderInfoItem(
+              title: lang.date,
+              value: DateTime.now().toString().split(' ').first,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -63,7 +75,7 @@ class HeaderInfoItem extends StatelessWidget {
         Text(
           title,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            color: theme.colorScheme.onPrimary,
           ),
         ),
         SizedBox(height: context.spacing.xxs),
@@ -73,7 +85,7 @@ class HeaderInfoItem extends StatelessWidget {
             fontWeight: FontWeight.bold,
             color: isValueBlue
                 ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface,
+                : theme.colorScheme.onPrimary,
           ),
         ),
       ],

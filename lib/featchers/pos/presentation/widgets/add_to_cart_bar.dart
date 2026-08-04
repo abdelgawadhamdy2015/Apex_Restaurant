@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/quantity_counter.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -58,8 +59,8 @@ class AddToCartBar extends StatelessWidget {
                   child: Text(
                     lang.addToCartWithPrice(totalPrice.toStringAsFixed(2)),
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
+                      color: AppColors.white,
+                      fontWeight: FontWeight.normal,
                     ),
                   ),
                 ),

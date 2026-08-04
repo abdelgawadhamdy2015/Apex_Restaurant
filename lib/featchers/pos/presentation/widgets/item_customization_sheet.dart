@@ -298,6 +298,23 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                           },
                         );
                       }),
+                    SizedBox(height: spacing.sm),
+                    Text(
+                      lang.specialNotes,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: spacing.xl),
+                    TextField(
+                      controller: _notesController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: lang.specialNotesHint,
+                        fillColor: theme.colorScheme.surfaceContainerHighest,
+                      ),
+                    ),
                     SizedBox(height: spacing.xl),
                     Text(
                       lang.specialDiscount,
@@ -319,25 +336,14 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: lang.enterDiscountValue,
-                        fillColor: theme.colorScheme.surfaceContainerHighest,
+                        fillColor: theme.colorScheme.onSurface,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outlineVariant,
+                          ),
+                        ),
                       ),
                       onChanged: (value) => setState(() {}),
-                    ),
-                    SizedBox(height: spacing.xl),
-                    Text(
-                      lang.specialNotes,
-                      style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: spacing.sm),
-                    TextField(
-                      controller: _notesController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        hintText: lang.specialNotesHint,
-                        fillColor: theme.colorScheme.surfaceContainerHighest,
-                      ),
                     ),
                     SizedBox(height: spacing.xl),
                   ],

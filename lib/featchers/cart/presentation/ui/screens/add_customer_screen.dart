@@ -7,6 +7,7 @@ import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.da
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/dashed_add_address_button.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
@@ -189,7 +190,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: theme.colorScheme.outlineVariant,
+        backgroundColor: theme.colorScheme.surface,
         appBar: CustomAppBar(
           title: _isEditMode ? lang.editCustomer : lang.addNewCustomer,
           showBackButton: true,
@@ -206,6 +207,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 SizedBox(height: spacing.xxs),
                 _FormTextField(
                   controller: _nameController,
+                  fillcolor: theme.colorScheme.onSurface,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Please enter customer name';
@@ -231,6 +233,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 SizedBox(height: spacing.xxs),
                 _FormTextField(
                   controller: _phoneController,
+                  fillcolor: theme.colorScheme.onSurface,
+
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -245,6 +249,8 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 SizedBox(height: spacing.xxs),
                 _FormTextField(
                   controller: _altPhoneController,
+                  fillcolor: theme.colorScheme.onSurface,
+
                   keyboardType: TextInputType.phone,
                 ),
                 SizedBox(height: spacing.lg),
@@ -268,7 +274,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 Container(
                   padding: EdgeInsets.all(spacing.md),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surface,
+                    color: theme.colorScheme.onSurface,
                     borderRadius: BorderRadius.circular(spacing.radiusLg),
                     border: Border.all(color: theme.colorScheme.outlineVariant),
                   ),
@@ -292,7 +298,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                 ),
                 SizedBox(height: spacing.sm),
 
-                _DashedAddButton(
+                DashedAddButton(
                   label: lang.addAnotherAddress,
                   onTap: _addAddress,
                 ),
@@ -377,11 +383,13 @@ class _FormTextField extends StatelessWidget {
     required this.controller,
     this.keyboardType,
     this.validator,
+    this.fillcolor,
   });
 
   final TextEditingController controller;
   final TextInputType? keyboardType;
   final String? Function(String?)? validator;
+  final Color? fillcolor;
 
   @override
   Widget build(BuildContext context) {
@@ -390,7 +398,9 @@ class _FormTextField extends StatelessWidget {
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
-      decoration: InputDecoration(fillColor: theme.colorScheme.surface),
+      decoration: InputDecoration(
+        fillColor: fillcolor ?? theme.colorScheme.surface,
+      ),
     );
   }
 }
@@ -478,7 +488,7 @@ class _BranchMultiSelectDropdownState extends State<BranchMultiSelectDropdown> {
   OverlayEntry _createOverlayEntry() {
     final renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
-
+    final theme = Theme.of(context);
     return OverlayEntry(
       builder: (context) => Stack(
         children: [
@@ -506,8 +516,6 @@ class _BranchMultiSelectDropdownState extends State<BranchMultiSelectDropdown> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: widget.branches.map((branch) {
-                      // Read from _localSelected (State field), not from
-                      // widget.selectedBranchIds (parent-owned snapshot).
                       final isSelected = _localSelected.contains(
                         branch.branchId,
                       );
@@ -524,6 +532,7 @@ class _BranchMultiSelectDropdownState extends State<BranchMultiSelectDropdown> {
                                 width: 20,
                                 height: 20,
                                 child: Checkbox(
+                                  activeColor: theme.colorScheme.primary,
                                   value: isSelected,
                                   onChanged: (_) =>
                                       _toggleBranch(branch.branchId),
@@ -579,7 +588,7 @@ class _BranchMultiSelectDropdownState extends State<BranchMultiSelectDropdown> {
               text: TextSpan(
                 text: lang.branches,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.primary,
+                  color: theme.colorScheme.onPrimary,
                 ),
                 children: const [
                   TextSpan(
@@ -591,14 +600,14 @@ class _BranchMultiSelectDropdownState extends State<BranchMultiSelectDropdown> {
             ),
             suffixIcon: Icon(
               _isOpen ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-              color: theme.colorScheme.outline,
+              color: theme.colorScheme.onSecondary,
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: context.spacing.sm,
+              vertical: context.spacing.sm,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(context.spacing.radiusSm),
               borderSide: BorderSide(color: theme.colorScheme.primary),
             ),
             enabledBorder: OutlineInputBorder(
@@ -606,7 +615,7 @@ class _BranchMultiSelectDropdownState extends State<BranchMultiSelectDropdown> {
               borderSide: BorderSide(
                 color: _isOpen
                     ? theme.colorScheme.primary
-                    : theme.colorScheme.outline,
+                    : theme.colorScheme.outlineVariant,
               ),
             ),
           ),
@@ -655,27 +664,6 @@ class _BottomBar extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: OutlinedButton(
-                onPressed: isLoading ? null : onCancel,
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(
-                    vertical: spacing.sm + spacing.xxs / 2,
-                  ),
-                  side: BorderSide(color: theme.colorScheme.outline),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(spacing.radiusMd),
-                  ),
-                ),
-                child: Text(
-                  lang.cancel,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: spacing.sm),
-            Expanded(
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
@@ -705,6 +693,28 @@ class _BottomBar extends StatelessWidget {
                       ),
                 label: Text(
                   isEditMode ? lang.save : lang.save,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: spacing.sm),
+
+            Expanded(
+              child: OutlinedButton(
+                onPressed: isLoading ? null : onCancel,
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    vertical: spacing.sm + spacing.xxs / 2,
+                  ),
+                  side: BorderSide(color: theme.colorScheme.outlineVariant),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(spacing.radiusMd),
+                  ),
+                ),
+                child: Text(
+                  lang.cancel,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -830,92 +840,4 @@ class _AddressFormSectionState extends State<_AddressFormSection> {
       ],
     );
   }
-}
-
-class _DashedAddButton extends StatelessWidget {
-  const _DashedAddButton({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-    final icons = context.iconSizes;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(spacing.radiusMd),
-      child: CustomPaint(
-        painter: _DashedBorderPainter(
-          color: theme.colorScheme.secondary,
-          radius: spacing.radiusMd,
-        ),
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(vertical: spacing.sm + spacing.xxs),
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.add,
-                color: theme.colorScheme.secondary,
-                size: icons.sm,
-              ),
-              SizedBox(width: spacing.xxs),
-              Text(
-                label,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DashedBorderPainter extends CustomPainter {
-  _DashedBorderPainter({required this.color, required this.radius});
-
-  final Color color;
-  final double radius;
-
-  static const _dashWidth = 6.0;
-  static const _dashSpace = 4.0;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
-
-    final rrect = RRect.fromRectAndRadius(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Radius.circular(radius),
-    );
-    final path = Path()..addRRect(rrect);
-
-    for (final metric in path.computeMetrics()) {
-      var distance = 0.0;
-      while (distance < metric.length) {
-        final next = distance + _dashWidth;
-        canvas.drawPath(
-          metric.extractPath(distance, next.clamp(0, metric.length)),
-          paint,
-        );
-        distance = next + _dashSpace;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _DashedBorderPainter oldDelegate) =>
-      oldDelegate.color != color || oldDelegate.radius != radius;
 }

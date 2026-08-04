@@ -24,7 +24,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: theme.scaffoldBackgroundColor,
         appBar: const CustomAppBar(
           title: 'الإعدادات',
-          showBackButton: false, // Hides the back button completely
+          showBackButton: true, // Hides the back button completely
         ),
         body: BlocBuilder<SettingsCubit, SettingsState>(
           builder: (context, state) {

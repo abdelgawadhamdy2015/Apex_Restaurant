@@ -1,4 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +22,7 @@ class PosBottomNavBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(spacing.radiusPill),
         ),
@@ -36,25 +38,76 @@ class PosBottomNavBar extends StatelessWidget {
         currentIndex: currentIndex,
         onTap: onTap,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: theme.colorScheme.surface,
         selectedItemColor: theme.colorScheme.secondary,
-        unselectedItemColor: theme.colorScheme.onSurfaceVariant,
+        unselectedItemColor: theme.colorScheme.onSecondary,
         items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.more_horiz),
+          _buildNavItem(
+            icon: Icons.more_horiz,
             label: lang.more,
+            theme: theme,
+            spacing: spacing,
           ),
-
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.receipt_long_outlined),
+          _buildNavItem(
+            icon: Icons.receipt_long_outlined,
             label: lang.navOrders,
+            theme: theme,
+            spacing: spacing,
           ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.restaurant_outlined),
+          _buildNavItem(
+            icon: Icons.restaurant_outlined,
             label: lang.navMenu,
+            theme: theme,
+            spacing: spacing,
           ),
         ],
       ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem({
+    required IconData icon,
+    required String label,
+    required ThemeData theme,
+    required AppSpacing spacing,
+  }) {
+    return BottomNavigationBarItem(
+      icon: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 04),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(spacing.sm),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: theme.colorScheme.onPrimary),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+      activeIcon: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 04),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.secondary,
+          borderRadius: BorderRadius.circular(spacing.sm),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: AppColors.white),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+      label: "",
     );
   }
 }

@@ -1,5 +1,6 @@
 // cart_state.dart
 
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
@@ -9,19 +10,17 @@ import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
 
-enum OrderType { takeaway, dineIn, delivery, deliveryCompany }
-
 enum DiscountType { coupon, direct }
 
 enum CartStatus { initial, loading, success, failure }
 
 class CartState extends Equatable {
-  final OrderType selectedOrderType;
+  final CartOrderType selectedOrderType;
   final CartStatus status;
   final DiscountType selectedDiscountType;
   final ClientAddressModel? selectedAddress;
   final TableEntity? selectedTable;
-  final DateTime? takeawayDateTime;
+  final DateTime? fromBranchDateTime;
   final List<OrderItem> items;
   final List<DynamicDiscountModel> discounts;
   final SaveDiscountModel? saveDiscountModel;
@@ -45,12 +44,12 @@ class CartState extends Equatable {
   final String? successMessage;
 
   const CartState({
-    this.selectedOrderType = OrderType.dineIn,
+    this.selectedOrderType = CartOrderType.TAKEAWAY,
     this.selectedDiscountType = DiscountType.coupon,
     this.status = CartStatus.initial,
     this.items = const [],
     this.couponDiscountvalue,
-    this.takeawayDateTime,
+    this.fromBranchDateTime,
     this.waiters = const [],
     this.deliveryAgents = const [],
     this.persons = const [],
@@ -75,22 +74,6 @@ class CartState extends Equatable {
   });
 
   SaveInvoiceRequestModel get toSaveInvoiceRequestModel {
-    int posTypeInt;
-    switch (selectedOrderType) {
-      case OrderType.takeaway:
-        posTypeInt = 1;
-        break;
-      case OrderType.dineIn:
-        posTypeInt = 2;
-        break;
-      case OrderType.delivery:
-        posTypeInt = 3;
-        break;
-      case OrderType.deliveryCompany:
-        posTypeInt = 4;
-        break;
-    }
-
     SaveDiscountModel? appliedDiscount;
     int? activeInvoiceDiscountId;
 
@@ -113,6 +96,11 @@ class CartState extends Equatable {
 
     // 3. Map items to InvoiceItemModel list
     final invoiceItems = items.map((item) {
+      final grouped = <String, int>{};
+
+      for (var addon in item.addons) {
+        grouped[addon.id] = (grouped[addon.id] ?? 0) + 1;
+      }
       return InvoiceItemModel(
         itemId: item.menuItem.itemId,
         sizeId: item.selectedSize?.sizeId,
@@ -125,11 +113,12 @@ class CartState extends Equatable {
                 value: item.discount,
               )
             : null,
-        additives: item.addons
+
+        additives: grouped.entries
             .map(
-              (addon) => SaveAdditiveModel(
-                additiveId: int.tryParse(addon.id) ?? 0,
-                quantity: 1.0,
+              (e) => SaveAdditiveModel(
+                additiveId: int.parse(e.key),
+                quantity: e.value.toDouble(),
               ),
             )
             .toList(),
@@ -138,13 +127,13 @@ class CartState extends Equatable {
 
     // 4. Build SaveInvoiceModel
     final invoiceModel = SaveInvoiceModel(
-      postype: posTypeInt,
+      postype: selectedOrderType.apiValue,
       foodTableId: int.tryParse(selectedTable?.id ?? ''),
       waiterId: int.tryParse(selectedWaiter?.id?.toString() ?? ''),
       deliveryManId: int.tryParse(selectedDeliveryMan?.id?.toString() ?? ''),
       deliveryCompanyId: selectedDeliveryCompany?.id,
       clientId: selectedPerson?.id,
-      takeawayDateTime: takeawayDateTime,
+      takeawayDateTime: fromBranchDateTime,
       discount: appliedDiscount,
       paidAmount: grandTotal,
       totalInvoicePrice: grandTotal,
@@ -209,15 +198,15 @@ class CartState extends Equatable {
   /// 5. Grand total = Net Subtotal + VAT + Delivery Fee
   double get grandTotal {
     double total = netSubtotal + vatAmount;
-    if (selectedOrderType == OrderType.delivery ||
-        selectedOrderType == OrderType.deliveryCompany) {
+    if (selectedOrderType == CartOrderType.DELIVERY ||
+        selectedOrderType == CartOrderType.DELIVERY_COMPANY) {
       total += deliveryFee;
     }
     return total < 0 ? 0.0 : total;
   }
 
   CartState copyWith({
-    OrderType? selectedOrderType,
+    CartOrderType? selectedOrderType,
     DiscountType? selectedDiscountType,
     ClientAddressModel? selectedAddress,
     SaveDiscountModel? saveDiscountModel,
@@ -274,7 +263,7 @@ class CartState extends Equatable {
       successMessage: successMessage,
       saveDiscountModel: saveDiscountModel ?? this.saveDiscountModel,
       selectedTable: selectedTable ?? this.selectedTable,
-      takeawayDateTime: takeawayDateTime ?? this.takeawayDateTime,
+      fromBranchDateTime: takeawayDateTime ?? this.fromBranchDateTime,
     );
   }
 
@@ -298,7 +287,7 @@ class CartState extends Equatable {
     selectedDeliveryCompany,
     selectedWaiter,
     selectedDeliveryMan,
-    takeawayDateTime,
+    fromBranchDateTime,
     discountAmount,
     deliveryFee,
     vatPercentage,
