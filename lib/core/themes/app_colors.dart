@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary palette
-  static const Color primary = Color(0xFF005BB2);
+  static const Color primaryLight = Color(0xFF005BB2);
+  static const Color primaryDark = Color(0xFF0D76E1);
+
   static const Color primaryVariant = Color(0xFF357ABD);
   static const Color secondary = Color(0xFF50E3C2);
   static const Color secondaryVariant = Color(0xFF3CBFA5);
@@ -13,8 +15,12 @@ class AppColors {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color onPrimary = Colors.white;
   static const Color onSecondary = Colors.black;
-  static const Color onBackground = Colors.black87;
-  static const Color onSurface = Colors.black87;
+  static const Color lightTextSecondary = Color(0xFF414753);
+  static const Color darkTextSecondary = Color(0xFFB2B2B2);
+
+  static const Color onSurface = Color(0xFF141516);
+  static const Color containerBackground = Color(0xFF01060B);
+  static const Color darkPorder = Color(0xFF272828);
 
   static const Color navy = Color(0xFF0D1B2A);
   static const Color navyLight = Color(0xFF1A2E45);
@@ -29,9 +35,6 @@ class AppColors {
   static const Color textPrimary = Color(
     0xFF0D1C2E,
   ); // Updated to requested rich dark slate
-  static const Color textSecondary = Color(
-    0xFF717784,
-  ); // Updated to requested neutral gray
   static const Color border = Color(
     0xFFE2E8F0,
   ); // Updated to requested border gray
@@ -81,7 +84,9 @@ class AppColors {
   static const Color black = Color(0xFF000000);
   static const Color blueAlpha20 = Color(0x330173DE); // Blue @ ~20% opacity
   static const Color grey = Color(0xFF6B7280); // Secondary labels
-  static const Color greySubtle = Color(0xFF717784); // Captions / meta text
+  static const Color lightTextSecondery = Color(
+    0xFF717784,
+  ); // Captions / meta text
   static const Color blueLight = Color(0xFFD5E3FC); // Unselected chip bg
   static const Color cartCanvas = Color(
     0xFFF8F9FF,

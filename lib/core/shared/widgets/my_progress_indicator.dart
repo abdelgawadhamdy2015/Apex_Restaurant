@@ -34,7 +34,7 @@ class _MyProgressIndicatorState extends State<MyProgressIndicator>
   Widget build(BuildContext context) {
     return Center(
       child: CircularProgressIndicator(
-        color: AppColors.primary,
+        color: AppColors.primaryLight,
         value: _controller.value,
       ),
     );

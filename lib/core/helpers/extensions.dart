@@ -2,6 +2,7 @@ import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/settings/settings_cubit.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/themes/app_button_theme.dart';
 import 'package:apex_restaurant/core/themes/app_icon_theme.dart';
 import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
 import 'package:apex_restaurant/core/themes/app_text_style.dart';
@@ -61,4 +62,6 @@ extension AppThemeContextX on BuildContext {
         accent: Theme.of(this).colorScheme.primary,
         onSurface: Theme.of(this).colorScheme.onSurface,
       );
+
+  AppButtonTheme get buttonTheme => Theme.of(this).extension<AppButtonTheme>()!;
 }

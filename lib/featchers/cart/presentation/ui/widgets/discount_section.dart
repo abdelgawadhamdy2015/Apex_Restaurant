@@ -10,9 +10,6 @@ import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Lets the user apply either a coupon code or a direct (fixed/percentage)
-/// discount. When a dynamic discount is active for the selected customer,
-/// controls are locked and pre-filled with the customer's discount ratio.
 class DiscountSection extends StatefulWidget {
   const DiscountSection({
     super.key,
@@ -30,7 +27,7 @@ class DiscountSection extends StatefulWidget {
 }
 
 class _DiscountSectionState extends State<DiscountSection> {
-  final _discountCodeController = TextEditingController();
+  final _discountCodeController = TextEditingController(text: '');
   bool _isPercentageDiscount = true;
 
   @override
@@ -60,7 +57,7 @@ class _DiscountSectionState extends State<DiscountSection> {
       context.read<CartBloc>().add(
         const ChangeDiscountTypeEvent(DiscountType.direct),
       );
-      _discountCodeController.text = person.discountRatio.toString();
+      _discountCodeController.text = person.discountRatio?.toString() ?? "";
     }
   }
 
@@ -94,6 +91,8 @@ class _DiscountSectionState extends State<DiscountSection> {
     );
     final spacing = context.spacing;
     final icons = context.iconSizes;
+    final buttonTheme = context.buttonTheme;
+
     final lang = S.of(context);
 
     void Function(DiscountType?)? onTypeChanged() {
@@ -108,7 +107,7 @@ class _DiscountSectionState extends State<DiscountSection> {
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -120,7 +119,10 @@ class _DiscountSectionState extends State<DiscountSection> {
               Radio<DiscountType>(
                 value: DiscountType.coupon,
                 groupValue: discountType,
-                activeColor: theme.colorScheme.primary,
+                activeColor: theme.colorScheme.onPrimary,
+                backgroundColor: WidgetStateProperty.all(
+                  theme.colorScheme.onSecondary,
+                ),
                 onChanged: onTypeChanged(),
               ),
               Text(
@@ -133,7 +135,10 @@ class _DiscountSectionState extends State<DiscountSection> {
               Radio<DiscountType>(
                 value: DiscountType.direct,
                 groupValue: discountType,
-                activeColor: theme.colorScheme.primary,
+                activeColor: theme.colorScheme.onPrimary,
+                backgroundColor: WidgetStateProperty.all(
+                  theme.colorScheme.onSecondary,
+                ),
                 onChanged: onTypeChanged(),
               ),
               Text(
@@ -144,7 +149,7 @@ class _DiscountSectionState extends State<DiscountSection> {
               ),
             ],
           ),
-          if (state.selectedDiscountType != DiscountType.coupon)
+          if (state.selectedDiscountType == DiscountType.direct)
             DiscountTypeToggle(
               enabled: !widget.dynamicIsActive,
               isPercentage: _isPercentageDiscount,
@@ -155,13 +160,14 @@ class _DiscountSectionState extends State<DiscountSection> {
           Row(
             children: [
               Expanded(
-                child: TextField(
+                child: TextFormField(
                   controller: _discountCodeController,
-                  enabled: !widget.dynamicIsActive,
+
+                  //  enabled: !widget.dynamicIsActive,
                   decoration: InputDecoration(
-                    hintText: state.selectedDiscountType == DiscountType.coupon
-                        ? lang.enterDiscountCode
-                        : lang.enterDiscountValue,
+                    hintText: state.selectedDiscountType == DiscountType.direct
+                        ? lang.enterDiscountValue
+                        : lang.enterDiscountCode,
                     prefixIcon: Icon(
                       Icons.local_offer_outlined,
                       color: theme.colorScheme.tertiary,
@@ -171,27 +177,24 @@ class _DiscountSectionState extends State<DiscountSection> {
                 ),
               ),
               SizedBox(width: spacing.xs),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      theme.colorScheme.primaryContainer.withOpacity(.1),
-                  foregroundColor: theme.colorScheme.onPrimaryContainer,
-                  elevation: 0,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: spacing.lg,
-                    vertical: spacing.sm + spacing.xxs / 2,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(spacing.radiusMd),
-                  ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: spacing.sm),
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: buttonTheme.background,
+                  borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
-                onPressed:
-                    widget.dynamicIsActive ? null : () => _applyDiscount(state),
-                child: Text(
-                  lang.apply,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+
+                child: TextButton(
+                  onPressed: widget.dynamicIsActive
+                      ? null
+                      : () => _applyDiscount(state),
+                  child: Text(
+                    lang.apply,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: buttonTheme.subtitleColor,
+                    ),
                   ),
                 ),
               ),

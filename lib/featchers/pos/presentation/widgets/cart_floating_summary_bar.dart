@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
@@ -50,7 +51,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
                     ),
                     child: Icon(
                       Icons.shopping_basket_outlined,
-                      color: theme.colorScheme.onPrimary,
+                      color: AppColors.white,
                       size: iconSizes.lg,
                     ),
                   ),
@@ -63,7 +64,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
                       child: Text(
                         '$itemCount',
                         style: theme.textTheme.labelSmall?.copyWith(
-                          color: theme.colorScheme.onSecondary,
+                          color: theme.colorScheme.onPrimary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -79,14 +80,14 @@ class CartFloatingSummaryBar extends StatelessWidget {
                   Text(
                     lang.itemsCount(itemCount),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
+                      color: AppColors.white.withOpacity(.8),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     '${totalAmount.toStringAsFixed(2)} ${lang.currencySar}',
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
+                      color: AppColors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -97,7 +98,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: onViewCartPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.onPrimary,
+              backgroundColor: AppColors.white,
               foregroundColor: theme.colorScheme.primary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(spacing.radiusLg),

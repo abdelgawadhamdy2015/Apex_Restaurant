@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/core/shared/widgets/app_radio_group.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
@@ -8,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-/// Bottom sheet listing the customer's saved addresses, with an option
-/// to add a new one or edit the customer to add an address.
 class AddressPickerSheet extends StatelessWidget {
   const AddressPickerSheet({
     super.key,
@@ -20,8 +19,6 @@ class AddressPickerSheet extends StatelessWidget {
   final List<ClientAddressModel> addresses;
   final ClientAddressModel? selectedAddress;
 
-  /// Opens this sheet as a modal bottom sheet, forwarding the given
-  /// [cartBloc] so address selection events reach the cart screen.
   static void show(
     BuildContext context, {
     required CartBloc cartBloc,
@@ -121,15 +118,18 @@ class _AddNewAddressButton extends StatelessWidget {
           horizontal: spacing.md,
         ),
         decoration: BoxDecoration(
-          color: theme.colorScheme.primary.withOpacity(0.05),
+          color: theme.colorScheme.onSurface,
           borderRadius: BorderRadius.circular(spacing.radiusMd),
-          border: Border.all(color: theme.colorScheme.primary.withOpacity(0.5)),
+          border: Border.all(
+            color: theme.colorScheme.secondary,
+            strokeAlign: BorderSide.strokeAlignInside,
+          ),
         ),
         child: Text(
           '+ ${lang.addNewAddress}',
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.primary,
+            color: theme.colorScheme.secondary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -191,18 +191,16 @@ class _AddressOption extends StatelessWidget {
                   SizedBox(height: spacing.xxs),
                   Text(
                     address.fullAddress,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+                    style: theme.textTheme.bodySmall?.copyWith(),
                   ),
                 ],
               ),
             ),
-            Radio<int>(
+            AppRadioGroup<int>(
               value: address.id,
               groupValue: selectedAddressId,
-              activeColor: theme.colorScheme.primary,
               onChanged: (_) => _select(context),
+              label: Text(address.fullAddress),
             ),
           ],
         ),

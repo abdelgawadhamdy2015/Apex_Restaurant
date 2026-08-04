@@ -27,7 +27,7 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
         height: preferredSize.height,
         padding: EdgeInsets.symmetric(horizontal: spacing.md),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: theme.colorScheme.onSurface,
           border: Border(
             bottom: BorderSide(color: theme.colorScheme.outlineVariant),
           ),
@@ -37,13 +37,16 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             IconButton(
               onPressed: onBack ?? () => context.pop(),
-              icon: Icon(Icons.arrow_back, color: theme.colorScheme.onSurface),
+              icon: Icon(
+                Icons.arrow_back,
+                color: theme.colorScheme.onSecondary,
+              ),
             ),
             Text(
               lang.shoppingCart,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
+                color: theme.colorScheme.onPrimary,
               ),
             ),
             TextButton.icon(

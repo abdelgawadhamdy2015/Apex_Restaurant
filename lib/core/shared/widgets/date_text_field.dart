@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
+import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 enum DateTextFieldType { date, time, dateTime }
@@ -40,25 +40,21 @@ class DateTextField extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
-          HelperMethods.verticalSpacing(.01),
+          SizedBox(height: context.spacing.sm),
         ],
-        MyTextForm(
+        TextFormField(
           controller: controller,
           readOnly: true,
           onTap: onTap,
           textAlign: TextAlign.center,
-          excep: label,
-          contentPadding: const EdgeInsets.only(right: 4),
-          hintStyle: textTheme.bodyMedium,
-          inputTextStyle: textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+          decoration: InputDecoration(
+            hintText: S.of(context).selectDateAndTimeError,
+            contentPadding: const EdgeInsets.only(right: 4),
+            hintStyle: textTheme.bodyMedium,
+            suffixIcon: Icon(_suffixIcon),
           ),
-          suffixIcon: Icon(_suffixIcon),
         ),
       ],
     );

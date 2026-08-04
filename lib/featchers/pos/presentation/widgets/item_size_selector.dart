@@ -64,9 +64,7 @@ class ItemSizeSelector extends StatelessWidget {
                             : Icons.radio_button_off,
                         color: isSelected
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurfaceVariant.withOpacity(
-                                0.5,
-                              ),
+                            : theme.colorScheme.onPrimary,
                         size: iconSizes.md,
                       ),
                     ],
@@ -78,7 +76,7 @@ class ItemSizeSelector extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: isSelected
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurfaceVariant,
+                          : theme.colorScheme.onSecondary,
                     ),
                   ),
                 ],

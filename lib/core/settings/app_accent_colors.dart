@@ -7,7 +7,7 @@ extension AppAccentColorX on AppAccentColor {
   Color get color {
     switch (this) {
       case AppAccentColor.primary:
-        return AppColors.primary;
+        return AppColors.primaryLight;
 
       case AppAccentColor.amber:
         return AppColors.amber;

@@ -47,6 +47,9 @@ SaveInvoiceModel _$SaveInvoiceModelFromJson(Map<String, dynamic> json) =>
       totalInvoicePrice: (json['totalInvoicePrice'] as num?)?.toDouble(),
       clientId: (json['clientId'] as num?)?.toInt(),
       invoiceDiscountId: (json['invoiceDiscountId'] as num?)?.toInt(),
+      takeawayDateTime: json['takeawayDateTime'] == null
+          ? null
+          : DateTime.parse(json['takeawayDateTime'] as String),
     );
 
 Map<String, dynamic> _$SaveInvoiceModelToJson(SaveInvoiceModel instance) =>
@@ -62,6 +65,7 @@ Map<String, dynamic> _$SaveInvoiceModelToJson(SaveInvoiceModel instance) =>
       'totalInvoicePrice': instance.totalInvoicePrice,
       'clientId': instance.clientId,
       'invoiceDiscountId': instance.invoiceDiscountId,
+      'takeawayDateTime': instance.takeawayDateTime?.toIso8601String(),
     };
 
 SaveDiscountModel _$SaveDiscountModelFromJson(Map<String, dynamic> json) =>

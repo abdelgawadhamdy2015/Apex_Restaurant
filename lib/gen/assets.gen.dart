@@ -14,6 +14,9 @@ import 'package:flutter/widgets.dart';
 class $ImagesGen {
   const $ImagesGen();
 
+  /// File path: images/apex-logo.png
+  AssetGenImage get apexLogo => const AssetGenImage('images/apex-logo.png');
+
   /// File path: images/images.png
   AssetGenImage get images => const AssetGenImage('images/images.png');
 
@@ -24,7 +27,7 @@ class $ImagesGen {
   AssetGenImage get noWifi => const AssetGenImage('images/no-wifi.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [images, logo, noWifi];
+  List<AssetGenImage> get values => [apexLogo, images, logo, noWifi];
 }
 
 class Assets {
@@ -32,6 +35,7 @@ class Assets {
 
   static const String time = 'assets/Time.svg';
   static const String alert = 'assets/alert.svg';
+  static const String apexlogo = 'assets/apexlogo.svg';
   static const String checked = 'assets/checked.svg';
   static const String closing = 'assets/closing.svg';
   static const String error = 'assets/error.svg';
@@ -45,6 +49,7 @@ class Assets {
   static List<String> get values => [
     time,
     alert,
+    apexlogo,
     checked,
     closing,
     error,

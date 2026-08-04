@@ -61,11 +61,10 @@ class _Option extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: spacing.sm),
         decoration: BoxDecoration(
           color: isSelected && isEnabled
-              ? theme.colorScheme.primary.withOpacity(0.04)
-              : Colors.transparent,
+              ? theme.colorScheme.onSurface.withOpacity(0.04)
+              : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
           border: Border.all(
-            // Check both isSelected and isEnabled!
             color: isSelected && isEnabled
                 ? theme.colorScheme.primary
                 : theme.colorScheme.outlineVariant,
@@ -79,9 +78,7 @@ class _Option extends StatelessWidget {
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
               color: isSelected && isEnabled
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onSurfaceVariant.withOpacity(
-                      isEnabled ? 1.0 : 0.5,
-                    ),
+                  : theme.colorScheme.onSecondary,
               size: iconSizes.md,
             ),
             SizedBox(width: spacing.xs),
@@ -90,7 +87,7 @@ class _Option extends StatelessWidget {
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: isEnabled
                     ? null
-                    : theme.colorScheme.onSurface.withOpacity(0.38),
+                    : theme.colorScheme.onSecondary.withOpacity(0.38),
               ),
             ),
           ],

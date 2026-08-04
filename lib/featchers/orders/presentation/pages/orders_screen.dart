@@ -3,7 +3,7 @@ import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/custom_pos_app_bar.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/widgets/custom_pos_app_bar.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -9,7 +9,11 @@ import 'package:go_router/go_router.dart';
 /// Shows the currently selected customer (or a placeholder) with
 /// shortcuts to add or edit a customer.
 class CustomerInfoCard extends StatelessWidget {
-  const CustomerInfoCard({super.key, required this.persons, this.selectedPerson});
+  const CustomerInfoCard({
+    super.key,
+    required this.persons,
+    this.selectedPerson,
+  });
 
   final List<PosClientModel> persons;
   final PosClientModel? selectedPerson;
@@ -25,19 +29,19 @@ class CustomerInfoCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: theme.colorScheme.primaryContainer,
+            backgroundColor: theme.colorScheme.primary.withOpacity(.5),
             radius: icons.lg - icons.sm / 2,
             child: Icon(
               Icons.person,
-              color: theme.colorScheme.onPrimaryContainer,
-              size: icons.md,
+              color: theme.colorScheme.primary,
+              size: icons.lg,
             ),
           ),
           SizedBox(width: spacing.sm),
@@ -52,14 +56,14 @@ class CustomerInfoCard extends StatelessWidget {
                     selectedPerson?.arabicName ?? lang.noCustomerSelected,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onPrimary,
                     ),
                   ),
                   if (phones != null && phones.isNotEmpty)
                     Text(
                       phones.first.phoneNumber.toString(),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: theme.colorScheme.onSecondary,
                       ),
                     ),
                 ],

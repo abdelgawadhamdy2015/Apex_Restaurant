@@ -11,7 +11,7 @@ class GradientContainer extends StatelessWidget {
     return DecoratedBox(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.primary],
+          colors: [AppColors.primaryLight, AppColors.primaryLight],
         ),
       ),
       child: child,

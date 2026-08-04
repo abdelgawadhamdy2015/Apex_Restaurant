@@ -70,6 +70,13 @@ class MoreOptions extends StatelessWidget {
         onTap: () {},
       ),
       OptionItem(
+        title: lang.navSettings,
+        icon: Icons.settings,
+        onTap: () {
+          context.pushNamed(Routes.settingsScreen);
+        },
+      ),
+      OptionItem(
         title: lang.closeSession,
         icon: Icons.power_settings_new,
         iconColor: colorScheme.errorContainer,

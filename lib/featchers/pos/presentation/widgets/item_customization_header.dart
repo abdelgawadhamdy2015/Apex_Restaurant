@@ -58,14 +58,18 @@ class ItemCustomizationHeader extends StatelessWidget {
               Text(
                 lang.customizationSubtitle,
                 style: textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: theme.colorScheme.onSecondary,
                 ),
               ),
             ],
           ),
           const Spacer(),
           IconButton(
-            icon: Icon(Icons.close, size: iconSizes.lg),
+            icon: Icon(
+              Icons.close,
+              size: iconSizes.lg,
+              color: theme.colorScheme.onSecondary,
+            ),
             onPressed: () => Navigator.pop(context),
           ),
         ],

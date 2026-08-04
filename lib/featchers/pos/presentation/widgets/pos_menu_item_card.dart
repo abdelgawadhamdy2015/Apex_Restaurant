@@ -22,7 +22,7 @@ class PosMenuItemCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
@@ -45,12 +45,12 @@ class PosMenuItemCard extends StatelessWidget {
                           fit: BoxFit.cover,
                         )
                       : Container(
-                          color: theme.colorScheme.surfaceContainerHighest,
+                          color: theme.colorScheme.surface,
                           child: Center(
                             child: Icon(
                               Icons.fastfood,
                               size: iconSizes.xl,
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: theme.colorScheme.onPrimary,
                             ),
                           ),
                         ),
@@ -64,13 +64,13 @@ class PosMenuItemCard extends StatelessWidget {
                       vertical: spacing.xxs,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.tertiary,
+                      color: theme.colorScheme.secondary,
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
                     ),
                     child: Text(
                       item.isOffer ? lang.badgeOffer : lang.badgeNew,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onTertiary,
+                        color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -90,7 +90,7 @@ class PosMenuItemCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                    color: theme.colorScheme.onPrimary,
                   ),
                 ),
                 SizedBox(height: spacing.xxs / 2),
@@ -99,7 +99,7 @@ class PosMenuItemCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.onPrimary,
                   ),
                 ),
                 SizedBox(height: spacing.xs),
@@ -123,7 +123,7 @@ class PosMenuItemCard extends StatelessWidget {
                         ),
                         child: Icon(
                           Icons.add,
-                          color: theme.colorScheme.onPrimary,
+                          color: theme.colorScheme.surface,
                           size: iconSizes.md,
                         ),
                       ),

@@ -337,6 +337,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "formattedDateTime": m2,
     "free": MessageLookupByLibrary.simpleMessage("Free"),
     "from": MessageLookupByLibrary.simpleMessage("from"),
+    "fromBranch": MessageLookupByLibrary.simpleMessage("From Branch"),
     "fromDate": MessageLookupByLibrary.simpleMessage("From Date "),
     "fullDay": MessageLookupByLibrary.simpleMessage("Day"),
     "fullName": MessageLookupByLibrary.simpleMessage("Full Name"),
@@ -532,6 +533,9 @@ class MessageLookup extends MessageLookupByLibrary {
         MessageLookupByLibrary.simpleMessage(
           "Please select a valid table and waiter.",
         ),
+    "pleaseSelectValidFromBranchDateTime": MessageLookupByLibrary.simpleMessage(
+      "Please select a valid branch and date/time.",
+    ),
     "pleaseSelectValidSize": MessageLookupByLibrary.simpleMessage(
       "Please select a valid size.",
     ),

@@ -1,7 +1,6 @@
-import 'package:apex_restaurant/core/themes/app_header_theme.dart';
+import 'package:apex_restaurant/core/themes/app_button_theme.dart';
 import 'package:apex_restaurant/core/themes/app_icon_theme.dart';
 import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
-import 'package:apex_restaurant/core/themes/app_status_theme.dart';
 import 'package:apex_restaurant/core/themes/app_text_style.dart';
 import 'package:apex_restaurant/core/themes/app_typography.dart';
 import 'package:flutter/material.dart';
@@ -11,24 +10,29 @@ import 'app_colors.dart';
 class AppTheme {
   static ThemeData theme(
     double fontScale, {
-    Color accent = AppColors.primary,
+    Color accent = AppColors.primaryLight,
     double spacingScale = 1.0,
     double iconScale = 1.0,
   }) {
     final colorScheme = ColorScheme.light(
       primary: accent,
-      onPrimary: Colors.white,
+      onPrimary: AppColors.textPrimary,
       secondary: AppColors.amber,
       error: AppColors.error,
       errorContainer: AppColors.errorContainer,
       onErrorContainer: AppColors.onErrorContainer,
-      surface: AppColors.surface,
+      surface: AppColors.canvas,
+      onSurface: AppColors.white,
       outlineVariant: AppColors.border,
+      onSecondary: AppColors.lightTextSecondery,
     );
 
     final baseTextTheme = AppTypography.textTheme(fontScale);
-    final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(baseTextTheme);
-
+    final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(baseTextTheme)
+        .apply(
+          bodyColor: AppColors.black,
+          displayColor: Colors.black.withOpacity(.8),
+        );
     return ThemeData(
       useMaterial3: true,
       fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,
@@ -36,18 +40,10 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.canvas,
       colorScheme: colorScheme,
       extensions: [
-        const AppHeaderTheme(
-          background: AppColors.navy,
-          backgroundSecondary: AppColors.navyLight,
-          iconTint: AppColors.primary,
-          subtitleColor: AppColors.primaryVariant,
-        ),
-        const AppStatusTheme(
-          registrationOpen: AppColors.success,
-          groupStage: AppColors.primary,
-          knockoutStage: AppColors.amber,
-          completed: AppColors.tealLight,
-          fallback: Colors.black38,
+        AppButtonTheme(
+          background: AppColors.background,
+          iconColor: AppColors.primaryLight,
+          subtitleColor: AppColors.primaryLight,
         ),
         AppTextStyles.build(
           scale: fontScale,
@@ -86,7 +82,7 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
         labelStyle: GoogleFonts.ibmPlexSansArabic(
-          color: AppColors.textSecondary,
+          color: AppColors.darkTextSecondary,
           fontSize: 14 * fontScale,
         ),
         hintStyle: GoogleFonts.ibmPlexSansArabic(
@@ -99,7 +95,7 @@ class AppTheme {
 
   static ThemeData darkTheme(
     double fontScale, {
-    Color accent = AppColors.primary,
+    Color accent = AppColors.primaryDark,
     double spacingScale = 1.0,
     double iconScale = 1.0,
   }) {
@@ -110,17 +106,18 @@ class AppTheme {
       error: AppColors.error,
       errorContainer: AppColors.errorContainer,
       onErrorContainer: AppColors.onErrorContainer,
-
-      surface: const Color(0xFF1E293B),
-      onSurface: Colors.white,
-      outlineVariant: AppColors.border,
-      secondaryContainer: const Color(0xFF0F172A),
+      surface: AppColors.containerBackground,
+      onSurface: AppColors.onSurface,
+      outlineVariant: AppColors.darkPorder,
+      onSecondary: AppColors.darkTextSecondary,
     );
 
     final baseTextTheme = AppTypography.textTheme(fontScale);
-    final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(
-      baseTextTheme,
-    ).apply(bodyColor: Colors.white, displayColor: Colors.white);
+    final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(baseTextTheme)
+        .apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white.withOpacity(.8),
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -129,18 +126,10 @@ class AppTheme {
       scaffoldBackgroundColor: const Color(0xFF0F172A),
       colorScheme: colorScheme,
       extensions: [
-        AppHeaderTheme(
-          background: const Color(0xFF1E293B),
-          backgroundSecondary: const Color(0xFF334155),
-          iconTint: accent,
-          subtitleColor: Colors.white70,
-        ),
-        const AppStatusTheme(
-          registrationOpen: Color(0xFF10B981),
-          groupStage: Color(0xFF3B82F6),
-          knockoutStage: Color(0xFFF59E0B),
-          completed: Color(0xFF64748B),
-          fallback: Colors.white38,
+        AppButtonTheme(
+          background: AppColors.amber,
+          iconColor: AppColors.onPrimary,
+          subtitleColor: AppColors.onPrimary,
         ),
         AppTextStyles.build(
           scale: fontScale,

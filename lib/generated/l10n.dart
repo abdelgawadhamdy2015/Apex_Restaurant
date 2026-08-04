@@ -3631,6 +3631,21 @@ class S {
       args: [],
     );
   }
+
+  /// `From Branch`
+  String get fromBranch {
+    return Intl.message('From Branch', name: 'fromBranch', desc: '', args: []);
+  }
+
+  /// `Please select a valid branch and date/time.`
+  String get pleaseSelectValidFromBranchDateTime {
+    return Intl.message(
+      'Please select a valid branch and date/time.',
+      name: 'pleaseSelectValidFromBranchDateTime',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -42,20 +42,20 @@ class PosCategoriesBar extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? theme.colorScheme.primary
+                        ? theme.colorScheme.onSurface
                         : theme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(spacing.radiusLg),
                     border: Border.all(
                       color: isSelected
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.outlineVariant,
+                          : theme.colorScheme.surface,
                     ),
                   ),
                   child: Icon(
                     Icons.restaurant_menu,
                     color: isSelected
                         ? theme.colorScheme.onPrimary
-                        : theme.colorScheme.onSurface,
+                        : theme.colorScheme.onPrimary,
                   ),
                 ),
                 SizedBox(height: spacing.xxs),
@@ -67,7 +67,7 @@ class PosCategoriesBar extends StatelessWidget {
                         : FontWeight.normal,
                     color: isSelected
                         ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface,
+                        : theme.colorScheme.onSecondary,
                   ),
                 ),
               ],

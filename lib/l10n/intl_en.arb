@@ -454,5 +454,7 @@
     "pleaseSelectValidCustomer": "Please select a valid customer.",
     "cartIsEmpty": "Your cart is empty.",
     "pleaseSelectValidSize": "Please select a valid size.",
-    "thisItemHasNoValidSize": "This item has no valid size."
+    "thisItemHasNoValidSize": "This item has no valid size.",
+    "fromBranch": "From Branch",
+    "pleaseSelectValidFromBranchDateTime": "Please select a valid branch and date/time."
 }

@@ -48,8 +48,8 @@ class AppButtonText extends StatelessWidget {
           style: TextButton.styleFrom(
             backgroundColor: linearGradient == null
                 ? (onPressed != null
-                      ? backgroundColor ?? AppColors.primary
-                      : AppColors.textSecondary)
+                      ? backgroundColor ?? AppColors.primaryLight
+                      : AppColors.darkTextSecondary)
                 : Colors.transparent,
             padding:
                 padding ??

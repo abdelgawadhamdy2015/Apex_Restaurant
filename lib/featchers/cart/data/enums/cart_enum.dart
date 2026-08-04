@@ -1,14 +1,14 @@
 // ignore_for_file: constant_identifier_names
 
 /// All order fulfilment types the cart screen supports.
-enum CartOrderType { TAKEAWAY, PICKUP, DINE_IN, DELIVERY, DELIVERY_COMPANY }
+enum CartOrderType { FROMBRANCH, TAKEAWAY, DINE_IN, DELIVERY, DELIVERY_COMPANY }
 
 extension CartOrderTypeX on CartOrderType {
   String get arabicLabel {
     switch (this) {
-      case CartOrderType.TAKEAWAY:
+      case CartOrderType.FROMBRANCH:
         return 'سفري';
-      case CartOrderType.PICKUP:
+      case CartOrderType.TAKEAWAY:
         return 'استلام';
       case CartOrderType.DINE_IN:
         return 'محلي';
@@ -24,11 +24,11 @@ extension CartOrderTypeX on CartOrderType {
     switch (this) {
       case CartOrderType.TAKEAWAY:
         return 1;
-      case CartOrderType.PICKUP:
+      case CartOrderType.DELIVERY:
         return 2;
       case CartOrderType.DINE_IN:
         return 3;
-      case CartOrderType.DELIVERY:
+      case CartOrderType.FROMBRANCH:
         return 4;
       case CartOrderType.DELIVERY_COMPANY:
         return 5;
