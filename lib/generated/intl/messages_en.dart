@@ -65,6 +65,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "account": MessageLookupByLibrary.simpleMessage("Account"),
     "active": MessageLookupByLibrary.simpleMessage("Active"),
     "activeNow": MessageLookupByLibrary.simpleMessage("Active Now"),
+    "actualCashInDrawer": MessageLookupByLibrary.simpleMessage(
+      "Actual Cash in Drawer",
+    ),
     "actualWorkingHours": MessageLookupByLibrary.simpleMessage(
       "Actual WorkingHours",
     ),
@@ -110,6 +113,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "apartmentNumber": MessageLookupByLibrary.simpleMessage("Apartment Number"),
     "apply": MessageLookupByLibrary.simpleMessage("Apply"),
     "approvals": MessageLookupByLibrary.simpleMessage("Approvals"),
+    "approve": MessageLookupByLibrary.simpleMessage("Approve"),
+    "approveDeficitVoucher": MessageLookupByLibrary.simpleMessage(
+      "Approve Deficit Voucher",
+    ),
     "approved": MessageLookupByLibrary.simpleMessage("Approved"),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
     "attachReceiptOrInvoice": MessageLookupByLibrary.simpleMessage(
@@ -176,8 +183,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "camera": MessageLookupByLibrary.simpleMessage("Camera"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
+    "cardNetwork": MessageLookupByLibrary.simpleMessage("Network"),
     "cart": MessageLookupByLibrary.simpleMessage("Cart"),
     "cartIsEmpty": MessageLookupByLibrary.simpleMessage("Your cart is empty."),
+    "cash": MessageLookupByLibrary.simpleMessage("Cash"),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("Walk-in Customer"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("Cashier Custody"),
     "changeAddress": MessageLookupByLibrary.simpleMessage("Change address"),
@@ -237,6 +246,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "customizationSubtitle": MessageLookupByLibrary.simpleMessage(
       "Select the appropriate size and desired add-ons",
     ),
+    "dailyClose": MessageLookupByLibrary.simpleMessage("Daily Close"),
     "dailyWorkingHours": MessageLookupByLibrary.simpleMessage(
       "from 9:00 A.M to 6:00 P.M",
     ),
@@ -250,6 +260,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dayStatus": MessageLookupByLibrary.simpleMessage("Day Status"),
     "days": MessageLookupByLibrary.simpleMessage("Days"),
     "dbName": MessageLookupByLibrary.simpleMessage("DataBase Name"),
+    "deficit": MessageLookupByLibrary.simpleMessage("Deficit"),
     "deleteOrder": MessageLookupByLibrary.simpleMessage("Delete Order"),
     "delivery": MessageLookupByLibrary.simpleMessage("Delivery"),
     "deliveryCompanies": MessageLookupByLibrary.simpleMessage(
@@ -314,6 +325,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Events and approvals",
     ),
     "exitApp": MessageLookupByLibrary.simpleMessage("click again to exit"),
+    "expectedTotalCash": MessageLookupByLibrary.simpleMessage(
+      "Expected Total Cash",
+    ),
     "expenseReimbursement": MessageLookupByLibrary.simpleMessage(
       "Expense Reimbursement",
     ),
@@ -457,6 +471,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "okDialog": MessageLookupByLibrary.simpleMessage("OK"),
     "openInvoice": MessageLookupByLibrary.simpleMessage("Open Invoice"),
     "openSetting": MessageLookupByLibrary.simpleMessage("Open Settings"),
+    "openingBalance": MessageLookupByLibrary.simpleMessage("Opening Balance"),
     "openingCash": MessageLookupByLibrary.simpleMessage("Opening Cash"),
     "openingCustody": MessageLookupByLibrary.simpleMessage("Opening Custody"),
     "openingCustodyTitle": MessageLookupByLibrary.simpleMessage(
@@ -550,6 +565,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "previousOrders": MessageLookupByLibrary.simpleMessage("Previous Orders"),
     "priceWithCurrency": m10,
     "print": MessageLookupByLibrary.simpleMessage("Print"),
+    "printReceipt": MessageLookupByLibrary.simpleMessage("Print Receipt"),
+    "printWithApproval": MessageLookupByLibrary.simpleMessage(
+      "Print with Approval",
+    ),
     "productSize": MessageLookupByLibrary.simpleMessage("Product Size"),
     "project": MessageLookupByLibrary.simpleMessage("Project"),
     "quantityWithCount": m11,
@@ -694,6 +713,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sureDelete": MessageLookupByLibrary.simpleMessage(
       "are you sure you need delete this request",
     ),
+    "surplus": MessageLookupByLibrary.simpleMessage("Surplus"),
     "suspendSession": MessageLookupByLibrary.simpleMessage("Suspend Session"),
     "systemTime": MessageLookupByLibrary.simpleMessage("System time"),
     "table": MessageLookupByLibrary.simpleMessage("Table"),
@@ -730,6 +750,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalHeldOrders": MessageLookupByLibrary.simpleMessage(
       "Total Held Orders",
     ),
+    "totalInvoices": MessageLookupByLibrary.simpleMessage("Total Invoices"),
     "totalPaid": MessageLookupByLibrary.simpleMessage("Total Amount Paid"),
     "totalWithdrawals": MessageLookupByLibrary.simpleMessage(
       "Total Withdrawals",

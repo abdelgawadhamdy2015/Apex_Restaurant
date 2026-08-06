@@ -50,30 +50,52 @@ class DateTextField extends StatelessWidget {
           onTap: onTap,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
+            fillColor: theme.colorScheme.surface,
             hintText: S.of(context).selectDateAndTimeError,
-            contentPadding: const EdgeInsets.only(right: 4),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: context.spacing.xxs,
+            ),
             hintStyle: textTheme.bodyMedium,
-            suffixIcon: Icon(_suffixIcon),
+            prefixIcon: Icon(
+              _suffixIcon,
+              color: theme.colorScheme.onPrimary,
+              size: context.iconSizes.sm,
+            ),
           ),
         ),
       ],
     );
   }
 
-  /// Helper method to pick DateTime (Date then Time sequentially)
+  /// Helper method to pick DateTime (Date then Time sequentially).
+  ///
+  /// No manual [Theme] override is needed here anymore — both
+  /// [showDatePicker] and [showTimePicker] automatically inherit the
+  /// app's ambient `Theme.of(context)`, which already carries the correct
+  /// `datePickerTheme` / `timePickerTheme` for whichever mode (light/dark)
+  /// is currently active, via `AppTheme`.
   static Future<DateTime?> pickDateTime(
     BuildContext context, {
     DateTime? initialDate,
+    DateTextFieldType? type,
   }) async {
     final now = DateTime.now();
-    final pickedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDate ?? now,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
+    DateTime? pickedDate;
 
-    if (pickedDate == null || !context.mounted) return null;
+    if (type == DateTextFieldType.dateTime || type == DateTextFieldType.date) {
+      pickedDate = await showDatePicker(
+        context: context,
+        initialDate: initialDate ?? now,
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+
+      if (pickedDate == null || !context.mounted) return null;
+
+      if (type == DateTextFieldType.date) {
+        return pickedDate;
+      }
+    }
 
     final pickedTime = await showTimePicker(
       context: context,
@@ -81,9 +103,11 @@ class DateTextField extends StatelessWidget {
     );
 
     if (pickedTime == null) return null;
-
+    if (type == DateTextFieldType.time) {
+      return DateTime(0, 0, 0, pickedTime.hour, pickedTime.minute);
+    }
     return DateTime(
-      pickedDate.year,
+      pickedDate!.year,
       pickedDate.month,
       pickedDate.day,
       pickedTime.hour,

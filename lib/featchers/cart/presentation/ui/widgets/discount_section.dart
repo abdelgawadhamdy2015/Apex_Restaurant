@@ -91,7 +91,7 @@ class _DiscountSectionState extends State<DiscountSection> {
     );
     final spacing = context.spacing;
     final icons = context.iconSizes;
-    final buttonTheme = context.buttonTheme;
+    final buttonTheme = context.appExtraTheme;
 
     final lang = S.of(context);
 

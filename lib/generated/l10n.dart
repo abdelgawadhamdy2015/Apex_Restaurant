@@ -3646,6 +3646,106 @@ class S {
       args: [],
     );
   }
+
+  /// `Daily Close`
+  String get dailyClose {
+    return Intl.message('Daily Close', name: 'dailyClose', desc: '', args: []);
+  }
+
+  /// `Total Invoices`
+  String get totalInvoices {
+    return Intl.message(
+      'Total Invoices',
+      name: 'totalInvoices',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Network`
+  String get cardNetwork {
+    return Intl.message('Network', name: 'cardNetwork', desc: '', args: []);
+  }
+
+  /// `Cash`
+  String get cash {
+    return Intl.message('Cash', name: 'cash', desc: '', args: []);
+  }
+
+  /// `Expected Total Cash`
+  String get expectedTotalCash {
+    return Intl.message(
+      'Expected Total Cash',
+      name: 'expectedTotalCash',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Actual Cash in Drawer`
+  String get actualCashInDrawer {
+    return Intl.message(
+      'Actual Cash in Drawer',
+      name: 'actualCashInDrawer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Deficit`
+  String get deficit {
+    return Intl.message('Deficit', name: 'deficit', desc: '', args: []);
+  }
+
+  /// `Surplus`
+  String get surplus {
+    return Intl.message('Surplus', name: 'surplus', desc: '', args: []);
+  }
+
+  /// `Print with Approval`
+  String get printWithApproval {
+    return Intl.message(
+      'Print with Approval',
+      name: 'printWithApproval',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approve Deficit Voucher`
+  String get approveDeficitVoucher {
+    return Intl.message(
+      'Approve Deficit Voucher',
+      name: 'approveDeficitVoucher',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Approve`
+  String get approve {
+    return Intl.message('Approve', name: 'approve', desc: '', args: []);
+  }
+
+  /// `Print Receipt`
+  String get printReceipt {
+    return Intl.message(
+      'Print Receipt',
+      name: 'printReceipt',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Opening Balance`
+  String get openingBalance {
+    return Intl.message(
+      'Opening Balance',
+      name: 'openingBalance',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

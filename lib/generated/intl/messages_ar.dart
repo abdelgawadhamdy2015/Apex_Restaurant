@@ -63,6 +63,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "account": MessageLookupByLibrary.simpleMessage("الحساب"),
     "active": MessageLookupByLibrary.simpleMessage("نشط"),
     "activeNow": MessageLookupByLibrary.simpleMessage("نشط الآن"),
+    "actualCashInDrawer": MessageLookupByLibrary.simpleMessage(
+      "المبلغ النقدي الفعلي بالدرج",
+    ),
     "actualWorkingHours": MessageLookupByLibrary.simpleMessage(
       "ساعات العمل الفعلية",
     ),
@@ -104,6 +107,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "apartmentNumber": MessageLookupByLibrary.simpleMessage("رقم الشقة"),
     "apply": MessageLookupByLibrary.simpleMessage("تطبيق"),
     "approvals": MessageLookupByLibrary.simpleMessage("الاعتمادات"),
+    "approve": MessageLookupByLibrary.simpleMessage("اعتماد"),
+    "approveDeficitVoucher": MessageLookupByLibrary.simpleMessage(
+      "اعتماد سند صرف العجز",
+    ),
     "approved": MessageLookupByLibrary.simpleMessage("موافق عليه"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
     "attachReceiptOrInvoice": MessageLookupByLibrary.simpleMessage(
@@ -168,8 +175,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "camera": MessageLookupByLibrary.simpleMessage("كاميرا"),
     "cancel": MessageLookupByLibrary.simpleMessage(" إلغاء"),
     "cancelled": MessageLookupByLibrary.simpleMessage("ملغي"),
+    "cardNetwork": MessageLookupByLibrary.simpleMessage("شبكة"),
     "cart": MessageLookupByLibrary.simpleMessage("السلة"),
     "cartIsEmpty": MessageLookupByLibrary.simpleMessage("السلة فارغة."),
+    "cash": MessageLookupByLibrary.simpleMessage("نقدي"),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("عميل نقدي"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("عهدة الكاشير"),
     "changeAddress": MessageLookupByLibrary.simpleMessage("تغيير العنوان"),
@@ -219,6 +228,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "customizationSubtitle": MessageLookupByLibrary.simpleMessage(
       "اختر الحجم المناسب والإضافات المرغوبة",
     ),
+    "dailyClose": MessageLookupByLibrary.simpleMessage("إقفال اليومية"),
     "dailyWorkingHours": MessageLookupByLibrary.simpleMessage(
       "من 9:00 صباحًا الي 6:00 مساءً",
     ),
@@ -232,6 +242,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dayStatus": MessageLookupByLibrary.simpleMessage("حالة اليوم"),
     "days": MessageLookupByLibrary.simpleMessage("ايام"),
     "dbName": MessageLookupByLibrary.simpleMessage("اسم قاعدة البيانات"),
+    "deficit": MessageLookupByLibrary.simpleMessage("العجز"),
     "deleteOrder": MessageLookupByLibrary.simpleMessage("حذف الطلب"),
     "delivery": MessageLookupByLibrary.simpleMessage("توصيل"),
     "deliveryCompanies": MessageLookupByLibrary.simpleMessage("شركات التوصيل"),
@@ -292,6 +303,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "الأحداث والموافقات",
     ),
     "exitApp": MessageLookupByLibrary.simpleMessage("اضغط مرة أخرى للخروج"),
+    "expectedTotalCash": MessageLookupByLibrary.simpleMessage(
+      "الإجمالي النقدي المتوقع",
+    ),
     "expenseReimbursement": MessageLookupByLibrary.simpleMessage(
       "تعويض مصروفات",
     ),
@@ -437,6 +451,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "okDialog": MessageLookupByLibrary.simpleMessage("موافق"),
     "openInvoice": MessageLookupByLibrary.simpleMessage("فتح فاتورة"),
     "openSetting": MessageLookupByLibrary.simpleMessage("فتح الإعدادات"),
+    "openingBalance": MessageLookupByLibrary.simpleMessage("الرصيد الإفتتاحي"),
     "openingCash": MessageLookupByLibrary.simpleMessage("العهدة الافتتاحية"),
     "openingCustody": MessageLookupByLibrary.simpleMessage("افتتاح عهدة"),
     "openingCustodyTitle": MessageLookupByLibrary.simpleMessage(
@@ -456,7 +471,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "overallReport": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "partialReturn": MessageLookupByLibrary.simpleMessage("مرتجع جزئي"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
-    "pay": MessageLookupByLibrary.simpleMessage("دفع"),
+    "pay": MessageLookupByLibrary.simpleMessage("سداد"),
     "payment": MessageLookupByLibrary.simpleMessage("الدفع"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
     "paymentMethodBankTransfer": MessageLookupByLibrary.simpleMessage(
@@ -524,6 +539,10 @@ class MessageLookup extends MessageLookupByLibrary {
     "previousOrders": MessageLookupByLibrary.simpleMessage("طلبات سابقة"),
     "priceWithCurrency": m10,
     "print": MessageLookupByLibrary.simpleMessage("طباعة"),
+    "printReceipt": MessageLookupByLibrary.simpleMessage("طباعة إيصال"),
+    "printWithApproval": MessageLookupByLibrary.simpleMessage(
+      "طباعة مع الإعتماد",
+    ),
     "productSize": MessageLookupByLibrary.simpleMessage("حجم المنتج"),
     "project": MessageLookupByLibrary.simpleMessage("المشروع"),
     "quantityWithCount": m11,
@@ -658,6 +677,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "sureDelete": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك بحاجة إلى حذف هذا الطلب",
     ),
+    "surplus": MessageLookupByLibrary.simpleMessage("الفائض"),
     "suspendSession": MessageLookupByLibrary.simpleMessage("تعليق الجلسة"),
     "systemTime": MessageLookupByLibrary.simpleMessage("توقيت النظام"),
     "table": MessageLookupByLibrary.simpleMessage("طاولة"),
@@ -692,6 +712,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalHeldOrders": MessageLookupByLibrary.simpleMessage(
       "إجمالي الطلبات المعلقة",
     ),
+    "totalInvoices": MessageLookupByLibrary.simpleMessage("إجمالي الفواتير"),
     "totalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المبلغ المدفوع"),
     "totalWithdrawals": MessageLookupByLibrary.simpleMessage("إجمالي السحوبات"),
     "transaction": MessageLookupByLibrary.simpleMessage(" الحضور "),

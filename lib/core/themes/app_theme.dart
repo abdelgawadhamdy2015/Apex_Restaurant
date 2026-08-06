@@ -40,10 +40,16 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.canvas,
       colorScheme: colorScheme,
       extensions: [
-        AppButtonTheme(
+        AppExtraTheme(
           background: AppColors.background,
+          secondaryBackground: AppColors.secondaryButtonColor,
           iconColor: AppColors.primaryLight,
           subtitleColor: AppColors.primaryLight,
+          greenBackground: AppColors.green,
+          cancelPorder: AppColors.cancelLightPorder,
+          togelBackground: AppColors.blueTint,
+          totalAmountColor: AppColors.white,
+          successGradient: AppColors.lightSuceesGrad,
         ),
         AppTextStyles.build(
           scale: fontScale,
@@ -90,6 +96,8 @@ class AppTheme {
           fontSize: 14 * fontScale,
         ),
       ),
+      datePickerTheme: _datePickerTheme(colorScheme),
+      timePickerTheme: _timePickerTheme(colorScheme),
     );
   }
 
@@ -106,7 +114,7 @@ class AppTheme {
       error: AppColors.error,
       errorContainer: AppColors.errorContainer,
       onErrorContainer: AppColors.onErrorContainer,
-      surface: AppColors.containerBackground,
+      surface: AppColors.darkSurfaceBackground,
       onSurface: AppColors.onSurface,
       outlineVariant: AppColors.darkPorder,
       onSecondary: AppColors.darkTextSecondary,
@@ -123,13 +131,19 @@ class AppTheme {
       useMaterial3: true,
       fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xFF0F172A),
+      scaffoldBackgroundColor: AppColors.darkSurfaceBackground,
       colorScheme: colorScheme,
       extensions: [
-        AppButtonTheme(
+        AppExtraTheme(
           background: AppColors.amber,
+          secondaryBackground: AppColors.darkPorder,
           iconColor: AppColors.onPrimary,
           subtitleColor: AppColors.onPrimary,
+          greenBackground: AppColors.green,
+          cancelPorder: AppColors.cancelDarkPorder,
+          togelBackground: AppColors.darkSurfaceBackground,
+          totalAmountColor: accent.withOpacity(.2),
+          successGradient: AppColors.darkSuceesGrad,
         ),
         AppTextStyles.build(
           scale: fontScale,
@@ -176,6 +190,90 @@ class AppTheme {
           fontSize: 14 * fontScale,
         ),
       ),
+      datePickerTheme: _datePickerTheme(colorScheme),
+      timePickerTheme: _timePickerTheme(colorScheme),
+    );
+  }
+
+  static DatePickerThemeData _datePickerTheme(ColorScheme colorScheme) {
+    return DatePickerThemeData(
+      backgroundColor: colorScheme.surface,
+      headerBackgroundColor: colorScheme.primary,
+      headerForegroundColor: Colors.white,
+      subHeaderForegroundColor: colorScheme.onPrimary,
+      weekdayStyle: TextStyle(color: colorScheme.primary),
+      dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.white;
+        }
+        return colorScheme.onPrimary;
+      }),
+      dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary;
+        }
+        return null;
+      }),
+      todayForegroundColor: WidgetStatePropertyAll(colorScheme.primary),
+      todayBackgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+      todayBorder: BorderSide(color: colorScheme.primary),
+      yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.white;
+        }
+        return null;
+      }),
+      yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary;
+        }
+        return colorScheme.onPrimary;
+      }),
+
+      surfaceTintColor: Colors.transparent,
+    );
+  }
+
+  static TimePickerThemeData _timePickerTheme(ColorScheme colorScheme) {
+    return TimePickerThemeData(
+      backgroundColor: colorScheme.surface,
+      dialBackgroundColor: colorScheme.onPrimary,
+      dialHandColor: colorScheme.primary,
+      dialTextColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return Colors.white;
+        }
+        return colorScheme.onSurface;
+      }),
+
+      hourMinuteColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary.withOpacity(.15);
+        }
+        return colorScheme.onPrimary;
+      }),
+      hourMinuteTextColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary;
+        }
+        return colorScheme.onSurface;
+      }),
+      dayPeriodColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary.withOpacity(0.15);
+        }
+        return Colors.transparent;
+      }),
+      dayPeriodTextColor: WidgetStateColor.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return colorScheme.primary;
+        }
+        return colorScheme.onPrimary;
+      }),
+      dayPeriodBorderSide: BorderSide(color: colorScheme.outlineVariant),
+      entryModeIconColor: colorScheme.primary,
+      helpTextStyle: TextStyle(color: colorScheme.onPrimary),
+      //  surfaceTintColor: Colors.transparent,
     );
   }
 }

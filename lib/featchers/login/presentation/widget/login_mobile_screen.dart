@@ -4,13 +4,9 @@ import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/service/signal_r_service.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
-import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
-import 'package:apex_restaurant/core/shared/widgets/grediant_container.dart';
 import 'package:apex_restaurant/core/shared/widgets/my_progress_indicator.dart';
-import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_event.dart';
 import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_state.dart';
@@ -19,8 +15,6 @@ import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 SignalRService mySignalRService = SignalRService();
@@ -56,6 +50,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     lang = S.of(context);
     selectedLanguage = Intl.defaultLocale == RestaurantConstants.arabic
         ? lang.arabic
@@ -65,6 +60,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       canPop: finish,
       onPopInvokedWithResult: _handlePop,
       child: Scaffold(
+        backgroundColor: theme.colorScheme.surface,
         body: SafeArea(
           child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: context.spacing.md),
@@ -96,7 +92,6 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final theme = Theme.of(context);
     final mediaQuery = MediaQuery.of(context);
     final double dpr = mediaQuery.devicePixelRatio;
     final double logoW = mediaQuery.size.width * 0.48;
@@ -164,7 +159,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
 
   Widget _buildLoginForm(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-
+    final spacing = context.spacing;
     return SizedBox(
       height: mediaQuery.size.height * 0.8,
       child: SingleChildScrollView(
@@ -178,12 +173,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
                 const SizedBox(height: 16),
                 _buildLoginTitle(context),
                 const SizedBox(height: 16),
-                _buildTextField(
-                  context,
-                  lang.dbName,
-                  context.read<AuthBloc>().dbController,
-                  lang.insertDBName,
-                ),
+
                 _buildTextField(
                   context,
                   lang.email,
@@ -192,14 +182,22 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
                 ),
                 _buildTextField(
                   context,
-                  lang.insertPassword,
-                  context.read<AuthBloc>().passwordController,
                   lang.password,
+                  context.read<AuthBloc>().passwordController,
+                  lang.insertPassword,
                   obsecure: true,
+                ),
+                _buildTextField(
+                  context,
+                  lang.dbName,
+                  context.read<AuthBloc>().dbController,
+                  lang.insertDBName,
                 ),
                 //   _buildRememberAndForget(context),
                 const SizedBox(height: 8),
                 _buildLoginButton(context),
+                SizedBox(height: spacing.lg),
+                _buildForgetPasswordLink(context),
                 AuthBlocListener(rememberMe: rememberMe),
               ],
             ),
@@ -215,7 +213,6 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       child: Text(
         lang.login,
         style: theme.textTheme.headlineSmall?.copyWith(
-          color: theme.colorScheme.onSurface,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -242,15 +239,19 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           Text(
             label,
             style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 8),
-          MyTextForm(
-            hint: hint,
-            excep: label,
-            obsecure: obsecure,
+          TextFormField(
+            obscureText: obsecure ?? false,
+            decoration: InputDecoration(
+              hintText: hint,
+              fillColor: theme.colorScheme.onSurface,
+              border: OutlineInputBorder(
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
+              ),
+            ),
             controller: controller,
           ),
         ],
@@ -307,17 +308,18 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
   Widget _buildForgetPasswordLink(BuildContext context) {
     final theme = Theme.of(context);
 
-    return InkWell(
-      onTap: () {
-        context.read<AuthBloc>().formKey.currentState!.reset();
-        context.pushNamed(Routes.forgetPasswordScreen);
-      },
-      child: Text(
-        lang.forgetPassword,
-        style: theme.textTheme.bodyMedium?.copyWith(
-          fontWeight: FontWeight.w500,
-          color: theme.colorScheme.primary,
-          decoration: TextDecoration.underline,
+    return Center(
+      child: InkWell(
+        onTap: () {
+          // context.read<AuthBloc>().formKey.currentState!.reset();
+          // context.pushNamed(Routes.forgetPasswordScreen);
+        },
+        child: Text(
+          lang.forgetPassword,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            decoration: TextDecoration.underline,
+          ),
         ),
       ),
     );
@@ -330,19 +332,14 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       builder: (context, state) {
         return !context.read<AuthBloc>().loadingLogin
             ? AppButtonText(
-                linearGradient: LinearGradient(
-                  colors: [
-                    theme.colorScheme.primary,
-                    theme.colorScheme.primary,
-                  ],
-                ),
+                backgroundColor: theme.colorScheme.primary,
                 padding: EdgeInsets.zero,
                 width: double.infinity,
                 buttonText: lang.login,
-
+                icon: Icons.check_circle_outline,
                 onPressed: () => _validateThenLogin(context),
                 textStyle: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onPrimary,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               )

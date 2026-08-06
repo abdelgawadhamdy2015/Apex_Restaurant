@@ -10,7 +10,7 @@ import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart'
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
-import 'package:apex_restaurant/featchers/home/presentation/widgets/shift_start_dialog.dart';
+import 'package:apex_restaurant/featchers/home/presentation/widgets/opening_balance_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_app_bar.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
@@ -106,7 +106,7 @@ class _MainContent extends StatelessWidget {
           } else {
             showDialog(
               context: context,
-              builder: (_) => const ShiftStartDialog(),
+              builder: (_) => const OpeningBalanceDialog(),
             );
           }
         } else if (state.status == HomeStatus.error) {
