@@ -205,6 +205,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
               child: Material(
                 elevation: 4.0,
                 shape: RoundedRectangleBorder(
+                  side: BorderSide(color: context.appExtraTheme.cancelPorder),
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
                 child: SizedBox(
@@ -215,13 +216,19 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                     itemCount: options.length,
                     itemBuilder: (context, index) {
                       final option = options.elementAt(index);
-                      return ListTile(
-                        leading: const Icon(Icons.person_outline),
-                        title: Text(option.arabicName),
-                        subtitle: option.phone != null
-                            ? Text(option.phone!)
-                            : null,
-                        onTap: () => onSelected(option),
+                      return Card(
+                        color: theme.colorScheme.onSurface,
+                        child: ListTile(
+                          leading: const Icon(Icons.person_outline),
+                          title: Text(
+                            option.arabicName,
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                          subtitle: option.phone != null
+                              ? Text(option.phone!)
+                              : null,
+                          onTap: () => onSelected(option),
+                        ),
                       );
                     },
                   ),
@@ -239,7 +246,12 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
       initialValue: _selectedTable,
       decoration: _decoration(theme, lang.selectTableHint),
       items: widget.tables
-          .map((t) => DropdownMenuItem(value: t, child: Text(t.arabicName)))
+          .map(
+            (t) => DropdownMenuItem(
+              value: t,
+              child: Text(t.arabicName, style: theme.textTheme.bodyMedium),
+            ),
+          )
           .toList(),
       onChanged: (val) => setState(() => _selectedTable = val),
     );
@@ -253,19 +265,6 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   ) {
     return Row(
       children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () => Navigator.pop(context),
-            style: OutlinedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 48),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(spacing.radiusLg),
-              ),
-            ),
-            child: Text(lang.cancel),
-          ),
-        ),
-        SizedBox(width: spacing.sm),
         Expanded(
           child: BlocBuilder<TablesBloc, TablesState>(
             builder: (context, state) {
@@ -302,6 +301,21 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                 ),
               );
             },
+          ),
+        ),
+        SizedBox(width: spacing.sm),
+
+        Expanded(
+          child: ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size(double.infinity, 48),
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: context.appExtraTheme.cancelPorder),
+                borderRadius: BorderRadius.circular(spacing.radiusLg),
+              ),
+            ),
+            child: Text(lang.cancel),
           ),
         ),
       ],

@@ -27,6 +27,7 @@ class ReservationItemCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final appExtraTheme = context.appExtraTheme;
     final lang = S.of(context);
     final isCancelled = reservation.status == ReservationStatus.cancelled;
     final (statusColor, statusText) = _statusInfo(lang);
@@ -87,8 +88,7 @@ class ReservationItemCard extends StatelessWidget {
                     style: TextStyle(color: theme.colorScheme.primary),
                   ),
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primaryContainer
-                        .withOpacity(0.2),
+                    backgroundColor: appExtraTheme.secondaryBackground,
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -107,19 +107,21 @@ class ReservationItemCard extends StatelessWidget {
                         ),
                   icon: Icon(
                     Icons.close,
-                    color: isCancelled ? Colors.grey : Colors.red,
+                    color: isCancelled ? Colors.grey : theme.colorScheme.error,
                     size: iconSizes.xs,
                   ),
                   label: Text(
                     isCancelled ? lang.cancelled : lang.cancel,
                     style: TextStyle(
-                      color: isCancelled ? Colors.grey : Colors.red,
+                      color: isCancelled
+                          ? Colors.grey
+                          : theme.colorScheme.error,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: isCancelled
                         ? Colors.grey.shade100
-                        : Colors.red.shade50,
+                        : theme.colorScheme.error.withOpacity(.1),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -186,7 +188,7 @@ class _TableInfo extends StatelessWidget {
     return Row(
       children: [
         CircleAvatar(
-          backgroundColor: theme.colorScheme.primaryContainer.withOpacity(0.4),
+          backgroundColor: context.appExtraTheme.secondaryBackground,
           child: Text(
             tableNumber.replaceAll(RegExp(r'[^0-9]'), ''),
             style: theme.textTheme.titleMedium?.copyWith(

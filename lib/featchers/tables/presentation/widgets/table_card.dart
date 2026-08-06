@@ -104,7 +104,7 @@ class _TableCardState extends State<TableCard> {
       child: Container(
         padding: EdgeInsets.all(spacing.sm),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+          color: theme.colorScheme.onSurface,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
           border: Border.all(color: theme.colorScheme.outlineVariant),
         ),
@@ -136,13 +136,13 @@ class _TableCardState extends State<TableCard> {
                 Icon(
                   Icons.people_outline,
                   size: iconSizes.xs,
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: theme.colorScheme.onPrimary,
                 ),
                 SizedBox(width: spacing.xxs),
                 Text(
                   '${widget.table.seatNumbers} ${l10n.seats}',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: theme.colorScheme.onPrimary,
                   ),
                 ),
               ],
@@ -153,13 +153,17 @@ class _TableCardState extends State<TableCard> {
                 vertical: spacing.xxs,
               ),
               decoration: BoxDecoration(
-                color: isAvailable ? Colors.green.shade50 : Colors.red.shade50,
+                color: isAvailable
+                    ? context.appExtraTheme.greenBackground.withOpacity(.1)
+                    : theme.colorScheme.error.withOpacity(.1),
                 borderRadius: BorderRadius.circular(spacing.radiusLg),
               ),
               child: Text(
                 isAvailable ? l10n.available : l10n.reserved,
                 style: theme.textTheme.labelSmall?.copyWith(
-                  color: isAvailable ? Colors.green : Colors.red,
+                  color: isAvailable
+                      ? context.appExtraTheme.greenBackground
+                      : theme.colorScheme.error,
                   fontWeight: FontWeight.bold,
                 ),
               ),

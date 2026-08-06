@@ -98,7 +98,7 @@ class _TablesScreenState extends State<TablesScreen> {
         final isLoading = state.status == TablesStatus.loading;
 
         return Scaffold(
-          backgroundColor: theme.colorScheme.surfaceContainerLowest,
+          backgroundColor: theme.colorScheme.surface,
           appBar: CustomAppBar(
             title: state.activeTab == 0 ? l10n.tables : l10n.reservations,
             onBackPressed: () => Navigator.of(context).maybePop(),

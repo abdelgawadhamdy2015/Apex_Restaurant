@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
@@ -19,150 +20,131 @@ class _DailyCloseScreenState extends State<DailyCloseScreen> {
     final spacing = context.spacing;
     final lang = S.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text(lang.restaurantManager),
-        centerTitle: false,
-        leading: Padding(
-          padding: EdgeInsets.all(spacing.xs),
-          child: CircleAvatar(
-            backgroundColor: theme.colorScheme.primaryContainer,
-            child: Icon(
-              Icons.person,
-              color: theme.colorScheme.onPrimaryContainer,
-            ),
-          ),
-        ),
-        actions: [IconButton(icon: const Icon(Icons.search), onPressed: () {})],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(spacing.md),
+        child: Container(
           padding: EdgeInsets.all(spacing.md),
-          child: Container(
-            padding: EdgeInsets.all(spacing.md),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(spacing.radiusLg),
-              border: Border.all(color: theme.colorScheme.outlineVariant),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Text(
-                    lang.dailyClose,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.onSurface,
-                    ),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(spacing.radiusLg),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Text(
+                  lang.dailyClose,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onPrimary,
                   ),
                 ),
-                SizedBox(height: spacing.md),
-                const _MetricsSummaryCard(),
-                SizedBox(height: spacing.md),
-                const _ExpectedCashCard(),
-                SizedBox(height: spacing.md),
-                _AmountInputField(
-                  label: lang.actualCashInDrawer,
-                  initialValue: '4,135.00',
-                  valueColor: theme.colorScheme.onSurface,
-                  onChanged: (val) {},
-                ),
-                SizedBox(height: spacing.sm),
-                _AmountInputField(
-                  label: lang.deficit,
-                  initialValue: '65.00',
-                  valueColor: Colors.red,
-                  readOnly: true,
-                ),
-                SizedBox(height: spacing.md),
-                SwitchListTile(
-                  value: _printWithApproval,
-                  onChanged: (val) => setState(() => _printWithApproval = val),
-                  title: Text(
-                    lang.printWithApproval,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  activeColor: Colors.green,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                SwitchListTile(
-                  value: _approveDeficitVoucher,
-                  onChanged: (val) =>
-                      setState(() => _approveDeficitVoucher = val),
-                  title: Text(
-                    lang.approveDeficitVoucher,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  activeColor: Colors.green,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                SizedBox(height: spacing.lg),
-                ElevatedButton.icon(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
-                    padding: EdgeInsets.symmetric(vertical: spacing.md),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(spacing.radiusMd),
-                    ),
-                  ),
-                  icon: const Icon(Icons.check_circle_outline),
-                  label: Text(
-                    lang.approve,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
+              ),
+              SizedBox(height: spacing.md),
+              const _MetricsSummaryCard(),
+              SizedBox(height: spacing.md),
+              const _ExpectedCashCard(),
+              SizedBox(height: spacing.md),
+              _AmountInputField(
+                label: lang.actualCashInDrawer,
+                initialValue: '4,135.00',
+                valueColor: theme.colorScheme.onPrimary,
+                onChanged: (val) {},
+              ),
+              SizedBox(height: spacing.sm),
+              _AmountInputField(
+                label: lang.deficit,
+                initialValue: '65.00',
+                valueColor: theme.colorScheme.error,
+                readOnly: true,
+              ),
+              SizedBox(height: spacing.md),
+              SwitchListTile(
+                value: _printWithApproval,
+                onChanged: (val) => setState(() => _printWithApproval = val),
+                title: Text(
+                  lang.printWithApproval,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSecondary,
                   ),
                 ),
-                SizedBox(height: spacing.sm),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.primary,
-                          side: BorderSide(color: theme.colorScheme.primary),
-                          padding: EdgeInsets.symmetric(vertical: spacing.md),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              spacing.radiusMd,
-                            ),
-                          ),
+                activeColor: AppColors.green,
+                contentPadding: EdgeInsets.zero,
+              ),
+              SwitchListTile(
+                value: _approveDeficitVoucher,
+                onChanged: (val) =>
+                    setState(() => _approveDeficitVoucher = val),
+                title: Text(
+                  lang.approveDeficitVoucher,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSecondary,
+                  ),
+                ),
+                activeColor: AppColors.green,
+                contentPadding: EdgeInsets.zero,
+              ),
+              SizedBox(height: spacing.lg),
+              ElevatedButton.icon(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  padding: EdgeInsets.symmetric(vertical: spacing.md),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(spacing.radiusMd),
+                  ),
+                ),
+                icon: const Icon(Icons.check_circle_outline),
+                label: Text(
+                  lang.approve,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: theme.colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: spacing.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: theme.colorScheme.primary,
+                        side: BorderSide(color: theme.colorScheme.primary),
+                        padding: EdgeInsets.symmetric(vertical: spacing.md),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(spacing.radiusMd),
                         ),
-                        icon: const Icon(Icons.print_outlined),
-                        label: Text(lang.printReceipt),
                       ),
+                      icon: const Icon(Icons.print_outlined),
+                      label: Text(lang.printReceipt),
                     ),
-                    SizedBox(width: spacing.sm),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.onSurfaceVariant,
-                          side: BorderSide(color: theme.colorScheme.outline),
-                          padding: EdgeInsets.symmetric(vertical: spacing.md),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              spacing.radiusMd,
-                            ),
+                  ),
+                  SizedBox(width: spacing.sm),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: theme.colorScheme.onSecondary,
+                        side: BorderSide(color: theme.colorScheme.outline),
+                        padding: EdgeInsets.symmetric(vertical: spacing.md),
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(
+                            color: context.appExtraTheme.cancelPorder,
                           ),
+                          borderRadius: BorderRadius.circular(spacing.radiusMd),
                         ),
-                        child: Text(lang.cancel),
                       ),
+                      child: Text(lang.cancel),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -195,7 +177,7 @@ class _MetricsSummaryCard extends StatelessWidget {
                   title: lang.totalInvoices,
                   amount: '13,270.00',
                   icon: Icons.receipt_long_outlined,
-                  color: Colors.blue,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               Container(
@@ -208,7 +190,7 @@ class _MetricsSummaryCard extends StatelessWidget {
                   title: lang.cardNetwork,
                   amount: '8,750.00',
                   icon: Icons.credit_card,
-                  color: Colors.amber,
+                  color: theme.colorScheme.tertiary,
                 ),
               ),
             ],
@@ -221,7 +203,7 @@ class _MetricsSummaryCard extends StatelessWidget {
                   title: lang.cash,
                   amount: '4,520.00',
                   icon: Icons.payments_outlined,
-                  color: Colors.green,
+                  color: AppColors.green,
                 ),
               ),
               Container(
@@ -234,7 +216,7 @@ class _MetricsSummaryCard extends StatelessWidget {
                   title: lang.returns,
                   amount: '320.00',
                   icon: Icons.assignment_return_outlined,
-                  color: Colors.red,
+                  color: AppColors.error,
                 ),
               ),
             ],
@@ -285,7 +267,7 @@ class _MetricTile extends StatelessWidget {
           '$amount ${lang.currencySarShort}',
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: theme.colorScheme.onSurface,
+            color: theme.colorScheme.onSecondary,
           ),
         ),
       ],
@@ -305,7 +287,7 @@ class _ExpectedCashCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
         borderRadius: BorderRadius.circular(spacing.radiusMd),
       ),
       child: Column(
@@ -313,7 +295,7 @@ class _ExpectedCashCard extends StatelessWidget {
           Text(
             lang.expectedTotalCash,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+              color: theme.colorScheme.onPrimary,
             ),
           ),
           SizedBox(height: spacing.xs),
@@ -357,7 +339,7 @@ class _AmountInputField extends StatelessWidget {
         Text(
           label,
           style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            color: theme.colorScheme.onSecondary,
           ),
         ),
         SizedBox(height: spacing.xs),
@@ -365,7 +347,7 @@ class _AmountInputField extends StatelessWidget {
           initialValue: initialValue,
           readOnly: readOnly,
           keyboardType: TextInputType.number,
-          textAlign: TextAlign.end,
+          textAlign: TextAlign.start,
           style: theme.textTheme.titleLarge?.copyWith(
             color: valueColor,
             fontWeight: FontWeight.bold,
@@ -374,12 +356,12 @@ class _AmountInputField extends StatelessWidget {
             isDense: true,
             filled: true,
             fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
-            prefixIcon: Padding(
+            suffixIcon: Padding(
               padding: EdgeInsets.all(spacing.sm),
               child: Text(
                 lang.currencySarShort,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: theme.colorScheme.onPrimaryFixed,
                 ),
               ),
             ),

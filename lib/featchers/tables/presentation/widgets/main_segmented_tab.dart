@@ -14,14 +14,13 @@ class MainSegmentedTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final spacing = context.spacing;
     final l10n = S.of(context);
 
     return Container(
       padding: EdgeInsets.all(spacing.xxs),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+        color: context.appExtraTheme.togelBackground,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
       ),
       child: Row(
@@ -65,7 +64,7 @@ class _SegmentButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: spacing.sm),
+        padding: EdgeInsets.symmetric(vertical: spacing.xs),
         decoration: BoxDecoration(
           color: isSelected ? theme.colorScheme.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -76,7 +75,7 @@ class _SegmentButton extends StatelessWidget {
           style: theme.textTheme.titleSmall?.copyWith(
             color: isSelected
                 ? theme.colorScheme.onPrimary
-                : theme.colorScheme.onSurfaceVariant,
+                : theme.colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),

@@ -123,7 +123,7 @@ class _ReservationSearchFilterCardState
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -136,7 +136,7 @@ class _ReservationSearchFilterCardState
                   initialValue: _selectedTable,
                   decoration: InputDecoration(
                     labelText: l10n.floor,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
+                    fillColor: theme.colorScheme.surface,
                   ),
                   items: [
                     DropdownMenuItem<TableEntity?>(
@@ -165,7 +165,7 @@ class _ReservationSearchFilterCardState
                   isExpanded: true,
                   decoration: InputDecoration(
                     labelText: l10n.customerName,
-                    fillColor: theme.colorScheme.surfaceContainerHighest,
+                    fillColor: theme.colorScheme.surface,
                   ),
                   items: [
                     DropdownMenuItem<PosClientModel>(
@@ -179,10 +179,8 @@ class _ReservationSearchFilterCardState
                           alignment: Alignment.centerRight,
                           child: Text(
                             f.arabicName,
-                            overflow: TextOverflow
-                                .ellipsis, // Prevents text overflow issues
-                            textDirection: TextDirection
-                                .rtl, // Forces proper Arabic layout
+                            overflow: TextOverflow.ellipsis,
+                            textDirection: TextDirection.rtl,
                           ),
                         ),
                       );
@@ -228,7 +226,7 @@ class _ReservationSearchFilterCardState
             ),
             label: Text(
               l10n.search,
-              style: theme.textTheme.titleMedium?.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
