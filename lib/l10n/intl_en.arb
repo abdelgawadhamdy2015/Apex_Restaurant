@@ -456,5 +456,18 @@
     "pleaseSelectValidSize": "Please select a valid size.",
     "thisItemHasNoValidSize": "This item has no valid size.",
     "fromBranch": "From Branch",
-    "pleaseSelectValidFromBranchDateTime": "Please select a valid branch and date/time."
+    "pleaseSelectValidFromBranchDateTime": "Please select a valid branch and date/time.",
+    "dailyClose": "Daily Close",
+    "totalInvoices": "Total Invoices",
+    "cardNetwork": "Network",
+    "cash": "Cash",
+    "expectedTotalCash": "Expected Total Cash",
+    "actualCashInDrawer": "Actual Cash in Drawer",
+    "deficit": "Deficit",
+    "surplus": "Surplus",
+    "printWithApproval": "Print with Approval",
+    "approveDeficitVoucher": "Approve Deficit Voucher",
+    "approve": "Approve",
+    "printReceipt": "Print Receipt",
+    "openingBalance": "Opening Balance"
 }

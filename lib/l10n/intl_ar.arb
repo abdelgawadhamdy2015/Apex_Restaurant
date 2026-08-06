@@ -192,7 +192,7 @@
     "apply": "تطبيق",
     "salesScreen": "شاشة البيع",
     "toRestaurant": "للمطعم",
-    "pay": "دفع",
+    "pay": "سداد",
     "tables": "الطاولات",
     "floors": "الطوابق",
     "total": "الإجمالي",
@@ -457,5 +457,18 @@
     "pleaseSelectValidSize": "يرجى اختيار حجم صالح.",
     "thisItemHasNoValidSize": "لا يحتوي هذا الصنف على حجم صالح.",
     "fromBranch": "من الفرع",
-    "pleaseSelectValidFromBranchDateTime": "يرجى اختيار فرع وتاريخ/وقت صالحين."
+    "pleaseSelectValidFromBranchDateTime": "يرجى اختيار فرع وتاريخ/وقت صالحين.",
+    "dailyClose": "إقفال اليومية",
+    "totalInvoices": "إجمالي الفواتير",
+    "cardNetwork": "شبكة",
+    "cash": "نقدي",
+    "expectedTotalCash": "الإجمالي النقدي المتوقع",
+    "actualCashInDrawer": "المبلغ النقدي الفعلي بالدرج",
+    "deficit": "العجز",
+    "surplus": "الفائض",
+    "printWithApproval": "طباعة مع الإعتماد",
+    "approveDeficitVoucher": "اعتماد سند صرف العجز",
+    "approve": "اعتماد",
+    "printReceipt": "طباعة إيصال",
+    "openingBalance": "الرصيد الإفتتاحي"
 }

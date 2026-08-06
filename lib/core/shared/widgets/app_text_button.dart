@@ -62,14 +62,15 @@ class AppButtonText extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(buttonText, style: resolvedTextStyle),
               if (icon != null) ...[
-                const SizedBox(width: 8),
                 Icon(
                   icon,
-                  color: resolvedTextStyle?.color ?? Colors.white,
+                  color: AppColors.white,
                   size: resolvedTextStyle?.fontSize,
                 ),
+                const SizedBox(width: 8),
+
+                Text(buttonText, style: resolvedTextStyle),
               ],
             ],
           ),

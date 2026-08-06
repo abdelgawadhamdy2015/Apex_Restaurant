@@ -17,10 +17,24 @@ class AppColors {
   static const Color onSecondary = Colors.black;
   static const Color lightTextSecondary = Color(0xFF414753);
   static const Color darkTextSecondary = Color(0xFFB2B2B2);
-
+  static const Color successGrad1 = Color(0xFF14B51D);
+  static const Color successGrad2 = Color(0xFFF8F9FF);
+  static const Color successGrad3 = Color(0xFF01060B);
+  static Gradient lightSuceesGrad = LinearGradient(
+    colors: [successGrad1.withOpacity(.2), successGrad2],
+  );
+  static Gradient darkSuceesGrad = LinearGradient(
+    colors: [successGrad1.withOpacity(.5), successGrad3],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
   static const Color onSurface = Color(0xFF141516);
-  static const Color containerBackground = Color(0xFF01060B);
+  static const Color darkSurfaceBackground = Color(0xFF01060B);
   static const Color darkPorder = Color(0xFF272828);
+  static const Color cancelDarkPorder = Color(0xFF808080);
+  static const Color cancelLightPorder = Color(0xFFC1C6D5);
+  static const Color currencyColor = Color(0xFFE6EEFF);
+  static const Color secondaryButtonColor = Color(0xFFDCE9FF);
 
   static const Color navy = Color(0xFF0D1B2A);
   static const Color navyLight = Color(0xFF1A2E45);

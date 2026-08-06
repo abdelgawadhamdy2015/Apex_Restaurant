@@ -138,7 +138,7 @@ class AppDialog extends StatelessWidget {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       clipBehavior: Clip.antiAlias,
-      backgroundColor: theme.colorScheme.surface,
+      backgroundColor: theme.colorScheme.onSurface,
       child: SizedBox(
         width: MediaQuery.sizeOf(context).width * 0.6,
         child: Column(
@@ -175,7 +175,6 @@ class AppDialog extends StatelessWidget {
                         Text(
                           config.badgeLabel(context),
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: config.iconColor,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -210,10 +209,7 @@ class AppDialog extends StatelessWidget {
                   // ── Message ──────────────────────────────────────────────
                   Text(
                     message,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      height: 1.6,
-                    ),
+                    style: theme.textTheme.titleSmall?.copyWith(height: 1.6),
                     textAlign: TextAlign.center,
                   ),
 

@@ -63,5 +63,5 @@ extension AppThemeContextX on BuildContext {
         onSurface: Theme.of(this).colorScheme.onSurface,
       );
 
-  AppButtonTheme get buttonTheme => Theme.of(this).extension<AppButtonTheme>()!;
+  AppExtraTheme get appExtraTheme => Theme.of(this).extension<AppExtraTheme>()!;
 }

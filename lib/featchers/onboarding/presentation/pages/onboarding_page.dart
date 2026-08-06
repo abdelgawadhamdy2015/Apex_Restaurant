@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
@@ -29,10 +30,10 @@ class _OnBoardingPageState extends State<OnBoardingPage>
       SystemUiMode.manual,
       overlays: SystemUiOverlay.values,
     );
-    // Add a delay before navigating to the main screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration(seconds: 2));
-      context.pushReplacement(Routes.loginScreen);
+      Future.delayed(Duration(seconds: 2)).then((_) {
+        context.pushReplacement(Routes.loginScreen);
+      });
     });
     super.initState();
   }
@@ -52,7 +53,7 @@ class _OnBoardingPageState extends State<OnBoardingPage>
                 versionNumberOfApp,
                 style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.spacing.md),
               const LinearProgressIndicator(),
             ],
           ),
