@@ -60,10 +60,12 @@ class _FloorChip extends StatelessWidget {
       onSelected: (selected) {
         if (selected) onSelected();
       },
-      selectedColor: theme.colorScheme.onSurfaceVariant.withOpacity(0.7),
+      selectedColor: theme.colorScheme.onSecondary,
       backgroundColor: theme.colorScheme.surface,
       labelStyle: theme.textTheme.bodySmall?.copyWith(
-        color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+        color: isSelected
+            ? theme.colorScheme.onPrimary
+            : theme.colorScheme.onSecondary,
         fontWeight: FontWeight.bold,
       ),
       shape: RoundedRectangleBorder(

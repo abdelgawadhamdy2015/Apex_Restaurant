@@ -1,9 +1,11 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/screens/daily_close_screen.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/tables_screen_arg.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -43,11 +45,11 @@ class MoreOptions extends StatelessWidget {
     final spacing = context.spacing;
 
     final options = <OptionItem>[
-      OptionItem(
-        title: lang.cashierCustody,
-        icon: Icons.payments,
-        onTap: () => context.pushNamed(Routes.cashierCustodyScreen),
-      ),
+      // OptionItem(
+      //   title: lang.cashierCustody,
+      //   icon: Icons.payments,
+      //   onTap: () => context.pushNamed(Routes.cashierCustodyScreen),
+      // ),
       OptionItem(
         title: lang.tables,
         icon: Icons.receipt_long,
@@ -61,7 +63,14 @@ class MoreOptions extends StatelessWidget {
       OptionItem(
         title: lang.closeCustody,
         icon: Icons.lock_clock_rounded,
-        onTap: () {},
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return Material(child: DailyCloseScreen());
+            },
+          );
+        },
       ),
       OptionItem(
         title: lang.suspendSession,
@@ -80,6 +89,12 @@ class MoreOptions extends StatelessWidget {
         title: lang.closeSession,
         icon: Icons.power_settings_new,
         iconColor: colorScheme.errorContainer,
+        onTap: () {},
+      ),
+      OptionItem(
+        title: lang.logout,
+        icon: Icons.logout,
+        iconColor: colorScheme.errorContainer,
         isLogOut: true,
         onTap: () {},
       ),
@@ -87,7 +102,7 @@ class MoreOptions extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: colorScheme.outlineVariant,
+        backgroundColor: colorScheme.surface,
         appBar: CustomAppBar(title: lang.more, showBackButton: false),
         body: SingleChildScrollView(
           child: Padding(
@@ -130,17 +145,17 @@ class Header extends StatelessWidget {
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(spacing.radiusSm),
-        color: colorScheme.surface,
+        color: colorScheme.onSurface,
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: spacing.radiusXl,
-            backgroundColor: colorScheme.primary.withOpacity(.5),
+            backgroundColor: AppColors.background,
             child: Icon(
               Icons.person,
               size: iconSizes.lg,
-              color: colorScheme.inversePrimary,
+              color: colorScheme.primary,
             ),
           ),
           SizedBox(width: spacing.md),
@@ -154,7 +169,12 @@ class Header extends StatelessWidget {
                   color: colorScheme.primary,
                 ),
               ),
-              Text(employeeType),
+              Text(
+                employeeType,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSecondary,
+                ),
+              ),
             ],
           ),
         ],
@@ -188,19 +208,19 @@ class OptionItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(spacing.sm),
+        padding: EdgeInsets.all(spacing.xs),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(spacing.radiusMd),
           color: isLogOut
               ? colorScheme.errorContainer.withOpacity(.08)
-              : colorScheme.onPrimary,
+              : colorScheme.onSurface,
           border: Border.all(color: colorScheme.outlineVariant),
         ),
         child: ListTile(
           title: Text(
             title,
             style: theme.textTheme.headlineMedium?.copyWith(
-              color: isLogOut ? colorScheme.error : Colors.black,
+              color: isLogOut ? colorScheme.error : colorScheme.onPrimary,
             ),
           ),
           leading: Container(
@@ -208,17 +228,19 @@ class OptionItem extends StatelessWidget {
             decoration: BoxDecoration(
               color: isLogOut
                   ? colorScheme.onErrorContainer
-                  : colorScheme.primary.withOpacity(.2),
+                  : context.appExtraTheme.totalAmountColor,
               borderRadius: BorderRadius.circular(spacing.radiusSm),
             ),
             child: Icon(icon, color: iconColor ?? colorScheme.primary),
           ),
-          trailing: Icon(
-            isLogOut ? Icons.logout : Icons.arrow_forward_ios,
-            color: isLogOut
-                ? colorScheme.errorContainer
-                : colorScheme.outlineVariant,
-          ),
+          trailing: isLogOut
+              ? null
+              : Icon(
+                  Icons.arrow_forward_ios,
+                  color: isLogOut
+                      ? colorScheme.errorContainer
+                      : colorScheme.onSecondary,
+                ),
         ),
       ),
     );

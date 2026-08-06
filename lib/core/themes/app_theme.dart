@@ -141,7 +141,7 @@ class AppTheme {
           subtitleColor: AppColors.onPrimary,
           greenBackground: AppColors.green,
           cancelPorder: AppColors.cancelDarkPorder,
-          togelBackground: AppColors.darkSurfaceBackground,
+          togelBackground: AppColors.onSurface,
           totalAmountColor: accent.withOpacity(.2),
           successGradient: AppColors.darkSuceesGrad,
         ),

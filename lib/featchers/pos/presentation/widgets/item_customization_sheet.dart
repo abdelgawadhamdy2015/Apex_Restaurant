@@ -102,7 +102,9 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
 
   bool get _isEditMode => widget.existingItem != null;
 
-  double get _currentBasePrice => widget.item.sizes[_selectedSizeIndex].price;
+  double get _currentBasePrice => widget.item.sizes.isNotEmpty
+      ? widget.item.sizes[_selectedSizeIndex].price
+      : 0.0;
 
   double _totalPrice(List<AdditiveModel> additives) {
     double addonsTotal = 0.0;
@@ -357,8 +359,9 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                 },
                 totalPrice: _totalPrice(additives),
                 onConfirm: () {
-                  if (widget.item.sizes[_selectedSizeIndex].sizeId <= 0 &&
-                      widget.item.sizes.length == 1) {
+                  if (widget.item.sizes.isEmpty ||
+                      (widget.item.sizes[_selectedSizeIndex].sizeId <= 0 &&
+                          widget.item.sizes.length == 1)) {
                     {
                       HelperMethods.showSnackBar(
                         context: context,

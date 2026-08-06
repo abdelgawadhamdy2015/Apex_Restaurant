@@ -9,13 +9,14 @@ class DateTextField extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onTap;
   final DateTextFieldType type;
-
+  final Color? fillColor;
   const DateTextField({
     super.key,
     this.label,
     required this.controller,
     required this.onTap,
     this.type = DateTextFieldType.date,
+    this.fillColor,
   });
 
   IconData get _suffixIcon {
@@ -40,7 +41,10 @@ class DateTextField extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSecondary,
+            ),
           ),
           SizedBox(height: context.spacing.sm),
         ],
@@ -50,7 +54,7 @@ class DateTextField extends StatelessWidget {
           onTap: onTap,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
-            fillColor: theme.colorScheme.surface,
+            fillColor: fillColor ?? theme.colorScheme.surface,
             hintText: S.of(context).selectDateAndTimeError,
             contentPadding: EdgeInsets.symmetric(
               horizontal: context.spacing.xxs,

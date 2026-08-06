@@ -50,7 +50,7 @@ class ReservationStatusFilters extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.xxs),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
       ),
       child: Row(
@@ -93,7 +93,7 @@ class _FilterTab extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: spacing.xs),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.onSurfaceVariant.withOpacity(0.5)
+              ? theme.colorScheme.onPrimary.withOpacity(.2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
         ),
@@ -103,17 +103,15 @@ class _FilterTab extends StatelessWidget {
               label,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: isSelected
-                    ? Colors.white
-                    : theme.colorScheme.onSurfaceVariant,
+                    ? theme.colorScheme.onSecondary
+                    : theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             Text(
               '($count)',
               style: theme.textTheme.labelSmall?.copyWith(
-                color: isSelected
-                    ? Colors.white
-                    : theme.colorScheme.onSurfaceVariant,
+                color: isSelected ? Colors.white : theme.colorScheme.onPrimary,
               ),
             ),
           ],
