@@ -175,6 +175,7 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetAllDeliveryCompanyUseCase(getIt<PosRepository>()),
   );
+  getIt.registerLazySingleton(() => GetSettingsUseCase(getIt<PosRepository>()));
 
   // cart
   getIt.registerLazySingleton(() => GetWaitersUseCase(getIt<CartRepository>()));
@@ -255,8 +256,9 @@ Future<void> setupGetIt() async {
   );
 
   //POS
-  getIt.registerFactory<PosBloc>(
+  getIt.registerLazySingleton<PosBloc>(
     () => PosBloc(
+      getSettingsUseCase: getIt<GetSettingsUseCase>(),
       getMenuCategories: getIt<GetMenuCategoriesUseCase>(),
       getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
       itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),

@@ -50,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m13(size) => "الحجم: ${size}";
 
+  static String m14(vat) => "ضريبة القيمة المضافة : ${vat}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "Email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
@@ -744,7 +746,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تقارير الإجازات",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("ضريبة القيمة المضافة"),
-    "vat15": MessageLookupByLibrary.simpleMessage("ضريبة القيمة المضافة (15%)"),
+    "vatPrecentage": m14,
     "verificationFailed": MessageLookupByLibrary.simpleMessage("فشل التحقق"),
     "verified": MessageLookupByLibrary.simpleMessage("تم التحقق"),
     "viewCart": MessageLookupByLibrary.simpleMessage("عرض السلة"),

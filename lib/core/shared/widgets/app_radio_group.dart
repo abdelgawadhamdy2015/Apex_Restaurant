@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class AppRadioGroup<T> extends StatelessWidget {
@@ -35,10 +36,11 @@ class AppRadioGroup<T> extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Radio<T>(
+              enabled: enabled,
               value: value,
               fillColor: WidgetStateProperty.resolveWith<Color>((states) {
                 if (states.contains(WidgetState.disabled)) {
-                  return theme.disabledColor;
+                  return AppColors.grey;
                 }
 
                 if (states.contains(WidgetState.selected)) {

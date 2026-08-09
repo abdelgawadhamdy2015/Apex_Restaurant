@@ -1,10 +1,8 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_sheet.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -31,20 +29,16 @@ class CartItemTile extends StatelessWidget {
   void _openEditSheet(BuildContext context) {
     final posBloc = context.read<PosBloc>();
     final cartBloc = context.read<CartBloc>();
-    posBloc.state.additives?.clear();
-    posBloc.add(
-      LoadFoodAdditivesEvent(
-        requestModel: GetFoodAdditivesRequest(
-          categoryID: item.menuItem.categoryId,
-        ),
-      ),
-    );
 
     final restaurantItem = posBloc.state.currentMenuItems.firstWhere(
       (m) => m.itemId == item.menuItem.itemId,
       orElse: () => item.menuItem,
     );
 
+    // Note: we no longer fetch/clear additives here. The sheet loads
+    // (or reuses already-cached) additives for the item's category
+    // itself in initState, so it behaves identically whether it's
+    // opened from the menu grid or from the cart.
     ItemCustomizationSheet.show(
       context,
       restaurantItem,

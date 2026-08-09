@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/helpers/transactionid_generator.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
@@ -36,13 +39,7 @@ class _MenuScreenState extends State<MenuScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
       context.read<CartBloc>().add(
-        LoadPersonsData(
-          request: GetClientsRequest(
-            pageNumber: 1,
-            pageSize: 20,
-            isSupplier: false,
-          ),
-        ),
+        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
     });
   }
@@ -149,10 +146,17 @@ class _MenuScreenState extends State<MenuScreen> {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
+        final matchedCategory = context.read<PosBloc>().state.categories.where(
+          (cat) => cat.id == item.categoryId,
+        );
+        final List<AdditiveModel> itemCatAdditives = matchedCategory.isNotEmpty
+            ? matchedCategory.first.additives ?? []
+            : [];
+
         return PosMenuItemCard(
           item: item,
           onAddPressed: () =>
-              _onAddPressed(parentContext, item, additives, cartState),
+              _onAddPressed(parentContext, item, itemCatAdditives, cartState),
         );
       },
     );
@@ -164,6 +168,7 @@ class _MenuScreenState extends State<MenuScreen> {
     List<AdditiveModel> additives,
     CartState cartState,
   ) {
+    log(additives.length.toString());
     if (cartState.selectedPerson == null) {
       HelperMethods.openPicker(parentContext, cartState.persons);
       return;
@@ -173,6 +178,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
     if (!needsCustomization) {
       final orderItem = OrderItem(
+        transactionId: TransactionIdGenerator.nextId,
         menuItem: item,
         selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
         quantity: 1,
@@ -194,6 +200,7 @@ class _MenuScreenState extends State<MenuScreen> {
       required quantity,
     }) {
       final orderItem = OrderItem(
+        transactionId: TransactionIdGenerator.nextId,
         menuItem: customItem,
         selectedSize: selectedSize,
         addons: selectedAddons,

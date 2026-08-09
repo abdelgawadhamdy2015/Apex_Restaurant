@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
@@ -13,6 +14,7 @@ enum PosStatus { initial, loading, loaded, error, submitting, submitted }
 
 class PosState extends Equatable implements ErrorableState {
   final PosStatus status;
+  final SettingsModel? settings;
   @override
   final BaseResponse? apiResponse;
   final List<FloorModel> floors;
@@ -52,6 +54,7 @@ class PosState extends Equatable implements ErrorableState {
     this.floors = const [],
     this.tables = const [],
     this.additives,
+    this.settings,
   });
 
   // ── ErrorableState contract ──
@@ -63,6 +66,7 @@ class PosState extends Equatable implements ErrorableState {
   );
 
   PosState copyWith({
+    SettingsModel? settings,
     BaseResponse? apiResponse,
     PosStatus? status,
     List<FloorModel>? floors,
@@ -84,6 +88,7 @@ class PosState extends Equatable implements ErrorableState {
     FloorModel? selectedFloor,
   }) {
     return PosState(
+      settings: settings ?? this.settings,
       apiResponse: apiResponse ?? this.apiResponse,
       status: status ?? this.status,
       categories: categories ?? this.categories,
@@ -108,6 +113,7 @@ class PosState extends Equatable implements ErrorableState {
 
   @override
   List<Object?> get props => [
+    settings,
     apiResponse,
     status,
     categories,

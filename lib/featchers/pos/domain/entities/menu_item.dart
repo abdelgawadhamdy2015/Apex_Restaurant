@@ -114,6 +114,7 @@ import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:equatable/equatable.dart';
 
 class OrderItem extends Equatable {
+  final int transactionId; // Unique identifier for this line item in the cart
   final RestaurantItem menuItem;
   final ItemSize? selectedSize;
   final int quantity;
@@ -123,6 +124,7 @@ class OrderItem extends Equatable {
   final bool isPercentageDiscount;
 
   const OrderItem({
+    required this.transactionId,
     required this.menuItem,
     this.selectedSize,
     required this.quantity,
@@ -162,9 +164,7 @@ class OrderItem extends Equatable {
     if (isPercentageDiscount) {
       return (unitPriceBeforeDiscount * discount) / 100;
     }
-    {
-      return discount;
-    }
+    return discount;
   }
 
   /// Price per single item after applying discount
@@ -177,6 +177,7 @@ class OrderItem extends Equatable {
   double get totalPrice => unitPrice * quantity;
 
   OrderItem copyWith({
+    int? transactionId,
     RestaurantItem? menuItem,
     ItemSize? selectedSize,
     int? quantity,
@@ -186,6 +187,7 @@ class OrderItem extends Equatable {
     bool? isPercentageDiscount,
   }) {
     return OrderItem(
+      transactionId: transactionId ?? this.transactionId,
       menuItem: menuItem ?? this.menuItem,
       selectedSize: selectedSize ?? this.selectedSize,
       quantity: quantity ?? this.quantity,
@@ -198,6 +200,7 @@ class OrderItem extends Equatable {
 
   @override
   List<Object?> get props => [
+    transactionId,
     menuItem,
     selectedSize,
     quantity,

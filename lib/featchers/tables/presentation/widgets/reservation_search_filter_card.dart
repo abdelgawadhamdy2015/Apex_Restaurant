@@ -103,8 +103,6 @@ class _ReservationSearchFilterCardState
 
     widget.onSearch(
       GetReservationRequest(
-        pageNumber: 1,
-        pageSize: 50,
         dateFrom: _fromDateController.text,
         dateTo: _toDateController.text,
         customerName: _selectedClient?.arabicName,

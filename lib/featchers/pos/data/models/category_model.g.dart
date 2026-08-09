@@ -17,8 +17,8 @@ CategoryModel _$CategoryModelFromJson(Map<String, dynamic> json) =>
       status: (json['status'] as num).toInt(),
       notes: json['notes'] as String?,
       imagePath: json['imagePath'] as String?,
-      additives: (json['additives'] as List<dynamic>)
-          .map((e) => AdditiveModel.fromJson(e as Map<String, dynamic>))
+      additives: (json['additives'] as List<dynamic>?)
+          ?.map((e) => AdditiveModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

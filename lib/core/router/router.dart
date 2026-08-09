@@ -18,7 +18,6 @@ import 'package:apex_restaurant/featchers/orders/presentation/pages/orders_scree
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/screens/payment_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/tables_screen_arg.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
@@ -84,10 +83,19 @@ class AppRouter {
         path: Routes.posScreen,
         name: Routes.posScreen,
         builder: (context, state) {
-          return BlocProvider(
-            create: (context) => getIt<PosBloc>(),
-            child: PosPage(changeLanguage: changeLanguage),
-          );
+          // IMPORTANT: PosBloc is already provided once, app-wide, in
+          // ApexRestaurantApp's MultiBlocProvider (via getIt<PosBloc>(),
+          // a *factory*, called exactly once there). Do NOT wrap this
+          // route in another BlocProvider<PosBloc> — that would call
+          // getIt<PosBloc>() again and create a second, independent
+          // instance scoped only to this route. Categories/menu items
+          // loaded into that second instance would then be invisible to
+          // every other screen (e.g. CartScreen), which reads the
+          // original app-wide instance instead — and that instance is
+          // destroyed the moment you navigate away from this route.
+          //
+          // Just use the shared instance from the tree.
+          return PosPage(changeLanguage: changeLanguage);
         },
       ),
       GoRoute(

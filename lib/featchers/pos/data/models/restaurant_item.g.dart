@@ -23,6 +23,8 @@ RestaurantItem _$RestaurantItemFromJson(Map<String, dynamic> json) =>
           .map((e) => ItemSize.fromJson(e as Map<String, dynamic>))
           .toList(),
       offersItems: json['offersItems'] as List<dynamic>,
+      isTobaccoTax: json['isTobaccoTax'] as bool?,
+      itemTypeId: (json['itemTypeId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestaurantItemToJson(RestaurantItem instance) =>
@@ -40,6 +42,8 @@ Map<String, dynamic> _$RestaurantItemToJson(RestaurantItem instance) =>
       'posTypes': instance.posTypes,
       'sizes': instance.sizes,
       'offersItems': instance.offersItems,
+      'isTobaccoTax': instance.isTobaccoTax,
+      'itemTypeId': instance.itemTypeId,
     };
 
 ItemSize _$ItemSizeFromJson(Map<String, dynamic> json) => ItemSize(

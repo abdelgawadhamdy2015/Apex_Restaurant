@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/shared/widgets/app_radio_group.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
@@ -56,7 +57,7 @@ class _DiscountSectionState extends State<DiscountSection> {
     final person = widget.selectedPerson;
     if (widget.dynamicIsActive && person != null && person.discountRatio != 0) {
       context.read<CartBloc>().add(
-        const ChangeDiscountTypeEvent(DiscountType.direct),
+        const ChangeDiscountTypeEvent(DiscountTypeEnum.direct),
       );
       _discountCodeController.text = person.discountRatio?.toString() ?? "";
     }
@@ -68,7 +69,7 @@ class _DiscountSectionState extends State<DiscountSection> {
     final textValue = _discountCodeController.text.trim();
     if (textValue.isEmpty) return;
 
-    if (state.selectedDiscountType == DiscountType.direct) {
+    if (state.selectedDiscountType == DiscountTypeEnum.direct) {
       final discountValue = double.tryParse(textValue) ?? 0.0;
       context.read<CartBloc>().add(
         ApplyDiscountEvent(
@@ -95,8 +96,10 @@ class _DiscountSectionState extends State<DiscountSection> {
     final buttonTheme = context.appExtraTheme;
 
     final lang = S.of(context);
-
-    ValueChanged<DiscountType?> onTypeChanged() {
+    final discountEnabled =
+        !widget.dynamicIsActive &&
+        !HelperMethods.anyItemHasDiscount(state.items);
+    ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
         if (widget.dynamicIsActive) return;
 
@@ -117,9 +120,10 @@ class _DiscountSectionState extends State<DiscountSection> {
         children: [
           Wrap(
             children: [
-              AppRadioGroup<DiscountType>(
-                value: DiscountType.coupon,
+              AppRadioGroup<DiscountTypeEnum>(
+                value: DiscountTypeEnum.coupon,
                 groupValue: discountType,
+                enabled: discountEnabled,
                 label: Text(
                   lang.coupon,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -132,9 +136,11 @@ class _DiscountSectionState extends State<DiscountSection> {
               ),
               SizedBox(width: spacing.md),
 
-              AppRadioGroup<DiscountType>(
-                value: DiscountType.direct,
+              AppRadioGroup<DiscountTypeEnum>(
+                value: DiscountTypeEnum.direct,
                 groupValue: discountType,
+                enabled: discountEnabled,
+
                 label: Text(
                   lang.directDiscount,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -147,9 +153,9 @@ class _DiscountSectionState extends State<DiscountSection> {
               ),
             ],
           ),
-          if (state.selectedDiscountType == DiscountType.direct)
+          if (state.selectedDiscountType == DiscountTypeEnum.direct)
             DiscountTypeToggle(
-              enabled: !widget.dynamicIsActive,
+              enabled: discountEnabled,
               isPercentage: _isPercentageDiscount,
               onChanged: (value) =>
                   setState(() => _isPercentageDiscount = value),
@@ -161,9 +167,10 @@ class _DiscountSectionState extends State<DiscountSection> {
                 child: TextFormField(
                   controller: _discountCodeController,
 
-                  //  enabled: !widget.dynamicIsActive,
+                  enabled: discountEnabled,
                   decoration: InputDecoration(
-                    hintText: state.selectedDiscountType == DiscountType.direct
+                    hintText:
+                        state.selectedDiscountType == DiscountTypeEnum.direct
                         ? lang.enterDiscountValue
                         : lang.enterDiscountCode,
                     prefixIcon: Icon(

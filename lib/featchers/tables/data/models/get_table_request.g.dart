@@ -8,8 +8,8 @@ part of 'get_table_request.dart';
 
 GetTablesRequest _$GetTablesRequestFromJson(Map<String, dynamic> json) =>
     GetTablesRequest(
-      pageNumber: (json['pageNumber'] as num?)?.toInt() ?? 1,
-      pageSize: (json['pageSize'] as num?)?.toInt() ?? 20,
+      pageNumber: (json['pageNumber'] as num?)?.toInt(),
+      pageSize: (json['pageSize'] as num?)?.toInt(),
       id: json['id'] as String?,
       name: json['name'] as String?,
       floorID: json['floorID'] as String?,

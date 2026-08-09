@@ -9,6 +9,7 @@ class ApiConstants {
 
   // Restaurants apis
 
+  static const String getSettings = "api/Store/InvGeneralSettings/GetSettings";
   static const String openRestaurantPos =
       "api/Restaurants/RestaurantPos/OpenRestaurantPos";
   static const String openRestaurantPosSession =

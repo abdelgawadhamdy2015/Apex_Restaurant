@@ -172,13 +172,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
             isError: false,
           );
           context.read<CartBloc>().add(
-            LoadPersonsData(
-              request: GetClientsRequest(
-                isSupplier: false,
-                pageNumber: 1,
-                pageSize: 50,
-              ),
-            ),
+            LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
           );
           Navigator.pop(context, true);
         } else if (state.status == CartStatus.failure) {

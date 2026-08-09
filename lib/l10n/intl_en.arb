@@ -276,7 +276,7 @@
     "enterDiscountCode": "Enter discount code",
     "discountCoupon": "Discount (Coupon)",
     "deliveryFee": "Delivery Fee",
-    "vat15": "VAT (15%)",
+    "vatPrecentage": "VAT : {vat}",
     "grandTotal": "Grand Total",
     "checkout": "Checkout",
     "holdOrder": "Hold Order",

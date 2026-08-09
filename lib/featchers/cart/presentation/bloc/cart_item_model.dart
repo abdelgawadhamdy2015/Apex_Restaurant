@@ -1,4 +1,3 @@
-// cart_item_model.dart
 import 'package:equatable/equatable.dart';
 
 class CartItemModel extends Equatable {
