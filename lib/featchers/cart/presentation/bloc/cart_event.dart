@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
@@ -24,6 +25,14 @@ abstract class CartEvent extends Equatable {
 }
 
 class LoadCartDataEvent extends CartEvent {}
+
+class UpdateSettingsEvent extends CartEvent {
+  final SettingsModel? settings;
+  const UpdateSettingsEvent(this.settings);
+
+  @override
+  List<Object?> get props => [settings];
+}
 
 class ChangeAddressEvent extends CartEvent {
   final ClientAddressModel address;
@@ -138,7 +147,7 @@ class ChangeOrderTypeEvent extends CartEvent {
 }
 
 class ChangeDiscountTypeEvent extends CartEvent {
-  final DiscountType discountType;
+  final DiscountTypeEnum discountType;
   const ChangeDiscountTypeEvent(this.discountType);
 
   @override

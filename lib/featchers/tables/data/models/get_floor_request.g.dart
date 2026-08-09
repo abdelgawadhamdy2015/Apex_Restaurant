@@ -8,8 +8,8 @@ part of 'get_floor_request.dart';
 
 GetFloorsRequest _$GetFloorsRequestFromJson(Map<String, dynamic> json) =>
     GetFloorsRequest(
-      pageNumber: (json['pageNumber'] as num?)?.toInt() ?? 1,
-      pageSize: (json['pageSize'] as num?)?.toInt() ?? 20,
+      pageNumber: (json['pageNumber'] as num?)?.toInt(),
+      pageSize: (json['pageSize'] as num?)?.toInt(),
       id: json['id'] as String?,
       name: json['name'] as String?,
       branchId: (json['branchId'] as num?)?.toInt(),

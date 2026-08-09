@@ -17,6 +17,8 @@ class RestaurantItem {
   final List<dynamic> posTypes;
   final List<ItemSize> sizes;
   final List<dynamic> offersItems;
+  final bool? isTobaccoTax;
+  final int? itemTypeId;
 
   const RestaurantItem({
     required this.itemId,
@@ -32,6 +34,8 @@ class RestaurantItem {
     required this.posTypes,
     required this.sizes,
     required this.offersItems,
+    this.isTobaccoTax,
+    this.itemTypeId,
   });
 
   factory RestaurantItem.fromJson(Map<String, dynamic> json) =>

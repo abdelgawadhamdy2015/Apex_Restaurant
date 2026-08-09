@@ -17,6 +17,10 @@ class LoadCategoriesEvent extends PosEvent {
   const LoadCategoriesEvent();
 }
 
+class LoadSettingsEvent extends PosEvent {
+  const LoadSettingsEvent();
+}
+
 class LoadItemsEvent extends PosEvent {
   final GetItemsRequest? requestModel;
   const LoadItemsEvent(this.requestModel);

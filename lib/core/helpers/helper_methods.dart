@@ -13,6 +13,7 @@ import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart
 import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
 import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +23,10 @@ import 'package:intl/intl.dart';
 import '../../generated/l10n.dart';
 
 class HelperMethods {
+  static bool anyItemHasDiscount(List<OrderItem> items) {
+    return items.any((item) => item.discount > 0);
+  }
+
   static Future<void> openPicker(
     BuildContext context,
     List<PosClientModel> persons,

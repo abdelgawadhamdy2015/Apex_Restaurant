@@ -7,19 +7,19 @@ class GetItemsRequest extends BaseRequest {
   final String? searchKey;
 
   const GetItemsRequest({
-    super.pageNumber = 1,
-    super.pageSize = 50,
+    super.pageNumber,
+    super.pageSize,
     this.statues,
     super.name,
     this.categoryId,
     this.companyId,
     this.searchKey,
   });
-
+  @override
   Map<String, dynamic> toJson() {
     return {
-      'pageNumber': pageNumber,
-      'pageSize': pageSize,
+      if (pageNumber != null) 'pageNumber': pageNumber,
+      if (pageSize != null) 'pageSize': pageSize,
       if (statues != null) 'statues': statues,
       if (name != null) 'name': name,
       if (categoryId != null) 'CategoryId': categoryId,

@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:developer';
 
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
@@ -93,9 +93,6 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
 
   bool _addonsPrefilled = false;
 
-  bool _isLoadingAdditives = true;
-  StreamSubscription<PosState>? _posSubscription;
-
   bool _isPercentageDiscount = true;
   final TextEditingController _discountController = TextEditingController();
   final TextEditingController _notesController = TextEditingController();
@@ -138,21 +135,23 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     return selectedList;
   }
 
+  /// Every category is already loaded up-front with its own additives
+  /// embedded (`CategoryModel.additives`). So resolving an item's
+  /// additives is just: find the category this item belongs to, then
+  /// read its additives — no API call, and identical no matter which
+  /// screen opened the sheet.
+  List<AdditiveModel> _additivesFor(PosState posState) {
+    log("categoris:  ${posState.categories.length.toString()}");
+    final matchCat = posState.categories.where(
+      (cat) => cat.id == widget.item.categoryId,
+    );
+    return matchCat.isNotEmpty ? (matchCat.first.additives ?? []) : [];
+  }
+
   @override
   void initState() {
     super.initState();
     _prefillSizeAndFieldsFromExistingItemIfAny();
-
-    if ((widget.posBloc.state.additives ?? []).isNotEmpty ||
-        widget.posBloc.state.status != PosStatus.loading) {
-      _isLoadingAdditives = false;
-    }
-
-    _posSubscription = widget.posBloc.stream.listen((state) {
-      if (state.status != PosStatus.loading && _isLoadingAdditives && mounted) {
-        setState(() => _isLoadingAdditives = false);
-      }
-    });
   }
 
   void _prefillSizeAndFieldsFromExistingItemIfAny() {
@@ -195,7 +194,6 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
 
   @override
   void dispose() {
-    _posSubscription?.cancel();
     _discountController.dispose();
     _notesController.dispose();
     super.dispose();
@@ -223,11 +221,21 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
       child: BlocBuilder<PosBloc, PosState>(
         bloc: widget.posBloc,
         builder: (context, posState) {
-          final additives = posState.additives ?? [];
-          final isLoadingAddons = _isLoadingAdditives && additives.isEmpty;
+          // Categories (and their additives) haven't finished their
+          // very first load yet — this can only happen if the sheet is
+          // somehow opened before the app's initial category fetch
+          // completes.
+          final isLoadingAddons =
+              posState.categories.isEmpty &&
+              posState.status == PosStatus.loading;
+
+          final List<AdditiveModel> additives = _additivesFor(posState);
 
           _prefillAddonsOnceIfNeeded(additives);
+          final discountValue =
+              context.read<CartBloc>().state.saveDiscountModel?.value ?? 0;
 
+          final isRadioEnabled = !dyanmicDiscountisActive && discountValue <= 0;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -326,14 +334,14 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                     ),
                     SizedBox(height: spacing.sm),
                     DiscountTypeToggle(
-                      enabled: !dyanmicDiscountisActive,
+                      enabled: isRadioEnabled,
                       isPercentage: _isPercentageDiscount,
                       onChanged: (value) =>
                           setState(() => _isPercentageDiscount = value),
                     ),
                     SizedBox(height: spacing.sm),
                     TextField(
-                      enabled: !dyanmicDiscountisActive,
+                      enabled: isRadioEnabled,
                       controller: _discountController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(

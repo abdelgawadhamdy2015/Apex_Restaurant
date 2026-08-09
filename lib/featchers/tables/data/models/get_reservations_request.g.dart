@@ -9,8 +9,8 @@ part of 'get_reservations_request.dart';
 GetReservationRequest _$GetReservationRequestFromJson(
   Map<String, dynamic> json,
 ) => GetReservationRequest(
-  pageNumber: (json['pageNumber'] as num?)?.toInt() ?? 1,
-  pageSize: (json['pageSize'] as num?)?.toInt() ?? 20,
+  pageNumber: (json['pageNumber'] as num?)?.toInt(),
+  pageSize: (json['pageSize'] as num?)?.toInt(),
   foodTableName: json['foodTableName'] as String?,
   customerName: json['customerName'] as String?,
   dateFrom: json['datefrom'] as String?,

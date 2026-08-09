@@ -29,8 +29,8 @@ class GetClientsRequest extends BaseRequest {
   @override
   Map<String, dynamic> toJson() => <String, dynamic>{
     if (name != null) 'Name': name,
-    'PageNumber': pageNumber,
-    'PageSize': pageSize,
+    if (pageNumber != null) 'PageNumber': pageNumber,
+    if (pageSize != null) 'PageSize': pageSize,
     if (type != null) 'Type': type,
     if (status != null) 'Status': status,
     if (customerActivity != null) 'CustomerActivity': customerActivity,

@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
@@ -8,6 +9,13 @@ import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
+
+class GetSettingsUseCase {
+  final PosRepository _repository;
+  GetSettingsUseCase(this._repository);
+  Future<ApiResult<BaseResponse<SettingsModel?>>> call() =>
+      _repository.getSettings();
+}
 
 class GetFoodAdditivesUseCase {
   final PosRepository _repository;

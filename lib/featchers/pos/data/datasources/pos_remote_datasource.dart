@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
@@ -12,6 +13,8 @@ import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.d
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 
 abstract class PosRemoteDataSource {
+  Future<BaseResponse<SettingsModel?>> getSettings();
+
   Future<BaseResponse<List<FloorModel>?>> getFloors({
     required GetFloorsRequest request,
   });
@@ -76,9 +79,7 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   Future<BaseResponse<List<AdditiveModel>?>> getFoodAdditives({
     GetFoodAdditivesRequest? request,
   }) async {
-    return await _apiService.getAllFoodAdditives(
-      request ?? const GetFoodAdditivesRequest(),
-    );
+    return await _apiService.getAllFoodAdditives(request);
   }
 
   @override
@@ -86,8 +87,8 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     BaseRequest? request,
   }) async {
     final queryRequest = BaseRequest(
-      pageNumber: request?.pageNumber ?? 1,
-      pageSize: request?.pageSize ?? 50,
+      pageNumber: request?.pageNumber,
+      pageSize: request?.pageSize,
       name: request?.name,
     );
 
@@ -104,5 +105,10 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   Future<void> sendToKitchen(Map<String, dynamic> orderData) async {
     // await _dio.post('/orders/kitchen', data: orderData);
     await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  @override
+  Future<BaseResponse<SettingsModel?>> getSettings() async {
+    return await _apiService.getSettings();
   }
 }

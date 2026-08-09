@@ -13,7 +13,7 @@ class CategoryModel {
   final int status;
   final String? notes;
   final String? imagePath;
-  final List<AdditiveModel> additives;
+  final List<AdditiveModel>? additives;
   const CategoryModel({
     required this.id,
     required this.arabicName,

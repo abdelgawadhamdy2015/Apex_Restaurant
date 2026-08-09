@@ -46,12 +46,14 @@ class OrderSummaryCard extends StatelessWidget {
             _SummaryRow(
               title: lang.deliveryFee,
               value:
-                  '${state.deliveryFee.toStringAsFixed(2)} ${lang.currencySar}',
+                  '${state.settingsModel?.posRestaurant?.deliveryCost?.toStringAsFixed(2) ?? 0} ${lang.currencySar}',
             ),
           ],
           SizedBox(height: spacing.xs),
           _SummaryRow(
-            title: lang.vat15,
+            title: lang.vatPrecentage(
+              state.settingsModel?.vat?.vatDefaultValue ?? 0,
+            ),
             value: '${state.vatAmount.toStringAsFixed(2)} ${lang.currencySar}',
           ),
           Divider(height: spacing.xl, color: theme.colorScheme.outlineVariant),

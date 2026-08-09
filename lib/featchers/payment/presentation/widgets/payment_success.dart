@@ -285,7 +285,7 @@ class _SuccessActionButtons extends StatelessWidget {
           onTap: () {
             final cartBloc = context.read<CartBloc>();
             cartBloc.add(ClearCartEvent());
-            context.goNamed(Routes.posScreen);
+            context.pushReplacementNamed(Routes.posScreen);
           },
         ),
         SizedBox(height: spacing.sm),

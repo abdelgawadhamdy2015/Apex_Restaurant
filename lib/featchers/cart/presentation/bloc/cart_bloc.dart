@@ -38,6 +38,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SelectPersonEvent>(_onSelectPerson);
+    on<UpdateSettingsEvent>((event, emit) {
+      emit(state.copyWith(settingsModel: event.settings));
+    });
     on<SelectCartTableEvent>(
       (event, emit) => emit(state.copyWith(selectedTable: event.table)),
     );
@@ -47,7 +50,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
     on<UpdateTakeawayDateTimeEvent>(
       (event, emit) =>
-          emit(state.copyWith(takeawayDateTime: event.takeawayDateTime)),
+          emit(state.copyWith(fromBranchDateTime: event.takeawayDateTime)),
     );
     on<SelectDeliveryManEvent>(
       (event, emit) =>
@@ -180,6 +183,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         notes: currentItem.notes,
         discount: currentItem.discount,
         isPercentageDiscount: currentItem.isPercentageDiscount,
+        transactionId: currentItem.transactionId,
       );
     } else {
       existingItems.add(event.item);
@@ -227,6 +231,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           notes: currentItem.notes,
           discount: currentItem.discount,
           isPercentageDiscount: currentItem.isPercentageDiscount,
+          transactionId: currentItem.transactionId,
         );
       }
       emit(state.copyWith(items: updated));
@@ -422,7 +427,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         saveDiscountModel: event.saveDiscountModel,
         couponDiscountvalue: 0.0, // Reset coupon discount
-        selectedDiscountType: DiscountType.direct,
+        selectedDiscountType: DiscountTypeEnum.direct,
         dynamicDiscountIsActive: false,
       ),
     );
@@ -438,7 +443,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         couponDiscountvalue: discountVal,
         saveDiscountModel: null, // Reset direct discount
-        selectedDiscountType: DiscountType.coupon,
+        selectedDiscountType: DiscountTypeEnum.coupon,
         dynamicDiscountIsActive: false,
       ),
     );

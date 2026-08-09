@@ -46,8 +46,8 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
     BaseRequest? request,
   }) {
     final queryRequest = BaseRequest(
-      pageNumber: request?.pageNumber ?? 1,
-      pageSize: request?.pageSize ?? 50,
+      pageNumber: request?.pageNumber,
+      pageSize: request?.pageSize,
       name: request?.name,
     );
 
@@ -57,8 +57,8 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   @override
   Future<BaseResponse<List<WaiterModel>?>> getWaiters({BaseRequest? request}) {
     final queryRequest = BaseRequest(
-      pageNumber: request?.pageNumber ?? 1,
-      pageSize: request?.pageSize ?? 50,
+      pageNumber: request?.pageNumber,
+      pageSize: request?.pageSize,
       name: request?.name,
     );
 

@@ -11,6 +11,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PosBloc extends Bloc<PosEvent, PosState> {
+  final GetSettingsUseCase _getSettingsUseCase;
   final GetMenuCategoriesUseCase _getMenuCategories;
   final GetMenuItemsByCategoryUseCase _itemsByCategoryUseCase;
   final GetFoodAdditivesUseCase _getfoodAdditivesUseCase;
@@ -19,7 +20,9 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     required this._getMenuCategories,
     required this._itemsByCategoryUseCase,
     required this._getfoodAdditivesUseCase,
+    required this._getSettingsUseCase,
   }) : super(PosState.initial()) {
+    on<LoadSettingsEvent>(_onLoadSettings);
     on<LoadCategoriesEvent>(_onLoadCategories);
     on<SelectCategoryEvent>(_onSelectCategory);
 
@@ -37,6 +40,50 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<ShowToastEvent>(_onShowToast);
     on<DismissToastEvent>(_onDismissToast);
     on<SelectTableEvent>(_onSelectTable);
+  }
+
+  Future<void> _onLoadSettings(
+    LoadSettingsEvent event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(status: PosStatus.loading));
+    try {
+      final response = await _getSettingsUseCase();
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(state.copyWith(status: PosStatus.loaded, settings: data.data));
+          } else {
+            emit(
+              state.copyWith(
+                status: PosStatus.error,
+                apiResponse: data,
+                errorMessage: data.errorMessageAr ?? 'فشل في تحميل المنتجات',
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              status: PosStatus.error,
+              errorMessage:
+                  errorHandler.apiErrorModel.errorMessageAr ??
+                  'خطأ في الاتصال بالخادم',
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: PosStatus.error,
+          errorMessage:
+              ErrorHandler.handle(e).apiErrorModel.errorMessageAr ??
+              'حدث خطأ غير متوقع عند تحميل المنتجات',
+        ),
+      );
+    }
   }
 
   Future<void> _onLoadCategories(
@@ -67,13 +114,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             if (firstCategory != null) {
               add(SelectCategoryEvent(firstCategory));
               add(
-                LoadItemsEvent(
-                  GetItemsRequest(
-                    categoryId: firstCategory.id,
-                    pageNumber: 1,
-                    pageSize: 20,
-                  ),
-                ),
+                LoadItemsEvent(GetItemsRequest(categoryId: firstCategory.id)),
               );
             }
           } else {
@@ -229,9 +270,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     add(
       LoadItemsEvent(
         GetItemsRequest(
-          categoryId: event.category.id,
-          pageNumber: 1,
-          pageSize: 20,
+          categoryId: event.category.id == 0 ? null : event.category.id,
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
@@ -13,6 +14,7 @@ import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.d
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 abstract class PosRepository {
+  Future<ApiResult<BaseResponse<SettingsModel?>>> getSettings();
   Future<ApiResult<BaseResponse<List<FloorModel>?>>> getFloors({
     required GetFloorsRequest request,
   });

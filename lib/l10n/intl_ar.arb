@@ -277,7 +277,7 @@
     "enterDiscountCode": "أدخل كود الخصم",
     "discountCoupon": "الخصم (كوبون)",
     "deliveryFee": "رسوم التوصيل",
-    "vat15": "ضريبة القيمة المضافة (15%)",
+    "vatPrecentage": "ضريبة القيمة المضافة : {vat}",
     "grandTotal": "الإجمالي النهائي",
     "checkout": "إتمام الدفع",
     "holdOrder": "تعليق الطلب",

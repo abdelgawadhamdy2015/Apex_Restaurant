@@ -37,13 +37,7 @@ class _CartScreenState extends State<CartScreen> {
       context.read<CartBloc>().add(LoadCartDataEvent());
       context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
       context.read<CartBloc>().add(
-        LoadPersonsData(
-          request: GetClientsRequest(
-            isSupplier: false,
-            pageNumber: 1,
-            pageSize: 50,
-          ),
-        ),
+        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
     });
   }

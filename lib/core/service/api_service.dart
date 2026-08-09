@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
@@ -38,6 +39,8 @@ abstract class ApiService {
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
   @GET(ApiConstants.openRestaurantPosSession)
   Future<BaseResponse<SessionModel?>> openRestaurantPosSession();
+  @GET(ApiConstants.getSettings)
+  Future<BaseResponse<SettingsModel?>> getSettings();
   @GET("${ApiConstants.getUserData}/{id}")
   Future<BaseResponse<UserDataModel?>> getUserData(@Path("id") int id);
   @GET(ApiConstants.getEmployeeBranches)
@@ -63,7 +66,7 @@ abstract class ApiService {
 
   @GET(ApiConstants.getAllFoodAdditives)
   Future<BaseResponse<List<AdditiveModel>?>> getAllFoodAdditives(
-    @Queries() GetFoodAdditivesRequest request,
+    @Queries() GetFoodAdditivesRequest? request,
   );
 
   @GET(ApiConstants.getListOfWaiters)

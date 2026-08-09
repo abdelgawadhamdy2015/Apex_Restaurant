@@ -2139,9 +2139,14 @@ class S {
     );
   }
 
-  /// `VAT (15%)`
-  String get vat15 {
-    return Intl.message('VAT (15%)', name: 'vat15', desc: '', args: []);
+  /// `VAT : {vat}`
+  String vatPrecentage(Object vat) {
+    return Intl.message(
+      'VAT : $vat',
+      name: 'vatPrecentage',
+      desc: '',
+      args: [vat],
+    );
   }
 
   /// `Grand Total`

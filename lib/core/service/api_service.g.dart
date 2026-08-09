@@ -119,6 +119,38 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<BaseResponse<SettingsModel?>> getSettings() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<SettingsModel?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/InvGeneralSettings/GetSettings',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<SettingsModel?> _value;
+    try {
+      _value = BaseResponse<SettingsModel?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : SettingsModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<BaseResponse<UserDataModel?>> getUserData(int id) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -341,11 +373,12 @@ class _ApiService implements ApiService {
 
   @override
   Future<BaseResponse<List<AdditiveModel>?>> getAllFoodAdditives(
-    GetFoodAdditivesRequest request,
+    GetFoodAdditivesRequest? request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(request.toJson());
+    queryParameters.addAll(request?.toJson() ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<List<AdditiveModel>?>>(

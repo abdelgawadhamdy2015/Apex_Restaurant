@@ -50,6 +50,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m13(size) => "Size: ${size}";
 
+  static String m14(vat) => "VAT : ${vat}";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "Email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -784,7 +786,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vacations Reports",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("VAT"),
-    "vat15": MessageLookupByLibrary.simpleMessage("VAT (15%)"),
+    "vatPrecentage": m14,
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Verification Failed",
     ),

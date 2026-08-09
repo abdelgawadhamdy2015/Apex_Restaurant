@@ -1,14 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-part 'base_request.g.dart';
 
-@JsonSerializable()
 class BaseRequest extends Equatable {
   final String? name;
-  final int pageNumber;
-  final int pageSize;
+  final int? pageNumber;
+  final int? pageSize;
 
-  const BaseRequest({this.name, this.pageNumber = 1, this.pageSize = 20});
+  const BaseRequest({this.name, this.pageNumber, this.pageSize});
 
   BaseRequest copyWith({String? name, int? pageNumber, int? pageSize}) {
     return BaseRequest(
@@ -18,9 +15,11 @@ class BaseRequest extends Equatable {
     );
   }
 
-  factory BaseRequest.fromJson(Map<String, dynamic> json) =>
-      _$BaseRequestFromJson(json);
-  Map<String, dynamic> toJson() => _$BaseRequestToJson(this);
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    if (name != null) 'name': name,
+    if (pageNumber != null) 'pageNumber': pageNumber,
+    if (pageSize != null) 'pageSize': pageSize,
+  };
 
   @override
   List<Object?> get props => [name, pageNumber, pageSize];

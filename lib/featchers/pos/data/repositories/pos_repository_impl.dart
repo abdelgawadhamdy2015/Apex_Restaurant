@@ -4,6 +4,7 @@ import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
+import 'package:apex_restaurant/core/shared/model/settings_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
@@ -28,7 +29,9 @@ class PosRepositoryImpl implements PosRepository {
     try {
       final response = await _remoteDataSource.getMenuCategories();
       return ApiResult.success(response);
-    } catch (e) {
+    } catch (e, s) {
+      log("$e\n$s");
+
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -42,7 +45,9 @@ class PosRepositoryImpl implements PosRepository {
         request: request,
       );
       return ApiResult.success(response);
-    } catch (e) {
+    } catch (e, s) {
+      log("$e\n$s");
+
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -83,7 +88,8 @@ class PosRepositoryImpl implements PosRepository {
     try {
       final response = await _remoteDataSource.getFloors(request: request);
       return ApiResult.success(response);
-    } catch (e) {
+    } catch (e, s) {
+      log("$e\n$s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -95,7 +101,9 @@ class PosRepositoryImpl implements PosRepository {
     try {
       final response = await _remoteDataSource.getTables(request: request);
       return ApiResult.success(response);
-    } catch (e) {
+    } catch (e, s) {
+      log("$e\n$s");
+
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -110,7 +118,7 @@ class PosRepositoryImpl implements PosRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("Error in getFoodAdditives: ${e.toString()} \nStackTrace: $s");
+      log("$e\n$s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -123,7 +131,21 @@ class PosRepositoryImpl implements PosRepository {
         request: request,
       );
       return ApiResult.success(response);
-    } catch (e) {
+    } catch (e, s) {
+      log("$e\n$s");
+
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<SettingsModel?>>> getSettings() async {
+    try {
+      final response = await _remoteDataSource.getSettings();
+      return ApiResult.success(response);
+    } catch (e, s) {
+      log("$e\n$s");
+
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }

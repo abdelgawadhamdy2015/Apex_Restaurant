@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/helpers/transactionid_generator.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
@@ -39,13 +40,7 @@ class _PosTabletScreenState extends State<PosTabletScreen> {
       context.read<CartBloc>().add(LoadCartDataEvent());
       context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
       context.read<CartBloc>().add(
-        LoadPersonsData(
-          request: GetClientsRequest(
-            pageNumber: 1,
-            pageSize: 50,
-            isSupplier: false,
-          ),
-        ),
+        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
     });
   }
@@ -194,6 +189,7 @@ class _PosTabletScreenState extends State<PosTabletScreen> {
 
     if (!needsCustomization) {
       final orderItem = OrderItem(
+        transactionId: TransactionIdGenerator.nextId,
         menuItem: item,
         selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
         quantity: 1,
@@ -215,6 +211,7 @@ class _PosTabletScreenState extends State<PosTabletScreen> {
       required quantity,
     }) {
       final orderItem = OrderItem(
+        transactionId: TransactionIdGenerator.nextId,
         menuItem: customItem,
         selectedSize: selectedSize,
         addons: selectedAddons,
