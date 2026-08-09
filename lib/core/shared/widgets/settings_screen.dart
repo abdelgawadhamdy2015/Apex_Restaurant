@@ -6,6 +6,7 @@ import 'package:apex_restaurant/core/settings/settings_cubit.dart';
 import 'package:apex_restaurant/core/settings/settings_state.dart';
 import 'package:apex_restaurant/core/shared/enums/ui_enum.dart';
 import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -123,10 +124,7 @@ class _SectionCard extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        // Card surface + border now come from ColorScheme so dark mode
-        // gets the darker surface (0xFF1E293B) and a matching outline
-        // instead of the light-only AppColors.surface/border.
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -191,9 +189,6 @@ class _AccentColorSelector extends StatelessWidget {
               vertical: spacing.xs,
             ),
             decoration: BoxDecoration(
-              // Unselected chip background follows the app background
-              // (canvas in light, near-black in dark) instead of a
-              // hardcoded light-only color.
               color: isSelected
                   ? accent.color.withOpacity(0.12)
                   : theme.scaffoldBackgroundColor,
@@ -215,7 +210,7 @@ class _AccentColorSelector extends StatelessWidget {
                   style: TextStyle(
                     color: isSelected
                         ? accent.color
-                        : theme.colorScheme.onSurfaceVariant,
+                        : theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -228,8 +223,6 @@ class _AccentColorSelector extends StatelessWidget {
   }
 }
 
-/// Generic single-select segmented control used for font/icon/spacing scale
-/// and theme-mode. Wraps on narrow screens instead of overflowing.
 class _SegmentedSetting<T> extends StatelessWidget {
   final List<T> values;
   final T current;
@@ -262,11 +255,9 @@ class _SegmentedSetting<T> extends StatelessWidget {
               vertical: spacing.xs,
             ),
             decoration: BoxDecoration(
-              // Selected pill uses the live accent color (colorScheme.primary,
-              // which already reflects the user's chosen AppAccentColor).
               color: isSelected
                   ? theme.colorScheme.primary
-                  : theme.scaffoldBackgroundColor,
+                  : theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(spacing.radiusPill),
               border: Border.all(
                 color: isSelected
@@ -279,8 +270,8 @@ class _SegmentedSetting<T> extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: isSelected
-                    ? theme.colorScheme.onPrimary
-                    : theme.colorScheme.onSurfaceVariant,
+                    ? AppColors.white
+                    : theme.colorScheme.onPrimary,
               ),
             ),
           ),

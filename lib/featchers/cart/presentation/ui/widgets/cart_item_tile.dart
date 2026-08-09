@@ -108,7 +108,7 @@ class CartItemTile extends StatelessWidget {
                     child: Container(
                       width: 80,
                       height: 80,
-                      color: theme.colorScheme.surfaceContainerHighest,
+                      color: theme.colorScheme.onPrimary,
                       child: item.menuItem.imagePath != null
                           ? Image.network(
                               item.menuItem.imagePath!,

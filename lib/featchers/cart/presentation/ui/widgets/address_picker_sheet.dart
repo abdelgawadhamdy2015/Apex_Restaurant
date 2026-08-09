@@ -175,34 +175,35 @@ class _AddressOption extends StatelessWidget {
             width: isSelected ? 1.5 : 1,
           ),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    address.city ?? '',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+        child: FittedBox(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppRadioGroup<int>(
+                value: address.id,
+                groupValue: selectedAddressId,
+                onChanged: (_) => _select(context),
+                label: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      address.city ?? '',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: spacing.xxs),
-                  Text(
-                    address.fullAddress,
-                    style: theme.textTheme.bodySmall?.copyWith(),
-                  ),
-                ],
+                    SizedBox(height: spacing.xxs),
+                    Text(
+                      address.fullAddress,
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      style: theme.textTheme.bodySmall?.copyWith(),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            AppRadioGroup<int>(
-              value: address.id,
-              groupValue: selectedAddressId,
-              onChanged: (_) => _select(context),
-              label: Text(address.fullAddress),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

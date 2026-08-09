@@ -470,5 +470,19 @@
     "approveDeficitVoucher": "اعتماد سند صرف العجز",
     "approve": "اعتماد",
     "printReceipt": "طباعة إيصال",
-    "openingBalance": "الرصيد الإفتتاحي"
+    "openingBalance": "الرصيد الإفتتاحي",
+    "bestSellers": "الأكثر مبيعاً 🔥",
+    "todayOffers": "عروض اليوم 🎁",
+    "newItems": "جديد 🟢",
+    "favorites": "المفضلة ⭐",
+    "card": "شبكة",
+    "paidAmount": "المسدد",
+    "remainingAmount": "المتبقي",
+    "saudiRiyal": "ريال سعودي",
+    "currencySymbol": "ر.س",
+    "payNow": "سداد",
+    "bankTransfer": "تحويل بنكي",
+    "visa": "فيزا",
+    "voucher": "قسيمة شراء",
+    "loyaltyPoints": "نقاط الولاء"
 }

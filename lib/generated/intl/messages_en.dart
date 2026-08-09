@@ -142,6 +142,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "badgeNew": MessageLookupByLibrary.simpleMessage("New"),
     "badgeOffer": MessageLookupByLibrary.simpleMessage("Offer"),
+    "bankTransfer": MessageLookupByLibrary.simpleMessage("Bank Transfer"),
+    "bestSellers": MessageLookupByLibrary.simpleMessage("Best Sellers 🔥"),
     "biometricAuthenticationCanceled": MessageLookupByLibrary.simpleMessage(
       "Biometric authentication canceled by user.",
     ),
@@ -183,6 +185,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "camera": MessageLookupByLibrary.simpleMessage("Camera"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
     "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
+    "card": MessageLookupByLibrary.simpleMessage("Card"),
     "cardNetwork": MessageLookupByLibrary.simpleMessage("Network"),
     "cart": MessageLookupByLibrary.simpleMessage("Cart"),
     "cartIsEmpty": MessageLookupByLibrary.simpleMessage("Your cart is empty."),
@@ -222,6 +225,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coupon": MessageLookupByLibrary.simpleMessage("Coupon"),
     "currencySar": MessageLookupByLibrary.simpleMessage("SAR"),
     "currencySarShort": MessageLookupByLibrary.simpleMessage("SAR"),
+    "currencySymbol": MessageLookupByLibrary.simpleMessage("SAR"),
     "currentAvailableBalance": MessageLookupByLibrary.simpleMessage(
       "Current Available Balance",
     ),
@@ -333,6 +337,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "exportCsv": MessageLookupByLibrary.simpleMessage("Export CSV"),
     "extraTime": MessageLookupByLibrary.simpleMessage("Extra Time"),
+    "favorites": MessageLookupByLibrary.simpleMessage("Favorites ⭐"),
     "filterAll": MessageLookupByLibrary.simpleMessage("All"),
     "filterBestSeller": MessageLookupByLibrary.simpleMessage("🔥 Best Seller"),
     "filterFavorites": MessageLookupByLibrary.simpleMessage("⭐ Favorites"),
@@ -414,6 +419,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "logout": MessageLookupByLibrary.simpleMessage("Log out "),
+    "loyaltyPoints": MessageLookupByLibrary.simpleMessage("Loyalty Points"),
     "map": MessageLookupByLibrary.simpleMessage("Map"),
     "matchTimeFormat": MessageLookupByLibrary.simpleMessage(
       " time format (7:00 , 12:30)",
@@ -438,6 +444,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needSignOut": MessageLookupByLibrary.simpleMessage(
       "Are you shure you need log signOut? ",
     ),
+    "newItems": MessageLookupByLibrary.simpleMessage("New 🟢"),
     "noAddons": MessageLookupByLibrary.simpleMessage("No Add-ons"),
     "noAddonsAvailable": MessageLookupByLibrary.simpleMessage(
       "No Add-ons Available",
@@ -489,9 +496,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "outdoorArea": MessageLookupByLibrary.simpleMessage("Outdoor Area"),
     "overallReport": MessageLookupByLibrary.simpleMessage("Overall"),
+    "paidAmount": MessageLookupByLibrary.simpleMessage("Paid Amount"),
     "partialReturn": MessageLookupByLibrary.simpleMessage("Partial Return"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
     "pay": MessageLookupByLibrary.simpleMessage("Pay"),
+    "payNow": MessageLookupByLibrary.simpleMessage("Pay Now"),
     "payment": MessageLookupByLibrary.simpleMessage("Payment"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("Payment Method"),
     "paymentMethodBankTransfer": MessageLookupByLibrary.simpleMessage(
@@ -592,6 +601,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),
     "religion": MessageLookupByLibrary.simpleMessage("Religion"),
+    "remainingAmount": MessageLookupByLibrary.simpleMessage("Remaining"),
     "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
     "reports": MessageLookupByLibrary.simpleMessage("Reports"),
     "requestFailed": MessageLookupByLibrary.simpleMessage("Request failed"),
@@ -630,6 +640,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Access the dashboard, orders and sales",
     ),
     "sar": MessageLookupByLibrary.simpleMessage("SAR"),
+    "saudiRiyal": MessageLookupByLibrary.simpleMessage("Saudi Riyal"),
     "save": MessageLookupByLibrary.simpleMessage("Save"),
     "saveAndOpenShift": MessageLookupByLibrary.simpleMessage(
       "Save and Open Shift",
@@ -741,6 +752,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "to": MessageLookupByLibrary.simpleMessage("to"),
     "toDate": MessageLookupByLibrary.simpleMessage(" To Date"),
     "toRestaurant": MessageLookupByLibrary.simpleMessage(" To Restaurant"),
+    "todayOffers": MessageLookupByLibrary.simpleMessage("Today Offers 🎁"),
     "total": MessageLookupByLibrary.simpleMessage("Total"),
     "totalAdditions": MessageLookupByLibrary.simpleMessage("Total Additions"),
     "totalAmountRequired": MessageLookupByLibrary.simpleMessage(
@@ -781,6 +793,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewFullCustodyLog": MessageLookupByLibrary.simpleMessage(
       "View Full Custody Log",
     ),
+    "visa": MessageLookupByLibrary.simpleMessage("Visa"),
+    "voucher": MessageLookupByLibrary.simpleMessage("Voucher"),
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "Please wait until the current location data is loaded",
     ),

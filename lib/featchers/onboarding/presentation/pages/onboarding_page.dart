@@ -47,7 +47,7 @@ class _OnBoardingPageState extends State<OnBoardingPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Assets.images.logo.image(fit: BoxFit.contain),
+              Assets.images.apexLogo.image(fit: BoxFit.contain),
               SizedBox(height: 16.h, width: double.infinity),
               Text(
                 versionNumberOfApp,

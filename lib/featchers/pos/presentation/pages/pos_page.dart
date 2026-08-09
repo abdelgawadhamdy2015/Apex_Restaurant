@@ -4,6 +4,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_menu_screen.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_tablet_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,14 +15,16 @@ class PosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //  final isMobile = context.size!.width < 400;
+    final size = MediaQuery.of(context).size;
+    final isMobile = size.width < 400;
     return BlocProvider(
       create: (_) => getIt<PosBloc>()
         ..add(const LoadCategoriesEvent())
         ..add(const LoadFoodAdditivesEvent()),
       child: BlocErrorListener<PosBloc, PosState>(
-        child: PosMenuScreen(changeLanguage: changeLanguage),
-        // : TabletPosLayout(changeLanguage: changeLanguage, managerName: ""),
+        child: isMobile
+            ? PosMenuScreen(changeLanguage: changeLanguage)
+            : PosTabletScreen(),
       ),
     );
   }
