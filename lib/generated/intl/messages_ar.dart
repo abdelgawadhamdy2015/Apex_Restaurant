@@ -134,6 +134,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "badgeNew": MessageLookupByLibrary.simpleMessage("جديد"),
     "badgeOffer": MessageLookupByLibrary.simpleMessage("عرض"),
+    "bankTransfer": MessageLookupByLibrary.simpleMessage("تحويل بنكي"),
+    "bestSellers": MessageLookupByLibrary.simpleMessage("الأكثر مبيعاً 🔥"),
     "biometricAuthenticationCanceled": MessageLookupByLibrary.simpleMessage(
       "تم إلغاء المصادقة  من قبل المستخدم.",
     ),
@@ -175,6 +177,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "camera": MessageLookupByLibrary.simpleMessage("كاميرا"),
     "cancel": MessageLookupByLibrary.simpleMessage(" إلغاء"),
     "cancelled": MessageLookupByLibrary.simpleMessage("ملغي"),
+    "card": MessageLookupByLibrary.simpleMessage("شبكة"),
     "cardNetwork": MessageLookupByLibrary.simpleMessage("شبكة"),
     "cart": MessageLookupByLibrary.simpleMessage("السلة"),
     "cartIsEmpty": MessageLookupByLibrary.simpleMessage("السلة فارغة."),
@@ -208,6 +211,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "coupon": MessageLookupByLibrary.simpleMessage("كوبون"),
     "currencySar": MessageLookupByLibrary.simpleMessage("ريال سعودي"),
     "currencySarShort": MessageLookupByLibrary.simpleMessage("ر.س"),
+    "currencySymbol": MessageLookupByLibrary.simpleMessage("ر.س"),
     "currentAvailableBalance": MessageLookupByLibrary.simpleMessage(
       "الرصيد المتوفر حالياً",
     ),
@@ -311,6 +315,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "exportCsv": MessageLookupByLibrary.simpleMessage("تصدير CSV"),
     "extraTime": MessageLookupByLibrary.simpleMessage("وقت إضافي "),
+    "favorites": MessageLookupByLibrary.simpleMessage("المفضلة ⭐"),
     "filterAll": MessageLookupByLibrary.simpleMessage("الكل"),
     "filterBestSeller": MessageLookupByLibrary.simpleMessage(
       "🔥 الأكثر مبيعاً",
@@ -394,6 +399,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "login": MessageLookupByLibrary.simpleMessage("تسجيل دخول"),
     "logout": MessageLookupByLibrary.simpleMessage("تسجيل خروج"),
+    "loyaltyPoints": MessageLookupByLibrary.simpleMessage("نقاط الولاء"),
     "map": MessageLookupByLibrary.simpleMessage("خريطة"),
     "matchTimeFormat": MessageLookupByLibrary.simpleMessage(
       "تنسيق الوقت، 7:00، 12:30",
@@ -418,6 +424,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "needSignOut": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك بحاجة إلى تسجيل الخروج",
     ),
+    "newItems": MessageLookupByLibrary.simpleMessage("جديد 🟢"),
     "noAddons": MessageLookupByLibrary.simpleMessage("بدون إضافات"),
     "noAddonsAvailable": MessageLookupByLibrary.simpleMessage(
       "لا توجد إضافات متاحة",
@@ -469,9 +476,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "other": MessageLookupByLibrary.simpleMessage("أخرى"),
     "outdoorArea": MessageLookupByLibrary.simpleMessage("المنطقة الخارجية"),
     "overallReport": MessageLookupByLibrary.simpleMessage("الإجمالي"),
+    "paidAmount": MessageLookupByLibrary.simpleMessage("المسدد"),
     "partialReturn": MessageLookupByLibrary.simpleMessage("مرتجع جزئي"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
     "pay": MessageLookupByLibrary.simpleMessage("سداد"),
+    "payNow": MessageLookupByLibrary.simpleMessage("سداد"),
     "payment": MessageLookupByLibrary.simpleMessage("الدفع"),
     "paymentMethod": MessageLookupByLibrary.simpleMessage("طريقة الدفع"),
     "paymentMethodBankTransfer": MessageLookupByLibrary.simpleMessage(
@@ -564,6 +573,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "rejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
     "religion": MessageLookupByLibrary.simpleMessage("الديانة"),
+    "remainingAmount": MessageLookupByLibrary.simpleMessage("المتبقي"),
     "rememberMe": MessageLookupByLibrary.simpleMessage("تذكرني"),
     "reports": MessageLookupByLibrary.simpleMessage("تقارير "),
     "requestFailed": MessageLookupByLibrary.simpleMessage("فشل إرسال الطلب"),
@@ -598,6 +608,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "الوصول إلى لوحة التحكم والطلبات والمبيعات",
     ),
     "sar": MessageLookupByLibrary.simpleMessage("ر.س"),
+    "saudiRiyal": MessageLookupByLibrary.simpleMessage("ريال سعودي"),
     "save": MessageLookupByLibrary.simpleMessage("حفظ"),
     "saveAndOpenShift": MessageLookupByLibrary.simpleMessage(
       "حفظ وفتح الوردية",
@@ -703,6 +714,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "to": MessageLookupByLibrary.simpleMessage("إلى"),
     "toDate": MessageLookupByLibrary.simpleMessage("إلى تاريخ"),
     "toRestaurant": MessageLookupByLibrary.simpleMessage("للمطعم"),
+    "todayOffers": MessageLookupByLibrary.simpleMessage("عروض اليوم 🎁"),
     "total": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "totalAdditions": MessageLookupByLibrary.simpleMessage("إجمالي الإضافات"),
     "totalAmountRequired": MessageLookupByLibrary.simpleMessage(
@@ -739,6 +751,8 @@ class MessageLookup extends MessageLookupByLibrary {
     "viewFullCustodyLog": MessageLookupByLibrary.simpleMessage(
       "عرض سجل العهدة بالكامل",
     ),
+    "visa": MessageLookupByLibrary.simpleMessage("فيزا"),
+    "voucher": MessageLookupByLibrary.simpleMessage("قسيمة شراء"),
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "يرجى الانتظار حتي يتم تحميل بيانات الموقع الحالى",
     ),

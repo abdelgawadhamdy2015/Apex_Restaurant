@@ -469,5 +469,19 @@
     "approveDeficitVoucher": "Approve Deficit Voucher",
     "approve": "Approve",
     "printReceipt": "Print Receipt",
-    "openingBalance": "Opening Balance"
+    "openingBalance": "Opening Balance",
+    "bestSellers": "Best Sellers 🔥",
+    "todayOffers": "Today Offers 🎁",
+    "newItems": "New 🟢",
+    "favorites": "Favorites ⭐",
+    "card": "Card",
+    "paidAmount": "Paid Amount",
+    "remainingAmount": "Remaining",
+    "saudiRiyal": "Saudi Riyal",
+    "currencySymbol": "SAR",
+    "payNow": "Pay Now",
+    "bankTransfer": "Bank Transfer",
+    "visa": "Visa",
+    "voucher": "Voucher",
+    "loyaltyPoints": "Loyalty Points"
 }

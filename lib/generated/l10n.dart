@@ -3746,6 +3746,101 @@ class S {
       args: [],
     );
   }
+
+  /// `Best Sellers 🔥`
+  String get bestSellers {
+    return Intl.message(
+      'Best Sellers 🔥',
+      name: 'bestSellers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Today Offers 🎁`
+  String get todayOffers {
+    return Intl.message(
+      'Today Offers 🎁',
+      name: 'todayOffers',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `New 🟢`
+  String get newItems {
+    return Intl.message('New 🟢', name: 'newItems', desc: '', args: []);
+  }
+
+  /// `Favorites ⭐`
+  String get favorites {
+    return Intl.message('Favorites ⭐', name: 'favorites', desc: '', args: []);
+  }
+
+  /// `Card`
+  String get card {
+    return Intl.message('Card', name: 'card', desc: '', args: []);
+  }
+
+  /// `Paid Amount`
+  String get paidAmount {
+    return Intl.message('Paid Amount', name: 'paidAmount', desc: '', args: []);
+  }
+
+  /// `Remaining`
+  String get remainingAmount {
+    return Intl.message(
+      'Remaining',
+      name: 'remainingAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Saudi Riyal`
+  String get saudiRiyal {
+    return Intl.message('Saudi Riyal', name: 'saudiRiyal', desc: '', args: []);
+  }
+
+  /// `SAR`
+  String get currencySymbol {
+    return Intl.message('SAR', name: 'currencySymbol', desc: '', args: []);
+  }
+
+  /// `Pay Now`
+  String get payNow {
+    return Intl.message('Pay Now', name: 'payNow', desc: '', args: []);
+  }
+
+  /// `Bank Transfer`
+  String get bankTransfer {
+    return Intl.message(
+      'Bank Transfer',
+      name: 'bankTransfer',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Visa`
+  String get visa {
+    return Intl.message('Visa', name: 'visa', desc: '', args: []);
+  }
+
+  /// `Voucher`
+  String get voucher {
+    return Intl.message('Voucher', name: 'voucher', desc: '', args: []);
+  }
+
+  /// `Loyalty Points`
+  String get loyaltyPoints {
+    return Intl.message(
+      'Loyalty Points',
+      name: 'loyaltyPoints',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -8,6 +8,8 @@ class AppRadioGroup<T> extends StatelessWidget {
     required this.label,
     required this.onChanged,
     this.enabled = true,
+    this.selectedColor,
+    this.unselectedColor,
   });
 
   final T value;
@@ -16,8 +18,13 @@ class AppRadioGroup<T> extends StatelessWidget {
   final ValueChanged<T?> onChanged;
   final bool enabled;
 
+  final Color? selectedColor;
+  final Color? unselectedColor;
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return RadioGroup<T>(
       groupValue: groupValue,
       onChanged: enabled ? onChanged : (_) {},
@@ -27,10 +34,22 @@ class AppRadioGroup<T> extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Flexible(child: label),
-            const SizedBox(width: 8),
+            Radio<T>(
+              value: value,
+              fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                if (states.contains(WidgetState.disabled)) {
+                  return theme.disabledColor;
+                }
 
-            Radio<T>(value: value),
+                if (states.contains(WidgetState.selected)) {
+                  return selectedColor ?? theme.colorScheme.primary;
+                }
+
+                return unselectedColor ?? theme.colorScheme.onSurfaceVariant;
+              }),
+            ),
+            const SizedBox(width: 8),
+            Flexible(child: label),
           ],
         ),
       ),

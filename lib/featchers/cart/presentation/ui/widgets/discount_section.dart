@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/shared/widgets/app_radio_group.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
@@ -95,9 +96,10 @@ class _DiscountSectionState extends State<DiscountSection> {
 
     final lang = S.of(context);
 
-    void Function(DiscountType?)? onTypeChanged() {
-      if (widget.dynamicIsActive) return null;
+    ValueChanged<DiscountType?> onTypeChanged() {
       return (val) {
+        if (widget.dynamicIsActive) return;
+
         if (val != null) {
           context.read<CartBloc>().add(ChangeDiscountTypeEvent(val));
         }
@@ -114,38 +116,34 @@ class _DiscountSectionState extends State<DiscountSection> {
       child: Column(
         children: [
           Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Radio<DiscountType>(
+              AppRadioGroup<DiscountType>(
                 value: DiscountType.coupon,
                 groupValue: discountType,
-                activeColor: theme.colorScheme.onPrimary,
-                backgroundColor: WidgetStateProperty.all(
-                  theme.colorScheme.onSecondary,
+                label: Text(
+                  lang.coupon,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+                selectedColor: theme.colorScheme.primary,
+                unselectedColor: theme.colorScheme.onSecondary,
                 onChanged: onTypeChanged(),
-              ),
-              Text(
-                lang.coupon,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
               ),
               SizedBox(width: spacing.md),
-              Radio<DiscountType>(
+
+              AppRadioGroup<DiscountType>(
                 value: DiscountType.direct,
                 groupValue: discountType,
-                activeColor: theme.colorScheme.onPrimary,
-                backgroundColor: WidgetStateProperty.all(
-                  theme.colorScheme.onSecondary,
+                label: Text(
+                  lang.directDiscount,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
+                selectedColor: theme.colorScheme.primary,
+                unselectedColor: theme.colorScheme.onSecondary,
                 onChanged: onTypeChanged(),
-              ),
-              Text(
-                lang.directDiscount,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ],
           ),
