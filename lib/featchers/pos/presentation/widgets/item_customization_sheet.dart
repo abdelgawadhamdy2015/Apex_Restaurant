@@ -111,7 +111,8 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
       }
     });
 
-    double itemTotal = (_currentBasePrice + addonsTotal) * _quantity;
+    // double itemTotal = (_currentBasePrice + addonsTotal) * _quantity;
+    double itemTotal = (_currentBasePrice * _quantity) + addonsTotal;
 
     double discountVal = double.tryParse(_discountController.text) ?? 0.0;
     if (_isPercentageDiscount) {

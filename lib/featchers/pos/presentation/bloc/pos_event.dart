@@ -1,7 +1,7 @@
+import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';

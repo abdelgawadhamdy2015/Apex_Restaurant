@@ -1,4 +1,3 @@
-import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
@@ -23,7 +22,11 @@ class _PosPageState extends State<PosPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<PosBloc>().add(LoadSettingsEvent());
+      final posBloc = context.read<PosBloc>()
+        ..add(LoadSettingsEvent())
+        ..add(const LoadCategoriesEvent())
+        ..add(const LoadFoodAdditivesEvent());
+      posBloc;
     });
   }
 
@@ -31,23 +34,17 @@ class _PosPageState extends State<PosPage> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isMobile = size.width < 400;
-    return BlocProvider(
-      create: (_) => getIt<PosBloc>()
-        ..add(const LoadCategoriesEvent())
-        ..add(const LoadFoodAdditivesEvent()),
-      child: BlocListener<PosBloc, PosState>(
-        listenWhen: (prev, curr) {
-          return curr != prev;
-        },
-        listener: (context, state) {
-          if (state.settings != null) {
-            context.read<CartBloc>().add(UpdateSettingsEvent(state.settings));
-          }
-        },
-        child: isMobile
-            ? PosMenuScreen(changeLanguage: widget.changeLanguage)
-            : PosTabletScreen(),
-      ),
+
+    return BlocListener<PosBloc, PosState>(
+      listenWhen: (prev, curr) => curr != prev,
+      listener: (context, state) {
+        if (state.settings != null) {
+          context.read<CartBloc>().add(UpdateSettingsEvent(state.settings));
+        }
+      },
+      child: isMobile
+          ? PosMenuScreen(changeLanguage: widget.changeLanguage)
+          : PosTabletScreen(),
     );
   }
 }

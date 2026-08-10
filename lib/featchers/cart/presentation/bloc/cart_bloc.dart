@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
@@ -17,7 +16,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final GetWaitersUseCase getWaitersUseCase;
   final GetDeliveryAgentsUseCase getDeliveryAgentsUseCase;
   final ApplyDiscountUseCase applyDiscountUseCase;
-  final HoldOrderUseCase holdOrderUseCase;
+  final SavePendingRestaurantPosInvoiceUseCase
+  savePendingRestaurantPosInvoiceUseCase;
+  final SaveBookingTableRestaurantPosInvoiceUseCase
+  saveBookingTableRestaurantPosInvoiceUseCase;
+
   final GetAllPosClientsUseCase getAllPersonsUseCase;
   final AddPosClientUseCase addPosClientUseCase;
   final UpdatePosClientUseCase updatePosClientUseCase;
@@ -27,7 +30,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.getWaitersUseCase,
     required this.getDeliveryAgentsUseCase,
     required this.applyDiscountUseCase,
-    required this.holdOrderUseCase,
+    required this.savePendingRestaurantPosInvoiceUseCase,
+    required this.saveBookingTableRestaurantPosInvoiceUseCase,
     required this.getAllPersonsUseCase,
     required this.addPosClientUseCase,
     required this.updatePosClientUseCase,
@@ -68,7 +72,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
     on<UpdateItemQuantityEvent>(_onUpdateItemQuantity);
     on<RemoveItemEvent>(_onRemoveItem);
-    on<HoldOrderSubmittedEvent>(_onHoldOrder);
+    on<HoldOrderEvent>(_onHoldOrder);
+    on<SaveTableOrderEvent>(_saveTableOrder);
     on<ClearCartEvent>(_onClearCartEvent);
     on<AddPosClientEvent>(_addPosClient);
     on<UpdatePosClientEvent>(_updatePosClient);
@@ -153,7 +158,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       success: (data) => personsList = data.data ?? [],
       failure: (_) {},
     );
-    log("bloc Persons : ${personsList.length}");
     emit(state.copyWith(persons: personsList));
   }
 
@@ -250,16 +254,76 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onHoldOrder(
-    HoldOrderSubmittedEvent event,
+    HoldOrderEvent event,
     Emitter<CartState> emit,
   ) async {
     emit(state.copyWith(isSubmitting: true));
-    await Future.delayed(const Duration(seconds: 1));
-    emit(
-      state.copyWith(
-        isSubmitting: false,
-        successMessage: 'تم تعليق الطلب بنجاح',
-      ),
+    final response = await savePendingRestaurantPosInvoiceUseCase(
+      event.request,
+    );
+    response.when(
+      success: (data) {
+        if (data.result == 1) {
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              successMessage: data.errorMessageAr,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              errorMessage: data.errorMessageAr,
+            ),
+          );
+        }
+      },
+      failure: (errorHandler) {
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _saveTableOrder(
+    SaveTableOrderEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(state.copyWith(isSubmitting: true));
+    final response = await saveBookingTableRestaurantPosInvoiceUseCase(
+      event.request,
+    );
+    response.when(
+      success: (data) {
+        if (data.result == 1) {
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              successMessage: data.errorMessageAr,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isSubmitting: false,
+              errorMessage: data.errorMessageAr,
+            ),
+          );
+        }
+      },
+      failure: (errorHandler) {
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+          ),
+        );
+      },
     );
   }
 
@@ -354,15 +418,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       response.when(
         success: (data) {
           if (data.result == 1) {
-            final activeDiscountModel = checkAvailability(data.data);
+            final activeDiscounts = checkAvailability(data.data);
 
-            emit(
-              state.copyWith(
-                discounts: data.data,
-                dynamicDiscountIsActive: activeDiscountModel != null,
-                activeDiscountModel: activeDiscountModel,
-              ),
-            );
+            emit(state.copyWith(activeDiscounts: activeDiscounts));
           } else {
             emit(state.copyWith(errorMessage: data.errorMessageAr));
           }
@@ -380,13 +438,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  DynamicDiscountModel? checkAvailability(List<DynamicDiscountModel>? data) {
-    if (data == null || data.isEmpty) return null;
-    DynamicDiscountModel? activDiscountModel;
+  List<DynamicDiscountModel> checkAvailability(
+    List<DynamicDiscountModel>? data,
+  ) {
+    if (data == null || data.isEmpty) return [];
+
     final now = DateTime.now();
-    data.any((d) {
+    final activeDiscounts = <DynamicDiscountModel>[];
+
+    for (final d in data) {
       final discount = d.discount;
-      if (discount == null) return false;
+      if (discount == null) continue;
 
       final startDate = discount.startDate;
       final endDate = discount.endDate;
@@ -397,7 +459,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final end = DateTime(endDate.year, endDate.month, endDate.day);
 
         if (today.isBefore(start) || today.isAfter(end)) {
-          return false;
+          continue;
         }
       }
 
@@ -410,13 +472,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         final endMinutes = endTime.hour * 60 + endTime.minute;
 
         if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
-          return false;
+          continue;
         }
       }
-      activDiscountModel = d;
-      return true;
-    });
-    return activDiscountModel;
+
+      activeDiscounts.add(d);
+    }
+
+    return activeDiscounts;
   }
 
   Future<void> _onApplyDiscount(
@@ -428,7 +491,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         saveDiscountModel: event.saveDiscountModel,
         couponDiscountvalue: 0.0, // Reset coupon discount
         selectedDiscountType: DiscountTypeEnum.direct,
-        dynamicDiscountIsActive: false,
+        activeDiscountModel: null,
       ),
     );
   }
@@ -444,7 +507,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         couponDiscountvalue: discountVal,
         saveDiscountModel: null, // Reset direct discount
         selectedDiscountType: DiscountTypeEnum.coupon,
-        dynamicDiscountIsActive: false,
+        activeDiscountModel: null,
       ),
     );
   }

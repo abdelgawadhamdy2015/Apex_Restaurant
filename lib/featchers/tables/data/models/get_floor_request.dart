@@ -1,8 +1,5 @@
 import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-part 'get_floor_request.g.dart';
 
-@JsonSerializable()
 class GetFloorsRequest extends BaseRequest {
   final String? id;
   final int? branchId;
@@ -10,15 +7,20 @@ class GetFloorsRequest extends BaseRequest {
   const GetFloorsRequest({
     super.pageNumber,
     super.pageSize,
-    this.id,
     super.name,
+    this.id,
     this.branchId,
   });
-  @override
-  Map<String, dynamic> toJson() => _$GetFloorsRequestToJson(this);
 
-  factory GetFloorsRequest.fromJson(Map<String, dynamic> json) =>
-      _$GetFloorsRequestFromJson(json);
   @override
-  List<Object?> get props => [pageNumber, pageSize, id, name, branchId];
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      if (id != null) 'id': id,
+      if (branchId != null) 'branchId': branchId,
+    };
+  }
+
+  @override
+  List<Object?> get props => [...super.props, id, branchId];
 }

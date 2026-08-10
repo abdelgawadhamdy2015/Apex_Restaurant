@@ -13,10 +13,10 @@ import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
 
 class PosRepositoryImpl implements PosRepository {
   final PosRemoteDataSource _remoteDataSource;

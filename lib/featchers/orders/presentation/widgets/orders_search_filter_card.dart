@@ -2,7 +2,7 @@ import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
@@ -158,10 +158,10 @@ class OrdersSearchFilterCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               context.read<OrdersBloc>().add(
-                FetchOrdersEvent(
-                  filter: OrderFilterModel(
-                    invoiceNumber: invoiceController.text,
-                    customerName: customerController.text,
+                FetchPreviousInvoicesEvent(
+                  request: GetPreviousInvoiceRequest(
+                    pageNumber: 1,
+                    pageSize: 100,
                   ),
                 ),
               );

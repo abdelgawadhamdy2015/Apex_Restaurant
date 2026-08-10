@@ -50,7 +50,7 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m13(size) => "الحجم: ${size}";
 
-  static String m14(vat) => "ضريبة القيمة المضافة : ${vat}";
+  static String m14(vat) => "ضريبة القيمة المضافة : % ${vat} ";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -262,6 +262,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "departures": MessageLookupByLibrary.simpleMessage("المغادرات"),
     "detailedReport": MessageLookupByLibrary.simpleMessage("التفصيلي"),
     "dineIn": MessageLookupByLibrary.simpleMessage("محلي"),
+    "dineInCost": MessageLookupByLibrary.simpleMessage("تكلفة الصالة"),
     "dineInOrder": MessageLookupByLibrary.simpleMessage("طلب صالة"),
     "directDiscount": MessageLookupByLibrary.simpleMessage("خصم مباشر"),
     "directManager": MessageLookupByLibrary.simpleMessage("المدير المباشر"),
@@ -716,6 +717,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "to": MessageLookupByLibrary.simpleMessage("إلى"),
     "toDate": MessageLookupByLibrary.simpleMessage("إلى تاريخ"),
     "toRestaurant": MessageLookupByLibrary.simpleMessage("للمطعم"),
+    "tobaccoVat": MessageLookupByLibrary.simpleMessage("ضريبة التبغ"),
     "todayOffers": MessageLookupByLibrary.simpleMessage("عروض اليوم 🎁"),
     "total": MessageLookupByLibrary.simpleMessage("الإجمالي"),
     "totalAdditions": MessageLookupByLibrary.simpleMessage("إجمالي الإضافات"),

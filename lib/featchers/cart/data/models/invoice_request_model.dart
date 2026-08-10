@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'invoice_request_model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SaveInvoiceRequestModel {
   final SaveInvoiceModel? invoice;
   final List<InvoiceItemModel>? items;
@@ -22,7 +22,7 @@ class SaveInvoiceRequestModel {
   Map<String, dynamic> toJson() => _$SaveInvoiceRequestModelToJson(this);
 }
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SaveInvoiceModel {
   final int? postype;
   final int? foodTableId;
@@ -35,7 +35,7 @@ class SaveInvoiceModel {
   final double? totalInvoicePrice;
   final int? clientId;
   final int? invoiceDiscountId;
-  final DateTime? takeawayDateTime;
+  final DateTime? orderReceivedTime;
   const SaveInvoiceModel({
     this.postype,
     this.foodTableId,
@@ -48,7 +48,7 @@ class SaveInvoiceModel {
     this.totalInvoicePrice,
     this.clientId,
     this.invoiceDiscountId,
-    this.takeawayDateTime,
+    this.orderReceivedTime,
   });
 
   factory SaveInvoiceModel.fromJson(Map<String, dynamic> json) =>
@@ -57,7 +57,7 @@ class SaveInvoiceModel {
   Map<String, dynamic> toJson() => _$SaveInvoiceModelToJson(this);
 }
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class SaveDiscountModel {
   final int? type;
   final double? value;
@@ -70,7 +70,7 @@ class SaveDiscountModel {
   Map<String, dynamic> toJson() => _$SaveDiscountModelToJson(this);
 }
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class InvoiceItemModel {
   final int? itemId;
   final int? sizeId;
@@ -98,7 +98,7 @@ class InvoiceItemModel {
   Map<String, dynamic> toJson() => _$InvoiceItemModelToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class SaveAdditiveModel {
   final int? additiveId;
   final double? quantity;
@@ -111,7 +111,7 @@ class SaveAdditiveModel {
   Map<String, dynamic> toJson() => _$SaveAdditiveModelToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class SavePaymentModel {
   final int? paymentMethodId;
   final double? amount;

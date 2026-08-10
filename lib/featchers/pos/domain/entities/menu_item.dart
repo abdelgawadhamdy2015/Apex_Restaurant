@@ -150,31 +150,33 @@ class OrderItem extends Equatable {
 
   bool get itemHasSizes => menuItem.sizes.isNotEmpty;
 
-  /// Total price of all selected additives/addons per single item
+  /// Total price of all selected additives/addons for this line item.
+  /// Independent of `quantity` — addons don't scale with how many
+  /// units of the item were ordered.
   double get addonsTotalPrice {
     return addons.fold(0.0, (sum, addon) => sum + (addon.price));
   }
 
-  /// Price per single item before applying item-level discount
-  double get unitPriceBeforeDiscount => unitBasePrice + addonsTotalPrice;
+  /// Base price scaled by quantity (addons are NOT included here).
+  double get basePriceTotal => unitBasePrice * quantity;
 
-  /// Calculated discount value per single unit
-  double get unitDiscountAmount {
+  /// Full line total before discount: quantity-scaled base price + addons.
+  double get totalPriceBeforeDiscount => basePriceTotal + addonsTotalPrice;
+
+  /// Discount amount applied on the full line total (not per unit).
+  double get discountAmount {
     if (discount <= 0) return 0.0;
     if (isPercentageDiscount) {
-      return (unitPriceBeforeDiscount * discount) / 100;
+      return (totalPriceBeforeDiscount * discount) / 100;
     }
     return discount;
   }
 
-  /// Price per single item after applying discount
-  double get unitPrice {
-    final netPrice = unitPriceBeforeDiscount - unitDiscountAmount;
-    return netPrice > 0 ? netPrice : 0.0;
+  /// Final total price for this order item line.
+  double get totalPrice {
+    final net = totalPriceBeforeDiscount - discountAmount;
+    return net > 0 ? net : 0.0;
   }
-
-  /// Final total price for this order item line
-  double get totalPrice => unitPrice * quantity;
 
   OrderItem copyWith({
     int? transactionId,

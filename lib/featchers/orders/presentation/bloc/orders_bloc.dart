@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
 import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
@@ -8,41 +9,167 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Bloc
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
+  final GetRestaurantPosBookingTableUseCase getRestaurantPosBookingTableUseCase;
+  final GetPindingInvoicesUseCase getPindingInvoicesUseCase;
   final GetPreviousOrdersUseCase getPreviousOrdersUseCase;
-  final GetHeldOrdersUseCase getHeldOrdersUseCase;
+
   final RestoreHeldOrderUseCase restoreHeldOrderUseCase;
   final DeleteHeldOrderUseCase deleteHeldOrderUseCase;
 
   OrdersBloc({
-    required this.getPreviousOrdersUseCase,
-    required this.getHeldOrdersUseCase,
+    required this.getPindingInvoicesUseCase,
+    required this.getRestaurantPosBookingTableUseCase,
     required this.restoreHeldOrderUseCase,
     required this.deleteHeldOrderUseCase,
+    required this.getPreviousOrdersUseCase,
   }) : super(const OrdersState()) {
     on<SwitchTabEvent>((event, emit) {
       emit(state.copyWith(activeTab: event.tab));
-      add(FetchOrdersEvent());
-    });
-
-    on<FetchOrdersEvent>((event, emit) async {
-      emit(state.copyWith(isLoading: true, filter: event.filter));
-      if (state.activeTab == OrderTab.previous) {
-        final orders = await getPreviousOrdersUseCase(event.filter);
-        emit(state.copyWith(previousOrders: orders, isLoading: false));
-      } else {
-        final orders = await getHeldOrdersUseCase();
-        emit(state.copyWith(heldOrders: orders, isLoading: false));
+      if (state.activeTab == OrderTab.held) {
+        add(FetchPindingInvoicesEvent());
       }
     });
+    on<FetchPreviousInvoicesEvent>(_onPreviousInvoices);
 
+    on<FetchPindingInvoicesEvent>(_onPindingInvoices);
+
+    on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
     on<RestoreOrderEvent>((event, emit) async {
       await restoreHeldOrderUseCase(event.orderId);
-      add(FetchOrdersEvent());
+      add(FetchPindingInvoicesEvent());
     });
 
     on<DeleteOrderEvent>((event, emit) async {
       await deleteHeldOrderUseCase(event.orderId);
-      add(FetchOrdersEvent());
+      add(FetchPindingInvoicesEvent());
     });
+  }
+
+  Future<void> _onPreviousInvoices(
+    FetchPreviousInvoicesEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(state.copyWith(status: OrdersStatus.loading));
+    try {
+      final response = await getPreviousOrdersUseCase(request: event.request);
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                previousOrders: data.data,
+                isLoading: false,
+                status: OrdersStatus.sussess,
+              ),
+            );
+          } else {
+            state.copyWith(
+              errorMessage: data.errorMessageAr,
+              isLoading: false,
+              status: OrdersStatus.failure,
+            );
+          }
+        },
+        failure: (errorHandler) {
+          state.copyWith(
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            isLoading: false,
+            status: OrdersStatus.failure,
+          );
+        },
+      );
+    } catch (e) {
+      state.copyWith(
+        pindingInvoices: [],
+        isLoading: false,
+        status: OrdersStatus.failure,
+      );
+    }
+  }
+
+  Future<void> _onPindingInvoices(
+    FetchPindingInvoicesEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(state.copyWith(status: OrdersStatus.loading));
+    try {
+      final response = await getPindingInvoicesUseCase(request: event.request);
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                pindingInvoices: data.data ?? [],
+                isLoading: false,
+                status: OrdersStatus.sussess,
+              ),
+            );
+          } else {
+            state.copyWith(
+              errorMessage: data.errorMessageAr,
+              isLoading: false,
+              status: OrdersStatus.failure,
+            );
+          }
+        },
+        failure: (errorHandler) {
+          state.copyWith(
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            isLoading: false,
+            status: OrdersStatus.failure,
+          );
+        },
+      );
+    } catch (e) {
+      state.copyWith(
+        pindingInvoices: [],
+        isLoading: false,
+        status: OrdersStatus.failure,
+      );
+    }
+  }
+
+  Future<void> _onRestaurantPosBookingTable(
+    FetchRestaurantPosBookingTableEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(state.copyWith(status: OrdersStatus.loading));
+    try {
+      final response = await getRestaurantPosBookingTableUseCase(
+        request: event.request,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                pindingInvoices: data.data,
+                isLoading: false,
+                status: OrdersStatus.sussess,
+              ),
+            );
+          } else {
+            state.copyWith(
+              errorMessage: data.errorMessageAr,
+              isLoading: false,
+              status: OrdersStatus.failure,
+            );
+          }
+        },
+        failure: (errorHandler) {
+          state.copyWith(
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            isLoading: false,
+            status: OrdersStatus.failure,
+          );
+        },
+      );
+    } catch (e) {
+      state.copyWith(
+        pindingInvoices: [],
+        isLoading: false,
+        status: OrdersStatus.failure,
+      );
+    }
   }
 }

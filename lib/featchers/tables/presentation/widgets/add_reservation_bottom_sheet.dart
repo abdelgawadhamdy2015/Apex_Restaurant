@@ -174,17 +174,18 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Autocomplete<PosClientModel>(
-          displayStringForOption: (person) => person.arabicName,
+          displayStringForOption: (person) => person.arabicName ?? "",
           optionsBuilder: (textEditingValue) {
             final query = textEditingValue.text.toLowerCase();
             if (query.isEmpty) return widget.personList;
             return widget.personList.where(
-              (person) => (person.arabicName).toLowerCase().contains(query),
+              (person) =>
+                  (person.arabicName ?? "").toLowerCase().contains(query),
             );
           },
           onSelected: (selection) {
             _selectedPerson = selection;
-            _customerNameController.text = selection.arabicName;
+            _customerNameController.text = selection.arabicName ?? "";
           },
           fieldViewBuilder: (context, textController, focusNode, _) {
             textController.addListener(() {
@@ -221,7 +222,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                         child: ListTile(
                           leading: const Icon(Icons.person_outline),
                           title: Text(
-                            option.arabicName,
+                            option.arabicName ?? "",
                             style: theme.textTheme.bodyMedium,
                           ),
                           subtitle: option.phone != null
@@ -249,7 +250,10 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
           .map(
             (t) => DropdownMenuItem(
               value: t,
-              child: Text(t.arabicName, style: theme.textTheme.bodyMedium),
+              child: Text(
+                t.arabicName ?? "",
+                style: theme.textTheme.bodyMedium,
+              ),
             ),
           )
           .toList(),

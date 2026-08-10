@@ -185,8 +185,12 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => ApplyDiscountUseCase(getIt<CartRepository>()),
   );
-  getIt.registerLazySingleton(() => HoldOrderUseCase(getIt<CartRepository>()));
-
+  getIt.registerLazySingleton(
+    () => SavePendingRestaurantPosInvoiceUseCase(getIt<CartRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => SaveBookingTableRestaurantPosInvoiceUseCase(getIt<CartRepository>()),
+  );
   getIt.registerLazySingleton(
     () => GetAllPosClientsUseCase(getIt<CartRepository>()),
   );
@@ -207,10 +211,13 @@ Future<void> setupGetIt() async {
 
   // Orders
   getIt.registerLazySingleton(
-    () => GetPreviousOrdersUseCase(getIt<OrdersRepository>()),
+    () => GetPindingInvoicesUseCase(getIt<OrdersRepository>()),
   );
   getIt.registerLazySingleton(
-    () => GetHeldOrdersUseCase(getIt<OrdersRepository>()),
+    () => GetRestaurantPosBookingTableUseCase(getIt<OrdersRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetPreviousOrdersUseCase(getIt<OrdersRepository>()),
   );
   getIt.registerLazySingleton(
     () => RestoreHeldOrderUseCase(getIt<OrdersRepository>()),
@@ -271,7 +278,11 @@ Future<void> setupGetIt() async {
       getDeliveryAgentsUseCase: getIt<GetDeliveryAgentsUseCase>(),
       getWaitersUseCase: getIt<GetWaitersUseCase>(),
       applyDiscountUseCase: getIt<ApplyDiscountUseCase>(),
-      holdOrderUseCase: getIt<HoldOrderUseCase>(),
+      savePendingRestaurantPosInvoiceUseCase:
+          getIt<SavePendingRestaurantPosInvoiceUseCase>(),
+      saveBookingTableRestaurantPosInvoiceUseCase:
+          getIt<SaveBookingTableRestaurantPosInvoiceUseCase>(),
+
       getAllPersonsUseCase: getIt<GetAllPosClientsUseCase>(),
       addPosClientUseCase: getIt<AddPosClientUseCase>(),
       updatePosClientUseCase: getIt<UpdatePosClientUseCase>(),
@@ -289,7 +300,9 @@ Future<void> setupGetIt() async {
   getIt.registerFactory(
     () => OrdersBloc(
       getPreviousOrdersUseCase: getIt<GetPreviousOrdersUseCase>(),
-      getHeldOrdersUseCase: getIt<GetHeldOrdersUseCase>(),
+      getPindingInvoicesUseCase: getIt<GetPindingInvoicesUseCase>(),
+      getRestaurantPosBookingTableUseCase:
+          getIt<GetRestaurantPosBookingTableUseCase>(),
       restoreHeldOrderUseCase: getIt<RestoreHeldOrderUseCase>(),
       deleteHeldOrderUseCase: getIt<DeleteHeldOrderUseCase>(),
     ),

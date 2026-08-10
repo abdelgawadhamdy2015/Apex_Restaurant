@@ -5,8 +5,8 @@ import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_reques
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 import '../models/discount_result_model.dart';
 import '../models/waiter_model.dart';
@@ -25,8 +25,6 @@ abstract class CartRemoteDataSource {
     ApplyDiscountRequestModel request,
   );
 
-  Future<BaseResponse<dynamic>> holdOrder(Order order);
-
   Future<BaseResponse<dynamic>> updatePosClient({
     required ClientRequestModel request,
   });
@@ -35,6 +33,12 @@ abstract class CartRemoteDataSource {
     required ClientRequestModel request,
   });
   Future<BaseResponse<List<DynamicDiscountModel>?>> getDynamicInvoiceDiscount();
+  Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  );
+  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  );
 }
 
 class CartRemoteDataSourceImpl implements CartRemoteDataSource {
@@ -73,13 +77,17 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<dynamic>> holdOrder(Order order) {
-    return _apiService.holdOrder({
-      'items': order.items
-          .map((i) => {'itemId': i.menuItem.itemId, 'quantity': i.quantity})
-          .toList(),
-      'tableId': order.tableId,
-    });
+  Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  ) {
+    return _apiService.savePendingRestaurantPosInvoice(request);
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  ) {
+    return _apiService.saveBookingTableRestaurantPosInvoice(request);
   }
 
   @override

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
@@ -116,7 +114,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ),
         success: (BaseResponse<SessionModel?> data) {
           if (data.result == 1) {
-            log('Session opened successfully: ${data.data}');
             emit(
               state.copyWith(
                 status: HomeStatus.openSessionLoaded,

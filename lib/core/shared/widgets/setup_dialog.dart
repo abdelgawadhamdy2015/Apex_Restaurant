@@ -61,18 +61,16 @@ extension AppDialogTypeConfig on AppDialogType {
         );
       case AppDialogType.warning:
         return _DialogConfig(
-          stripeColor: scheme.tertiary,
-          badgeColor: scheme.tertiaryContainer,
-          iconBg: scheme.tertiaryContainer,
-          iconColor: scheme.tertiary,
+          stripeColor: scheme.error,
+          badgeColor: scheme.errorContainer,
+          iconBg: scheme.errorContainer,
+          iconColor: scheme.error,
           badgeIcon: Icons.info_outline,
           badgeLabel: (_) => S.of(context).confirm,
           icon: Icons.logout_outlined,
           confirmIcon: Icons.logout_outlined,
         );
       case AppDialogType.success:
-        // TODO: swap Colors.green for a themed "success" role if one gets
-        // added to the app's ColorScheme/theme extensions.
         return const _DialogConfig(
           stripeColor: Colors.green,
           badgeColor: Color(0xFFE1F5E5),
@@ -169,7 +167,7 @@ class AppDialog extends StatelessWidget {
                         Icon(
                           config.badgeIcon,
                           size: 16,
-                          color: config.iconColor,
+                          color: theme.colorScheme.onPrimary,
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -192,7 +190,11 @@ class AppDialog extends StatelessWidget {
                       color: config.iconBg,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(config.icon, size: 20, color: config.iconColor),
+                    child: Icon(
+                      config.icon,
+                      size: 20,
+                      color: theme.colorScheme.onPrimary,
+                    ),
                   ),
 
                   const SizedBox(height: 16),
@@ -366,7 +368,6 @@ class _OutlineBtn extends StatelessWidget {
             Text(
               label,
               style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),

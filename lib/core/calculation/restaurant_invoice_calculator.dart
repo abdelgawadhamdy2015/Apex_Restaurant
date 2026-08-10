@@ -190,7 +190,7 @@ class InvoiceCalculationResponse {
 // =====================================================================
 
 class InvoiceCalculator {
-  static final double minimumTobaccoTax = 10250.toDouble();
+  static final double minimumTobaccoTax = 25.toDouble();
   static final double _hundred = 100.toDouble();
 
   final ItemTypeId noteItemTypeId;
@@ -348,9 +348,10 @@ class InvoiceCalculator {
         final tobaccoBase = input.priceIncludesVAT
             ? itemNet - itemVAT
             : itemNet;
-        itemTobaccoTax = tobaccoBase > minimumTobaccoTax
-            ? tobaccoBase
-            : minimumTobaccoTax;
+        itemTobaccoTax = tobaccoBase;
+        //  > minimumTobaccoTax
+        //     ? tobaccoBase
+        //     : minimumTobaccoTax;
         totalTobaccoTax += itemTobaccoTax;
       }
 
@@ -380,7 +381,11 @@ class InvoiceCalculator {
         invoiceDiscount: resultInvoiceDiscount,
         totalDiscount: totalItemDiscount + winningDiscount,
         totalVAT: totalVAT,
-        totalTobaccoTax: totalTobaccoTax,
+        totalTobaccoTax: totalTobaccoTax == 0
+            ? 0
+            : totalTobaccoTax < 25
+            ? 25
+            : totalTobaccoTax, // if total tobaco < 25 set 25 other set total
         deliveryCost: input.deliveryCost,
         dineInCost: dineInCost,
       ),

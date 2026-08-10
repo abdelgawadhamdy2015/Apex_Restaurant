@@ -6,10 +6,10 @@ import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.
 import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
 import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 class GetWaitersUseCase {
   final CartRepository repository;
@@ -77,12 +77,21 @@ class ApplyDiscountUseCase {
   }
 }
 
-class HoldOrderUseCase {
+class SavePendingRestaurantPosInvoiceUseCase {
   final CartRepository repository;
-  HoldOrderUseCase(this.repository);
+  SavePendingRestaurantPosInvoiceUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<dynamic>>> call(Order order) {
-    return repository.holdOrder(order);
+  Future<ApiResult<BaseResponse<dynamic>>> call(SaveInvoiceRequestModel order) {
+    return repository.savePendingRestaurantPosInvoice(order);
+  }
+}
+
+class SaveBookingTableRestaurantPosInvoiceUseCase {
+  final CartRepository repository;
+  SaveBookingTableRestaurantPosInvoiceUseCase(this.repository);
+
+  Future<ApiResult<BaseResponse<dynamic>>> call(SaveInvoiceRequestModel order) {
+    return repository.saveBookingTableRestaurantPosInvoice(order);
   }
 }
 

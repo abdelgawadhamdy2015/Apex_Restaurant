@@ -9,9 +9,9 @@ import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_reques
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 import '../models/discount_result_model.dart';
 import '../models/waiter_model.dart';
@@ -59,9 +59,26 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<dynamic>>> holdOrder(Order order) async {
+  Future<ApiResult<BaseResponse<dynamic>>> savePendingRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  ) async {
     try {
-      final response = await _remoteDataSource.holdOrder(order);
+      final response = await _remoteDataSource.savePendingRestaurantPosInvoice(
+        request,
+      );
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<dynamic>>> saveBookingTableRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  ) async {
+    try {
+      final response = await _remoteDataSource
+          .saveBookingTableRestaurantPosInvoice(request);
       return ApiResult.success(response);
     } catch (error) {
       return ApiResult.failure(ErrorHandler.handle(error));

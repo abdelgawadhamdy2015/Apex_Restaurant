@@ -5,6 +5,7 @@ import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -100,76 +101,98 @@ class BottomActionBar extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
 
-    return Container(
-      padding: EdgeInsets.all(spacing.md),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          top: BorderSide(color: theme.colorScheme.outlineVariant),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: spacing.sm - spacing.xxs / 2,
-            offset: Offset(0, -spacing.xxs),
+    return BlocSelector<CartBloc, CartState, CartOrderType>(
+      selector: (state) => state.selectedOrderType,
+      builder: (context, selectedOrderType) {
+        return Container(
+          padding: EdgeInsets.all(spacing.md),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            border: Border(
+              top: BorderSide(color: theme.colorScheme.outlineVariant),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: spacing.sm - spacing.xxs / 2,
+                offset: Offset(0, -spacing.xxs),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  vertical: spacing.sm + spacing.xxs / 2,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(spacing.radiusMd),
+          child: Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(
+                      vertical: spacing.sm + spacing.xxs / 2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(spacing.radiusMd),
+                    ),
+                  ),
+                  onPressed: () => _checkout(context),
+                  icon: Icon(Icons.payments_outlined, size: icons.md),
+                  label: Text(
+                    lang.checkout,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
-              onPressed: () => _checkout(context),
-              icon: Icon(Icons.payments_outlined, size: icons.md),
-              label: Text(
-                lang.checkout,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+
+              SizedBox(width: spacing.sm),
+
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: spacing.md,
+                    vertical: spacing.sm + spacing.xxs / 2,
+                  ),
+                  backgroundColor: theme.colorScheme.onSurface,
+                  side: BorderSide(color: theme.colorScheme.outlineVariant),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(spacing.radiusMd),
+                  ),
+                ),
+                onPressed: () {
+                  final state = context.read<CartBloc>().state;
+
+                  if (selectedOrderType == CartOrderType.DINE_IN) {
+                    context.read<CartBloc>().add(
+                      SaveTableOrderEvent(
+                        request: state.toSaveInvoiceRequestModel,
+                      ),
+                    );
+                  } else {
+                    context.read<CartBloc>().add(
+                      HoldOrderEvent(request: state.toSaveInvoiceRequestModel),
+                    );
+                  }
+                },
+                icon: Icon(
+                  Icons.pause_circle_outline,
+                  color: theme.colorScheme.onPrimary,
+                  size: icons.md,
+                ),
+                label: Text(
+                  selectedOrderType == CartOrderType.DINE_IN
+                      ? lang.save
+                      : lang.holdOrder,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-          SizedBox(width: spacing.sm),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.symmetric(
-                horizontal: spacing.md,
-                vertical: spacing.sm + spacing.xxs / 2,
-              ),
-              backgroundColor: theme.colorScheme.onSurface,
-              side: BorderSide(color: theme.colorScheme.outlineVariant),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(spacing.radiusMd),
-              ),
-            ),
-            onPressed: () =>
-                context.read<CartBloc>().add(HoldOrderSubmittedEvent()),
-            icon: Icon(
-              Icons.pause_circle_outline,
-              color: theme.colorScheme.onPrimary,
-              size: icons.md,
-            ),
-            label: Text(
-              lang.holdOrder,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

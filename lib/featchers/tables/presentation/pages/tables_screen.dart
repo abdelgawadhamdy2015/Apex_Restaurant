@@ -46,7 +46,15 @@ class _TablesScreenState extends State<TablesScreen> {
     super.initState();
     final bloc = context.read<TablesBloc>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc.add(FetchFloorsEvent(GetFloorsRequest(branchId: widget.branchId)));
+      bloc.add(
+        FetchFloorsEvent(
+          GetFloorsRequest(
+            branchId: widget.branchId,
+            pageNumber: 1,
+            pageSize: 100,
+          ),
+        ),
+      );
     });
   }
 
@@ -68,7 +76,14 @@ class _TablesScreenState extends State<TablesScreen> {
     if (floors.isNotEmpty && index < floors.length) {
       final floor = floors[index];
       context.read<TablesBloc>().add(
-        FetchTablesEvent(GetTablesRequest(floorID: floor.id, forPOS: true)),
+        FetchTablesEvent(
+          GetTablesRequest(
+            pageNumber: 1,
+            pageSize: 100,
+            floorID: floor.id,
+            forPOS: false,
+          ),
+        ),
       );
     }
   }

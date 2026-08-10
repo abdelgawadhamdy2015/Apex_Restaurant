@@ -5,8 +5,8 @@ import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_reques
 import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 
 import '../../data/models/discount_result_model.dart';
 import '../../data/models/waiter_model.dart';
@@ -24,8 +24,13 @@ abstract class CartRepository {
     ApplyDiscountRequestModel request,
   );
 
-  Future<ApiResult<BaseResponse<dynamic>>> holdOrder(Order order);
+  Future<ApiResult<BaseResponse<dynamic>>> savePendingRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  );
 
+  Future<ApiResult<BaseResponse<dynamic>>> saveBookingTableRestaurantPosInvoice(
+    SaveInvoiceRequestModel request,
+  );
   Future<ApiResult<BaseResponse<List<PosClientModel>?>>> getPosClients({
     required GetClientsRequest request,
   });

@@ -5,34 +5,34 @@ part 'pos_client_model.g.dart';
 @JsonSerializable(explicitToJson: true)
 class PosClientModel {
   final int id;
-  final String code;
-  final String arabicName;
-  final String latinName;
-  final int type;
-  final int status;
+  final String? code;
+  final String? arabicName;
+  final String? latinName;
+  final int? type;
+  final int? status;
   final SalesManModel? salesManId;
   final String? responsibleAr;
   final String? responsibleEn;
-  final int customerActivity;
+  final int? customerActivity;
   final String? phone;
   final String? fax;
   final String? email;
-  final String taxNumber;
+  final String? taxNumber;
   final String? addressAr;
   final String? addressEn;
-  final bool addToAnotherList;
-  final bool isSupplier;
-  final bool isCustomerAndSupplier;
-  final bool mainTypeIsCustomer;
-  final List<int> branches;
-  final String branchNameAr;
-  final String branchNameEn;
+  final bool? addToAnotherList;
+  final bool? isSupplier;
+  final bool? isCustomerAndSupplier;
+  final bool? mainTypeIsCustomer;
+  final List<int>? branches;
+  final String? branchNameAr;
+  final String? branchNameEn;
   final double? creditLimit;
   final int? creditPeriod;
   final double? discountRatio;
-  final int salesPriceId;
-  final int lessSalesPriceId;
-  final bool canDelete;
+  final int? salesPriceId;
+  final int? lessSalesPriceId;
+  final bool? canDelete;
   final String? buildingNumber;
   final String? streetName;
   final String? neighborhood;
@@ -44,54 +44,54 @@ class PosClientModel {
   final String? statusEn;
   final String? typeAr;
   final String? typeEn;
-  final bool isUsedInInvoices;
+  final bool? isUsedInInvoices;
   final List<ClientAddressModel>? personAddress;
   final List<ClientPhoneModel>? personPhones;
 
   const PosClientModel({
     required this.id,
-    required this.code,
-    required this.arabicName,
-    required this.latinName,
-    required this.type,
-    required this.status,
+    this.code,
+    this.arabicName,
+    this.latinName,
+    this.type,
+    this.status,
     this.salesManId,
     this.responsibleAr,
     this.responsibleEn,
-    required this.customerActivity,
+    this.customerActivity,
     this.phone,
     this.fax,
     this.email,
-    required this.taxNumber,
+    this.taxNumber,
     this.addressAr,
     this.addressEn,
-    required this.addToAnotherList,
-    required this.isSupplier,
-    required this.isCustomerAndSupplier,
-    required this.mainTypeIsCustomer,
-    required this.branches,
-    required this.branchNameAr,
-    required this.branchNameEn,
+    this.addToAnotherList,
+    this.isSupplier,
+    this.isCustomerAndSupplier,
+    this.mainTypeIsCustomer,
+    this.branches,
+    this.branchNameAr,
+    this.branchNameEn,
     this.creditLimit,
     this.creditPeriod,
     this.discountRatio,
-    required this.salesPriceId,
-    required this.lessSalesPriceId,
-    required this.canDelete,
-    required this.buildingNumber,
-    required this.streetName,
-    required this.neighborhood,
-    required this.city,
-    required this.country,
-    required this.postalNumber,
-    required this.financialAccountId,
-    required this.statusAr,
-    required this.statusEn,
-    required this.typeAr,
-    required this.typeEn,
-    required this.isUsedInInvoices,
-    required this.personAddress,
-    required this.personPhones,
+    this.salesPriceId,
+    this.lessSalesPriceId,
+    this.canDelete,
+    this.buildingNumber,
+    this.streetName,
+    this.neighborhood,
+    this.city,
+    this.country,
+    this.postalNumber,
+    this.financialAccountId,
+    this.statusAr,
+    this.statusEn,
+    this.typeAr,
+    this.typeEn,
+    this.isUsedInInvoices,
+    this.personAddress,
+    this.personPhones,
   });
 
   factory PosClientModel.fromJson(Map<String, dynamic> json) =>
@@ -108,8 +108,8 @@ class FinancialAccountModel {
 
   const FinancialAccountModel({
     required this.id,
-    required this.arabicName,
-    required this.latinName,
+    this.arabicName,
+    this.latinName,
   });
 
   factory FinancialAccountModel.fromJson(Map<String, dynamic> json) =>
@@ -132,14 +132,14 @@ class ClientAddressModel {
 
   const ClientAddressModel({
     required this.id,
-    required this.city,
-    required this.street,
-    required this.district,
-    required this.buildingNo,
-    required this.floor,
-    required this.apartmentNo,
-    required this.landmark,
-    required this.isDefault,
+    this.city,
+    this.street,
+    this.district,
+    this.buildingNo,
+    this.floor,
+    this.apartmentNo,
+    this.landmark,
+    this.isDefault,
   });
 
   factory ClientAddressModel.fromJson(Map<String, dynamic> json) =>
@@ -182,8 +182,8 @@ class ClientPhoneModel {
 @JsonSerializable()
 class SalesManModel {
   final int id;
-  final String arabicName;
-  final String latinName;
+  final String? arabicName;
+  final String? latinName;
 
   const SalesManModel({
     required this.id,

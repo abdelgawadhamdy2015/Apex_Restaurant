@@ -2139,10 +2139,10 @@ class S {
     );
   }
 
-  /// `VAT : {vat}`
+  /// `VAT : % {vat} `
   String vatPrecentage(Object vat) {
     return Intl.message(
-      'VAT : $vat',
+      'VAT : % $vat ',
       name: 'vatPrecentage',
       desc: '',
       args: [vat],
@@ -3845,6 +3845,16 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `Dine-in Cost`
+  String get dineInCost {
+    return Intl.message('Dine-in Cost', name: 'dineInCost', desc: '', args: []);
+  }
+
+  /// `Tobacco VAT`
+  String get tobaccoVat {
+    return Intl.message('Tobacco VAT', name: 'tobaccoVat', desc: '', args: []);
   }
 }
 
