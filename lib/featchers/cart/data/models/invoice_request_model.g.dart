@@ -24,10 +24,10 @@ SaveInvoiceRequestModel _$SaveInvoiceRequestModelFromJson(
 Map<String, dynamic> _$SaveInvoiceRequestModelToJson(
   SaveInvoiceRequestModel instance,
 ) => <String, dynamic>{
-  'invoice': instance.invoice?.toJson(),
-  'items': instance.items?.map((e) => e.toJson()).toList(),
-  'payments': instance.payments?.map((e) => e.toJson()).toList(),
-  'gediaKey': instance.gediaKey,
+  'invoice': ?instance.invoice?.toJson(),
+  'items': ?instance.items?.map((e) => e.toJson()).toList(),
+  'payments': ?instance.payments?.map((e) => e.toJson()).toList(),
+  'gediaKey': ?instance.gediaKey,
 };
 
 SaveInvoiceModel _$SaveInvoiceModelFromJson(Map<String, dynamic> json) =>
@@ -47,25 +47,25 @@ SaveInvoiceModel _$SaveInvoiceModelFromJson(Map<String, dynamic> json) =>
       totalInvoicePrice: (json['totalInvoicePrice'] as num?)?.toDouble(),
       clientId: (json['clientId'] as num?)?.toInt(),
       invoiceDiscountId: (json['invoiceDiscountId'] as num?)?.toInt(),
-      takeawayDateTime: json['takeawayDateTime'] == null
+      orderReceivedTime: json['orderReceivedTime'] == null
           ? null
-          : DateTime.parse(json['takeawayDateTime'] as String),
+          : DateTime.parse(json['orderReceivedTime'] as String),
     );
 
 Map<String, dynamic> _$SaveInvoiceModelToJson(SaveInvoiceModel instance) =>
     <String, dynamic>{
-      'postype': instance.postype,
-      'foodTableId': instance.foodTableId,
-      'waiterId': instance.waiterId,
-      'deliveryCompanyId': instance.deliveryCompanyId,
-      'deliveryManId': instance.deliveryManId,
-      'notes': instance.notes,
-      'discount': instance.discount?.toJson(),
-      'paidAmount': instance.paidAmount,
-      'totalInvoicePrice': instance.totalInvoicePrice,
-      'clientId': instance.clientId,
-      'invoiceDiscountId': instance.invoiceDiscountId,
-      'takeawayDateTime': instance.takeawayDateTime?.toIso8601String(),
+      'postype': ?instance.postype,
+      'foodTableId': ?instance.foodTableId,
+      'waiterId': ?instance.waiterId,
+      'deliveryCompanyId': ?instance.deliveryCompanyId,
+      'deliveryManId': ?instance.deliveryManId,
+      'notes': ?instance.notes,
+      'discount': ?instance.discount?.toJson(),
+      'paidAmount': ?instance.paidAmount,
+      'totalInvoicePrice': ?instance.totalInvoicePrice,
+      'clientId': ?instance.clientId,
+      'invoiceDiscountId': ?instance.invoiceDiscountId,
+      'orderReceivedTime': ?instance.orderReceivedTime?.toIso8601String(),
     };
 
 SaveDiscountModel _$SaveDiscountModelFromJson(Map<String, dynamic> json) =>
@@ -75,7 +75,7 @@ SaveDiscountModel _$SaveDiscountModelFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$SaveDiscountModelToJson(SaveDiscountModel instance) =>
-    <String, dynamic>{'type': instance.type, 'value': instance.value};
+    <String, dynamic>{'type': ?instance.type, 'value': ?instance.value};
 
 InvoiceItemModel _$InvoiceItemModelFromJson(Map<String, dynamic> json) =>
     InvoiceItemModel(
@@ -97,14 +97,14 @@ InvoiceItemModel _$InvoiceItemModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$InvoiceItemModelToJson(InvoiceItemModel instance) =>
     <String, dynamic>{
-      'itemId': instance.itemId,
-      'sizeId': instance.sizeId,
-      'quantity': instance.quantity,
-      'price': instance.price,
-      'notes': instance.notes,
-      'discount': instance.discount?.toJson(),
-      'itemDiscountId': instance.itemDiscountId,
-      'additives': instance.additives?.map((e) => e.toJson()).toList(),
+      'itemId': ?instance.itemId,
+      'sizeId': ?instance.sizeId,
+      'quantity': ?instance.quantity,
+      'price': ?instance.price,
+      'notes': ?instance.notes,
+      'discount': ?instance.discount?.toJson(),
+      'itemDiscountId': ?instance.itemDiscountId,
+      'additives': ?instance.additives?.map((e) => e.toJson()).toList(),
     };
 
 SaveAdditiveModel _$SaveAdditiveModelFromJson(Map<String, dynamic> json) =>
@@ -115,8 +115,8 @@ SaveAdditiveModel _$SaveAdditiveModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SaveAdditiveModelToJson(SaveAdditiveModel instance) =>
     <String, dynamic>{
-      'additiveId': instance.additiveId,
-      'quantity': instance.quantity,
+      'additiveId': ?instance.additiveId,
+      'quantity': ?instance.quantity,
     };
 
 SavePaymentModel _$SavePaymentModelFromJson(Map<String, dynamic> json) =>
@@ -127,6 +127,6 @@ SavePaymentModel _$SavePaymentModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SavePaymentModelToJson(SavePaymentModel instance) =>
     <String, dynamic>{
-      'paymentMethodId': instance.paymentMethodId,
-      'amount': instance.amount,
+      'paymentMethodId': ?instance.paymentMethodId,
+      'amount': ?instance.amount,
     };

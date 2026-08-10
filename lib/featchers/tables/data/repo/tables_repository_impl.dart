@@ -40,9 +40,9 @@ class TablesRepositoryImpl implements TablesRepository {
           alart: response.alart,
         ),
       );
-    } catch (error, stackTrace) {
-      log("getReservations Repository Error: $error");
-      log("StackTrace: $stackTrace");
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -54,7 +54,9 @@ class TablesRepositoryImpl implements TablesRepository {
     try {
       final response = await remoteDataSource.addReservation(request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -76,7 +78,9 @@ class TablesRepositoryImpl implements TablesRepository {
 
       final response = await remoteDataSource.editReservation(request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -87,7 +91,9 @@ class TablesRepositoryImpl implements TablesRepository {
       final request = CancelReserveFoodTableRequest(reservationId: id);
       final response = await remoteDataSource.cancelReservation(request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -110,7 +116,9 @@ class TablesRepositoryImpl implements TablesRepository {
           alart: response.alart,
         ),
       );
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -133,7 +141,8 @@ class TablesRepositoryImpl implements TablesRepository {
           alart: response.alart,
         ),
       );
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }

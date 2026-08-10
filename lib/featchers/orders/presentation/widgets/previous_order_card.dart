@@ -1,11 +1,11 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Card representing a single completed order on the "Previous Orders" tab.
 class PreviousOrderCard extends StatelessWidget {
-  final OrderModel order;
+  final PreviousInvoiceModel order;
   final S l10n;
 
   const PreviousOrderCard({super.key, required this.order, required this.l10n});
@@ -15,6 +15,12 @@ class PreviousOrderCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+
+    // New model fields are nullable — resolve fallbacks up front.
+    final invoiceCode = order.invoiceCode ?? '';
+    final invoiceDate = order.invoiceDate;
+    final personName = order.personNameAr ?? '';
+    final totalAmount = order.totalAmount ?? 0.0;
 
     return Container(
       margin: EdgeInsets.only(bottom: spacing.md),
@@ -30,7 +36,7 @@ class PreviousOrderCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                order.invoiceNumber,
+                invoiceCode,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -44,7 +50,9 @@ class PreviousOrderCard extends StatelessWidget {
                   ),
                   SizedBox(width: spacing.xxs),
                   Text(
-                    '${order.dateTime.year}-${order.dateTime.month.toString().padLeft(2, '0')}-${order.dateTime.day.toString().padLeft(2, '0')} |${order.dateTime.hour}:${order.dateTime.minute.toString().padLeft(2, '0')}  ',
+                    invoiceDate != null
+                        ? '${invoiceDate.year}-${invoiceDate.month.toString().padLeft(2, '0')}-${invoiceDate.day.toString().padLeft(2, '0')} |${invoiceDate.hour}:${invoiceDate.minute.toString().padLeft(2, '0')}  '
+                        : '',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSecondary,
                     ),
@@ -67,7 +75,7 @@ class PreviousOrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    order.customerName ?? '',
+                    personName,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -84,9 +92,7 @@ class PreviousOrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    l10n.priceWithCurrency(
-                      order.totalAmount.toStringAsFixed(2),
-                    ),
+                    l10n.priceWithCurrency(totalAmount.toStringAsFixed(2)),
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: theme.colorScheme.primary,
                     ),
@@ -133,8 +139,8 @@ class PreviousOrderCard extends StatelessWidget {
                     style: TextStyle(color: theme.colorScheme.secondary),
                   ),
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.secondary.withOpacity(
-                      0.12,
+                    backgroundColor: theme.colorScheme.secondary.withValues(
+                      alpha: 0.12,
                     ),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(

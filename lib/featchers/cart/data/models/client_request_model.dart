@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'client_request_model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, includeIfNull: false)
 class ClientRequestModel {
   @JsonKey(name: 'Id')
   final int? id;
@@ -33,7 +33,7 @@ class ClientRequestModel {
   Map<String, dynamic> toJson() => _$ClientRequestModelToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class ClientRequestAddressModel {
   @JsonKey(name: 'Id')
   final int? id;
@@ -63,7 +63,7 @@ class ClientRequestAddressModel {
   final bool? isDefault;
 
   const ClientRequestAddressModel({
-    this.id = 0,
+    this.id,
     this.city,
     this.street,
     this.district,
@@ -80,7 +80,7 @@ class ClientRequestAddressModel {
   Map<String, dynamic> toJson() => _$ClientRequestAddressModelToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class ClientRequestPhoneModel {
   @JsonKey(name: 'Id')
   final int? id;
@@ -95,10 +95,10 @@ class ClientRequestPhoneModel {
   final int? personsId;
 
   const ClientRequestPhoneModel({
-    this.id = 0,
+    this.id,
     this.phoneNumber,
     this.isDefault,
-    this.personsId = 0,
+    this.personsId,
   });
 
   factory ClientRequestPhoneModel.fromJson(Map<String, dynamic> json) =>

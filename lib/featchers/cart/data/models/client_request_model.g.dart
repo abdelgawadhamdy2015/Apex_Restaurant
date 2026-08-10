@@ -28,17 +28,17 @@ ClientRequestModel _$ClientRequestModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ClientRequestModelToJson(ClientRequestModel instance) =>
     <String, dynamic>{
-      'Id': instance.id,
-      'Name': instance.name,
-      'Addresses': instance.addresses?.map((e) => e.toJson()).toList(),
-      'Phones': instance.phones?.map((e) => e.toJson()).toList(),
-      'Branches': instance.branches,
+      'Id': ?instance.id,
+      'Name': ?instance.name,
+      'Addresses': ?instance.addresses?.map((e) => e.toJson()).toList(),
+      'Phones': ?instance.phones?.map((e) => e.toJson()).toList(),
+      'Branches': ?instance.branches,
     };
 
 ClientRequestAddressModel _$ClientRequestAddressModelFromJson(
   Map<String, dynamic> json,
 ) => ClientRequestAddressModel(
-  id: (json['Id'] as num?)?.toInt() ?? 0,
+  id: (json['Id'] as num?)?.toInt(),
   city: json['City'] as String?,
   street: json['Street'] as String?,
   district: json['District'] as String?,
@@ -52,31 +52,31 @@ ClientRequestAddressModel _$ClientRequestAddressModelFromJson(
 Map<String, dynamic> _$ClientRequestAddressModelToJson(
   ClientRequestAddressModel instance,
 ) => <String, dynamic>{
-  'Id': instance.id,
-  'City': instance.city,
-  'Street': instance.street,
-  'District': instance.district,
-  'BuildingNo': instance.buildingNo,
-  'Floor': instance.floor,
-  'ApartmentNo': instance.apartmentNo,
-  'Landmark': instance.landmark,
-  'IsDefault': instance.isDefault,
+  'Id': ?instance.id,
+  'City': ?instance.city,
+  'Street': ?instance.street,
+  'District': ?instance.district,
+  'BuildingNo': ?instance.buildingNo,
+  'Floor': ?instance.floor,
+  'ApartmentNo': ?instance.apartmentNo,
+  'Landmark': ?instance.landmark,
+  'IsDefault': ?instance.isDefault,
 };
 
 ClientRequestPhoneModel _$ClientRequestPhoneModelFromJson(
   Map<String, dynamic> json,
 ) => ClientRequestPhoneModel(
-  id: (json['Id'] as num?)?.toInt() ?? 0,
+  id: (json['Id'] as num?)?.toInt(),
   phoneNumber: json['PhoneNumber'] as String?,
   isDefault: json['IsDefault'] as bool?,
-  personsId: (json['PersonsId'] as num?)?.toInt() ?? 0,
+  personsId: (json['PersonsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$ClientRequestPhoneModelToJson(
   ClientRequestPhoneModel instance,
 ) => <String, dynamic>{
-  'Id': instance.id,
-  'PhoneNumber': instance.phoneNumber,
-  'IsDefault': instance.isDefault,
-  'PersonsId': instance.personsId,
+  'Id': ?instance.id,
+  'PhoneNumber': ?instance.phoneNumber,
+  'IsDefault': ?instance.isDefault,
+  'PersonsId': ?instance.personsId,
 };

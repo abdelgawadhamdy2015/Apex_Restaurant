@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// Collapsible card representing a single held order, with an expandable
 /// item list and restore/delete actions.
 class HeldOrderExpandableCard extends StatefulWidget {
-  final OrderModel order;
+  final PindingInvoiceModel order;
   final S l10n;
 
   const HeldOrderExpandableCard({
@@ -35,6 +35,17 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
     final buttonTheme = context.appExtraTheme;
     final l10n = widget.l10n;
     final order = widget.order;
+
+    // All fields on the new PindingInvoiceModel/PindingInvoiceItemModel are
+    // nullable, so resolve everything up front with sane fallbacks instead
+    // of scattering `??`/null-checks through the widget tree.
+    final invoiceId = order.invoiceId;
+    final queueNumber = order.orderNumber?.toString() ?? '';
+    final invoiceCode = order.code ?? '';
+    final invoiceDate = order.invoiceDate;
+    final itemsCount = order.itemsCount ?? 0;
+    final invoiceTotal = order.invoiceTotal ?? 0.0;
+    final items = order.items ?? const <PindingInvoiceItemModel>[];
 
     return Container(
       margin: EdgeInsets.only(bottom: spacing.md),
@@ -63,7 +74,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
                     ),
                     child: Text(
-                      order.orderQueueNumber ?? '',
+                      queueNumber,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.onPrimary,
                         fontWeight: FontWeight.bold,
@@ -75,7 +86,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        order.invoiceNumber,
+                        invoiceCode,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -83,7 +94,9 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                       Row(
                         children: [
                           Text(
-                            ' ${order.dateTime.hour}:${order.dateTime.minute.toString().padLeft(2, '0')}  ص',
+                            invoiceDate != null
+                                ? ' ${invoiceDate.hour}:${invoiceDate.minute.toString().padLeft(2, '0')}  ص'
+                                : '',
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSecondary,
                             ),
@@ -104,17 +117,15 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        order.itemsCount == 1
+                        itemsCount == 1
                             ? l10n.singleItemCount
-                            : l10n.itemsCount(order.itemsCount),
+                            : l10n.itemsCount(itemsCount),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
                       ),
                       Text(
-                        l10n.priceWithCurrency(
-                          order.totalAmount.toStringAsFixed(2),
-                        ),
+                        l10n.priceWithCurrency(invoiceTotal.toStringAsFixed(2)),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -153,8 +164,12 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                     ),
                   ),
                   SizedBox(height: spacing.sm),
-                  ...order.items.map(
-                    (item) => Padding(
+                  ...items.map((item) {
+                    final itemName = item.itemNameAr ?? '';
+                    final itemQuantity = (item.quantity ?? 0).toInt();
+                    final itemTotal = item.total ?? 0.0;
+
+                    return Padding(
                       padding: EdgeInsets.only(bottom: spacing.xs),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -162,7 +177,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                           Row(
                             children: [
                               Text(
-                                item.name,
+                                itemName,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -170,7 +185,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                               SizedBox(width: spacing.xs),
 
                               Text(
-                                '${item.quantity}x',
+                                '${itemQuantity}x',
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -179,7 +194,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                           ),
                           Text(
                             l10n.priceWithCurrency(
-                              item.price.toStringAsFixed(2),
+                              itemTotal.toStringAsFixed(2),
                             ),
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontWeight: FontWeight.bold,
@@ -187,18 +202,20 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                           ),
                         ],
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                   SizedBox(height: spacing.md),
                   Row(
                     children: [
                       Expanded(
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            context.read<OrdersBloc>().add(
-                              RestoreOrderEvent(order.id),
-                            );
-                          },
+                          onPressed: invoiceId == null
+                              ? null
+                              : () {
+                                  context.read<OrdersBloc>().add(
+                                    RestoreOrderEvent(invoiceId.toString()),
+                                  );
+                                },
                           icon: Icon(
                             Icons.history,
                             color: AppColors.white,
@@ -228,11 +245,13 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
 
                       Expanded(
                         child: TextButton.icon(
-                          onPressed: () {
-                            context.read<OrdersBloc>().add(
-                              DeleteOrderEvent(order.id),
-                            );
-                          },
+                          onPressed: invoiceId == null
+                              ? null
+                              : () {
+                                  context.read<OrdersBloc>().add(
+                                    DeleteOrderEvent(invoiceId.toString()),
+                                  );
+                                },
                           icon: Icon(
                             Icons.delete,
                             color: theme.colorScheme.errorContainer,
@@ -247,7 +266,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                           ),
                           style: TextButton.styleFrom(
                             backgroundColor: theme.colorScheme.errorContainer
-                                .withOpacity(0.1),
+                                .withValues(alpha: 0.1),
                             padding: EdgeInsets.symmetric(
                               horizontal: spacing.sm,
                             ),
@@ -257,7 +276,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                               ),
                               side: BorderSide(
                                 color: theme.colorScheme.errorContainer
-                                    .withOpacity(0.20),
+                                    .withValues(alpha: 0.20),
                               ),
                             ),
                           ),

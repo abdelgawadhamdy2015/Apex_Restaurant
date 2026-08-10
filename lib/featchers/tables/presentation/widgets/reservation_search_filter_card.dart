@@ -145,7 +145,7 @@ class _ReservationSearchFilterCardState
                         ?.map(
                           (t) => DropdownMenuItem<TableEntity?>(
                             value: t,
-                            child: Text(t.arabicName),
+                            child: Text(t.arabicName ?? ""),
                           ),
                         )
                         .toList()),
@@ -176,7 +176,7 @@ class _ReservationSearchFilterCardState
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: Text(
-                            f.arabicName,
+                            f.arabicName ?? "",
                             overflow: TextOverflow.ellipsis,
                             textDirection: TextDirection.rtl,
                           ),

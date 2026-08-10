@@ -277,7 +277,7 @@
     "enterDiscountCode": "أدخل كود الخصم",
     "discountCoupon": "الخصم (كوبون)",
     "deliveryFee": "رسوم التوصيل",
-    "vatPrecentage": "ضريبة القيمة المضافة : {vat}",
+    "vatPrecentage": "ضريبة القيمة المضافة : % {vat} ",
     "grandTotal": "الإجمالي النهائي",
     "checkout": "إتمام الدفع",
     "holdOrder": "تعليق الطلب",
@@ -484,5 +484,7 @@
     "bankTransfer": "تحويل بنكي",
     "visa": "فيزا",
     "voucher": "قسيمة شراء",
-    "loyaltyPoints": "نقاط الولاء"
+    "loyaltyPoints": "نقاط الولاء",
+    "dineInCost": "تكلفة الصالة",
+    "tobaccoVat": "ضريبة التبغ"
 }

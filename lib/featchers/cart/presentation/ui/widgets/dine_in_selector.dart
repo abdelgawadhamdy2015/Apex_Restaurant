@@ -15,7 +15,11 @@ import 'package:go_router/go_router.dart';
 /// Dine-in controls: waiter selection, the currently selected table
 /// and a shortcut to open the table picker.
 class DineInSelector extends StatelessWidget {
-  const DineInSelector({super.key, required this.persons, required this.waiters});
+  const DineInSelector({
+    super.key,
+    required this.persons,
+    required this.waiters,
+  });
 
   final List<PosClientModel> persons;
   final List<WaiterModel> waiters;
@@ -26,9 +30,7 @@ class DineInSelector extends StatelessWidget {
     final spacing = context.spacing;
     final icons = context.iconSizes;
     final lang = S.of(context);
-    final selectedTable = context.select(
-      (CartBloc b) => b.state.selectedTable,
-    );
+    final selectedTable = context.select((CartBloc b) => b.state.selectedTable);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -39,7 +41,7 @@ class DineInSelector extends StatelessWidget {
       ),
       child: Column(
         children: [
-          DropdownButtonFormField<WaiterModel?>(
+          DropdownButtonFormField<int>(
             decoration: InputDecoration(
               hintText: lang.selectWaiter,
               contentPadding: EdgeInsets.symmetric(
@@ -47,16 +49,23 @@ class DineInSelector extends StatelessWidget {
                 vertical: spacing.xs,
               ),
             ),
+            initialValue: context.read<CartBloc>().state.selectedWaiter?.id,
             items: waiters
                 .map(
-                  (waiter) => DropdownMenuItem<WaiterModel?>(
-                    value: waiter,
+                  (waiter) => DropdownMenuItem<int>(
+                    value: waiter.id,
                     child: Text(waiter.arabicName ?? ''),
                   ),
                 )
                 .toList(),
-            onChanged: (val) =>
-                context.read<CartBloc>().add(SelectWaiterEvent(val)),
+            onChanged: (waiterId) {
+              final waiter = waiters.cast<WaiterModel?>().firstWhere(
+                (waiter) => waiter?.id == waiterId,
+                orElse: () => null,
+              );
+
+              context.read<CartBloc>().add(SelectWaiterEvent(waiter));
+            },
           ),
           SizedBox(height: spacing.xs + spacing.xxs / 2),
           Row(
@@ -64,15 +73,11 @@ class DineInSelector extends StatelessWidget {
             children: [
               Text(
                 '${lang.selectedTable} : ',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                style: theme.textTheme.bodyLarge?.copyWith(),
               ),
               Text(
                 selectedTable?.arabicName ?? '',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                style: theme.textTheme.bodyLarge?.copyWith(),
               ),
             ],
           ),

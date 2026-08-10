@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entities/table_entity.dart';
 
 part 'table_model.g.dart';
@@ -7,26 +8,55 @@ part 'table_model.g.dart';
 @JsonSerializable()
 class TableModel extends TableEntity {
   const TableModel({
-    required super.id,
-    required super.code,
-    required super.arabicName,
-    required super.latinName,
+    super.id,
+    super.code,
+    super.arabicName,
+    super.latinName,
     super.notes,
-    required super.status,
-    required super.seatNumbers,
-    required super.tableTypeID,
-    required super.tableTypeNameAr,
-    required super.tableTypeNameEn,
-    required super.floorID,
-    required super.floorNameAr,
-    required super.floorNameEn,
-    required super.serviceRatio,
-    required super.xloc,
-    required super.yloc,
-    required super.isReserved,
+    super.status,
+    super.seatNumbers,
+    super.tableTypeID,
+    super.tableTypeNameAr,
+    super.tableTypeNameEn,
+    super.floorID,
+    super.floorNameAr,
+    super.floorNameEn,
+    super.uTime,
+    super.serviceRatio,
+    super.canDelete,
+    super.canEdit,
+    super.xloc,
+    super.yloc,
+    super.isReserved,
   });
 
   factory TableModel.fromJson(Map<String, dynamic> json) =>
       _$TableModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$TableModelToJson(this);
+
+  TableEntity toEntity() {
+    return TableEntity(
+      id: id,
+      code: code,
+      arabicName: arabicName,
+      latinName: latinName,
+      notes: notes,
+      status: status,
+      seatNumbers: seatNumbers,
+      tableTypeID: tableTypeID,
+      tableTypeNameAr: tableTypeNameAr,
+      tableTypeNameEn: tableTypeNameEn,
+      floorID: floorID,
+      floorNameAr: floorNameAr,
+      floorNameEn: floorNameEn,
+      uTime: uTime,
+      serviceRatio: serviceRatio,
+      canDelete: canDelete,
+      canEdit: canEdit,
+      xloc: xloc,
+      yloc: yloc,
+      isReserved: isReserved,
+    );
+  }
 }

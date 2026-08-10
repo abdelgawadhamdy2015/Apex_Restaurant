@@ -141,7 +141,12 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
         if (floorsList.isNotEmpty) {
           add(
             FetchTablesEvent(
-              GetTablesRequest(floorID: floorsList.first.id, forPOS: true),
+              GetTablesRequest(
+                pageNumber: 1,
+                pageSize: 100,
+                floorID: floorsList.first.id,
+                forPOS: false,
+              ),
             ),
           );
         }

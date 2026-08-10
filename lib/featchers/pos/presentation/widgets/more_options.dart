@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
+import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
@@ -96,7 +97,12 @@ class MoreOptions extends StatelessWidget {
         icon: Icons.logout,
         iconColor: colorScheme.errorContainer,
         isLogOut: true,
-        onTap: () {},
+        onTap: () {
+          showLogOutDialogState(context, lang.needSignOut, [
+            lang.confirm,
+            lang.cancel,
+          ]);
+        },
       ),
     ];
 

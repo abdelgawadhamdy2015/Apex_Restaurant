@@ -43,10 +43,22 @@ class ApiConstants {
   static const String holdOrder = 'api/Order/Hold';
 
   static const String getAllPersons = "api/Store/Persons/GetListOfPersons";
+  static const String getPendingRestaurantPosInvoiceDetails =
+      "api/Restaurants/RestaurantPos/GetPendingRestaurantPosInvoiceDetails";
+  static const String getRestaurantPosBookingTable =
+      "api/Restaurants/RestaurantPos/GetRestaurantPosBookingTable";
+
   static const String updatePosClient = "api/Store/Persons/UpdatePosClient";
   static const String addPosClient = "api/Store/Persons/AddPosClient";
   static const String saveRestaurantPosInvoice =
       "api/Restaurants/RestaurantPos/SaveRestaurantPosInvoice";
+  static const String savePendingRestaurantPosInvoice =
+      "api/Restaurants/RestaurantPos/SavePendingRestaurantPosInvoice";
+  static const String saveBookingTableRestaurantPosInvoice =
+      "api/Restaurants/RestaurantPos/SaveBookingTableRestaurantPosInvoice";
+  static const String getListPosInvoiceData =
+      "api/Restaurants/RestaurantPos/GetListPosInvoiceData";
+
   static const String getDynamicInvoiceDiscounts =
       "api/Restaurants/ItemDiscounts/GetInvoiceDiscounts";
 

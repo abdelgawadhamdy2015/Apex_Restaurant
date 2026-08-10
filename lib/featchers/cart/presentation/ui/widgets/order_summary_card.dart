@@ -20,7 +20,8 @@ class OrderSummaryCard extends StatelessWidget {
     final showDeliveryFee =
         state.selectedOrderType == CartOrderType.DELIVERY ||
         state.selectedOrderType == CartOrderType.DELIVERY_COMPANY;
-
+    final dineInFee = state.selectedOrderType == CartOrderType.DINE_IN;
+    final tobacoActive = state.tobaccoTaxAmount > 0;
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
@@ -49,6 +50,18 @@ class OrderSummaryCard extends StatelessWidget {
                   '${state.settingsModel?.posRestaurant?.deliveryCost?.toStringAsFixed(2) ?? 0} ${lang.currencySar}',
             ),
           ],
+          if (dineInFee)
+            _SummaryRow(
+              title: lang.dineInCost,
+              value:
+                  '${state.dineInCost.toStringAsFixed(2)} ${lang.currencySar}',
+            ),
+          if (tobacoActive)
+            _SummaryRow(
+              title: lang.tobaccoVat,
+              value:
+                  '${state.tobaccoTaxAmount.toStringAsFixed(2)} ${lang.currencySar}',
+            ),
           SizedBox(height: spacing.xs),
           _SummaryRow(
             title: lang.vatPrecentage(

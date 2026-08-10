@@ -35,7 +35,7 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
       _filtered = normalized.isEmpty
           ? widget.persons
           : widget.persons.where((p) {
-              final name = (p.arabicName).toLowerCase();
+              final name = (p.arabicName ?? "").toLowerCase();
               final phone = (p.phone ?? '').toLowerCase();
               return name.contains(normalized) || phone.contains(normalized);
             }).toList();
@@ -211,7 +211,7 @@ class _CustomerPickerRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    person.arabicName,
+                    person.arabicName ?? "",
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),

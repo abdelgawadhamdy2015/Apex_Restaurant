@@ -9,38 +9,38 @@ part of 'pos_client_model.dart';
 PosClientModel _$PosClientModelFromJson(Map<String, dynamic> json) =>
     PosClientModel(
       id: (json['id'] as num).toInt(),
-      code: json['code'] as String,
-      arabicName: json['arabicName'] as String,
-      latinName: json['latinName'] as String,
-      type: (json['type'] as num).toInt(),
-      status: (json['status'] as num).toInt(),
+      code: json['code'] as String?,
+      arabicName: json['arabicName'] as String?,
+      latinName: json['latinName'] as String?,
+      type: (json['type'] as num?)?.toInt(),
+      status: (json['status'] as num?)?.toInt(),
       salesManId: json['salesManId'] == null
           ? null
           : SalesManModel.fromJson(json['salesManId'] as Map<String, dynamic>),
       responsibleAr: json['responsibleAr'] as String?,
       responsibleEn: json['responsibleEn'] as String?,
-      customerActivity: (json['customerActivity'] as num).toInt(),
+      customerActivity: (json['customerActivity'] as num?)?.toInt(),
       phone: json['phone'] as String?,
       fax: json['fax'] as String?,
       email: json['email'] as String?,
-      taxNumber: json['taxNumber'] as String,
+      taxNumber: json['taxNumber'] as String?,
       addressAr: json['addressAr'] as String?,
       addressEn: json['addressEn'] as String?,
-      addToAnotherList: json['addToAnotherList'] as bool,
-      isSupplier: json['isSupplier'] as bool,
-      isCustomerAndSupplier: json['isCustomerAndSupplier'] as bool,
-      mainTypeIsCustomer: json['mainTypeIsCustomer'] as bool,
-      branches: (json['branches'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+      addToAnotherList: json['addToAnotherList'] as bool?,
+      isSupplier: json['isSupplier'] as bool?,
+      isCustomerAndSupplier: json['isCustomerAndSupplier'] as bool?,
+      mainTypeIsCustomer: json['mainTypeIsCustomer'] as bool?,
+      branches: (json['branches'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
           .toList(),
-      branchNameAr: json['branchNameAr'] as String,
-      branchNameEn: json['branchNameEn'] as String,
+      branchNameAr: json['branchNameAr'] as String?,
+      branchNameEn: json['branchNameEn'] as String?,
       creditLimit: (json['creditLimit'] as num?)?.toDouble(),
       creditPeriod: (json['creditPeriod'] as num?)?.toInt(),
       discountRatio: (json['discountRatio'] as num?)?.toDouble(),
-      salesPriceId: (json['salesPriceId'] as num).toInt(),
-      lessSalesPriceId: (json['lessSalesPriceId'] as num).toInt(),
-      canDelete: json['canDelete'] as bool,
+      salesPriceId: (json['salesPriceId'] as num?)?.toInt(),
+      lessSalesPriceId: (json['lessSalesPriceId'] as num?)?.toInt(),
+      canDelete: json['canDelete'] as bool?,
       buildingNumber: json['buildingNumber'] as String?,
       streetName: json['streetName'] as String?,
       neighborhood: json['neighborhood'] as String?,
@@ -56,7 +56,7 @@ PosClientModel _$PosClientModelFromJson(Map<String, dynamic> json) =>
       statusEn: json['statusEn'] as String?,
       typeAr: json['typeAr'] as String?,
       typeEn: json['typeEn'] as String?,
-      isUsedInInvoices: json['isUsedInInvoices'] as bool,
+      isUsedInInvoices: json['isUsedInInvoices'] as bool?,
       personAddress: (json['personAddress'] as List<dynamic>?)
           ?.map((e) => ClientAddressModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -173,8 +173,8 @@ Map<String, dynamic> _$ClientPhoneModelToJson(ClientPhoneModel instance) =>
 SalesManModel _$SalesManModelFromJson(Map<String, dynamic> json) =>
     SalesManModel(
       id: (json['id'] as num).toInt(),
-      arabicName: json['arabicName'] as String,
-      latinName: json['latinName'] as String,
+      arabicName: json['arabicName'] as String?,
+      latinName: json['latinName'] as String?,
     );
 
 Map<String, dynamic> _$SalesManModelToJson(SalesManModel instance) =>

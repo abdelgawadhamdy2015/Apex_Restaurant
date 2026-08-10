@@ -46,9 +46,9 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
   void _populateDataForEditMode() {
     if (_isEditMode) {
       final person = widget.selectedPerson!;
-      _nameController.text = person.arabicName;
-      if (person.branches.isNotEmpty) {
-        _selectedBranchIds = person.branches;
+      _nameController.text = person.arabicName ?? "";
+      if (person.branches != null && person.branches!.isNotEmpty) {
+        _selectedBranchIds = person.branches!;
       }
       // Safe phone number population
       if (person.personPhones?.isNotEmpty == true) {
@@ -774,6 +774,7 @@ class _AddressFormSectionState extends State<_AddressFormSection> {
           children: [
             Checkbox(
               value: widget.data.isDefault,
+              side: BorderSide(color: theme.colorScheme.onPrimary),
               onChanged: (val) {
                 setState(() {
                   widget.data.isDefault = val ?? false;

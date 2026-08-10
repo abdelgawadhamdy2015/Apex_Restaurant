@@ -219,7 +219,19 @@ class LoadDeliveryCompaniesEvent extends CartEvent {
   List<Object?> get props => [request];
 }
 
-class HoldOrderSubmittedEvent extends CartEvent {}
+class HoldOrderEvent extends CartEvent {
+  final SaveInvoiceRequestModel request;
+  const HoldOrderEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
+}
+
+class SaveTableOrderEvent extends CartEvent {
+  final SaveInvoiceRequestModel request;
+  const SaveTableOrderEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
+}
 
 class ClearCartEvent extends CartEvent {}
 

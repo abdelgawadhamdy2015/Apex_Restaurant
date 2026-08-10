@@ -47,7 +47,7 @@ class AppRadioGroup<T> extends StatelessWidget {
                   return selectedColor ?? theme.colorScheme.primary;
                 }
 
-                return unselectedColor ?? theme.colorScheme.onSurfaceVariant;
+                return unselectedColor ?? theme.colorScheme.onPrimary;
               }),
             ),
             const SizedBox(width: 8),

@@ -14,11 +14,14 @@ import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
@@ -26,6 +29,7 @@ import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_re
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/reservations_data.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 part 'api_service.g.dart';
@@ -124,6 +128,31 @@ abstract class ApiService {
     @Body() SaveInvoiceRequestModel request,
   );
 
+  @POST(ApiConstants.savePendingRestaurantPosInvoice)
+  Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
+    @Body() SaveInvoiceRequestModel request,
+  );
+
+  @POST(ApiConstants.saveBookingTableRestaurantPosInvoice)
+  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+    @Body() SaveInvoiceRequestModel request,
+  );
+
+  @GET(ApiConstants.getPendingRestaurantPosInvoiceDetails)
+  Future<BaseResponse<List<PindingInvoiceModel>?>>
+  getPendingRestaurantPosInvoiceDetails(
+    @Queries() GetPindingInvoicesRequest? request,
+  );
+
+  @GET(ApiConstants.getRestaurantPosBookingTable)
+  Future<BaseResponse<List<PindingInvoiceModel>?>> getRestaurantPosBookingTable(
+    @Queries() GetPindingInvoicesRequest? request,
+  );
+
+  @GET(ApiConstants.getListPosInvoiceData)
+  Future<BaseResponse<List<PreviousInvoiceModel>?>> getListPosInvoiceData(
+    @Body() GetPreviousInvoiceRequest? request,
+  );
   @GET(ApiConstants.getDynamicInvoiceDiscounts)
   Future<BaseResponse<List<DynamicDiscountModel>?>>
   getDynamicInvoiceDiscounts();

@@ -1,12 +1,12 @@
 import 'package:apex_restaurant/core/service/api_service.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/table_model.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/reservations_data.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
 
 abstract class TablesRemoteDataSource {
   Future<BaseResponse<ReservationsData?>> fetchReservations(
