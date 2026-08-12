@@ -4,7 +4,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_menu_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_tablet_layout.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_tablet_menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,7 +33,7 @@ class _PosPageState extends State<PosPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isMobile = size.width < 400;
+    final isMobile = size.width < 600;
 
     return BlocListener<PosBloc, PosState>(
       listenWhen: (prev, curr) => curr != prev,
@@ -44,7 +44,7 @@ class _PosPageState extends State<PosPage> {
       },
       child: isMobile
           ? PosMenuScreen(changeLanguage: widget.changeLanguage)
-          : PosTabletScreen(),
+          : PosTabletMenuScreen(),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.
 import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/domain/repo/orders_repository.dart';
 
 class GetPreviousOrdersUseCase {
@@ -33,7 +34,8 @@ class GetRestaurantPosBookingTableUseCase {
 class RestoreHeldOrderUseCase {
   final OrdersRepository repository;
   RestoreHeldOrderUseCase(this.repository);
-  Future<void> call(String orderId) => repository.restoreHeldOrder(orderId);
+  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>> call(int invoiceId) =>
+      repository.restorePosRestuarantInvoice(invoiceId);
 }
 
 class DeleteHeldOrderUseCase {

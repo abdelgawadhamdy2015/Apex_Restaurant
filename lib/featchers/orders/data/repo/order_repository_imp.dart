@@ -8,6 +8,7 @@ import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.
 import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/domain/repo/orders_repository.dart';
 
 class OrdersRepositoryImpl implements OrdersRepository {
@@ -58,8 +59,18 @@ class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @override
-  Future<void> restoreHeldOrder(String orderId) =>
-      remoteDataSource.restoreHeldOrder(orderId);
+  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
+  restorePosRestuarantInvoice(int invoiceId) async {
+    try {
+      final response = await remoteDataSource.restorePosRestuarantInvoice(
+        invoiceId,
+      );
+      return ApiResult.success(response);
+    } catch (e, s) {
+      log("$e , \n $s");
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
 
   @override
   Future<void> deleteHeldOrder(String orderId) =>

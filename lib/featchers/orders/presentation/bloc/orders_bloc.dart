@@ -34,14 +34,14 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<FetchPindingInvoicesEvent>(_onPindingInvoices);
 
     on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
-    on<RestoreOrderEvent>((event, emit) async {
-      await restoreHeldOrderUseCase(event.orderId);
-      add(FetchPindingInvoicesEvent());
-    });
 
     on<DeleteOrderEvent>((event, emit) async {
       await deleteHeldOrderUseCase(event.orderId);
       add(FetchPindingInvoicesEvent());
+    });
+    on<RestoreOrderEvent>(_onRestoreOrder);
+    on<ClearRestoredInvoiceEvent>((event, emit) {
+      emit(state.copyWith(clearRestoredInvoice: true));
     });
   }
 
@@ -171,5 +171,58 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         status: OrdersStatus.failure,
       );
     }
+  }
+
+  Future<void> _onRestoreOrder(
+    RestoreOrderEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(state.copyWith(restoringInvoiceId: event.invoiceId));
+
+    try {
+      final response = await restoreHeldOrderUseCase(event.invoiceId);
+      response.when(
+        success: (data) {
+          if (data.result == 1 && data.data != null) {
+            emit(
+              state.copyWith(
+                status: OrdersStatus.sussess,
+                restoredInvoice: data.data,
+                clearRestoringId: true,
+                canEdite: event.canEdite,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: OrdersStatus.failure,
+                errorMessage: data.errorMessageAr ?? 'فشل استرجاع الفاتورة',
+                clearRestoringId: true,
+              ),
+            );
+          }
+        },
+        failure: (err) {
+          emit(
+            state.copyWith(
+              status: OrdersStatus.failure,
+              errorMessage:
+                  err.apiErrorModel.errorMessageAr ?? 'خطأ في الاتصال بالخادم',
+              clearRestoringId: true,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: OrdersStatus.failure,
+          errorMessage: 'حدث خطأ غير متوقع أثناء استرجاع الفاتورة',
+          clearRestoringId: true,
+        ),
+      );
+    }
+
+    add(FetchPindingInvoicesEvent());
   }
 }

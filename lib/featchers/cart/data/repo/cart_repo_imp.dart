@@ -29,7 +29,9 @@ class CartRepositoryImpl implements CartRepository {
         request: request,
       );
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -41,7 +43,9 @@ class CartRepositoryImpl implements CartRepository {
     try {
       final response = await _remoteDataSource.getWaiters(request: request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -53,7 +57,9 @@ class CartRepositoryImpl implements CartRepository {
     try {
       final response = await _remoteDataSource.applyDiscount(request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -67,7 +73,8 @@ class CartRepositoryImpl implements CartRepository {
         request,
       );
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -80,7 +87,9 @@ class CartRepositoryImpl implements CartRepository {
       final response = await _remoteDataSource
           .saveBookingTableRestaurantPosInvoice(request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -105,7 +114,9 @@ class CartRepositoryImpl implements CartRepository {
     try {
       final response = await _remoteDataSource.addPosClient(request: request);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -119,7 +130,9 @@ class CartRepositoryImpl implements CartRepository {
         request: request,
       );
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -130,7 +143,9 @@ class CartRepositoryImpl implements CartRepository {
     try {
       final response = await _remoteDataSource.getDynamicInvoiceDiscount();
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      log("$error, \n $s");
+
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }

@@ -1,7 +1,10 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 /// Card representing a single completed order on the "Previous Orders" tab.
 class PreviousOrderCard extends StatelessWidget {
@@ -106,7 +109,14 @@ class PreviousOrderCard extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<OrdersBloc>().add(
+                      RestoreOrderEvent(
+                        invoiceId: order.invoiceId ?? 0,
+                        canEdite: false,
+                      ),
+                    );
+                  },
                   icon: Icon(
                     Icons.visibility_outlined,
                     color: theme.colorScheme.primary,

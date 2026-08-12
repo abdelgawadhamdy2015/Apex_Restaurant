@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/router.dart';
 import 'package:apex_restaurant/core/settings/app_accent_colors.dart';
 import 'package:apex_restaurant/core/settings/settings_cubit.dart';
@@ -50,6 +51,10 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
 
   @override
   Widget build(BuildContext context) {
+    SizeHelper.init(
+      width: MediaQuery.sizeOf(context).width,
+      height: MediaQuery.sizeOf(context).height,
+    );
     return MultiBlocProvider(
       providers: [
         BlocProvider<CartBloc>(create: (_) => getIt<CartBloc>()),

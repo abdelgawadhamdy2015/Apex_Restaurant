@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/cart_screen_args.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/add_customer_screen.dart';
@@ -102,7 +103,9 @@ class AppRouter {
         path: Routes.cartScreen,
         name: Routes.cartScreen,
         builder: (context, state) {
-          return const CartScreen();
+          final extra = state.extra as CartScreenArgs?;
+
+          return CartScreen(args: extra);
         },
       ),
       GoRoute(

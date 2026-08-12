@@ -5,6 +5,7 @@ import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/restored_cart_data.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
@@ -25,6 +26,18 @@ abstract class CartEvent extends Equatable {
 }
 
 class LoadCartDataEvent extends CartEvent {}
+
+class AcknowledgeCartRestoredEvent extends CartEvent {
+  const AcknowledgeCartRestoredEvent();
+}
+
+class SyncRestoredInvoiceEvent extends CartEvent {
+  final RestoredCartData data;
+  const SyncRestoredInvoiceEvent(this.data);
+
+  @override
+  List<Object?> get props => [data];
+}
 
 class UpdateSettingsEvent extends CartEvent {
   final SettingsModel? settings;

@@ -1,7 +1,9 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/ass_customer_tablet.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -71,7 +73,9 @@ class CustomerInfoCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => context.pushNamed(Routes.addCustomerScreen),
+            onPressed: () => SizeHelper.isMobile
+                ? context.pushNamed(Routes.addCustomerScreen)
+                : AddCustomerDialog.show(context),
             icon: Icon(
               Icons.person_add_outlined,
               size: icons.lg,
@@ -79,10 +83,15 @@ class CustomerInfoCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => context.pushNamed(
-              Routes.addCustomerScreen,
-              extra: selectedPerson,
-            ),
+            onPressed: () => SizeHelper.isMobile
+                ? context.pushNamed(
+                    Routes.addCustomerScreen,
+                    extra: selectedPerson,
+                  )
+                : AddCustomerDialog.show(
+                    context,
+                    selectedPerson: selectedPerson,
+                  ),
             icon: Icon(
               Icons.edit,
               size: icons.lg,

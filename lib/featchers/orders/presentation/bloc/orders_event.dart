@@ -20,6 +20,10 @@ class FetchPindingInvoicesEvent extends OrdersEvent {
   const FetchPindingInvoicesEvent({this.request});
 }
 
+class ClearRestoredInvoiceEvent extends OrdersEvent {
+  const ClearRestoredInvoiceEvent();
+}
+
 class FetchPreviousInvoicesEvent extends OrdersEvent {
   final GetPreviousInvoiceRequest request;
   const FetchPreviousInvoicesEvent({required this.request});
@@ -31,8 +35,9 @@ class FetchRestaurantPosBookingTableEvent extends OrdersEvent {
 }
 
 class RestoreOrderEvent extends OrdersEvent {
-  final String orderId;
-  const RestoreOrderEvent(this.orderId);
+  final int invoiceId;
+  final bool canEdite;
+  const RestoreOrderEvent({required this.invoiceId, this.canEdite = true});
 }
 
 class DeleteOrderEvent extends OrdersEvent {

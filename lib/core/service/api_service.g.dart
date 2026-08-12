@@ -971,6 +971,40 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
+    int invoiceId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'InvoiceId': invoiceId};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<RestoredInvoiceModel?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Restaurants/RestaurantPos/GetPosInvoiceDataById',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<RestoredInvoiceModel?> _value;
+    try {
+      _value = BaseResponse<RestoredInvoiceModel?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : RestoredInvoiceModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<BaseResponse<List<PindingInvoiceModel>?>> getRestaurantPosBookingTable(
     GetPindingInvoicesRequest? request,
   ) async {
@@ -1013,15 +1047,24 @@ class _ApiService implements ApiService {
 
   @override
   Future<BaseResponse<List<PreviousInvoiceModel>?>> getListPosInvoiceData(
-    GetPreviousInvoiceRequest? request,
+    GetPreviousInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = request;
+    final _headers = <String, dynamic>{
+      r'Content-Type': 'application/json-patch+json',
+      r'Accept': 'text/plain',
+    };
+    _headers.removeWhere((k, v) => v == null);
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
     final _options = _setStreamType<BaseResponse<List<PreviousInvoiceModel>?>>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'application/json-patch+json',
+          )
           .compose(
             _dio.options,
             'api/Restaurants/RestaurantPos/GetListPosInvoiceData',

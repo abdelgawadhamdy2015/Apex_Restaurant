@@ -22,6 +22,7 @@ class OrderSummaryCard extends StatelessWidget {
         state.selectedOrderType == CartOrderType.DELIVERY_COMPANY;
     final dineInFee = state.selectedOrderType == CartOrderType.DINE_IN;
     final tobacoActive = state.tobaccoTaxAmount > 0;
+
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(

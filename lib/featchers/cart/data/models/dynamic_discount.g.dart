@@ -24,7 +24,7 @@ Map<String, dynamic> _$DynamicDiscountModelToJson(
 
 DiscountModel _$DiscountModelFromJson(Map<String, dynamic> json) =>
     DiscountModel(
-      id: (json['id'] as num?)?.toInt(),
+      id: json['id'] as String?,
       code: (json['code'] as num?)?.toInt(),
       arabicName: json['arabicName'] as String?,
       latinName: json['latinName'] as String?,

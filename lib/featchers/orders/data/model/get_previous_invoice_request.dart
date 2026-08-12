@@ -15,7 +15,7 @@ class GetPreviousInvoiceRequest {
     this.personName,
   });
 
-  Map<String, dynamic> toQueryParameters() {
+  Map<String, dynamic> toJson() {
     return {
       'PageNumber': pageNumber,
       'PageSize': pageSize,

@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:apex_restaurant/core/service/api_result.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
 import 'package:apex_restaurant/featchers/cart/domain/usescase/cart_usescase.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'cart_event.dart';
@@ -37,11 +39,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.updatePosClientUseCase,
     required this.getDynamicInvoiceDiscountUseCase,
   }) : super(const CartState()) {
+    debugPrint('CartBloc instance created: $hashCode');
+
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SelectPersonEvent>(_onSelectPerson);
+    on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
       emit(state.copyWith(settingsModel: event.settings));
     });
@@ -65,7 +70,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel),
       ),
     );
-
+    on<AcknowledgeCartRestoredEvent>((event, emit) {
+      emit(state.copyWith(justRestored: false));
+    });
     on<ChangeDiscountTypeEvent>(
       (event, emit) =>
           emit(state.copyWith(selectedDiscountType: event.discountType)),
@@ -114,6 +121,57 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
 
     emit(state.copyWith(items: items));
+  }
+
+  void _onSyncRestoredInvoice(
+    SyncRestoredInvoiceEvent event,
+    Emitter<CartState> emit,
+  ) {
+    final data = event.data;
+
+    // 1. Determine discount strategy based on restored invoice data
+    final hasInvoiceDiscount =
+        data.saveDiscountModel != null &&
+        (data.saveDiscountModel!.value ?? 0) > 0;
+
+    // 2. Clear opposing entity selections based on Order Type (Clean State Isolation)
+    final isDineIn = data.orderType == CartOrderType.DINE_IN;
+    final isDelivery = data.orderType == CartOrderType.DELIVERY;
+    final isDeliveryCompany = data.orderType == CartOrderType.DELIVERY_COMPANY;
+
+    emit(
+      state.copyWith(
+        // Primary Restored Data
+        items: data.items,
+        selectedOrderType: data.orderType,
+        fromBranchDateTime: null,
+
+        // Entities mapped according to active order type
+        selectedTable: isDineIn ? data.table : null,
+        selectedWaiter: isDineIn ? data.waiter : null,
+        selectedDeliveryMan: isDelivery ? data.deliveryMan : null,
+        selectedDeliveryCompany: isDeliveryCompany
+            ? data.deliveryCompany
+            : null,
+        selectedPerson: data.client,
+
+        // Discount Configuration
+        saveDiscountModel: data.saveDiscountModel,
+        selectedDiscountType: hasInvoiceDiscount
+            ? DiscountTypeEnum.direct
+            : DiscountTypeEnum.coupon,
+        discountAmount: hasInvoiceDiscount
+            ? (data.saveDiscountModel!.value ?? 0.0)
+            : 0.0,
+
+        // State Flags & Status
+        justRestored: true,
+        status: CartStatus
+            .pindingSuccess, // Triggers state listeners without breaking UI flow
+        isLoading: false,
+        errorMessage: null,
+      ),
+    );
   }
 
   Future<void> _onLoadCartData(
@@ -257,7 +315,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     HoldOrderEvent event,
     Emitter<CartState> emit,
   ) async {
-    emit(state.copyWith(isSubmitting: true));
+    emit(state.copyWith(status: CartStatus.pindingLoading));
     final response = await savePendingRestaurantPosInvoiceUseCase(
       event.request,
     );
@@ -266,14 +324,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         if (data.result == 1) {
           emit(
             state.copyWith(
-              isSubmitting: false,
+              status: CartStatus.pindingSuccess,
               successMessage: data.errorMessageAr,
             ),
           );
         } else {
           emit(
             state.copyWith(
-              isSubmitting: false,
+              status: CartStatus.pindingFailure,
               errorMessage: data.errorMessageAr,
             ),
           );
@@ -282,7 +340,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       failure: (errorHandler) {
         emit(
           state.copyWith(
-            isSubmitting: false,
+            status: CartStatus.pindingFailure,
             errorMessage: errorHandler.apiErrorModel.errorMessageAr,
           ),
         );
@@ -294,7 +352,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     SaveTableOrderEvent event,
     Emitter<CartState> emit,
   ) async {
-    emit(state.copyWith(isSubmitting: true));
+    emit(state.copyWith(status: CartStatus.pindingLoading));
     final response = await saveBookingTableRestaurantPosInvoiceUseCase(
       event.request,
     );
@@ -303,14 +361,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         if (data.result == 1) {
           emit(
             state.copyWith(
-              isSubmitting: false,
+              status: CartStatus.pindingSuccess,
               successMessage: data.errorMessageAr,
             ),
           );
         } else {
           emit(
             state.copyWith(
-              isSubmitting: false,
+              status: CartStatus.pindingFailure,
               errorMessage: data.errorMessageAr,
             ),
           );
@@ -319,7 +377,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       failure: (errorHandler) {
         emit(
           state.copyWith(
-            isSubmitting: false,
+            status: CartStatus.pindingFailure,
             errorMessage: errorHandler.apiErrorModel.errorMessageAr,
           ),
         );

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
@@ -136,13 +134,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     return selectedList;
   }
 
-  /// Every category is already loaded up-front with its own additives
-  /// embedded (`CategoryModel.additives`). So resolving an item's
-  /// additives is just: find the category this item belongs to, then
-  /// read its additives — no API call, and identical no matter which
-  /// screen opened the sheet.
   List<AdditiveModel> _additivesFor(PosState posState) {
-    log("categoris:  ${posState.categories.length.toString()}");
     final matchCat = posState.categories.where(
       (cat) => cat.id == widget.item.categoryId,
     );
@@ -222,10 +214,6 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
       child: BlocBuilder<PosBloc, PosState>(
         bloc: widget.posBloc,
         builder: (context, posState) {
-          // Categories (and their additives) haven't finished their
-          // very first load yet — this can only happen if the sheet is
-          // somehow opened before the app's initial category fetch
-          // completes.
           final isLoadingAddons =
               posState.categories.isEmpty &&
               posState.status == PosStatus.loading;
@@ -368,35 +356,32 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                 },
                 totalPrice: _totalPrice(additives),
                 onConfirm: () {
-                  if (widget.item.sizes.isEmpty ||
-                      (widget.item.sizes[_selectedSizeIndex].sizeId <= 0 &&
-                          widget.item.sizes.length == 1)) {
-                    {
-                      HelperMethods.showSnackBar(
-                        context: context,
-                        message: S.of(context).thisItemHasNoValidSize,
-                        isError: true,
-                      );
-                      return;
-                    }
+                  if (widget.item.sizes.isEmpty) {
+                    HelperMethods.showSnackBar(
+                      context: context,
+                      message: S.of(context).thisItemHasNoValidSize,
+                      isError: true,
+                    );
+                    return;
                   }
 
-                  if (widget.item.sizes[_selectedSizeIndex].sizeId <= 0 &&
-                      widget.item.sizes.length > 1) {
-                    {
-                      HelperMethods.showSnackBar(
-                        context: context,
-                        message: S.of(context).pleaseSelectValidSize,
-                        isError: true,
-                      );
-                      return;
-                    }
+                  final selectedSize = widget.item.sizes[_selectedSizeIndex];
+
+                  if (widget.item.sizes.length > 1 &&
+                      selectedSize.sizeId <= 0) {
+                    HelperMethods.showSnackBar(
+                      context: context,
+                      message: S.of(context).pleaseSelectValidSize,
+                      isError: true,
+                    );
+                    return;
                   }
+
                   Navigator.pop(context);
                   widget.onConfirm(
                     widget.item,
                     additives,
-                    selectedSize: widget.item.sizes[_selectedSizeIndex],
+                    selectedSize: selectedSize,
                     selectedAddons: _getSelectedAddonsList(additives),
                     discount: double.tryParse(_discountController.text) ?? 0.0,
                     isPercentageDiscount: _isPercentageDiscount,
