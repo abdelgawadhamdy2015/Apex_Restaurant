@@ -4,6 +4,7 @@ import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.
 import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
 
 abstract class OrdersRemoteDataSource {
   Future<BaseResponse<List<PreviousInvoiceModel>?>> getPreviousOrders({
@@ -14,7 +15,9 @@ abstract class OrdersRemoteDataSource {
   });
   Future<BaseResponse<List<PindingInvoiceModel>?>>
   getRestaurantPosBookingTable({GetPindingInvoicesRequest? request});
-  Future<void> restoreHeldOrder(String orderId);
+  Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
+    int invoiceId,
+  );
   Future<void> deleteHeldOrder(String orderId);
 }
 
@@ -42,7 +45,11 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   }
 
   @override
-  Future<void> restoreHeldOrder(String orderId) async {}
+  Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
+    int invoiceId,
+  ) async {
+    return await apiService.getPosInvoiceDataById(invoiceId);
+  }
 
   @override
   Future<void> deleteHeldOrder(String orderId) async {}

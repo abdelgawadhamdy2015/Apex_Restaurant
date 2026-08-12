@@ -3,6 +3,7 @@ import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
+import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,9 +37,6 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
     final l10n = widget.l10n;
     final order = widget.order;
 
-    // All fields on the new PindingInvoiceModel/PindingInvoiceItemModel are
-    // nullable, so resolve everything up front with sane fallbacks instead
-    // of scattering `??`/null-checks through the widget tree.
     final invoiceId = order.invoiceId;
     final queueNumber = order.orderNumber?.toString() ?? '';
     final invoiceCode = order.code ?? '';
@@ -183,7 +181,6 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                                 ),
                               ),
                               SizedBox(width: spacing.xs),
-
                               Text(
                                 '${itemQuantity}x',
                                 style: theme.textTheme.bodySmall?.copyWith(
@@ -208,37 +205,57 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: invoiceId == null
-                              ? null
-                              : () {
-                                  context.read<OrdersBloc>().add(
-                                    RestoreOrderEvent(invoiceId.toString()),
-                                  );
-                                },
-                          icon: Icon(
-                            Icons.history,
-                            color: AppColors.white,
-                            size: iconSizes.sm,
-                          ),
-                          label: Text(
-                            l10n.restoreOrder,
-                            style: TextStyle(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.primary,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: spacing.sm,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                spacing.radiusSm,
+                        child: BlocBuilder<OrdersBloc, OrdersState>(
+                          buildWhen: (prev, curr) =>
+                              prev.restoringInvoiceId !=
+                              curr.restoringInvoiceId,
+                          builder: (context, state) {
+                            final isRestoring =
+                                invoiceId != null &&
+                                state.restoringInvoiceId == invoiceId;
+
+                            return ElevatedButton.icon(
+                              onPressed: invoiceId == null || isRestoring
+                                  ? null
+                                  : () {
+                                      context.read<OrdersBloc>().add(
+                                        RestoreOrderEvent(invoiceId: invoiceId),
+                                      );
+                                    },
+                              icon: isRestoring
+                                  ? SizedBox(
+                                      width: iconSizes.sm,
+                                      height: iconSizes.sm,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: AppColors.white,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.history,
+                                      color: AppColors.white,
+                                      size: iconSizes.sm,
+                                    ),
+                              label: Text(
+                                l10n.restoreOrder,
+                                style: const TextStyle(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: spacing.sm,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    spacing.radiusSm,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       SizedBox(width: spacing.sm),

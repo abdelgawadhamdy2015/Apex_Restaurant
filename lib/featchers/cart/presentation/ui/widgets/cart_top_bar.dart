@@ -6,10 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const CartTopBar({super.key, this.onBack, this.onClearAll});
+  const CartTopBar({
+    super.key,
+    this.onBack,
+    this.onClearAll,
+    this.isTablet = false,
+  });
 
   final VoidCallback? onBack;
   final VoidCallback? onClearAll;
+  final bool isTablet;
 
   @override
   Size get preferredSize => const Size.fromHeight(56);
@@ -35,13 +41,14 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              onPressed: onBack ?? () => context.pop(),
-              icon: Icon(
-                Icons.arrow_back,
-                color: theme.colorScheme.onSecondary,
+            if (!isTablet)
+              IconButton(
+                onPressed: onBack ?? () => context.pop(),
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: theme.colorScheme.onSecondary,
+                ),
               ),
-            ),
             Text(
               lang.shoppingCart,
               style: theme.textTheme.titleMedium?.copyWith(

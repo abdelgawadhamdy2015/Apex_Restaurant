@@ -18,6 +18,7 @@ import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.
 import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
@@ -31,7 +32,7 @@ import 'package:apex_restaurant/featchers/tables/data/models/reservation_request
 import 'package:apex_restaurant/featchers/tables/data/models/reservations_data.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
 import 'package:retrofit/retrofit.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Headers;
 part 'api_service.g.dart';
 
 @RestApi(baseUrl: ApiConstants.baseUsrl)
@@ -143,15 +144,23 @@ abstract class ApiService {
   getPendingRestaurantPosInvoiceDetails(
     @Queries() GetPindingInvoicesRequest? request,
   );
+  @GET(ApiConstants.getPosInvoiceDataById)
+  Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
+    @Query('InvoiceId') int invoiceId,
+  );
 
   @GET(ApiConstants.getRestaurantPosBookingTable)
   Future<BaseResponse<List<PindingInvoiceModel>?>> getRestaurantPosBookingTable(
     @Queries() GetPindingInvoicesRequest? request,
   );
 
-  @GET(ApiConstants.getListPosInvoiceData)
+  @POST(ApiConstants.getListPosInvoiceData)
+  @Headers({
+    'Content-Type': 'application/json-patch+json',
+    'Accept': 'text/plain',
+  })
   Future<BaseResponse<List<PreviousInvoiceModel>?>> getListPosInvoiceData(
-    @Body() GetPreviousInvoiceRequest? request,
+    @Body() GetPreviousInvoiceRequest request,
   );
   @GET(ApiConstants.getDynamicInvoiceDiscounts)
   Future<BaseResponse<List<DynamicDiscountModel>?>>

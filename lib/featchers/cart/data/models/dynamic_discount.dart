@@ -19,7 +19,7 @@ class DynamicDiscountModel {
 
 @JsonSerializable()
 class DiscountModel {
-  final int? id;
+  final String? id;
   final int? code;
   final String? arabicName;
   final String? latinName;

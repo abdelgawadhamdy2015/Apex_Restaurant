@@ -2,6 +2,7 @@ import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/cart_screen_args.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
@@ -23,20 +24,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartScreen extends StatefulWidget {
-  const CartScreen({super.key});
+  const CartScreen({super.key, this.args});
+  final CartScreenArgs? args;
 
   @override
   State<CartScreen> createState() => _CartScreenState();
 }
 
 class _CartScreenState extends State<CartScreen> {
+  bool get canEdit => widget.args?.canEdite ?? true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadCartDataEvent());
-      context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
-      context.read<CartBloc>().add(
+      final cartBloc = context.read<CartBloc>();
+
+      if (widget.args?.isRestored == true) {
+        cartBloc.add(const AcknowledgeCartRestoredEvent());
+      } else {
+        cartBloc.add(LoadCartDataEvent());
+      }
+
+      cartBloc.add(LoadDynamicDiscountsEvent());
+      cartBloc.add(
         LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
     });
@@ -48,7 +59,10 @@ class _CartScreenState extends State<CartScreen> {
 
     return Scaffold(
       appBar: CartTopBar(
-        onClearAll: () => context.read<CartBloc>().add(ClearCartEvent()),
+        // Disable clear all button in top bar if editing is locked
+        onClearAll: canEdit
+            ? () => context.read<CartBloc>().add(ClearCartEvent())
+            : null,
       ),
       backgroundColor: theme.colorScheme.surface,
       body: BlocConsumer<CartBloc, CartState>(
@@ -57,7 +71,11 @@ class _CartScreenState extends State<CartScreen> {
           if (state.status == CartStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           }
-          return _CartContent(state: state);
+          return IgnorePointer(
+            ignoring:
+                !canEdit, // Locks tap gestures on interactive inputs if read-only
+            child: _CartContent(state: state, canEdit: canEdit),
+          );
         },
       ),
     );
@@ -83,14 +101,15 @@ class _CartScreenState extends State<CartScreen> {
 
 /// The scrollable body of the cart screen plus the fixed bottom action bar.
 class _CartContent extends StatelessWidget {
-  const _CartContent({required this.state});
+  const _CartContent({required this.state, required this.canEdit});
 
   final CartState state;
+  final bool canEdit;
 
   Widget _orderTypeSpecificSection(CartState state) {
     switch (state.selectedOrderType) {
       case CartOrderType.TAKEAWAY:
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       case CartOrderType.DELIVERY:
         return DeliveryAgentSelector(deliveryMens: state.deliveryAgents);
 
@@ -176,7 +195,12 @@ class _CartContent extends StatelessWidget {
                 ),
               ),
             ),
-            const BottomActionBar(),
+            // Re-enabled touch events for BottomActionBar if you need actions like print/exit
+            // while passing down `canEdit` to disable save/submit buttons internally.
+            IgnorePointer(
+              ignoring: false,
+              child: BottomActionBar(canEdit: canEdit),
+            ),
           ],
         );
       },

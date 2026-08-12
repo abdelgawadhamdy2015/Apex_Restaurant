@@ -12,11 +12,21 @@ import 'package:equatable/equatable.dart';
 
 enum DiscountTypeEnum { coupon, direct }
 
-enum CartStatus { initial, loading, success, failure }
+enum CartStatus {
+  initial,
+  loading,
+  pindingLoading,
+  success,
+  pindingSuccess,
+  failure,
+  pindingFailure,
+}
 
 class CartState extends Equatable {
   final SettingsModel? settingsModel;
   final CartOrderType selectedOrderType;
+  final bool justRestored;
+
   final CartStatus status;
   final DiscountTypeEnum selectedDiscountType;
   final ClientAddressModel? selectedAddress;
@@ -45,6 +55,8 @@ class CartState extends Equatable {
   const CartState({
     this.selectedOrderType = CartOrderType.TAKEAWAY,
     this.selectedDiscountType = DiscountTypeEnum.coupon,
+    this.justRestored = false,
+
     this.status = CartStatus.initial,
     this.items = const [],
     this.couponDiscountvalue,
@@ -270,7 +282,9 @@ class CartState extends Equatable {
     final matchedDiscount = matchedDynamicDiscount;
 
     if (matchedDiscount != null) {
-      activeInvoiceDiscountId = matchedDiscount.discount?.id;
+      activeInvoiceDiscountId = int.tryParse(
+        matchedDiscount.discount?.id ?? "",
+      );
       appliedDiscount = SaveDiscountModel(
         type: matchedDiscount.discount?.discountType,
         value: matchedDiscount.discount?.discountValue,
@@ -290,9 +304,14 @@ class CartState extends Equatable {
       }
       return InvoiceItemModel(
         itemId: item.menuItem.itemId,
-        sizeId: item.selectedSize?.sizeId,
+        // 0 is valid when the item has exactly one size.
+        sizeId: item.selectedSize?.sizeId ?? 0,
         quantity: item.quantity.toDouble(),
-        price: item.selectedSize?.price ?? item.menuItem.sizes.first.price,
+        price:
+            item.selectedSize?.price ??
+            (item.menuItem.sizes.isNotEmpty
+                ? item.menuItem.sizes.first.price
+                : item.menuItem.defaultPrice),
         notes: item.notes,
         discount: item.discount > 0
             ? SaveDiscountModel(
@@ -336,6 +355,8 @@ class CartState extends Equatable {
     SettingsModel? settingsModel,
     CartOrderType? selectedOrderType,
     DiscountTypeEnum? selectedDiscountType,
+    bool? justRestored,
+
     ClientAddressModel? selectedAddress,
     SaveDiscountModel? saveDiscountModel,
     double? couponDiscountvalue,
@@ -368,6 +389,7 @@ class CartState extends Equatable {
       items: items ?? this.items,
       activeDiscounts: activeDiscounts ?? this.activeDiscounts,
       couponDiscountvalue: couponDiscountvalue ?? this.couponDiscountvalue,
+      justRestored: justRestored ?? this.justRestored,
 
       activeDiscountModel: activeDiscountModel ?? this.activeDiscountModel,
       waiters: waiters ?? this.waiters,
@@ -395,6 +417,7 @@ class CartState extends Equatable {
     settingsModel,
     selectedOrderType,
     selectedDiscountType,
+    justRestored,
     selectedAddress,
     status,
     items,

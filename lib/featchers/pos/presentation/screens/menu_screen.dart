@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/transactionid_generator.dart';
@@ -168,7 +166,6 @@ class _MenuScreenState extends State<MenuScreen> {
     List<AdditiveModel> additives,
     CartState cartState,
   ) {
-    log(additives.length.toString());
     if (cartState.selectedPerson == null) {
       HelperMethods.openPicker(parentContext, cartState.persons);
       return;

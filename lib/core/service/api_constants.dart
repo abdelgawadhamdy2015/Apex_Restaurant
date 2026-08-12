@@ -58,6 +58,8 @@ class ApiConstants {
       "api/Restaurants/RestaurantPos/SaveBookingTableRestaurantPosInvoice";
   static const String getListPosInvoiceData =
       "api/Restaurants/RestaurantPos/GetListPosInvoiceData";
+  static const String getPosInvoiceDataById =
+      "api/Restaurants/RestaurantPos/GetPosInvoiceDataById";
 
   static const String getDynamicInvoiceDiscounts =
       "api/Restaurants/ItemDiscounts/GetInvoiceDiscounts";
