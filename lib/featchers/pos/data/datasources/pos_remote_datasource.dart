@@ -1,19 +1,25 @@
-import 'package:apex_restaurant/core/service/api_service.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
+import '../../../../core/service/api_service.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../../home/data/models/session_model.dart';
+import '../models/category_model.dart';
+import '../models/delivery_company.dart';
+import '../models/floor_model.dart';
+import '../models/restaurant_item.dart';
+import '../../domain/entities/get_food_additive_request.dart';
+import '../../domain/entities/get_items_request_model.dart';
+import '../../../tables/data/models/get_floor_request.dart';
+import '../../../tables/data/models/get_table_request.dart';
+import '../../../tables/data/models/table_model.dart';
 
 abstract class PosRemoteDataSource {
   Future<BaseResponse<SettingsModel?>> getSettings();
+  Future<BaseResponse<SessionModel?>> getCurrentSession();
+
+  Future<BaseResponse<dynamic>> closeRestaurantPosSession({
+    required int sessionId,
+  });
 
   Future<BaseResponse<List<FloorModel>?>> getFloors({
     required GetFloorsRequest request,
@@ -110,5 +116,17 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
   @override
   Future<BaseResponse<SettingsModel?>> getSettings() async {
     return await _apiService.getSettings();
+  }
+
+  @override
+  Future<BaseResponse> closeRestaurantPosSession({
+    required int sessionId,
+  }) async {
+    return await _apiService.closeRestaurantPosSession(sessionId);
+  }
+
+  @override
+  Future<BaseResponse<SessionModel?>> getCurrentSession() async {
+    return await _apiService.currentPOSsession();
   }
 }

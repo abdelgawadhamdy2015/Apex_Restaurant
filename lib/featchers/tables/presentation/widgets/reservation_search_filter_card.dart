@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../../core/shared/widgets/date_text_field.dart';
+import '../../../cart/data/models/pos_client_model.dart';
+import '../../data/models/get_reservations_request.dart';
+import '../../domain/entities/table_entity.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ReservationSearchFilterCard extends StatefulWidget {

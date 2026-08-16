@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../domain/entities/floor_entity.dart';
 import 'package:flutter/material.dart';
 
 class FloorSelector extends StatelessWidget {

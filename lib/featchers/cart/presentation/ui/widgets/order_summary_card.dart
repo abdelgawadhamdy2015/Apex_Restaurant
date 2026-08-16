@@ -1,8 +1,8 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/themes/app_colors.dart';
+import '../../../data/enums/cart_enum.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -34,7 +34,8 @@ class OrderSummaryCard extends StatelessWidget {
         children: [
           _SummaryRow(
             title: lang.subtotal,
-            value: '${state.subtotal.toStringAsFixed(2)} ${lang.currencySar}',
+            value:
+                '${state.netSubtotal.toStringAsFixed(2)} ${lang.currencySar}',
           ),
           SizedBox(height: spacing.xs),
           _SummaryRow(

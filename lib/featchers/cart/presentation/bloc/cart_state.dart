@@ -1,13 +1,13 @@
-import 'package:apex_restaurant/core/calculation/restaurant_invoice_calculator.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import '../../../../core/calculation/restaurant_invoice_calculator.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../data/enums/cart_enum.dart';
+import '../../data/models/dynamic_discount.dart';
+import '../../data/models/invoice_request.dart';
+import '../../data/models/pos_client_model.dart';
+import '../../data/models/waiter_model.dart';
+import '../../../pos/data/models/delivery_company.dart';
+import '../../../pos/domain/entities/menu_item.dart';
+import '../../../tables/domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
 
 enum DiscountTypeEnum { coupon, direct }
@@ -22,6 +22,8 @@ enum CartStatus {
   pindingFailure,
 }
 
+enum DiscountSource { none, dynamic, customer, size, manualInvoice, manualItem }
+
 class CartState extends Equatable {
   final SettingsModel? settingsModel;
   final CartOrderType selectedOrderType;
@@ -34,9 +36,12 @@ class CartState extends Equatable {
   final DateTime? fromBranchDateTime;
   final List<OrderItem> items;
   final List<DynamicDiscountModel> activeDiscounts;
-  final SaveDiscountModel? saveDiscountModel;
+  final RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
   final double? couponDiscountvalue;
   final DynamicDiscountModel? activeDiscountModel;
+
+  final RestaurantPosDiscountRequest? customerDiscount;
+
   final List<WaiterModel> waiters;
   final List<WaiterModel> deliveryAgents;
   final List<PosClientModel> persons;
@@ -77,15 +82,13 @@ class CartState extends Equatable {
     this.selectedPerson,
     this.activeDiscounts = const [],
     this.activeDiscountModel,
-    this.saveDiscountModel,
+    this.restaurantPosDiscountRequest,
+    this.customerDiscount,
     this.selectedTable,
     this.settingsModel,
   });
 
-  // =====================================================================
-  // DYNAMIC DISCOUNT RESOLUTION
-  // =====================================================================
-
+  // الخصومات الديناميكية
   DynamicDiscountModel? get matchedDynamicDiscount {
     if (!dynamicDiscountIsActive) return null;
 
@@ -99,10 +102,113 @@ class CartState extends Equatable {
     return match.isNotEmpty ? match.first : null;
   }
 
-  // =====================================================================
-  // INVOICE CALCULATOR ENGINE INTEGRATION
-  // =====================================================================
+  bool get dynamicDiscountIsActive =>
+      activeDiscounts.any((d) => d.posTypeId == selectedOrderType.apiValue);
 
+  // أولويات الخصومات
+  bool get hasSizeDiscount {
+    final posTypeId = selectedOrderType.apiValue;
+    return items.any(
+      (item) => item.selectedSize?.discountForPosType(posTypeId) != null,
+    );
+  }
+
+  bool get isCustomerDiscountEditable => !dynamicDiscountIsActive;
+
+  bool get isCustomerDiscountApplied =>
+      isCustomerDiscountEditable &&
+      customerDiscount != null &&
+      (customerDiscount!.value) > 0;
+
+  bool get isManualItemDiscountApplied => items.any((i) => i.discount > 0);
+
+  bool get isManualInvoiceDiscountApplied =>
+      selectedDiscountType == DiscountTypeEnum.direct &&
+      (restaurantPosDiscountRequest?.value ?? 0) > 0;
+
+  bool get isInvoiceManualDiscountEnabled =>
+      !dynamicDiscountIsActive &&
+      !isCustomerDiscountApplied &&
+      !hasSizeDiscount &&
+      !isManualItemDiscountApplied;
+
+  bool get isItemManualDiscountEnabled =>
+      !dynamicDiscountIsActive &&
+      !isCustomerDiscountApplied &&
+      !hasSizeDiscount &&
+      !isManualInvoiceDiscountApplied;
+
+  // تحديد مصدر الخصم المطبق حسب الأولوية
+  DiscountSource get activeDiscountSource {
+    if (dynamicDiscountIsActive) return DiscountSource.dynamic;
+    if (isCustomerDiscountApplied) return DiscountSource.customer;
+    if (hasSizeDiscount) return DiscountSource.size;
+    if (isManualInvoiceDiscountApplied) return DiscountSource.manualInvoice;
+    if (isManualItemDiscountApplied) return DiscountSource.manualItem;
+    return DiscountSource.none;
+  }
+
+  // احتساب خصم الصنف الفردي
+  ({double value, bool isPercentage, int? discountId}) _resolveItemDiscount(
+    OrderItem item,
+  ) {
+    if (dynamicDiscountIsActive || isCustomerDiscountApplied) {
+      return (value: 0.0, isPercentage: false, discountId: null);
+    }
+
+    final sizeDiscount = _sizeDiscountFor(item);
+    if (sizeDiscount != null) return sizeDiscount;
+
+    if (isManualInvoiceDiscountApplied) {
+      return (value: 0.0, isPercentage: false, discountId: null);
+    }
+
+    if (item.discount > 0) {
+      return (
+        value: item.discount,
+        isPercentage: item.isPercentageDiscount,
+        discountId: null,
+      );
+    }
+
+    return (value: 0.0, isPercentage: false, discountId: null);
+  }
+
+  // جلب وتطبيق خصم الحجم
+  ({double value, bool isPercentage, int? discountId})? _sizeDiscountFor(
+    OrderItem item,
+  ) {
+    final posTypeId = selectedOrderType.apiValue;
+    final discount = item.selectedSize?.discountForPosType(posTypeId);
+    if (discount == null || discount.discountValue <= 0) return null;
+
+    final lineTotal = item.totalPriceBeforeDiscount;
+    if (discount.minInvoiceNet > 0 && lineTotal < discount.minInvoiceNet) {
+      return null;
+    }
+
+    final isPercentage = discount.discountNatural == 1;
+    final value = discount.discountValue;
+    final discountId = discount.id;
+
+    if (isPercentage && discount.maxDiscountValue > 0) {
+      final computedAmount = lineTotal * value / 100;
+      if (computedAmount > discount.maxDiscountValue) {
+        return (
+          value: discount.maxDiscountValue,
+          isPercentage: false,
+          discountId: discountId,
+        );
+      }
+    }
+
+    return (value: value, isPercentage: isPercentage, discountId: discountId);
+  }
+
+  // ضريبة التبغ
+  bool get hasTobaccoItems => items.any((i) => i.menuItem.isTobaccoTax == true);
+
+  // محرك حساب الفاتورة
   List<InvoiceItemInput> _mapItemsToCalculationInputs() {
     final inputs = <InvoiceItemInput>[];
     int additiveCounter = 100000;
@@ -119,7 +225,9 @@ class CartState extends Equatable {
               ? item.menuItem.sizes.first.price
               : item.menuItem.defaultPrice);
 
-      // 1. إدراج الصنف الرئيسي
+      final resolvedDiscount = _resolveItemDiscount(item);
+
+      // الصنف الرئيسي
       inputs.add(
         InvoiceItemInput(
           transactionId: parentTxId,
@@ -127,10 +235,10 @@ class CartState extends Equatable {
           itemId: item.menuItem.itemId,
           sizeId: item.selectedSize?.sizeId,
           quantity: item.quantity.toDouble(),
-          unitPrice: unitPrice,
+          unitPrice: unitPrice ?? 0,
           vatRatio: defaultVatRatio,
-          discount: item.discount,
-          discountType: item.isPercentageDiscount
+          discount: resolvedDiscount.value,
+          discountType: resolvedDiscount.isPercentage
               ? DiscountType.percentage
               : DiscountType.fixedAmount,
           itemTypeId: item.menuItem.itemTypeId ?? 0,
@@ -138,7 +246,7 @@ class CartState extends Equatable {
         ),
       );
 
-      // 2. تجميع الإضافات وحساب أسعارها وكمياتها
+      // تجميع الإضافات
       final groupedAddons = <String, Map<String, dynamic>>{};
       for (var addon in item.addons) {
         if (!groupedAddons.containsKey(addon.id)) {
@@ -148,9 +256,7 @@ class CartState extends Equatable {
             (groupedAddons[addon.id]!['count'] as int) + 1;
       }
 
-      // 3. إدراج الإضافات بسعرها المباشر ونسبة الضريبة
-      // ملاحظة: الكمية هنا مستقلة عن كمية الصنف الرئيسي (item.quantity)،
-      // بحيث لا تتضاعف الإضافة تلقائيًا عند زيادة عدد الصنف.
+      // إضافة بند لكل نوع من الإضافات
       for (final entry in groupedAddons.values) {
         final addon = entry['addon'];
         final countPerItem = entry['count'] as int;
@@ -173,30 +279,41 @@ class CartState extends Equatable {
     return inputs;
   }
 
-  /// Evaluates and calculates the full invoice response using [InvoiceCalculator].
+  // نتائج الحسابات الفعالة
   InvoiceCalculationResult? get calculationResult {
     if (items.isEmpty) return null;
 
-    // 1. Resolve Invoice-Level Discount
     double discountOnTotal = 0.0;
     DiscountType calcDiscountType = DiscountType.percentage;
 
-    final matchedDiscount = matchedDynamicDiscount;
-
-    if (matchedDiscount != null) {
-      discountOnTotal = matchedDiscount.discount?.discountValue ?? 0.0;
-      calcDiscountType = matchedDiscount.discount?.discountType == 1
-          ? DiscountType.percentage
-          : DiscountType.fixedAmount;
-    } else if (selectedDiscountType == DiscountTypeEnum.direct &&
-        saveDiscountModel != null) {
-      discountOnTotal = saveDiscountModel!.value ?? 0.0;
-      calcDiscountType = saveDiscountModel!.type == 1
-          ? DiscountType.percentage
-          : DiscountType.fixedAmount;
+    switch (activeDiscountSource) {
+      case DiscountSource.dynamic:
+        final matchedDiscount = matchedDynamicDiscount;
+        discountOnTotal = matchedDiscount?.discount?.discountValue ?? 0.0;
+        calcDiscountType = matchedDiscount?.discount?.discountNatural == 1
+            ? DiscountType.percentage
+            : DiscountType.fixedAmount;
+        break;
+      case DiscountSource.customer:
+        discountOnTotal = customerDiscount?.value ?? 0.0;
+        calcDiscountType = customerDiscount?.type == 1
+            ? DiscountType.percentage
+            : DiscountType.fixedAmount;
+        break;
+      case DiscountSource.manualInvoice:
+        discountOnTotal = restaurantPosDiscountRequest?.value ?? 0.0;
+        calcDiscountType = restaurantPosDiscountRequest?.type == 1
+            ? DiscountType.percentage
+            : DiscountType.fixedAmount;
+        break;
+      case DiscountSource.size:
+      case DiscountSource.manualItem:
+      case DiscountSource.none:
+        discountOnTotal = 0.0;
+        break;
     }
 
-    // 2. Resolve Coupon / Voucher
+    // إدخال القسيمة/الكوبون
     VoucherInput? voucherInput;
     if (selectedDiscountType == DiscountTypeEnum.coupon &&
         couponDiscountvalue != null) {
@@ -207,7 +324,7 @@ class CartState extends Equatable {
       );
     }
 
-    // 3. Resolve Delivery & Service Charge
+    // رسوم التوصيل والخدمة
     double calculatedDeliveryCost = 0.0;
     if (selectedOrderType == CartOrderType.DELIVERY ||
         selectedOrderType == CartOrderType.DELIVERY_COMPANY) {
@@ -220,7 +337,6 @@ class CartState extends Equatable {
       dineInRatio = selectedTable?.serviceRatio ?? 0.0;
     }
 
-    // 4. Build Input Payload
     final input = InvoiceCalculationInput(
       discountOnTotal: discountOnTotal,
       discountType: calcDiscountType,
@@ -232,7 +348,6 @@ class CartState extends Equatable {
       voucher: voucherInput,
     );
 
-    // 5. Calculate (Pass backend-specific IDs for Note & Offer item types)
     const calculator = InvoiceCalculator(
       noteItemTypeId: 99,
       offerItemTypeId: 100,
@@ -242,59 +357,53 @@ class CartState extends Equatable {
     return response.data;
   }
 
-  // =====================================================================
-  // CALCULATED GETTERS
-  // =====================================================================
-
-  /// Total raw dynamicDiscount avilibility
-  bool get dynamicDiscountIsActive =>
-      activeDiscounts.any((d) => d.posTypeId == selectedOrderType.apiValue);
-
-  /// Total raw price of items before discount or tax
+  // القيم المحسوبة
   double get subtotal => calculationResult?.totalOfItems ?? 0.0;
-
-  /// Calculates total applied discount amount (item + invoice level)
   double get totalDiscountAmount => calculationResult?.totalDiscount ?? 0.0;
-
-  /// Subtotal minus total discounts (excluding VAT)
   double get netSubtotal => calculationResult?.totalWithoutVAT ?? 0.0;
-
-  /// Computed VAT amount
   double get vatAmount => calculationResult?.totalVAT ?? 0.0;
-
-  /// Computed Tobacco Tax amount
   double get tobaccoTaxAmount => calculationResult?.totalTobaccoTax ?? 0.0;
-
-  /// Computed Dine-In Service Charge amount
   double get dineInCost => calculationResult?.dineInCost ?? 0.0;
-
-  /// Final payable grand total
   double get grandTotal => calculationResult?.netTotal ?? 0.0;
 
-  // =====================================================================
-  // API PAYLOAD MAPPER
-  // =====================================================================
-
-  SaveInvoiceRequestModel get toSaveInvoiceRequestModel {
-    SaveDiscountModel? appliedDiscount;
+  // تحويل البيانات لطلب الحفظ (API)
+  SaveRestaurantPosInvoiceRequest get toSaveRestaurantPosInvoiceRequest {
+    RestaurantPosDiscountRequest? appliedDiscount;
     int? activeInvoiceDiscountId;
+    String? voucherCode;
 
-    final matchedDiscount = matchedDynamicDiscount;
+    switch (activeDiscountSource) {
+      case DiscountSource.dynamic:
+        final matchedDiscount = matchedDynamicDiscount;
+        activeInvoiceDiscountId = int.tryParse(
+          matchedDiscount?.discount?.id ?? "",
+        );
+        appliedDiscount = RestaurantPosDiscountRequest(
+          type: matchedDiscount?.discount?.discountType ?? 0,
+          value: matchedDiscount?.discount?.discountValue ?? 0,
+        );
+        break;
+      case DiscountSource.customer:
+        appliedDiscount = customerDiscount;
+        break;
+      case DiscountSource.manualInvoice:
+        appliedDiscount = restaurantPosDiscountRequest;
+        break;
+      case DiscountSource.size:
+      case DiscountSource.manualItem:
+      case DiscountSource.none:
+        appliedDiscount = null;
+        break;
+    }
 
-    if (matchedDiscount != null) {
-      activeInvoiceDiscountId = int.tryParse(
-        matchedDiscount.discount?.id ?? "",
-      );
-      appliedDiscount = SaveDiscountModel(
-        type: matchedDiscount.discount?.discountType,
-        value: matchedDiscount.discount?.discountValue,
-      );
-    } else if (selectedDiscountType == DiscountTypeEnum.direct &&
-        saveDiscountModel != null) {
-      appliedDiscount = saveDiscountModel;
-    } else if (selectedDiscountType == DiscountTypeEnum.coupon &&
+    if (appliedDiscount == null &&
+        selectedDiscountType == DiscountTypeEnum.coupon &&
         couponDiscountvalue != null) {
-      appliedDiscount = SaveDiscountModel(type: 2, value: couponDiscountvalue);
+      appliedDiscount = RestaurantPosDiscountRequest(
+        type: 2,
+        value: couponDiscountvalue ?? 0,
+      );
+      voucherCode = 'COUPON';
     }
 
     final invoiceItems = items.map((item) {
@@ -302,26 +411,30 @@ class CartState extends Equatable {
       for (var addon in item.addons) {
         grouped[addon.id] = (grouped[addon.id] ?? 0) + 1;
       }
-      return InvoiceItemModel(
+
+      final resolvedDiscount = _resolveItemDiscount(item);
+
+      return RestaurantPosInvoiceItemRequest(
         itemId: item.menuItem.itemId,
-        // 0 is valid when the item has exactly one size.
         sizeId: item.selectedSize?.sizeId ?? 0,
         quantity: item.quantity.toDouble(),
         price:
             item.selectedSize?.price ??
             (item.menuItem.sizes.isNotEmpty
                 ? item.menuItem.sizes.first.price
-                : item.menuItem.defaultPrice),
+                : item.menuItem.defaultPrice) ??
+            0.0,
         notes: item.notes,
-        discount: item.discount > 0
-            ? SaveDiscountModel(
-                type: item.isPercentageDiscount ? 1 : 2,
-                value: item.discount,
+        discount: resolvedDiscount.value > 0
+            ? RestaurantPosDiscountRequest(
+                type: resolvedDiscount.isPercentage ? 1 : 2,
+                value: resolvedDiscount.value,
               )
             : null,
+        itemDiscountId: resolvedDiscount.discountId,
         additives: grouped.entries
             .map(
-              (e) => SaveAdditiveModel(
+              (e) => RestaurantPosItemAdditiveRequest(
                 additiveId: int.parse(e.key),
                 quantity: e.value.toDouble(),
               ),
@@ -330,35 +443,49 @@ class CartState extends Equatable {
       );
     }).toList();
 
-    final invoiceModel = SaveInvoiceModel(
+    double calculatedDeliveryCost = 0.0;
+    if (selectedOrderType == CartOrderType.DELIVERY ||
+        selectedOrderType == CartOrderType.DELIVERY_COMPANY) {
+      calculatedDeliveryCost =
+          calculationResult?.deliveryCost ??
+          (settingsModel?.posRestaurant?.deliveryCost ?? 0.0);
+    }
+
+    final invoiceModel = RestaurantPosInvoiceInfoRequest(
       postype: selectedOrderType.apiValue,
       foodTableId: int.tryParse(selectedTable?.id ?? ''),
       waiterId: int.tryParse(selectedWaiter?.id?.toString() ?? ''),
       deliveryManId: int.tryParse(selectedDeliveryMan?.id?.toString() ?? ''),
       deliveryCompanyId: selectedDeliveryCompany?.id,
-      clientId: selectedPerson?.id,
+      voucherCode: voucherCode,
+      clientId: selectedPerson?.id ?? 0,
+      personAddressId: int.tryParse(selectedAddress?.id.toString() ?? '') ?? 0,
+      personPhoneId: selectedPerson?.personPhones?.first.id ?? 0,
       orderReceivedTime: fromBranchDateTime,
       discount: appliedDiscount?.value == 0 ? null : appliedDiscount,
       paidAmount: grandTotal,
       totalInvoicePrice: grandTotal,
       invoiceDiscountId: activeInvoiceDiscountId,
+      deliveryCost: calculatedDeliveryCost,
     );
 
-    return SaveInvoiceRequestModel(invoice: invoiceModel, items: invoiceItems);
+    return SaveRestaurantPosInvoiceRequest(
+      invoice: invoiceModel,
+      items: invoiceItems,
+      payments: const [],
+      gediaKey: '',
+    );
   }
 
-  // =====================================================================
-  // COPYWITH & EQUATABLE
-  // =====================================================================
-
+  // نسخ ومقارنة الحالة
   CartState copyWith({
     SettingsModel? settingsModel,
     CartOrderType? selectedOrderType,
     DiscountTypeEnum? selectedDiscountType,
     bool? justRestored,
-
     ClientAddressModel? selectedAddress,
-    SaveDiscountModel? saveDiscountModel,
+    RestaurantPosDiscountRequest? restaurantPosDiscountRequest,
+    RestaurantPosDiscountRequest? customerDiscount,
     double? couponDiscountvalue,
     CartStatus? status,
     List<OrderItem>? items,
@@ -379,6 +506,12 @@ class CartState extends Equatable {
     String? successMessage,
     TableEntity? selectedTable,
     DateTime? fromBranchDateTime,
+
+    // Optional flag helpers to force explicit null assignment
+    bool clearActiveDiscountModel = false,
+    bool clearRestaurantPosDiscountRequest = false,
+    bool clearCustomerDiscount = false,
+    bool clearCouponDiscountValue = false,
   }) {
     return CartState(
       settingsModel: settingsModel ?? this.settingsModel,
@@ -388,10 +521,13 @@ class CartState extends Equatable {
       status: status ?? this.status,
       items: items ?? this.items,
       activeDiscounts: activeDiscounts ?? this.activeDiscounts,
-      couponDiscountvalue: couponDiscountvalue ?? this.couponDiscountvalue,
+      couponDiscountvalue: clearCouponDiscountValue
+          ? null
+          : (couponDiscountvalue ?? this.couponDiscountvalue),
       justRestored: justRestored ?? this.justRestored,
-
-      activeDiscountModel: activeDiscountModel ?? this.activeDiscountModel,
+      activeDiscountModel: clearActiveDiscountModel
+          ? null
+          : (activeDiscountModel ?? this.activeDiscountModel),
       waiters: waiters ?? this.waiters,
       persons: persons ?? this.persons,
       selectedPerson: selectedPerson ?? this.selectedPerson,
@@ -406,7 +542,12 @@ class CartState extends Equatable {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage,
       successMessage: successMessage,
-      saveDiscountModel: saveDiscountModel ?? this.saveDiscountModel,
+      restaurantPosDiscountRequest: clearRestaurantPosDiscountRequest
+          ? null
+          : (restaurantPosDiscountRequest ?? this.restaurantPosDiscountRequest),
+      customerDiscount: clearCustomerDiscount
+          ? null
+          : (customerDiscount ?? this.customerDiscount),
       selectedTable: selectedTable ?? this.selectedTable,
       fromBranchDateTime: fromBranchDateTime ?? this.fromBranchDateTime,
     );
@@ -423,7 +564,8 @@ class CartState extends Equatable {
     items,
     activeDiscounts,
     couponDiscountvalue,
-    saveDiscountModel,
+    restaurantPosDiscountRequest,
+    customerDiscount,
     activeDiscountModel,
     waiters,
     deliveryAgents,

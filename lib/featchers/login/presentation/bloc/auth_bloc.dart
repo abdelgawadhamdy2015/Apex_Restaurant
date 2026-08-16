@@ -1,11 +1,11 @@
-import 'package:apex_restaurant/core/helpers/crashlytics_logger.dart';
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
-import 'package:apex_restaurant/featchers/login/domain/usecases/auth_usecase.dart';
-import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_event.dart';
-import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_state.dart';
+import '../../../../core/helpers/crashlytics_logger.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/restaurant_constants.dart';
+import '../../../../core/service/api_result.dart';
+import '../../data/models/login_request_body.dart';
+import '../../domain/usecases/auth_usecase.dart';
+import 'auth_event.dart';
+import 'auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,13 +1,13 @@
-import 'package:apex_restaurant/core/di/debandancy_injection.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/pages/orders_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/screens/menu_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/more_options.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_bottom_nav_bar.dart';
+import '../../../../core/di/debandancy_injection.dart';
+import '../../../../core/router/routes.dart';
+import '../../../home/presentation/widgets/side_nav.dart';
+import '../../../orders/presentation/bloc/orders_bloc.dart';
+import '../../../orders/presentation/pages/orders_screen.dart';
+import '../bloc/pos_bloc.dart';
+import '../bloc/pos_event.dart';
+import '../screens/menu_screen.dart';
+import '../widgets/more_options.dart';
+import '../widgets/pos_bottom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

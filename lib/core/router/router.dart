@@ -1,28 +1,27 @@
-import 'package:apex_restaurant/core/di/debandancy_injection.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/cart_screen_args.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/add_customer_screen.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/cart_screen.dart';
-import 'package:apex_restaurant/featchers/cashier_custody/presentation/screens/cashier_custody.dart';
-import 'package:apex_restaurant/featchers/cashier_custody/presentation/screens/custody_log_screen.dart';
-import 'package:apex_restaurant/featchers/cashier_custody/presentation/screens/returns_screen.dart';
-import 'package:apex_restaurant/featchers/home/presentation/pages/home_page.dart';
-import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
-import 'package:apex_restaurant/featchers/login/presentation/pages/forget_password_page.dart';
-import 'package:apex_restaurant/featchers/login/presentation/pages/login_page.dart';
-import 'package:apex_restaurant/featchers/onboarding/presentation/pages/onboarding_page.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/pages/orders_screen.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/screens/payment_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/tables_screen_arg.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/pages/tables_screen.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
+
+import '../di/debandancy_injection.dart';
+import 'routes.dart';
+import '../shared/widgets/settings_screen.dart';
+import '../../featchers/cart/data/models/cart_screen_args.dart';
+import '../../featchers/cart/data/models/pos_client_model.dart';
+import '../../featchers/cart/presentation/ui/screens/add_customer_screen.dart';
+import '../../featchers/cart/presentation/ui/screens/cart_screen.dart';
+import '../../featchers/cashier_custody/presentation/screens/cashier_custody.dart';
+import '../../featchers/cashier_custody/presentation/screens/custody_log_screen.dart';
+import '../../featchers/cashier_custody/presentation/screens/returns_screen.dart';
+import '../../featchers/home/presentation/pages/home_page.dart';
+import '../../featchers/login/presentation/bloc/auth_bloc.dart';
+import '../../featchers/login/presentation/pages/forget_password_page.dart';
+import '../../featchers/login/presentation/pages/login_page.dart';
+import '../../featchers/onboarding/presentation/pages/onboarding_page.dart';
+import '../../featchers/orders/presentation/bloc/orders_bloc.dart';
+import '../../featchers/orders/presentation/pages/orders_screen.dart';
+import '../../featchers/payment/presentation/screens/payment_screen.dart';
+import '../../featchers/pos/presentation/pages/pos_page.dart';
+import '../../featchers/tables/data/models/tables_screen_arg.dart';
+import '../../featchers/tables/presentation/bloc/tables_bloc.dart';
+import '../../featchers/tables/presentation/pages/tables_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -84,18 +83,6 @@ class AppRouter {
         path: Routes.posScreen,
         name: Routes.posScreen,
         builder: (context, state) {
-          // IMPORTANT: PosBloc is already provided once, app-wide, in
-          // ApexRestaurantApp's MultiBlocProvider (via getIt<PosBloc>(),
-          // a *factory*, called exactly once there). Do NOT wrap this
-          // route in another BlocProvider<PosBloc> — that would call
-          // getIt<PosBloc>() again and create a second, independent
-          // instance scoped only to this route. Categories/menu items
-          // loaded into that second instance would then be invisible to
-          // every other screen (e.g. CartScreen), which reads the
-          // original app-wide instance instead — and that instance is
-          // destroyed the moment you navigate away from this route.
-          //
-          // Just use the shared instance from the tree.
           return PosPage(changeLanguage: changeLanguage);
         },
       ),
@@ -120,17 +107,10 @@ class AppRouter {
         path: Routes.paymentScreen,
         name: Routes.paymentScreen,
         builder: (context, state) {
-          final saveInvoiceRequestModel =
-              state.extra as SaveInvoiceRequestModel;
-          return BlocProvider(
-            create: (context) => getIt<PaymentBloc>()
-              ..add(
-                InitializePaymentEvent(
-                  totalAmount:
-                      saveInvoiceRequestModel.invoice?.totalInvoicePrice ?? 0.0,
-                ),
-              ),
-            child: PaymentScreen(invoiceRequestModel: saveInvoiceRequestModel),
+          final saveRestaurantPosInvoiceRequest =
+              state.extra as SaveRestaurantPosInvoiceRequest;
+          return PaymentScreen(
+            invoiceRequestModel: saveRestaurantPosInvoiceRequest,
           );
         },
       ),

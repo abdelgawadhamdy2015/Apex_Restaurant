@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 /// Header card on the "Held Orders" tab showing the total held-order count.

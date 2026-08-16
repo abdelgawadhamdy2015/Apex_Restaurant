@@ -1,14 +1,14 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
-import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../../core/shared/widgets/custom_app_bar.dart';
+import '../../../../core/shared/widgets/date_text_field.dart';
+import '../../../cart/data/models/pos_client_model.dart';
+import '../../data/models/reservation_requests.dart';
+import '../../domain/entities/table_entity.dart';
+import '../bloc/tables_bloc.dart';
+import '../bloc/tables_event.dart';
+import '../bloc/tables_state.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

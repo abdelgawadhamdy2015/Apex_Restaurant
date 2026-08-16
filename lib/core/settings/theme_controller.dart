@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/settings/app_accent_colors.dart';
-import 'package:apex_restaurant/core/settings/settings_state.dart';
-import 'package:apex_restaurant/core/themes/app_theme.dart';
+import 'app_accent_colors.dart';
+import 'settings_state.dart';
+import '../themes/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class AppThemeController {

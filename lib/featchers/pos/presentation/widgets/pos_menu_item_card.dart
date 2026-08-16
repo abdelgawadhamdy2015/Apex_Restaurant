@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class PosMenuItemCard extends StatelessWidget {
@@ -108,7 +108,7 @@ class PosMenuItemCard extends StatelessWidget {
                   children: [
                     Text(
                       item.sizes.isNotEmpty
-                          ? lang.priceWithCurrency(item.sizes.first.price)
+                          ? lang.priceWithCurrency(item.sizes.first.price ?? 0)
                           : "",
                       style: theme.textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,

@@ -1,19 +1,21 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/helpers/permission_checker.dart';
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/service/api_constants.dart';
-import 'package:apex_restaurant/core/shared/widgets/auth_listener.dart';
-import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
-import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
-import 'package:apex_restaurant/featchers/home/presentation/widgets/opening_balance_dialog.dart';
-import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_app_bar.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import 'dart:developer';
+
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../../core/router/routes.dart';
+import '../../../../core/service/api_constants.dart';
+import '../../../../core/shared/widgets/auth_listener.dart';
+import '../../data/models/employee_branch.dart';
+import '../../data/models/user_data_model.dart';
+import '../bloc/home_bloc.dart';
+import '../bloc/home_event.dart';
+import '../bloc/home_state.dart';
+import '../widgets/opening_balance_dialog.dart';
+import '../widgets/side_nav.dart';
+import '../../../pos/presentation/bloc/pos_bloc.dart';
+import '../../../pos/presentation/bloc/pos_event.dart';
+import '../../../pos/presentation/bloc/pos_state.dart';
+import '../../../pos/presentation/widgets/pos_top_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,14 +32,21 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _loadEmployeeBranches(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInitialData();
+    });
   }
 
-  void _loadEmployeeBranches() {
-    context.read<HomeBloc>().add(LoadBranchesEvent());
-    context.read<HomeBloc>().add(LoadUserDataEvent(id: ApiConstants.userId!));
+  void _loadInitialData() {
+    final homeBloc = context.read<HomeBloc>();
+    homeBloc.add(const LoadBranchesEvent());
+
+    // 1. طلب فحص الجلسة الحالية من الـ PosBloc
+    context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());
+
+    if (ApiConstants.userId != null) {
+      homeBloc.add(LoadUserDataEvent(id: ApiConstants.userId!));
+    }
   }
 
   @override
@@ -46,7 +55,7 @@ class _HomePageState extends State<HomePage> {
 
     return BlocErrorListener<HomeBloc, HomeState>(
       child: Scaffold(
-        backgroundColor: theme.scaffoldBackgroundColor,
+        backgroundColor: theme.colorScheme.surface,
         drawer: SideNav(
           changeLanguage: widget.changeLanguage,
           currentRoute: Routes.homeScreen,
@@ -54,6 +63,7 @@ class _HomePageState extends State<HomePage> {
         body: SafeArea(
           child: Column(
             children: [
+              // Top Bar
               BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
                   final branches = state.branches
@@ -66,7 +76,17 @@ class _HomePageState extends State<HomePage> {
                   return const PosTopAppBar();
                 },
               ),
-              const Expanded(child: _MainContent()),
+              // Session Start Screen Container
+              Expanded(
+                child: BlocBuilder<HomeBloc, HomeState>(
+                  builder: (context, homeState) {
+                    return _SessionStartContent(
+                      userDataModel: homeState.userDataModel,
+                      selectedEmployeeBranch: homeState.selectedEmployeeBranch,
+                    );
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -75,267 +95,409 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class _MainContent extends StatelessWidget {
-  const _MainContent();
+class _SessionStartContent extends StatelessWidget {
+  const _SessionStartContent({this.userDataModel, this.selectedEmployeeBranch});
+
+  final UserDataModel? userDataModel;
+  final EmployeeBranch? selectedEmployeeBranch;
 
   @override
   Widget build(BuildContext context) {
-    final lang = S.of(context);
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
     final spacing = context.spacing;
 
-    return BlocConsumer<HomeBloc, HomeState>(
-      listenWhen: (previous, current) => previous.status != current.status,
-      listener: (context, state) {
-        if (state.status == HomeStatus.openSessionLoading) {
-          // Show non-dismissible loading indicator while checking session status
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => const Center(child: CircularProgressIndicator()),
+    return MultiBlocListener(
+      listeners: [
+        // الاستماع لـ HomeBloc عند بدء فتح جلسة جديدة
+        BlocListener<HomeBloc, HomeState>(
+          listenWhen: (previous, current) => previous.status != current.status,
+          listener: (context, state) {
+            if (state.status == HomeStatus.openSessionLoading) {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) =>
+                    const Center(child: CircularProgressIndicator()),
+              );
+            } else if (state.status == HomeStatus.openSessionLoaded) {
+              if (Navigator.of(context, rootNavigator: true).canPop()) {
+                Navigator.of(context, rootNavigator: true).pop();
+              }
+
+              if (state.sessionModel != null && state.sessionModel!.id != 0) {
+                context.push(Routes.posScreen);
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (_) => const OpeningBalanceDialog(),
+                );
+              }
+            } else if (state.status == HomeStatus.error) {
+              if (Navigator.of(context, rootNavigator: true).canPop()) {
+                Navigator.of(context, rootNavigator: true).pop();
+              }
+
+              if (state.errorMessage != null &&
+                  state.errorMessage!.isNotEmpty) {
+                HelperMethods.showSnackBar(
+                  context: context,
+                  message: state.errorMessage!,
+                  isError: true,
+                );
+              }
+            }
+          },
+        ),
+
+        // الاستماع لـ PosBloc لعرض أخطاء جلب الجلسة الحالية إن وجدت
+        BlocListener<PosBloc, PosState>(
+          listenWhen: (previous, current) => previous.status != current.status,
+          listener: (context, state) {
+            if (state.status == PosStatus.error &&
+                state.errorMessage != null &&
+                state.errorMessage!.isNotEmpty) {
+              HelperMethods.showSnackBar(
+                context: context,
+                message: state.errorMessage!,
+                isError: true,
+              );
+            }
+          },
+        ),
+      ],
+      child: BlocBuilder<PosBloc, PosState>(
+        builder: (context, posState) {
+          final userName = userDataModel?.employees?.arabicName ?? 'المستخدم';
+          final jobTitle =
+              userDataModel?.employees?.arabicName ?? 'مدير النظام المالي';
+          final branchName =
+              selectedEmployeeBranch?.arabicName ??
+              selectedEmployeeBranch?.latinName ??
+              'الفرع الرئيسي';
+          final firstLetter = userName.isNotEmpty ? userName.trim()[0] : 'أ';
+
+          // التحقق من وجود جلسة نشطة عبر PosBloc
+          final bool hasActiveSession =
+              posState.currentSessionId != null &&
+              posState.currentSessionId != 0;
+          log(
+            " hasActive : $hasActiveSession , id : ${posState.currentSessionId}",
           );
-        } else if (state.status == HomeStatus.openSessionLoaded) {
-          // Pop loading dialog if displayed
-          if (Navigator.of(context, rootNavigator: true).canPop()) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-
-          // Check session model to decide target screen / dialog
-          if (state.sessionModel != null && state.sessionModel!.id != 0) {
-            context.push(Routes.posScreen);
-          } else {
-            showDialog(
-              context: context,
-              builder: (_) => const OpeningBalanceDialog(),
-            );
-          }
-        } else if (state.status == HomeStatus.error) {
-          // Pop loading indicator on error
-          if (Navigator.of(context, rootNavigator: true).canPop()) {
-            Navigator.of(context, rootNavigator: true).pop();
-          }
-
-          if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-            HelperMethods.showSnackBar(
-              context: context,
-              message: state.errorMessage ?? 'An error occurred',
-              isError: true,
-            );
-          }
-        }
-      },
-      builder: (context, state) {
-        final userName = state.userDataModel?.employees?.arabicName ?? '';
-
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final isTablet = constraints.maxWidth >= 600;
-            final horizontalPadding = isTablet ? spacing.xl : spacing.md;
-
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: spacing.lg,
-              ),
+          return Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(spacing.lg),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '${lang.welcome}، $userName',
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.displayLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                  SizedBox(height: spacing.xs),
-                  Text(
-                    lang.homeSubtitle,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium,
-                  ),
+                  // Logo Section
+                  const _AppLogo(),
                   SizedBox(height: spacing.xl),
 
-                  // Action Cards Grid/List based on screen width
-                  if (PermissionChecker(
-                    RestaurantConstants.permissions,
-                  ).hasAnyAccess(AppPermission.itemCardRestaurant))
-                    GridView.count(
-                      crossAxisCount: isTablet ? 2 : 1,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      mainAxisSpacing: spacing.md,
-                      crossAxisSpacing: spacing.md,
-                      childAspectRatio: isTablet ? 1.4 : 1.6,
-                      children: [
-                        _ActionCard(
-                          icon: Icons.point_of_sale,
-                          iconColor: theme.colorScheme.onSurfaceVariant,
-                          iconBg: theme.colorScheme.primary,
-                          title: lang.salesScreen,
-                          subtitle: lang.salesScreenSubtitle,
-                          badge: _Badge(
-                            text: lang.pleaseCheckInFirst,
-                            color: theme.colorScheme.secondary,
-                            isLink: true,
-                            icon: Icons.alarm,
-                            onTap: () {},
-                          ),
-                          onTap: () {
-                            if (state.sessionModel != null &&
-                                state.sessionModel!.id != 0) {
-                              context.push(Routes.posScreen);
-                            } else {
-                              context.read<HomeBloc>().add(
-                                OpenRestaurantPosEvent(),
-                              );
-                            }
-                          },
+                  // Session Card
+                  Container(
+                    constraints: const BoxConstraints(maxWidth: 460),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: spacing.xl,
+                      vertical: spacing.xl,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurface,
+                      borderRadius: BorderRadius.circular(spacing.radiusLg),
+                      border: Border.all(color: colorScheme.outlineVariant),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black,
+                          blurRadius: 24,
+                          offset: Offset(0, 8),
                         ),
                       ],
                     ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Greeting Header
+                        Text(
+                          'مرحباً بك مجدداً',
+                          style: textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: spacing.xs),
+                        Text(
+                          hasActiveSession
+                              ? 'توجد جلسة عمل نشطة حالياً، يمكنك المتابعة مباشرة للـ POS'
+                              : 'جاهز للبدء؟ يرجى التحقق من تفاصيل الجلسة أدناه لبدء جلسة جديدة',
+                          style: textTheme.bodyMedium?.copyWith(height: 1.4),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: spacing.lg),
 
-                  SizedBox(height: spacing.lg),
-                  const _StatusBar(),
+                        // User Info Card
+                        _UserProfileCard(
+                          userName: userName,
+                          active: userDataModel?.employees?.status == 1,
+                          jobTitle: jobTitle,
+                          firstLetter: firstLetter,
+                        ),
+                        SizedBox(height: spacing.lg),
+
+                        // Details List
+                        _SessionDetailItem(
+                          icon: Icons.apartment_rounded,
+                          label: 'الفرع المعتمد',
+                          value: branchName,
+                        ),
+                        Divider(
+                          color: theme.dividerColor.withOpacity(0.4),
+                          height: spacing.md,
+                        ),
+                        const _SessionDetailItem(
+                          icon: Icons.shield_outlined,
+                          label: 'مستوى الصلاحية',
+                          value: 'وصول كامل (آمن)',
+                        ),
+                        Divider(
+                          color: theme.dividerColor.withOpacity(0.4),
+                          height: spacing.md,
+                        ),
+                        const _SessionDetailItem(
+                          icon: Icons.code_rounded,
+                          label: 'عنوان الخادم IP',
+                          value: '192.168.1.14',
+                        ),
+                        SizedBox(height: spacing.xl),
+
+                        // Start / Continue Session Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50.0,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (hasActiveSession) {
+                                // الانتقال للـ POS مباشرة عند وجود جلسة فعالة
+                                context.push(Routes.posScreen);
+                              } else {
+                                // إرسال حدث فتح الجلسة لـ HomeBloc
+                                context.read<HomeBloc>().add(
+                                  const OpenRestaurantPosEvent(),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  spacing.radiusSm,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  hasActiveSession
+                                      ? 'متابعة جلسة العمل'
+                                      : 'بدء جلسة العمل',
+                                  style: textTheme.titleMedium?.copyWith(
+                                    color: colorScheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: spacing.xs),
+                                Icon(
+                                  hasActiveSession
+                                      ? Icons.play_arrow_rounded
+                                      : Icons.arrow_forward,
+                                  size: context.iconSizes.sm,
+                                  color: colorScheme.onPrimary,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: spacing.sm),
+
+                        // Logout Button
+                        TextButton(
+                          onPressed: () {
+                            context.go(Routes.loginScreen);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: colorScheme.primary,
+                          ),
+                          child: Text(
+                            'تسجيل الخروج',
+                            style: textTheme.titleMedium?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 }
 
-class _ActionCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final String title;
-  final String subtitle;
-  final Widget badge;
-  final VoidCallback onTap;
-
-  const _ActionCard({
-    required this.icon,
-    required this.iconColor,
-    required this.iconBg,
-    required this.title,
-    required this.subtitle,
-    required this.badge,
-    required this.onTap,
-  });
+/// Header Logo Widget
+class _AppLogo extends StatelessWidget {
+  const _AppLogo();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final spacing = context.spacing;
-    final iconSizes = context.iconSizes;
 
-    return Material(
-      color: theme.colorScheme.surface,
-      elevation: 0,
-      borderRadius: BorderRadius.circular(spacing.radiusSm),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(spacing.radiusMd),
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(spacing.radiusLg),
-            border: Border.all(color: theme.colorScheme.outlineVariant),
-          ),
-          padding: EdgeInsets.all(spacing.sm),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.bolt, color: theme.colorScheme.primary, size: 36),
+        const SizedBox(width: 4),
+        RichText(
+          text: TextSpan(
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+            ),
             children: [
-              SizedBox(
-                width: spacing.sm,
-                height: spacing.sm,
-                child: Icon(icon, size: iconSizes.lg, color: iconColor),
+              TextSpan(
+                text: 'AP',
+                style: TextStyle(color: theme.colorScheme.primary),
               ),
-              SizedBox(height: spacing.md),
-              Text(
-                title,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.primary,
+              const TextSpan(
+                text: 'E',
+                style: TextStyle(color: Color(0xFF00A859)),
+              ),
+              TextSpan(
+                text: 'X',
+                style: TextStyle(color: theme.colorScheme.primary),
+              ),
+              const TextSpan(
+                text: ' ERP',
+                style: TextStyle(
+                  color: Color(0xFF00A859),
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
-              ),
-              SizedBox(height: spacing.xs),
-              badge,
-              SizedBox(height: spacing.xs),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(height: 1.4),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }
 
-class _Badge extends StatelessWidget {
-  final String text;
-  final Color color;
-  final bool isLink;
-  final IconData? icon;
-  final VoidCallback? onTap;
+/// User Info Badge Box
+class _UserProfileCard extends StatelessWidget {
+  final String userName;
+  final String jobTitle;
+  final String firstLetter;
+  final bool active;
 
-  const _Badge({
-    required this.text,
-    required this.color,
-    required this.isLink,
-    this.icon,
-    this.onTap,
+  const _UserProfileCard({
+    required this.userName,
+    required this.jobTitle,
+    required this.firstLetter,
+    required this.active,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     final spacing = context.spacing;
-    final iconSizes = context.iconSizes;
-
-    if (isLink) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Text(
-          text,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: color,
-            fontWeight: FontWeight.w600,
-            decoration: TextDecoration.underline,
-            decorationColor: color,
-          ),
-        ),
-      );
-    }
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: spacing.sm,
-        vertical: spacing.xs / 2,
+        horizontal: spacing.md,
+        vertical: spacing.sm,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(spacing.radiusPill),
-        border: Border.all(color: color.withOpacity(0.25)),
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(spacing.radiusMd),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ...[
-            Icon(icon, size: iconSizes.sm, color: color),
-            SizedBox(width: spacing.xs / 2),
-          ],
-          Text(
-            text,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
+          // User Avatar
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: theme.colorScheme.primary,
+            child: Text(
+              firstLetter,
+              style: textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onPrimary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          SizedBox(width: spacing.md),
+
+          // User Info Text
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  jobTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: textTheme.bodySmall?.copyWith(),
+                ),
+              ],
+            ),
+          ),
+
+          // Status Indicator Badge
+          Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.sm,
+              vertical: spacing.xs / 2,
+            ),
+            decoration: BoxDecoration(
+              color: const Color(0xFFDCFCE7),
+              borderRadius: BorderRadius.circular(spacing.radiusPill),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF10B981),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                SizedBox(width: spacing.xs),
+                Text(
+                  active ? 'متصل' : "غير متصل",
+                  style: textTheme.labelMedium?.copyWith(
+                    color: const Color(0xFF15803D),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -344,88 +506,38 @@ class _Badge extends StatelessWidget {
   }
 }
 
-class _StatusBar extends StatelessWidget {
-  const _StatusBar();
-
-  @override
-  Widget build(BuildContext context) {
-    final lang = S.of(context);
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.lg,
-        vertical: spacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(spacing.radiusMd),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Wrap(
-        alignment: WrapAlignment.spaceBetween,
-        runSpacing: spacing.sm,
-        spacing: spacing.md,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.circle, size: 12, color: theme.colorScheme.error),
-              SizedBox(width: spacing.xs),
-              Text(
-                lang.currentStatusOffShift,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _StatusItem(
-                label: lang.lastCheckOut,
-                value: lang.lastCheckOutValue,
-              ),
-              SizedBox(width: spacing.lg),
-              _StatusItem(label: lang.systemTime, value: '09:15 ص'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusItem extends StatelessWidget {
+/// Session Details List Row
+class _SessionDetailItem extends StatelessWidget {
+  final IconData icon;
   final String label;
   final String value;
-  const _StatusItem({required this.label, required this.value});
+
+  const _SessionDetailItem({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final spacing = context.spacing;
+    final textTheme = theme.textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
+        // Label + Icon (Right)
+        Row(
+          children: [
+            Text(label, style: textTheme.bodyMedium?.copyWith()),
+            SizedBox(width: context.spacing.xs),
+            Icon(icon, size: context.iconSizes.sm),
+          ],
         ),
-        SizedBox(height: spacing.xs / 4),
+        // Value (Left)
         Text(
           value,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
+          style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
       ],
     );

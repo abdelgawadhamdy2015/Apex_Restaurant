@@ -1,23 +1,29 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../../home/data/models/session_model.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/delivery_company.dart';
+import '../../data/models/floor_model.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../../tables/data/models/get_floor_request.dart';
+import '../entities/get_food_additive_request.dart';
+import '../entities/get_items_request_model.dart';
+import '../../../tables/data/models/get_table_request.dart';
+import '../../../tables/data/models/table_model.dart';
 
 abstract class PosRepository {
   Future<ApiResult<BaseResponse<SettingsModel?>>> getSettings();
+  Future<ApiResult<BaseResponse<SessionModel?>>> getCurrentSession();
   Future<ApiResult<BaseResponse<List<FloorModel>?>>> getFloors({
     required GetFloorsRequest request,
   });
+
+  Future<ApiResult<BaseResponse<dynamic>>> closeRestaurantPosSession({
+    required int sessionId,
+  });
+
   Future<ApiResult<BaseResponse<List<TableModel>?>>> getTables({
     required GetTablesRequest request,
   });
@@ -28,8 +34,8 @@ abstract class PosRepository {
   Future<ApiResult<BaseResponse<List<RestaurantItem>?>>> getMenuItemsByCategory(
     GetItemsRequest? request,
   );
-  Future<void> submitOrder(Order order);
-  Future<void> sendToKitchen(Order order);
+  // Future<void> submitOrder(Order order);
+  // Future<void> sendToKitchen(Order order);
 
   Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>>
   getAllDeliveryCompany({BaseRequest? request});

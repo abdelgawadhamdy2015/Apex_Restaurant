@@ -1,22 +1,22 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/service/api_error_handler.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
+import '../../../../core/service/api_error_handler.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../../home/data/models/session_model.dart';
+import '../datasources/pos_remote_datasource.dart';
+import '../models/category_model.dart';
+import '../models/delivery_company.dart';
+import '../models/floor_model.dart';
+import '../models/restaurant_item.dart';
+import '../../../tables/data/models/get_floor_request.dart';
+import '../../domain/entities/get_food_additive_request.dart';
+import '../../domain/entities/get_items_request_model.dart';
+import '../../../tables/data/models/get_table_request.dart';
+import '../../domain/repositories/pos_repository.dart';
+import '../../../tables/data/models/table_model.dart';
 
 class PosRepositoryImpl implements PosRepository {
   final PosRemoteDataSource _remoteDataSource;
@@ -52,34 +52,34 @@ class PosRepositoryImpl implements PosRepository {
     }
   }
 
-  @override
-  Future<void> sendToKitchen(Order order) async {
-    final data = _orderToMap(order);
-    await _remoteDataSource.sendToKitchen(data);
-  }
+  // @override
+  // Future<void> sendToKitchen(Order order) async {
+  //   final data = _orderToMap(order);
+  //   await _remoteDataSource.sendToKitchen(data);
+  // }
 
-  @override
-  Future<void> submitOrder(Order order) async {
-    final data = _orderToMap(order);
-    await _remoteDataSource.submitOrder(data);
-  }
+  // @override
+  // Future<void> submitOrder(Order order) async {
+  //   final data = _orderToMap(order);
+  //   await _remoteDataSource.submitOrder(data);
+  // }
 
-  Map<String, dynamic> _orderToMap(Order order) => {
-    'table_id': order.tableId,
-    'items': order.items
-        .map(
-          (item) => {
-            'menu_item_id': item.menuItem.itemId,
-            'quantity': item.quantity,
-            'notes': item.notes,
-            'addons': item.addons,
-          },
-        )
-        .toList(),
-    'subtotal': order.subtotal,
-    'tax': order.tax,
-    'total': order.total,
-  };
+  // Map<String, dynamic> _orderToMap(Order order) => {
+  //   'table_id': order.tableId,
+  //   'items': order.items
+  //       .map(
+  //         (item) => {
+  //           'menu_item_id': item.menuItem.itemId,
+  //           'quantity': item.quantity,
+  //           'notes': item.notes,
+  //           'addons': item.addons,
+  //         },
+  //       )
+  //       .toList(),
+  //   'subtotal': order.subtotal,
+  //   'tax': order.tax,
+  //   'total': order.total,
+  // };
 
   @override
   Future<ApiResult<BaseResponse<List<FloorModel>?>>> getFloors({
@@ -142,6 +142,34 @@ class PosRepositoryImpl implements PosRepository {
   Future<ApiResult<BaseResponse<SettingsModel?>>> getSettings() async {
     try {
       final response = await _remoteDataSource.getSettings();
+      return ApiResult.success(response);
+    } catch (e, s) {
+      log("$e\n$s");
+
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<dynamic>>> closeRestaurantPosSession({
+    required int sessionId,
+  }) async {
+    try {
+      final response = await _remoteDataSource.closeRestaurantPosSession(
+        sessionId: sessionId,
+      );
+      return ApiResult.success(response);
+    } catch (e, s) {
+      log("$e\n$s");
+
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<SessionModel?>>> getCurrentSession() async {
+    try {
+      final response = await _remoteDataSource.getCurrentSession();
       return ApiResult.success(response);
     } catch (e, s) {
       log("$e\n$s");

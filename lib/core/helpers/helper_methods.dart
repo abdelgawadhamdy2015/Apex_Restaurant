@@ -1,19 +1,19 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/service/dio_factory.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
-import 'package:apex_restaurant/core/shared/widgets/pos_toast.dart';
-import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
-import 'package:apex_restaurant/core/shared/widgets/toast_snack_bar.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
-import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'restaurant_constants.dart';
+import 'shared_prf_helper.dart';
+import '../router/routes.dart';
+import '../service/dio_factory.dart';
+import '../shared/model/base_response.dart';
+import '../shared/widgets/mytextfile.dart';
+import '../shared/widgets/pos_toast.dart';
+import '../shared/widgets/setup_dialog.dart';
+import '../shared/widgets/toast_snack_bar.dart';
+import '../../featchers/cart/data/models/pos_client_model.dart';
+import '../../featchers/cart/presentation/bloc/cart_bloc.dart';
+import '../../featchers/cart/presentation/bloc/cart_event.dart';
+import '../../featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
+import '../../featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../../featchers/pos/data/models/category_model.dart';
+import '../../featchers/pos/domain/entities/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -107,10 +107,10 @@ class HelperMethods {
   ) {
     final message = Intl.defaultLocale == RestaurantConstants.arabic
         ? response.errorMessageAr ??
-              response.alart?.messageAr ??
+              response.alert?.messageAr ??
               S.of(context).noDataFound
         : response.errorMessageEn ??
-              response.alart?.messageEn ??
+              response.alert?.messageEn ??
               S.of(context).noDataFound;
 
     final isAuthError =

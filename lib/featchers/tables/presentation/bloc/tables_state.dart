@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import '../../domain/entities/floor_entity.dart';
+import '../../domain/entities/reservation_entity.dart';
+import '../../domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
 
 enum TablesStatus { initial, loading, success, failure }

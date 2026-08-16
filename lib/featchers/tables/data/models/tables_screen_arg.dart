@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import '../../../cart/data/models/pos_client_model.dart';
 
 class TablesScreenArgs {
   final int branchId;

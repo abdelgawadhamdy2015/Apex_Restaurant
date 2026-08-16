@@ -1,11 +1,12 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/restaurant_constants.dart';
+import '../../../../core/shared/widgets/date_text_field.dart';
+import '../../../../core/themes/app_colors.dart';
+import '../../data/model/get_previous_invoice_request.dart';
+import '../bloc/orders_bloc.dart';
+import '../bloc/orders_event.dart';
+import '../bloc/orders_state.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -161,7 +162,23 @@ class OrdersSearchFilterCard extends StatelessWidget {
                 FetchPreviousInvoicesEvent(
                   request: GetPreviousInvoiceRequest(
                     pageNumber: 1,
-                    pageSize: 100,
+                    pageSize: kOrdersPageSize,
+                    invoiceCode: invoiceController.text.trim().isEmpty
+                        ? null
+                        : invoiceController.text.trim(),
+                    personName: customerController.text.trim().isEmpty
+                        ? null
+                        : customerController.text.trim(),
+                    fromDate: fromDateController.text.trim().isEmpty
+                        ? null
+                        : RestaurantConstants.dateTimeFormat.parse(
+                            fromDateController.text.trim(),
+                          ),
+                    toDate: toDateController.text.trim().isEmpty
+                        ? null
+                        : RestaurantConstants.dateTimeFormat.parse(
+                            toDateController.text.trim(),
+                          ),
                   ),
                 ),
               );

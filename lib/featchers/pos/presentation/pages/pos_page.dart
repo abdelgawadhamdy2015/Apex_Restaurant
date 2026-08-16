@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_menu_screen.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/layout/pos_tablet_menu_screen.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../bloc/pos_bloc.dart';
+import '../bloc/pos_event.dart';
+import '../bloc/pos_state.dart';
+import '../layout/pos_menu_screen.dart';
+import '../layout/pos_tablet_menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

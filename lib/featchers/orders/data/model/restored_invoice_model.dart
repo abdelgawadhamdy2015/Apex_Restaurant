@@ -4,9 +4,9 @@ part 'restored_invoice_model.g.dart';
 
 @JsonSerializable()
 class RestoredInvoiceModel {
-  final RestoredInvoiceDetailsModel? invoice;
-  final List<RestoredInvoiceItemModel>? items;
-  final List<RestoredInvoicePaymentModel>? payments;
+  final RestoredInvoiceInfo? invoice;
+  final List<RestoredInvoiceItem>? items;
+  final List<RestoredInvoicePayment>? payments;
 
   const RestoredInvoiceModel({this.invoice, this.items, this.payments});
 
@@ -17,11 +17,12 @@ class RestoredInvoiceModel {
 }
 
 @JsonSerializable()
-class RestoredInvoiceDetailsModel {
+class RestoredInvoiceInfo {
   final int? invoiceId;
+  final int? invoiceDiscountId;
   final int? orderNumber;
   final String? invoiceCode;
-  final String? invoiceDate;
+  final DateTime? invoiceDate;
   final int? posType;
 
   final int? foodTableId;
@@ -45,13 +46,13 @@ class RestoredInvoiceDetailsModel {
   final String? clientLatinName;
 
   final int? personAddressId;
-  final String? address;
+  final RestoredAddress? address;
 
   final int? personPhoneId;
-  final String? phone;
+  final RestoredPhone? phone;
 
   final String? notes;
-  final dynamic invoiceDiscount;
+  final RestoredInvoiceDiscount? invoiceDiscount;
 
   final double? totalInvoicePrice;
   final double? paidAmount;
@@ -61,14 +62,17 @@ class RestoredInvoiceDetailsModel {
   final double? dineInCost;
   final double? tobaccoTax;
 
-  final RestoredInvoiceClientModel? client;
-  final dynamic waiter;
-  final dynamic deliveryCompany;
-  final dynamic deliveryMan;
-  final dynamic foodTable;
+  final RestoredClient? client;
+  final RestoredWaiter? waiter;
+  final RestoredDeliveryCompany? deliveryCompany;
+  final RestoredDeliveryMan? deliveryMan;
+  final RestoredFoodTable? foodTable;
 
-  const RestoredInvoiceDetailsModel({
+  final int? voucherId;
+
+  const RestoredInvoiceInfo({
     this.invoiceId,
+    this.invoiceDiscountId,
     this.orderNumber,
     this.invoiceCode,
     this.invoiceDate,
@@ -106,30 +110,203 @@ class RestoredInvoiceDetailsModel {
     this.deliveryCompany,
     this.deliveryMan,
     this.foodTable,
+    this.voucherId,
   });
 
-  factory RestoredInvoiceDetailsModel.fromJson(Map<String, dynamic> json) =>
-      _$RestoredInvoiceDetailsModelFromJson(json);
+  factory RestoredInvoiceInfo.fromJson(Map<String, dynamic> json) =>
+      _$RestoredInvoiceInfoFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RestoredInvoiceDetailsModelToJson(this);
+  Map<String, dynamic> toJson() => _$RestoredInvoiceInfoToJson(this);
 }
 
 @JsonSerializable()
-class RestoredInvoiceClientModel {
+class RestoredAddress {
+  final int? id;
+  final String? addressLineAr;
+  final String? addressLineEn;
+  final String? city;
+  final String? street;
+  final String? district;
+  final String? buildingNo;
+  final String? floor;
+  final String? apartmentNo;
+  final String? landmark;
+  final bool? isDefault;
+  final int? personsId;
+  final bool? isDeleted;
+  final dynamic persons;
+
+  const RestoredAddress({
+    this.id,
+    this.addressLineAr,
+    this.addressLineEn,
+    this.city,
+    this.street,
+    this.district,
+    this.buildingNo,
+    this.floor,
+    this.apartmentNo,
+    this.landmark,
+    this.isDefault,
+    this.personsId,
+    this.isDeleted,
+    this.persons,
+  });
+
+  factory RestoredAddress.fromJson(Map<String, dynamic> json) =>
+      _$RestoredAddressFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredAddressToJson(this);
+}
+
+@JsonSerializable()
+class RestoredPhone {
+  const RestoredPhone();
+
+  factory RestoredPhone.fromJson(Map<String, dynamic> json) =>
+      _$RestoredPhoneFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredPhoneToJson(this);
+}
+
+@JsonSerializable()
+class RestoredInvoiceDiscount {
   final int? id;
   final String? arabicName;
   final String? latinName;
+  final int? discountType;
+  final int? discountNatural;
+  final double? discountValue;
+  final bool? isAutomatic;
 
-  const RestoredInvoiceClientModel({this.id, this.arabicName, this.latinName});
+  const RestoredInvoiceDiscount({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.discountType,
+    this.discountNatural,
+    this.discountValue,
+    this.isAutomatic,
+  });
 
-  factory RestoredInvoiceClientModel.fromJson(Map<String, dynamic> json) =>
-      _$RestoredInvoiceClientModelFromJson(json);
+  factory RestoredInvoiceDiscount.fromJson(Map<String, dynamic> json) =>
+      _$RestoredInvoiceDiscountFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RestoredInvoiceClientModelToJson(this);
+  Map<String, dynamic> toJson() => _$RestoredInvoiceDiscountToJson(this);
 }
 
 @JsonSerializable()
-class RestoredInvoiceItemModel {
+class RestoredClient {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredClient({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredClient.fromJson(Map<String, dynamic> json) =>
+      _$RestoredClientFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredClientToJson(this);
+}
+
+@JsonSerializable()
+class RestoredWaiter {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredWaiter({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredWaiter.fromJson(Map<String, dynamic> json) =>
+      _$RestoredWaiterFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredWaiterToJson(this);
+}
+
+@JsonSerializable()
+class RestoredDeliveryCompany {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredDeliveryCompany({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredDeliveryCompany.fromJson(Map<String, dynamic> json) =>
+      _$RestoredDeliveryCompanyFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredDeliveryCompanyToJson(this);
+}
+
+@JsonSerializable()
+class RestoredDeliveryMan {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredDeliveryMan({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredDeliveryMan.fromJson(Map<String, dynamic> json) =>
+      _$RestoredDeliveryManFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredDeliveryManToJson(this);
+}
+
+@JsonSerializable()
+class RestoredFoodTable {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredFoodTable({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredFoodTable.fromJson(Map<String, dynamic> json) =>
+      _$RestoredFoodTableFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredFoodTableToJson(this);
+}
+
+@JsonSerializable()
+class RestoredInvoiceItem {
   final int? transactionId;
   final int? parentTransactionId;
 
@@ -146,15 +323,16 @@ class RestoredInvoiceItemModel {
   final double? price;
   final String? notes;
 
-  final dynamic itemDiscount;
-  final List<dynamic>? additives;
+  final RestoredItemDiscount? itemDiscount;
+  final List<RestoredInvoiceAdditive>? additives;
 
-  final RestoredInvoiceItemInfoModel? item;
-  final dynamic size;
+  final RestoredItem? item;
+  final RestoredSize? size;
+
   final dynamic additive;
   final int? foodAdditiveId;
 
-  const RestoredInvoiceItemModel({
+  const RestoredInvoiceItem({
     this.transactionId,
     this.parentTransactionId,
     this.itemId,
@@ -175,69 +353,146 @@ class RestoredInvoiceItemModel {
     this.foodAdditiveId,
   });
 
-  factory RestoredInvoiceItemModel.fromJson(Map<String, dynamic> json) =>
-      _$RestoredInvoiceItemModelFromJson(json);
+  factory RestoredInvoiceItem.fromJson(Map<String, dynamic> json) =>
+      _$RestoredInvoiceItemFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RestoredInvoiceItemModelToJson(this);
+  Map<String, dynamic> toJson() => _$RestoredInvoiceItemToJson(this);
 }
 
 @JsonSerializable()
-class RestoredInvoiceItemInfoModel {
+class RestoredItemDiscount {
   final int? id;
   final String? arabicName;
   final String? latinName;
+  final int? discountType;
+  final int? discountNatural;
+  final double? discountValue;
+  final bool? isAutomatic;
 
-  const RestoredInvoiceItemInfoModel({
+  const RestoredItemDiscount({
     this.id,
     this.arabicName,
     this.latinName,
+    this.discountType,
+    this.discountNatural,
+    this.discountValue,
+    this.isAutomatic,
   });
 
-  factory RestoredInvoiceItemInfoModel.fromJson(Map<String, dynamic> json) =>
-      _$RestoredInvoiceItemInfoModelFromJson(json);
+  factory RestoredItemDiscount.fromJson(Map<String, dynamic> json) =>
+      _$RestoredItemDiscountFromJson(json);
 
-  Map<String, dynamic> toJson() => _$RestoredInvoiceItemInfoModelToJson(this);
+  Map<String, dynamic> toJson() => _$RestoredItemDiscountToJson(this);
 }
 
 @JsonSerializable()
-class RestoredInvoicePaymentModel {
-  final int? paymentMethodId;
+class RestoredInvoiceAdditive {
+  final int? additiveId;
   final String? arabicName;
   final String? latinName;
+  final String? imagePath;
+
+  final double? quantity;
+  final double? price;
+
+  final RestoredAdditive? additive;
+
+  final int? transactionId;
+  final int? parentTransactionId;
+
+  const RestoredInvoiceAdditive({
+    this.additiveId,
+    this.arabicName,
+    this.latinName,
+    this.imagePath,
+    this.quantity,
+    this.price,
+    this.additive,
+    this.transactionId,
+    this.parentTransactionId,
+  });
+
+  factory RestoredInvoiceAdditive.fromJson(Map<String, dynamic> json) =>
+      _$RestoredInvoiceAdditiveFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredInvoiceAdditiveToJson(this);
+}
+
+@JsonSerializable()
+class RestoredAdditive {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredAdditive({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredAdditive.fromJson(Map<String, dynamic> json) =>
+      _$RestoredAdditiveFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredAdditiveToJson(this);
+}
+
+@JsonSerializable()
+class RestoredItem {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredItem({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredItem.fromJson(Map<String, dynamic> json) =>
+      _$RestoredItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredItemToJson(this);
+}
+
+@JsonSerializable()
+class RestoredSize {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+
+  const RestoredSize({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+  });
+
+  factory RestoredSize.fromJson(Map<String, dynamic> json) =>
+      _$RestoredSizeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredSizeToJson(this);
+}
+
+@JsonSerializable()
+class RestoredInvoicePayment {
+  final int? paymentMethodId;
   final double? amount;
 
-  final RestoredInvoicePaymentMethodModel? paymentMethod;
+  const RestoredInvoicePayment({this.paymentMethodId, this.amount});
 
-  const RestoredInvoicePaymentModel({
-    this.paymentMethodId,
-    this.arabicName,
-    this.latinName,
-    this.amount,
-    this.paymentMethod,
-  });
+  factory RestoredInvoicePayment.fromJson(Map<String, dynamic> json) =>
+      _$RestoredInvoicePaymentFromJson(json);
 
-  factory RestoredInvoicePaymentModel.fromJson(Map<String, dynamic> json) =>
-      _$RestoredInvoicePaymentModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$RestoredInvoicePaymentModelToJson(this);
-}
-
-@JsonSerializable()
-class RestoredInvoicePaymentMethodModel {
-  final int? id;
-  final String? arabicName;
-  final String? latinName;
-
-  const RestoredInvoicePaymentMethodModel({
-    this.id,
-    this.arabicName,
-    this.latinName,
-  });
-
-  factory RestoredInvoicePaymentMethodModel.fromJson(
-    Map<String, dynamic> json,
-  ) => _$RestoredInvoicePaymentMethodModelFromJson(json);
-
-  Map<String, dynamic> toJson() =>
-      _$RestoredInvoicePaymentMethodModelToJson(this);
+  Map<String, dynamic> toJson() => _$RestoredInvoicePaymentToJson(this);
 }

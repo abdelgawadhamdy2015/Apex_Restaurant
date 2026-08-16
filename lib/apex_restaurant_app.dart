@@ -1,15 +1,16 @@
-import 'package:apex_restaurant/core/di/debandancy_injection.dart';
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/helpers/size_helper.dart';
-import 'package:apex_restaurant/core/router/router.dart';
-import 'package:apex_restaurant/core/settings/app_accent_colors.dart';
-import 'package:apex_restaurant/core/settings/settings_cubit.dart';
-import 'package:apex_restaurant/core/settings/settings_state.dart';
-import 'package:apex_restaurant/core/themes/app_theme.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import 'core/di/debandancy_injection.dart';
+import 'core/helpers/restaurant_constants.dart';
+import 'core/helpers/size_helper.dart';
+import 'core/router/router.dart';
+import 'core/settings/app_accent_colors.dart';
+import 'core/settings/settings_cubit.dart';
+import 'core/settings/settings_state.dart';
+import 'core/themes/app_theme.dart';
+import 'featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'featchers/home/presentation/bloc/home_bloc.dart';
+import 'featchers/payment/presentation/bloc/payment_bloc.dart';
+import 'featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,7 +61,7 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
         BlocProvider<CartBloc>(create: (_) => getIt<CartBloc>()),
         BlocProvider<HomeBloc>(create: (_) => getIt<HomeBloc>()),
         BlocProvider<PosBloc>(create: (_) => getIt<PosBloc>()),
-
+        BlocProvider(create: (_) => getIt<PaymentBloc>()),
         BlocProvider<SettingsCubit>(create: (_) => getIt<SettingsCubit>()),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(

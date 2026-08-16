@@ -1,13 +1,14 @@
-import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/enums/pos_order_type.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
+import '../../../../core/shared/contracts/errorable_state.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../data/enums/pos_order_type.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/delivery_company.dart';
+import '../../data/models/floor_model.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../domain/entities/get_items_request_model.dart';
+import '../../domain/entities/menu_item.dart';
+import '../../../tables/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
 
 enum PosStatus { initial, loading, loaded, error, submitting, submitted }
@@ -28,13 +29,25 @@ class PosState extends Equatable implements ErrorableState {
   final List<RestaurantItem> currentMenuItems;
   final OrderItem? selectedOrderItem;
 
-  final Order currentOrder;
+  /// Pagination state for [currentMenuItems].
+  final int itemsPageNumber;
+  final bool hasMoreItems;
+  final bool isLoadingMoreItems;
+
+  /// The filter fields (category/search/etc.) currently applied to the
+  /// items grid — reused when requesting the next page via
+  /// [LoadMoreItemsEvent].
+  final GetItemsRequest? currentItemsRequest;
+
   final String? errorMessage;
   final String? toastMessage;
   final bool isKitchenSent;
   final PosOrderType orderType;
   final FloorModel? selectedFloor;
   final TableModel? selectedTable;
+
+  // session
+  final int? currentSessionId;
   const PosState({
     this.status = PosStatus.initial,
     this.apiResponse,
@@ -44,7 +57,10 @@ class PosState extends Equatable implements ErrorableState {
     this.selectedCategory,
     this.currentMenuItems = const [],
     this.selectedOrderItem,
-    required this.currentOrder,
+    this.itemsPageNumber = 1,
+    this.hasMoreItems = true,
+    this.isLoadingMoreItems = false,
+    this.currentItemsRequest,
     this.errorMessage,
     this.toastMessage,
     this.isKitchenSent = false,
@@ -55,15 +71,14 @@ class PosState extends Equatable implements ErrorableState {
     this.tables = const [],
     this.additives,
     this.settings,
+    this.currentSessionId,
   });
 
   // ── ErrorableState contract ──
   @override
   bool get hasError => status == PosStatus.error;
 
-  factory PosState.initial() => PosState(
-    currentOrder: const Order(tableId: '12', items: []),
-  );
+  factory PosState.initial() => PosState();
 
   PosState copyWith({
     SettingsModel? settings,
@@ -78,7 +93,10 @@ class PosState extends Equatable implements ErrorableState {
     CategoryModel? selectedCategory,
     List<RestaurantItem>? currentMenuItems,
     OrderItem? selectedOrderItem,
-    Order? currentOrder,
+    int? itemsPageNumber,
+    bool? hasMoreItems,
+    bool? isLoadingMoreItems,
+    GetItemsRequest? currentItemsRequest,
     String? errorMessage,
     String? toastMessage,
     bool clearToast = false,
@@ -86,6 +104,8 @@ class PosState extends Equatable implements ErrorableState {
     PosOrderType? orderType,
     TableModel? selectedTable,
     FloorModel? selectedFloor,
+    int? currentSessionId,
+    bool clear = false,
   }) {
     return PosState(
       settings: settings ?? this.settings,
@@ -98,7 +118,10 @@ class PosState extends Equatable implements ErrorableState {
           selectedDeliveryCompany ?? this.selectedDeliveryCompany,
       currentMenuItems: currentMenuItems ?? this.currentMenuItems,
       selectedOrderItem: selectedOrderItem ?? this.selectedOrderItem,
-      currentOrder: currentOrder ?? this.currentOrder,
+      itemsPageNumber: itemsPageNumber ?? this.itemsPageNumber,
+      hasMoreItems: hasMoreItems ?? this.hasMoreItems,
+      isLoadingMoreItems: isLoadingMoreItems ?? this.isLoadingMoreItems,
+      currentItemsRequest: currentItemsRequest ?? this.currentItemsRequest,
       errorMessage: errorMessage ?? this.errorMessage,
       toastMessage: clearToast ? null : (toastMessage ?? this.toastMessage),
       isKitchenSent: isKitchenSent ?? this.isKitchenSent,
@@ -108,6 +131,9 @@ class PosState extends Equatable implements ErrorableState {
       floors: floors ?? this.floors,
       tables: tables ?? this.tables,
       additives: additives ?? this.additives,
+      currentSessionId: clear
+          ? currentSessionId
+          : currentSessionId ?? this.currentSessionId,
     );
   }
 
@@ -122,7 +148,9 @@ class PosState extends Equatable implements ErrorableState {
     selectedDeliveryCompany,
     currentMenuItems,
     selectedOrderItem,
-    currentOrder,
+    itemsPageNumber,
+    hasMoreItems,
+    isLoadingMoreItems,
     errorMessage,
     toastMessage,
     isKitchenSent,
@@ -131,5 +159,6 @@ class PosState extends Equatable implements ErrorableState {
     selectedFloor,
     floors,
     tables,
+    currentSessionId,
   ];
 }

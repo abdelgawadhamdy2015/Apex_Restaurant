@@ -1,12 +1,12 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
-import 'package:apex_restaurant/featchers/payment/domain/usecase/process_payment_usecase.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_state.dart';
+import '../../../../core/service/api_result.dart';
+import '../../data/model/payment_success_model.dart';
+import '../../domain/usecase/process_payment_usecase.dart';
+import 'payment_event.dart';
+import 'payment_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
-  final SaveRestaurantPosInvoice processPaymentUseCase;
+  final SavePaymentRestaurantPosInvoiceUseCase processPaymentUseCase;
 
   PaymentBloc({required this.processPaymentUseCase})
     : super(const PaymentState()) {
@@ -16,6 +16,9 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<UpdateReferenceNumberEvent>(_onUpdateReferenceNumber);
     on<UpdateSplitAmountEvent>(_onUpdateSplitAmount);
     on<SubmitPaymentEvent>(_onSubmitPayment);
+    on<ClearPaymentEvent>((event, emit) {
+      emit(state.copyWith(status: PaymentStatus.initial, successModel: null));
+    });
   }
 
   void _onInitializePayment(
@@ -66,7 +69,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   ) async {
     emit(state.copyWith(status: PaymentStatus.loading));
 
-    // Submit complete SaveInvoiceRequestModel to UseCase
+    // Submit complete SaveRestaurantPosInvoiceRequest to UseCase
     final result = await processPaymentUseCase(event.invoiceRequest);
 
     result.when(
@@ -85,16 +88,19 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         emit(
           state.copyWith(
             status: PaymentStatus.success,
+            successResponseModel: response.data,
             successModel: PaymentSuccessModel(
               orderNumber: response.result?.toString() ?? '',
               invoiceNumber: "",
-              totalPaid: event.invoiceRequest.invoice?.paidAmount ?? 0,
-              paymentMethodName:
-                  event.invoiceRequest.payments?.first.paymentMethodId
-                      .toString() ??
-                  '',
+              totalPaid: event.invoiceRequest.invoice.paidAmount,
+              paymentMethodName: event
+                  .invoiceRequest
+                  .payments
+                  .first
+                  .paymentMethodId
+                  .toString(),
               transactionTime: DateTime.now(),
-              items: event.invoiceRequest.items!
+              items: event.invoiceRequest.items
                   .map(
                     (item) => OrderItemModel(
                       name: item.itemId.toString(),

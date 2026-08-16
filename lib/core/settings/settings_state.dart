@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/settings/app_accent_colors.dart';
-import 'package:apex_restaurant/core/settings/app_font_scale.dart';
-import 'package:apex_restaurant/core/shared/enums/ui_enum.dart';
+import 'app_accent_colors.dart';
+import 'app_font_scale.dart';
+import '../shared/enums/ui_enum.dart';
 import 'package:flutter/material.dart' show ThemeMode;
 
 class SettingsState {

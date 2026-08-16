@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
+import '../../data/model/get_pinding_invoice.dart';
+import '../../data/model/get_previous_invoice_request.dart';
+import '../../data/model/order_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class OrdersEvent extends Equatable {
@@ -20,6 +20,11 @@ class FetchPindingInvoicesEvent extends OrdersEvent {
   const FetchPindingInvoicesEvent({this.request});
 }
 
+/// Fetches the next page of held/pending orders and appends it.
+class LoadMorePindingInvoicesEvent extends OrdersEvent {
+  const LoadMorePindingInvoicesEvent();
+}
+
 class ClearRestoredInvoiceEvent extends OrdersEvent {
   const ClearRestoredInvoiceEvent();
 }
@@ -27,6 +32,12 @@ class ClearRestoredInvoiceEvent extends OrdersEvent {
 class FetchPreviousInvoicesEvent extends OrdersEvent {
   final GetPreviousInvoiceRequest request;
   const FetchPreviousInvoicesEvent({required this.request});
+}
+
+/// Fetches the next page of previous orders (using the last-applied
+/// filters) and appends it.
+class LoadMorePreviousInvoicesEvent extends OrdersEvent {
+  const LoadMorePreviousInvoicesEvent();
 }
 
 class FetchRestaurantPosBookingTableEvent extends OrdersEvent {

@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
+import '../../../tables/domain/entities/floor_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'floor_model.g.dart';

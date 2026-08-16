@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import '../../../featchers/pos/presentation/bloc/pos_bloc.dart';
+import '../../../featchers/pos/presentation/bloc/pos_event.dart';
+import '../../../featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

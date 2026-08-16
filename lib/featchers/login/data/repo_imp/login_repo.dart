@@ -1,9 +1,9 @@
-import 'package:apex_restaurant/core/service/api_error_handler.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/login/data/datasource/auth_datasource.dart';
-import 'package:apex_restaurant/featchers/login/domain/repo/auth_repo.dart';
-import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
+import '../../../../core/service/api_error_handler.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../datasource/auth_datasource.dart';
+import '../../domain/repo/auth_repo.dart';
+import '../models/login_request_body.dart';
 
 import '../models/login_data.dart';
 

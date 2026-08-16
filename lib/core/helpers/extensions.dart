@@ -1,11 +1,11 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/service/api_error_handler.dart';
-import 'package:apex_restaurant/core/settings/settings_cubit.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/themes/app_button_theme.dart';
-import 'package:apex_restaurant/core/themes/app_icon_theme.dart';
-import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
-import 'package:apex_restaurant/core/themes/app_text_style.dart';
+import 'restaurant_constants.dart';
+import '../service/api_error_handler.dart';
+import '../settings/settings_cubit.dart';
+import '../shared/model/base_response.dart';
+import '../themes/app_button_theme.dart';
+import '../themes/app_icon_theme.dart';
+import '../themes/app_spacing_theme.dart';
+import '../themes/app_text_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -15,11 +15,11 @@ extension AlertMessageExt on BaseResponse {
     final isArabic = Intl.defaultLocale == RestaurantConstants.arabic;
 
     return isArabic
-        ? alart?.messageAr ??
+        ? alert?.messageAr ??
               (isSuccess
                   ? "تم الحفظ بنجاح"
                   : "فشل الحفظ. يرجى المحاولة مرة أخرى.")
-        : alart?.messageEn ??
+        : alert?.messageEn ??
               (isSuccess
                   ? "Saved successfully"
                   : "Failed to save. Please try again.");

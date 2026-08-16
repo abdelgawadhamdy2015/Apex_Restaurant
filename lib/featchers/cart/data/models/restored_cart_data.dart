@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import '../enums/cart_enum.dart';
+import 'invoice_request.dart';
+import 'pos_client_model.dart';
+import 'waiter_model.dart';
+import '../../../pos/data/models/delivery_company.dart';
+import '../../../pos/domain/entities/menu_item.dart';
+import '../../../tables/domain/entities/table_entity.dart';
 
 class RestoredCartData {
   final List<OrderItem> items;
@@ -14,7 +14,7 @@ class RestoredCartData {
   final WaiterModel? deliveryMan;
   final DeliveryCompanyModel? deliveryCompany;
   final TableEntity? table;
-  final SaveDiscountModel? saveDiscountModel;
+  final RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
 
   const RestoredCartData({
     required this.items,
@@ -24,6 +24,6 @@ class RestoredCartData {
     this.deliveryMan,
     this.deliveryCompany,
     this.table,
-    this.saveDiscountModel,
+    this.restaurantPosDiscountRequest,
   });
 }

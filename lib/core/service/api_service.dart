@@ -1,36 +1,37 @@
-import 'package:apex_restaurant/core/service/api_constants.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
-import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
-import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
-import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
-import 'package:apex_restaurant/featchers/login/data/models/login_request_body.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/get_previous_invoice_request.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/floor_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/reservations_data.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
+import 'api_constants.dart';
+import '../shared/entity/base_request.dart';
+import '../shared/model/base_response.dart';
+import '../shared/model/settings_model.dart';
+import '../../featchers/cart/data/models/discount_result_model.dart';
+import '../../featchers/cart/data/models/dynamic_discount.dart';
+import '../../featchers/cart/data/models/get_client_request.dart';
+import '../../featchers/cart/data/models/invoice_request.dart';
+import '../../featchers/cart/data/models/pos_client_model.dart';
+import '../../featchers/cart/data/models/client_request_model.dart';
+import '../../featchers/cart/data/models/waiter_model.dart';
+import '../../featchers/home/data/models/employee_branch.dart';
+import '../../featchers/home/data/models/session_model.dart';
+import '../../featchers/home/data/models/user_data_model.dart';
+import '../../featchers/login/data/models/login_data.dart';
+import '../../featchers/login/data/models/login_request_body.dart';
+import '../../featchers/orders/data/model/get_pinding_invoice.dart';
+import '../../featchers/orders/data/model/get_previous_invoice_request.dart';
+import '../../featchers/orders/data/model/pinding_invoice_model.dart';
+import '../../featchers/orders/data/model/previous_invoice_model.dart';
+import '../../featchers/orders/data/model/restored_invoice_model.dart';
+import '../../featchers/payment/data/model/success_response_model.dart';
+import '../../featchers/pos/data/models/category_model.dart';
+import '../../featchers/pos/data/models/delivery_company.dart';
+import '../../featchers/pos/data/models/floor_model.dart';
+import '../../featchers/pos/data/models/restaurant_item.dart';
+import '../../featchers/pos/domain/entities/get_food_additive_request.dart';
+import '../../featchers/pos/domain/entities/get_items_request_model.dart';
+import '../../featchers/tables/data/models/get_floor_request.dart';
+import '../../featchers/tables/data/models/get_reservations_request.dart';
+import '../../featchers/tables/data/models/get_table_request.dart';
+import '../../featchers/tables/data/models/reservation_requests.dart';
+import '../../featchers/tables/data/models/reservations_data.dart';
+import '../../featchers/tables/data/models/table_model.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart' hide Headers;
 part 'api_service.g.dart';
@@ -44,6 +45,13 @@ abstract class ApiService {
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
   @GET(ApiConstants.openRestaurantPosSession)
   Future<BaseResponse<SessionModel?>> openRestaurantPosSession();
+  @GET(ApiConstants.currentPOSsession)
+  Future<BaseResponse<SessionModel?>> currentPOSsession();
+  @POST("${ApiConstants.closePOSSeassion}/{sessionId}")
+  Future<BaseResponse<void>> closeRestaurantPosSession(
+    @Path("sessionId") int sessionId,
+  );
+
   @GET(ApiConstants.getSettings)
   Future<BaseResponse<SettingsModel?>> getSettings();
   @GET("${ApiConstants.getUserData}/{id}")
@@ -64,7 +72,7 @@ abstract class ApiService {
     @Queries() GetTablesRequest request,
   );
 
-  @GET(ApiConstants.getAllItems)
+  @GET(ApiConstants.getRestaurantItemsPOS)
   Future<BaseResponse<List<RestaurantItem>?>> getItemsByCategory(
     @Queries() GetItemsRequest request,
   );
@@ -125,18 +133,18 @@ abstract class ApiService {
   );
 
   @POST(ApiConstants.saveRestaurantPosInvoice)
-  Future<BaseResponse<dynamic>> saveRestaurantPosInvoice(
-    @Body() SaveInvoiceRequestModel request,
+  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
+    @Body() SaveRestaurantPosInvoiceRequest request,
   );
 
   @POST(ApiConstants.savePendingRestaurantPosInvoice)
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
-    @Body() SaveInvoiceRequestModel request,
+    @Body() SaveRestaurantPosInvoiceRequest request,
   );
 
   @POST(ApiConstants.saveBookingTableRestaurantPosInvoice)
   Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
-    @Body() SaveInvoiceRequestModel request,
+    @Body() SaveRestaurantPosInvoiceRequest request,
   );
 
   @GET(ApiConstants.getPendingRestaurantPosInvoiceDetails)
@@ -147,6 +155,11 @@ abstract class ApiService {
   @GET(ApiConstants.getPosInvoiceDataById)
   Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     @Query('InvoiceId') int invoiceId,
+  );
+
+  @GET(ApiConstants.getItemById)
+  Future<BaseResponse<RestoredInvoiceModel?>> getItemById(
+    @Query('Id') int itemId,
   );
 
   @GET(ApiConstants.getRestaurantPosBookingTable)
@@ -165,4 +178,9 @@ abstract class ApiService {
   @GET(ApiConstants.getDynamicInvoiceDiscounts)
   Future<BaseResponse<List<DynamicDiscountModel>?>>
   getDynamicInvoiceDiscounts();
+
+  @DELETE(ApiConstants.deletetPendingInvoiceAndBokkingTable)
+  Future<BaseResponse<UserDataModel?>> deletetPendingInvoiceAndBokkingTable(
+    @Query("Id") int id,
+  );
 }

@@ -1,7 +1,7 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/gen/assets.gen.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/router/routes.dart';
+import '../../../../core/themes/app_colors.dart';
+import '../../../../gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import '../../helpers/restaurant_constants.dart';
 import 'package:flutter/material.dart';
 
 class BodyContainer extends StatelessWidget {

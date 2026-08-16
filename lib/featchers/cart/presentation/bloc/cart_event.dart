@@ -1,19 +1,19 @@
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/restored_cart_data.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../data/enums/cart_enum.dart';
+import '../../data/models/client_request_model.dart';
+import '../../data/models/get_client_request.dart';
+import '../../data/models/invoice_request.dart';
+import '../../data/models/pos_client_model.dart';
+import '../../data/models/restored_cart_data.dart';
+import '../../data/models/waiter_model.dart';
+import '../../../pos/data/models/category_model.dart';
+import '../../../pos/data/models/delivery_company.dart';
+import '../../../pos/data/models/restaurant_item.dart';
+import '../../../pos/domain/entities/menu_item.dart';
+import '../../../tables/data/models/get_floor_request.dart';
+import '../../../tables/data/models/get_table_request.dart';
+import '../../../tables/domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
 
 import 'cart_state.dart';
@@ -168,11 +168,11 @@ class ChangeDiscountTypeEvent extends CartEvent {
 }
 
 class ApplyDiscountEvent extends CartEvent {
-  final SaveDiscountModel? saveDiscountModel;
-  const ApplyDiscountEvent({this.saveDiscountModel});
+  final RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
+  const ApplyDiscountEvent({this.restaurantPosDiscountRequest});
 
   @override
-  List<Object?> get props => [saveDiscountModel];
+  List<Object?> get props => [RestaurantPosDiscountRequest];
 }
 
 class ApplyCouponDiscountEvent extends CartEvent {
@@ -233,14 +233,14 @@ class LoadDeliveryCompaniesEvent extends CartEvent {
 }
 
 class HoldOrderEvent extends CartEvent {
-  final SaveInvoiceRequestModel request;
+  final SaveRestaurantPosInvoiceRequest request;
   const HoldOrderEvent({required this.request});
   @override
   List<Object?> get props => [request];
 }
 
 class SaveTableOrderEvent extends CartEvent {
-  final SaveInvoiceRequestModel request;
+  final SaveRestaurantPosInvoiceRequest request;
   const SaveTableOrderEvent({required this.request});
   @override
   List<Object?> get props => [request];

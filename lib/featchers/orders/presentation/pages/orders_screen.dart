@@ -1,20 +1,21 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/cart_screen_args.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
-import 'package:apex_restaurant/featchers/orders/domain/mapper/restored_invoice_mapper.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_state.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/widgets/held_order_expandable_card.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/widgets/held_orders_summary_card.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/widgets/orders_search_filter_card.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/widgets/orders_segmented_tab.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/widgets/previous_order_card.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/router/routes.dart';
+import '../../../../core/shared/widgets/custom_app_bar.dart';
+import '../../../cart/data/models/cart_screen_args.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../../data/model/get_previous_invoice_request.dart';
+import '../../data/model/order_model.dart';
+import '../../domain/mapper/restored_invoice_mapper.dart';
+import '../bloc/orders_bloc.dart';
+import '../bloc/orders_event.dart';
+import '../bloc/orders_state.dart';
+import '../widgets/held_order_expandable_card.dart';
+import '../widgets/held_orders_summary_card.dart';
+import '../widgets/orders_search_filter_card.dart';
+import '../widgets/orders_segmented_tab.dart';
+import '../widgets/previous_order_card.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -31,9 +32,45 @@ class _OrdersScreenState extends State<OrdersScreen> {
   final TextEditingController _customerController = TextEditingController();
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    // Initial load for the default (previous orders) tab.
+    context.read<OrdersBloc>().add(
+      const FetchPreviousInvoicesEvent(
+        request: GetPreviousInvoiceRequest(
+          pageNumber: 1,
+          pageSize: kOrdersPageSize,
+        ),
+      ),
+    );
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    // Trigger a bit before the actual bottom for a smoother feel.
+    if (position.pixels < position.maxScrollExtent - 200) return;
+
+    final state = context.read<OrdersBloc>().state;
+    if (state.activeTab == OrderTab.previous) {
+      if (!state.isLoadingMorePrevious && state.previousOrdersHasMore) {
+        context.read<OrdersBloc>().add(const LoadMorePreviousInvoicesEvent());
+      }
+    } else {
+      if (!state.isLoadingMorePinding && state.pindingInvoicesHasMore) {
+        context.read<OrdersBloc>().add(const LoadMorePindingInvoicesEvent());
+      }
+    }
+  }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     _invoiceController.dispose();
     _customerController.dispose();
     _fromDateController.dispose();
@@ -76,6 +113,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         builder: (context, state) {
           return SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollController,
               padding: EdgeInsets.all(spacing.md),
               child: Column(
                 children: [
@@ -96,6 +134,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ...state.previousOrders.map(
                       (order) => PreviousOrderCard(order: order, l10n: lang),
                     ),
+                    if (state.isLoadingMorePrevious)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: spacing.md),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
                   ] else ...[
                     // Total Held Orders Header Widget
                     HeldOrdersSummaryCard(
@@ -108,6 +151,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       (order) =>
                           HeldOrderExpandableCard(order: order, l10n: lang),
                     ),
+                    if (state.isLoadingMorePinding)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: spacing.md),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
                   ],
                 ],
               ),

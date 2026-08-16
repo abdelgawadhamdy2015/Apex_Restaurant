@@ -1,8 +1,8 @@
-import 'package:apex_restaurant/core/service/api_service.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
-import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
-import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
+import '../../../../core/service/api_service.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../models/employee_branch.dart';
+import '../models/session_model.dart';
+import '../models/user_data_model.dart';
 
 abstract class HomeDatasource {
   Future<BaseResponse<List<EmployeeBranch>?>> getEmployeeBranches();

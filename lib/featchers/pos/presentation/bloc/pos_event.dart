@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/featchers/tables/data/models/table_model.dart';
+import '../../../tables/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
 
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import '../../data/models/category_model.dart';
+import '../../domain/entities/get_food_additive_request.dart';
+import '../../domain/entities/get_items_request_model.dart';
+import '../../domain/entities/menu_item.dart';
 
 abstract class PosEvent extends Equatable {
   const PosEvent();
@@ -23,10 +23,23 @@ class LoadSettingsEvent extends PosEvent {
 
 class LoadItemsEvent extends PosEvent {
   final GetItemsRequest? requestModel;
-  const LoadItemsEvent(this.requestModel);
+
+  /// When true, appends the next page onto [PosState.currentMenuItems]
+  /// instead of replacing it. When false (default), resets pagination
+  /// and loads page 1.
+  final bool loadMore;
+
+  const LoadItemsEvent(this.requestModel, {this.loadMore = false});
 
   @override
-  List<Object?> get props => [requestModel];
+  List<Object?> get props => [requestModel, loadMore];
+}
+
+/// Fetches the next page of items for whatever filters are currently
+/// active in [PosState.currentItemsRequest]. No-ops if there is no
+/// more data or a page fetch is already in flight.
+class LoadMoreItemsEvent extends PosEvent {
+  const LoadMoreItemsEvent();
 }
 
 class LoadFoodAdditivesEvent extends PosEvent {
@@ -62,40 +75,8 @@ class UpdateItemAddonsEvent extends PosEvent {
   List<Object?> get props => [item, addons];
 }
 
-class RemoveItemFromOrderEvent extends PosEvent {
-  final String itemId;
-  const RemoveItemFromOrderEvent(this.itemId);
-
-  @override
-  List<Object?> get props => [itemId];
-}
-
-class IncrementItemEvent extends PosEvent {
-  final int itemId;
-  const IncrementItemEvent(this.itemId);
-
-  @override
-  List<Object?> get props => [itemId];
-}
-
-class DecrementItemEvent extends PosEvent {
-  final int itemId;
-  const DecrementItemEvent(this.itemId);
-
-  @override
-  List<Object?> get props => [itemId];
-}
-
 class SendToKitchenEvent extends PosEvent {
   const SendToKitchenEvent();
-}
-
-class PayOrderEvent extends PosEvent {
-  const PayOrderEvent();
-}
-
-class CancelOrderEvent extends PosEvent {
-  const CancelOrderEvent();
 }
 
 class ShowToastEvent extends PosEvent {
@@ -116,4 +97,19 @@ class SelectTableEvent extends PosEvent {
 
   @override
   List<Object?> get props => [table];
+}
+
+class CloseRestaurantPosSessionEvent extends PosEvent {
+  final int sessionId;
+  const CloseRestaurantPosSessionEvent({required this.sessionId});
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
+class CurrentRestaurantPosSessionEvent extends PosEvent {
+  const CurrentRestaurantPosSessionEvent();
+
+  @override
+  List<Object?> get props => [];
 }

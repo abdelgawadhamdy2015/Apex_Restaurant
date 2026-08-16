@@ -14,6 +14,11 @@ class ApiConstants {
       "api/Restaurants/RestaurantPos/OpenRestaurantPos";
   static const String openRestaurantPosSession =
       "api/Restaurants/RestaurantPos/OpenRestaurantPosSession";
+  static const String closePOSSeassion =
+      "api/Store/POSSession/ClosePOSSeassion";
+  static const String currentPOSsession =
+      "api/Store/POSSession/currentPOSsession";
+
   static const String getAllFloors = "api/Restaurants/Floors/GetAllFloors";
   static const String getAllFoodTables =
       "api/Restaurants/FoodTables/GetAllFoodTables";
@@ -31,7 +36,7 @@ class ApiConstants {
 
   static const String getAllCategoriesDropDown =
       "api/Restaurants/RestaurantPos/GetRestaurantCategoryPOS";
-  static const String getAllItems =
+  static const String getRestaurantItemsPOS =
       "api/Restaurants/RestaurantPos/GetRestaurantItemsPOS";
   static const String getAllDeliveryAgents = '/api/DeliveryAgent/GetAll';
   static const String getAllDeliveryCompany =
@@ -56,10 +61,14 @@ class ApiConstants {
       "api/Restaurants/RestaurantPos/SavePendingRestaurantPosInvoice";
   static const String saveBookingTableRestaurantPosInvoice =
       "api/Restaurants/RestaurantPos/SaveBookingTableRestaurantPosInvoice";
+  static const String deletetPendingInvoiceAndBokkingTable =
+      "api/Restaurants/RestaurantPos/DeletetPendingInvoiceAndBokkingTable";
+
   static const String getListPosInvoiceData =
       "api/Restaurants/RestaurantPos/GetListPosInvoiceData";
   static const String getPosInvoiceDataById =
       "api/Restaurants/RestaurantPos/GetPosInvoiceDataById";
+  static const String getItemById = "api/Store/RestaurantItemCard/GetItemById";
 
   static const String getDynamicInvoiceDiscounts =
       "api/Restaurants/ItemDiscounts/GetInvoiceDiscounts";

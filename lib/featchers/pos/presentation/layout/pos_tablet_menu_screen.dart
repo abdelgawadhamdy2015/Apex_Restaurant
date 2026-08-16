@@ -1,10 +1,22 @@
-import 'package:apex_restaurant/featchers/cart/presentation/ui/layouts/cart_tablet_screen.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../../core/helpers/transactionid_generator.dart';
+import '../../../cart/data/models/get_client_request.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../../../cart/presentation/bloc/cart_state.dart';
+import '../../../cart/presentation/ui/layouts/cart_tablet_screen.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../domain/entities/menu_item.dart';
+import '../bloc/pos_bloc.dart';
+import '../bloc/pos_event.dart';
+import '../bloc/pos_state.dart';
+import '../widgets/item_customization_sheet.dart';
+import '../widgets/pos_categories_bar.dart';
+import '../widgets/pos_filters_bar.dart';
+import '../widgets/pos_menu_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_categories_bar.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_filters_bar.dart';
 
 class PosTabletMenuScreen extends StatefulWidget {
   const PosTabletMenuScreen({super.key});
@@ -15,8 +27,45 @@ class PosTabletMenuScreen extends StatefulWidget {
 
 class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   int _selectedFilterIndex = 0;
-  int? _selectedCategoryId;
   int _selectedNavIndex = 0;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // PosTabletMenuScreen is rendered directly by PosPage (not nested under
+    // PosMenuScreen/MenuScreen like the mobile flow), so it needs to kick
+    // off the same cart bootstrap data itself.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
+      context.read<CartBloc>().add(
+        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
+      );
+    });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final nearBottom =
+        _scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300;
+    if (!nearBottom) return;
+
+    final posState = context.read<PosBloc>().state;
+    if (posState.hasMoreItems &&
+        !posState.isLoadingMoreItems &&
+        posState.status != PosStatus.loading) {
+      context.read<PosBloc>().add(const LoadMoreItemsEvent());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,57 +79,65 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
         textDirection: TextDirection.rtl,
         child: Row(
           children: [
-            // 1. Right Navigation Rail (In RTL view: far right side)
             _buildSideNavigationRail(theme, isDark),
 
-            // 2. Main Content Area (Categories, Filters & Food Grid)
             Expanded(
               flex: 3,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: BlocBuilder<PosBloc, PosState>(
-                      builder: (context, posState) {
-                        return Column(
-                          children: [
-                            const SizedBox(height: 12),
-                            PosCategoriesBar(
-                              categories: posState.categories,
-                              selectedCategoryId: _selectedCategoryId,
-                              onCategorySelected: (cat) {
-                                setState(() {
-                                  _selectedCategoryId = cat.id;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            PosFiltersBar(
-                              selectedIndex: _selectedFilterIndex,
-                              onSelected: (index) {
-                                setState(() {
-                                  _selectedFilterIndex = index;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            Expanded(child: _buildProductGrid(posState, theme)),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ],
+              child: BlocConsumer<PosBloc, PosState>(
+                listener: (context, state) {
+                  if (state.toastMessage != null) {
+                    HelperMethods.showSnackBar(
+                      context: context,
+                      message: state.toastMessage!,
+                      isError: false,
+                    );
+                    context.read<PosBloc>().add(const DismissToastEvent());
+                  }
+                },
+                builder: (context, posState) {
+                  final cartState = context.watch<CartBloc>().state;
+                  return Column(
+                    children: [
+                      const SizedBox(height: 12),
+                      PosCategoriesBar(
+                        categories: posState.categories,
+                        selectedCategoryId: posState.selectedCategory?.id,
+                        onCategorySelected: (cat) {
+                          if (_scrollController.hasClients) {
+                            _scrollController.jumpTo(0);
+                          }
+                          context.read<PosBloc>().add(SelectCategoryEvent(cat));
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      PosFiltersBar(
+                        selectedIndex: _selectedFilterIndex,
+                        onSelected: (index) {
+                          setState(() {
+                            _selectedFilterIndex = index;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child:
+                            posState.status == PosStatus.loading &&
+                                posState.currentMenuItems.isEmpty
+                            ? const Center(child: CircularProgressIndicator())
+                            : _buildProductGrid(posState, cartState, theme),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
 
-            // Vertical Divider
             VerticalDivider(
               width: 1,
               thickness: 1,
               color: theme.dividerColor.withOpacity(0.1),
             ),
 
-            // 3. Left Side Cart Summary Pane (In RTL view: far left side)
             Expanded(flex: 3, child: _buildCartSummaryPane(theme)),
           ],
         ),
@@ -88,7 +145,6 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     );
   }
 
-  /// Navigation Rail for Tablet
   Widget _buildSideNavigationRail(ThemeData theme, bool isDark) {
     return Container(
       width: 80,
@@ -96,7 +152,6 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-
           _buildRailItem(0, Icons.restaurant_menu, 'القائمة', theme),
           _buildRailItem(1, Icons.receipt_long, 'الطلبات', theme),
           _buildRailItem(2, Icons.people, 'العملاء', theme),
@@ -149,7 +204,6 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     );
   }
 
-  /// Top Search & Admin Header
   Widget _buildTabletHeader(ThemeData theme) {
     return Container(
       height: 64,
@@ -188,7 +242,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
                 hintText: 'بحث عن منتج...',
                 prefixIcon: const Icon(Icons.search),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                fillColor: theme.colorScheme.background,
+                fillColor: theme.colorScheme.surface,
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -202,81 +256,112 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     );
   }
 
-  /// Grid view of food items
-  Widget _buildProductGrid(PosState posState, ThemeData theme) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3, // 3 columns for tablet central pane
-        childAspectRatio: 0.78,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: posState.categories
-          .expand((element) => element.additives ?? [])
-          .length, // Replace with your items list
-      itemBuilder: (context, index) {
-        // Construct or fetch item
-        return Container(
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: theme.dividerColor.withOpacity(0.08)),
+  /// Real menu grid backed by [PosBloc], with the same pagination behavior
+  /// as the mobile screen (infinite scroll via [_scrollController]).
+  Widget _buildProductGrid(
+    PosState posState,
+    CartState cartState,
+    ThemeData theme,
+  ) {
+    final items = posState.currentMenuItems;
+
+    if (items.isEmpty) {
+      return const Center(child: Text("No items found"));
+    }
+
+    return CustomScrollView(
+      key: ValueKey(posState.selectedCategory?.id),
+      controller: _scrollController,
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverGrid(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 0.78,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final item = items[index];
+              final matchedCategory = posState.categories.where(
+                (cat) => cat.id == item.categoryId,
+              );
+              final List<AdditiveModel> itemCatAdditives =
+                  matchedCategory.isNotEmpty
+                  ? matchedCategory.first.additives ?? []
+                  : [];
+
+              return PosMenuItemCard(
+                item: item,
+                onAddPressed: () =>
+                    _onAddPressed(context, item, itemCatAdditives, cartState),
+              );
+            }, childCount: items.length),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceVariant,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                  ),
-                  child: const Center(child: Icon(Icons.fastfood, size: 40)),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'وجبة متكاملة',
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '45.00 ر.س',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add_circle),
-                          color: theme.colorScheme.primary,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+        ),
+        if (posState.isLoadingMoreItems)
+          const SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
           ),
-        );
-      },
+      ],
     );
   }
 
-  /// Persistent Tablet Order/Cart Sidebar
+  void _onAddPressed(
+    BuildContext context,
+    RestaurantItem item,
+    List<AdditiveModel> additives,
+    CartState cartState,
+  ) {
+    if (cartState.selectedPerson == null) {
+      HelperMethods.openPicker(context, cartState.persons);
+      return;
+    }
+
+    final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
+
+    if (!needsCustomization) {
+      final orderItem = OrderItem(
+        transactionId: TransactionIdGenerator.nextId,
+        menuItem: item,
+        selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
+        quantity: 1,
+      );
+      context.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+      return;
+    }
+
+    final posBloc = context.read<PosBloc>();
+
+    ItemCustomizationSheet.show(context, item, posBloc, (
+      customItem,
+      returnedAdditives, {
+      required selectedSize,
+      required selectedAddons,
+      required discount,
+      required isPercentageDiscount,
+      required notes,
+      required quantity,
+    }) {
+      final orderItem = OrderItem(
+        transactionId: TransactionIdGenerator.nextId,
+        menuItem: customItem,
+        selectedSize: selectedSize,
+        addons: selectedAddons,
+        quantity: quantity,
+        notes: notes,
+        discount: discount,
+        isPercentageDiscount: isPercentageDiscount,
+      );
+
+      context.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+    });
+  }
+
   Widget _buildCartSummaryPane(ThemeData theme) {
     return PosTabletCartPanel();
   }

@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
+import '../../../cart/data/models/invoice_request.dart';
+import '../../data/model/payment_request_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class PaymentEvent extends Equatable {
@@ -55,9 +55,16 @@ class UpdateSplitAmountEvent extends PaymentEvent {
 }
 
 class SubmitPaymentEvent extends PaymentEvent {
-  final SaveInvoiceRequestModel invoiceRequest;
+  final SaveRestaurantPosInvoiceRequest invoiceRequest;
   const SubmitPaymentEvent(this.invoiceRequest);
 
   @override
   List<Object?> get props => [invoiceRequest];
+}
+
+class ClearPaymentEvent extends PaymentEvent {
+  const ClearPaymentEvent();
+
+  @override
+  List<Object?> get props => [];
 }

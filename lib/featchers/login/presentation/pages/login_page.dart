@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/core/service/signal_r_service.dart';
-import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../../../../core/service/signal_r_service.dart';
+import '../widget/login_mobile_screen.dart';
 import 'package:flutter/material.dart';
 
 SignalRService mySignalRService = SignalRService();

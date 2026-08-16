@@ -1,13 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:printing/printing.dart';
 
 class PaymentSuccess extends StatelessWidget {
   final PaymentSuccessModel model;
@@ -269,11 +280,85 @@ class PaymentSuccess extends StatelessWidget {
 class _SuccessActionButtons extends StatelessWidget {
   const _SuccessActionButtons();
 
+  /// Helper to send raw PDF file/bytes or PDF URL directly to the printing service
+  Future<void> _printDirectPdf(
+    BuildContext context,
+    dynamic pdfSource,
+    String jobName,
+  ) async {
+    if (pdfSource == null) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: "No PDF file available to print",
+        isError: true,
+      );
+      return;
+    }
+
+    try {
+      Uint8List? pdfBytes;
+
+      if (pdfSource is Uint8List) {
+        pdfBytes = pdfSource;
+      } else if (pdfSource is File) {
+        pdfBytes = await pdfSource.readAsBytes();
+      } else if (pdfSource is String) {
+        final uri = Uri.tryParse(pdfSource);
+
+        // 1. Web / Remote URL
+        if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+          final response = await http.get(uri);
+          if (response.statusCode == 200) {
+            pdfBytes = response.bodyBytes;
+          } else {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: "Failed to download PDF (${response.statusCode})",
+              isError: true,
+            );
+            return;
+          }
+        }
+        // 2. Local File Path
+        else if (pdfSource.startsWith('/')) {
+          final file = File(pdfSource);
+          if (await file.exists()) {
+            pdfBytes = await file.readAsBytes();
+          }
+        }
+        // 3. Base64 String
+        else {
+          pdfBytes = base64Decode(pdfSource);
+        }
+      }
+
+      if (pdfBytes != null && pdfBytes.isNotEmpty) {
+        await Printing.layoutPdf(
+          onLayout: (format) async => pdfBytes!,
+          name: jobName,
+        );
+      } else {
+        HelperMethods.showSnackBar(
+          context: context,
+          message: "Could not read PDF file bytes.",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: "Error printing file: $e.",
+        isError: true,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
     final theme = Theme.of(context);
     final lang = S.of(context);
+    final state = context.read<PaymentBloc>().state;
 
     return Column(
       children: [
@@ -284,6 +369,7 @@ class _SuccessActionButtons extends StatelessWidget {
           contentColor: AppColors.white,
           onTap: () {
             final cartBloc = context.read<CartBloc>();
+            context.read<PaymentBloc>().add(ClearPaymentEvent());
             cartBloc.add(ClearCartEvent());
             context.pushReplacementNamed(Routes.posScreen);
           },
@@ -292,21 +378,24 @@ class _SuccessActionButtons extends StatelessWidget {
         _CustomActionButton(
           label: lang.btnPrintReceipt,
           icon: Icons.print_outlined,
-
-          onTap: () {},
+          onTap: () {
+            final fileUrl = state.successResponseModel?.printingCheque?.fileURL;
+            _printDirectPdf(context, fileUrl, 'Receipt');
+          },
         ),
         SizedBox(height: spacing.sm),
         _CustomActionButton(
           label: lang.btnPrintKitchen,
           icon: Icons.soup_kitchen_outlined,
-
-          onTap: () {},
+          onTap: () {
+            final fileUrl = state.successResponseModel?.printingCheque?.fileURL;
+            _printDirectPdf(context, fileUrl, 'Kitchen_Ticket');
+          },
         ),
         SizedBox(height: spacing.sm),
         _CustomActionButton(
           label: lang.btnPreviousOrders,
           icon: Icons.shopping_bag_outlined,
-
           onTap: () {
             final cartBloc = context.read<CartBloc>();
             cartBloc.add(ClearCartEvent());
@@ -329,7 +418,6 @@ class _CustomActionButton extends StatelessWidget {
     required this.label,
     required this.icon,
     this.backgroundColor,
-
     required this.onTap,
     this.contentColor,
   });

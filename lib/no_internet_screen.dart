@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
-import 'package:apex_restaurant/gen/assets.gen.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import 'core/shared/widgets/body_container.dart';
+import 'gen/assets.gen.dart';
+import 'generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class NoInternetScreen extends StatelessWidget {

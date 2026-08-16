@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../data/models/category_model.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ItemAddonTile extends StatelessWidget {

@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
-import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
+import '../../featchers/home/data/models/employee_branch.dart';
+import '../../featchers/login/data/models/login_data.dart';
 import 'package:intl/intl.dart';
 
 class RestaurantConstants {

@@ -1,14 +1,14 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/helpers/size_helper.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/screens/tablet_payment_dialog.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/helpers/helper_methods.dart';
+import '../../../../../core/helpers/size_helper.dart';
+import '../../../../../core/router/routes.dart';
+import '../../../data/enums/cart_enum.dart';
+import '../../../data/models/invoice_request.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../bloc/cart_state.dart';
+import '../../../../payment/presentation/screens/tablet_payment_dialog.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -84,10 +84,10 @@ class BottomActionBar extends StatelessWidget {
       return;
     }
 
-    final SaveInvoiceRequestModel invoiceRequestModel = context
+    final SaveRestaurantPosInvoiceRequest invoiceRequestModel = context
         .read<CartBloc>()
         .state
-        .toSaveInvoiceRequestModel;
+        .toSaveRestaurantPosInvoiceRequest;
     if (SizeHelper.isMobile == true) {
       context.pushNamed(Routes.paymentScreen, extra: invoiceRequestModel);
     } else {
@@ -196,13 +196,13 @@ class BottomActionBar extends StatelessWidget {
                     if (selectedOrderType == CartOrderType.DINE_IN) {
                       context.read<CartBloc>().add(
                         SaveTableOrderEvent(
-                          request: state.toSaveInvoiceRequestModel,
+                          request: state.toSaveRestaurantPosInvoiceRequest,
                         ),
                       );
                     } else {
                       context.read<CartBloc>().add(
                         HoldOrderEvent(
-                          request: state.toSaveInvoiceRequestModel,
+                          request: state.toSaveRestaurantPosInvoiceRequest,
                         ),
                       );
                     }

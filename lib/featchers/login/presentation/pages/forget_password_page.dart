@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/shared/widgets/app_text_button.dart';
-import 'package:apex_restaurant/core/shared/widgets/body_container.dart';
-import 'package:apex_restaurant/core/shared/widgets/grediant_container.dart';
-import 'package:apex_restaurant/core/shared/widgets/mytextfile.dart';
-import 'package:apex_restaurant/gen/assets.gen.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/restaurant_constants.dart';
+import '../../../../core/shared/widgets/app_text_button.dart';
+import '../../../../core/shared/widgets/body_container.dart';
+import '../../../../core/shared/widgets/grediant_container.dart';
+import '../../../../core/shared/widgets/mytextfile.dart';
+import '../../../../gen/assets.gen.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';

@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
+import '../../helpers/extensions.dart';
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {

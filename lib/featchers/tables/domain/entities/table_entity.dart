@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
+import '../../../pos/data/enums/table_status.dart';
 
 class TableEntity {
   final String? id;

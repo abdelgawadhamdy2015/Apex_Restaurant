@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/featchers/tables/data/models/reservation_model.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_data_entity.dart';
+import 'reservation_model.dart';
+import '../../domain/entities/reservation_data_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'reservations_data.g.dart';

@@ -1,13 +1,13 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_data_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../data/models/get_floor_request.dart';
+import '../../data/models/get_reservations_request.dart';
+import '../../data/models/get_table_request.dart';
+import '../../data/models/reservation_requests.dart';
+import '../entities/floor_entity.dart';
+import '../entities/reservation_data_entity.dart';
+import '../entities/reservation_entity.dart';
+import '../entities/table_entity.dart';
 
 abstract class TablesRepository {
   Future<ApiResult<BaseResponse<ReservationsDataEntity>>> getReservations(

@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
+import '../enums/cart_enum.dart';
 
 /// Sent to the backend when the user taps "تطبيق" on the cart screen.
 ///

@@ -1,7 +1,7 @@
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
+import '../../data/models/get_floor_request.dart';
+import '../../data/models/get_reservations_request.dart';
+import '../../data/models/get_table_request.dart';
+import '../../data/models/reservation_requests.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class TablesEvent extends Equatable {

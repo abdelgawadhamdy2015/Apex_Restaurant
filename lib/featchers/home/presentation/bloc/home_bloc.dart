@@ -1,11 +1,11 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
-import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
-import 'package:apex_restaurant/featchers/home/domain/usecases/home_usecases.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
+import '../../../../core/helpers/restaurant_constants.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../data/models/session_model.dart';
+import '../../data/models/user_data_model.dart';
+import '../../domain/usecases/home_usecases.dart';
+import 'home_event.dart';
+import 'home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -13,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetUserDataUseCase getUseDataUseCase;
   final OpenRestaurantPosSessionUseCase openRestaurantPosSessionUseCase;
   final OpenRestaurantPosUseCase openRestaurantPosUseCase;
+
   HomeBloc({
     required this.getEmployeeBranches,
     required this.getUseDataUseCase,
@@ -30,7 +31,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadUserDataEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(state.copyWith(status: HomeStatus.userDataLoading));
+    emit(state.copyWith(status: HomeStatus.userDataLoading, clearError: true));
     try {
       final response = await getUseDataUseCase(id: event.id);
       response.when(
@@ -49,15 +50,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ),
             );
           } else {
-            emit(state.copyWith(status: HomeStatus.error, apiResponse: data));
+            emit(
+              state.copyWith(
+                status: HomeStatus.error,
+                errorMessage: data.errorMessageAr,
+                apiResponse: data,
+              ),
+            );
           }
         },
       );
-    } catch (e) {
+    } catch (_) {
       emit(
         state.copyWith(
           status: HomeStatus.error,
-          errorMessage: 'Failed to load branches. Please try again.',
+          errorMessage: 'فشل في تحميل بيانات المستخدم، يرجى المحاولة لاحقاً',
         ),
       );
     }
@@ -67,14 +74,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     LoadBranchesEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(state.copyWith(status: HomeStatus.loading));
+    emit(state.copyWith(status: HomeStatus.branchesLoading, clearError: true));
     try {
       final response = await getEmployeeBranches();
       response.when(
         success: (data) {
           if (data.result == 1) {
             emit(
-              state.copyWith(status: HomeStatus.loaded, branches: data.data),
+              state.copyWith(
+                status: HomeStatus.branchesLoaded,
+                branches: data.data ?? [],
+              ),
             );
           } else {
             emit(
@@ -86,13 +96,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             );
           }
         },
-        failure: (e) {},
+        failure: (e) {
+          emit(
+            state.copyWith(
+              status: HomeStatus.error,
+              errorMessage: e.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
       );
-    } catch (e) {
+    } catch (_) {
       emit(
         state.copyWith(
           status: HomeStatus.error,
-          errorMessage: 'Failed to load branches. Please try again.',
+          errorMessage: 'فشل في تحميل الفروع المتاحة، يرجى إعادة المحاولة',
         ),
       );
     }
@@ -102,7 +119,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     OpenRestaurantPosEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(state.copyWith(status: HomeStatus.openSessionLoading));
+    emit(
+      state.copyWith(status: HomeStatus.openSessionLoading, clearError: true),
+    );
     try {
       final response = await openRestaurantPosUseCase();
       response.when(
@@ -121,15 +140,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ),
             );
           } else {
-            emit(state.copyWith(status: HomeStatus.error, apiResponse: data));
+            emit(
+              state.copyWith(
+                status: HomeStatus.error,
+                errorMessage: data.errorMessageAr,
+                apiResponse: data,
+              ),
+            );
           }
         },
       );
-    } catch (e) {
+    } catch (_) {
       emit(
         state.copyWith(
           status: HomeStatus.error,
-          errorMessage: 'Failed to open session. Please try again.',
+          errorMessage: 'حدث خطأ أثناء فتح الجلسة، يرجى المحاولة لاحقاً',
         ),
       );
     }
@@ -139,7 +164,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     OpenRestaurantPosSessionEvent event,
     Emitter<HomeState> emit,
   ) async {
-    emit(state.copyWith(status: HomeStatus.openSessionLoading));
+    emit(
+      state.copyWith(status: HomeStatus.openSessionLoading, clearError: true),
+    );
     try {
       final response = await openRestaurantPosSessionUseCase();
       response.when(
@@ -158,15 +185,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               ),
             );
           } else {
-            emit(state.copyWith(status: HomeStatus.error, apiResponse: data));
+            emit(
+              state.copyWith(
+                status: HomeStatus.error,
+                errorMessage: data.errorMessageAr,
+                apiResponse: data,
+              ),
+            );
           }
         },
       );
-    } catch (e) {
+    } catch (_) {
       emit(
         state.copyWith(
           status: HomeStatus.error,
-          errorMessage: 'Failed to open session. Please try again.',
+          errorMessage: 'حدث خطأ أثناء فتح الجلسة، يرجى المحاولة لاحقاً',
         ),
       );
     }

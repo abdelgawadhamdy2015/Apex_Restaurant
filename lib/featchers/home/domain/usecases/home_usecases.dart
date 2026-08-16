@@ -1,9 +1,9 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
-import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
-import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
-import 'package:apex_restaurant/featchers/home/domain/repo/home_repo.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../data/models/employee_branch.dart';
+import '../../data/models/session_model.dart';
+import '../../data/models/user_data_model.dart';
+import '../repo/home_repo.dart';
 
 class GetEmployeeBranchesUseCase {
   final HomeRepository _repository;

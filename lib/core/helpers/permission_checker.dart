@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/featchers/home/data/enums/app_permissions.dart';
-import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
+import '../../featchers/home/data/enums/app_permissions.dart';
+import '../../featchers/login/data/models/login_data.dart';
 
 class PermissionChecker {
   final Map<int, SubPermissionModel> _permissionsMap;
