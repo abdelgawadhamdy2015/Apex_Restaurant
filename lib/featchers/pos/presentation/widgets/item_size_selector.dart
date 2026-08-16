@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ItemSizeSelector extends StatelessWidget {
@@ -51,7 +51,7 @@ class ItemSizeSelector extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        size.sizeNameAr,
+                        size.sizeNameAr ?? "",
                         style: textTheme.bodyLarge?.copyWith(
                           fontWeight: isSelected
                               ? FontWeight.bold
@@ -71,7 +71,7 @@ class ItemSizeSelector extends StatelessWidget {
                   ),
                   SizedBox(height: spacing.xs),
                   Text(
-                    lang.priceWithCurrency(size.price.toStringAsFixed(2)),
+                    lang.priceWithCurrency(size.price?.toStringAsFixed(2) ?? 0),
                     style: textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: isSelected

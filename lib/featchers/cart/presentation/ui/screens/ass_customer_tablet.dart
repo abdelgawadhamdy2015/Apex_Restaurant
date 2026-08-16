@@ -1,15 +1,15 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/dashed_add_address_button.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/helpers/helper_methods.dart';
+import '../../../../../core/themes/app_colors.dart';
+import '../../../data/models/client_request_model.dart';
+import '../../../data/models/get_client_request.dart';
+import '../../../data/models/pos_client_model.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../bloc/cart_state.dart';
+import '../widgets/dashed_add_address_button.dart';
+import '../../../../home/presentation/bloc/home_bloc.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

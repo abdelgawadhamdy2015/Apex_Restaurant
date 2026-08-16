@@ -30,9 +30,7 @@ class $ImagesGen {
   List<AssetGenImage> get values => [apexLogo, images, logo, noWifi];
 }
 
-class Assets {
-  const Assets._();
-
+abstract final class Assets {
   static const String time = 'assets/Time.svg';
   static const String alert = 'assets/alert.svg';
   static const String apexlogo = 'assets/apexlogo.svg';

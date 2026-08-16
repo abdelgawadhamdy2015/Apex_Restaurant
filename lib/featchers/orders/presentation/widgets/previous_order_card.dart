@@ -1,8 +1,8 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/previous_invoice_model.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../data/model/previous_invoice_model.dart';
+import '../bloc/orders_bloc.dart';
+import '../bloc/orders_event.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

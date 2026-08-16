@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+import '../../../../core/shared/entity/base_request.dart';
 
 class GetClientsRequest extends BaseRequest {
   final String? type;

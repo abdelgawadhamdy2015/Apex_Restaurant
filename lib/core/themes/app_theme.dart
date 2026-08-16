@@ -1,8 +1,8 @@
-import 'package:apex_restaurant/core/themes/app_button_theme.dart';
-import 'package:apex_restaurant/core/themes/app_icon_theme.dart';
-import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
-import 'package:apex_restaurant/core/themes/app_text_style.dart';
-import 'package:apex_restaurant/core/themes/app_typography.dart';
+import 'app_button_theme.dart';
+import 'app_icon_theme.dart';
+import 'app_spacing_theme.dart';
+import 'app_text_style.dart';
+import 'app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';

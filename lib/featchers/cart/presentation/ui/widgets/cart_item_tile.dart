@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_sheet.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../../../pos/domain/entities/menu_item.dart';
+import '../../../../pos/presentation/bloc/pos_bloc.dart';
+import '../../../../pos/presentation/widgets/item_customization_sheet.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,23 +26,31 @@ class CartItemTile extends StatelessWidget {
         .toList();
   }
 
-  void _openEditSheet(BuildContext context) {
+  void _openEditSheet(BuildContext context) async {
     final posBloc = context.read<PosBloc>();
     final cartBloc = context.read<CartBloc>();
 
-    final restaurantItem = posBloc.state.currentMenuItems.firstWhere(
-      (m) => m.itemId == item.menuItem.itemId,
-      orElse: () => item.menuItem,
+    // Fetch fresh item details using categoryId + itemId as searchKey.
+    final fetchedItem = await posBloc.fetchItemDetails(
+      categoryId: item.menuItem.categoryId,
+      itemId: item.menuItem.itemId,
     );
 
-    // Note: we no longer fetch/clear additives here. The sheet loads
-    // (or reuses already-cached) additives for the item's category
-    // itself in initState, so it behaves identically whether it's
-    // opened from the menu grid or from the cart.
+    final restaurantItem =
+        fetchedItem ??
+        posBloc.state.currentMenuItems.firstWhere(
+          (m) => m.itemId == item.menuItem.itemId,
+          orElse: () => item.menuItem,
+        );
+
+    if (!context.mounted) return;
+
+    // Note: additives still resolve from PosState.categories by categoryId,
+    // handled inside ItemCustomizationSheet itself — no change needed there.
     ItemCustomizationSheet.show(
       context,
       restaurantItem,
-      posBloc, // sheet now watches this bloc directly via BlocBuilder
+      posBloc,
       (
         restaurantItem,
         additives, {

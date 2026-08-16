@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/service/api_constants.dart';
-import 'package:apex_restaurant/core/service/dio_factory.dart';
-import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../helpers/restaurant_constants.dart';
+import '../../helpers/shared_prf_helper.dart';
+import '../../router/routes.dart';
+import '../../service/api_constants.dart';
+import '../../service/dio_factory.dart';
+import '../../../featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../../../generated/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

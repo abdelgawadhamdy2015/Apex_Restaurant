@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/login/data/models/login_data.dart';
+import 'login_data.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 class DynamicDataConverter<T> implements JsonConverter<dynamic, Object?> {

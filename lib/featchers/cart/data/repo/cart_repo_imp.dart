@@ -1,17 +1,17 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/service/api_error_handler.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/cart/data/datasource/cart_remote_datasource.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
+import '../../../../core/service/api_error_handler.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../datasource/cart_remote_datasource.dart';
+import '../models/apply_discount_request_model.dart';
+import '../models/client_request_model.dart';
+import '../models/dynamic_discount.dart';
+import '../models/get_client_request.dart';
+import '../models/invoice_request.dart';
+import '../models/pos_client_model.dart';
+import '../../domain/repo/cart_repo.dart';
 
 import '../models/discount_result_model.dart';
 import '../models/waiter_model.dart';
@@ -66,7 +66,7 @@ class CartRepositoryImpl implements CartRepository {
 
   @override
   Future<ApiResult<BaseResponse<dynamic>>> savePendingRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   ) async {
     try {
       final response = await _remoteDataSource.savePendingRestaurantPosInvoice(
@@ -81,7 +81,7 @@ class CartRepositoryImpl implements CartRepository {
 
   @override
   Future<ApiResult<BaseResponse<dynamic>>> saveBookingTableRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   ) async {
     try {
       final response = await _remoteDataSource

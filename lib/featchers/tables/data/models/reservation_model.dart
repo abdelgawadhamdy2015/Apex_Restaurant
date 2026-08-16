@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
+import '../../domain/entities/reservation_entity.dart';
 
 part 'reservation_model.g.dart';
 

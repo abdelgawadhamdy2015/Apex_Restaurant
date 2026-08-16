@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/gen/assets.gen.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../gen/assets.gen.dart';
+import '../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

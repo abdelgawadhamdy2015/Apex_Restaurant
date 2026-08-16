@@ -1,11 +1,11 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:apex_restaurant/core/router/router.dart';
-import 'package:apex_restaurant/core/service/api_constants.dart';
-import 'package:apex_restaurant/core/service/api_error_model.dart';
-import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
-import 'package:apex_restaurant/featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../helpers/restaurant_constants.dart';
+import '../router/router.dart';
+import 'api_constants.dart';
+import 'api_error_model.dart';
+import '../shared/widgets/setup_dialog.dart';
+import '../../featchers/login/presentation/widget/login_mobile_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:signalr_netcore/signalr_client.dart';

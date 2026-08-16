@@ -1,17 +1,17 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/add_to_cart_bar.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/discount_type_toggle.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_addon_tile.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_header.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_size_selector.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../domain/entities/menu_item.dart';
+import '../bloc/pos_bloc.dart';
+import '../bloc/pos_state.dart';
+import 'add_to_cart_bar.dart';
+import 'discount_type_toggle.dart';
+import 'item_addon_tile.dart';
+import 'item_customization_header.dart';
+import 'item_size_selector.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -98,7 +98,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
   bool get _isEditMode => widget.existingItem != null;
 
   double get _currentBasePrice => widget.item.sizes.isNotEmpty
-      ? widget.item.sizes[_selectedSizeIndex].price
+      ? widget.item.sizes[_selectedSizeIndex].price ?? 0
       : 0.0;
 
   double _totalPrice(List<AdditiveModel> additives) {
@@ -222,7 +222,12 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
 
           _prefillAddonsOnceIfNeeded(additives);
           final discountValue =
-              context.read<CartBloc>().state.saveDiscountModel?.value ?? 0;
+              context
+                  .read<CartBloc>()
+                  .state
+                  .restaurantPosDiscountRequest
+                  ?.value ??
+              0;
 
           final isRadioEnabled = !dyanmicDiscountisActive && discountValue <= 0;
           return Column(
@@ -368,7 +373,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                   final selectedSize = widget.item.sizes[_selectedSizeIndex];
 
                   if (widget.item.sizes.length > 1 &&
-                      selectedSize.sizeId <= 0) {
+                      (selectedSize.sizeId ?? 0) <= 0) {
                     HelperMethods.showSnackBar(
                       context: context,
                       message: S.of(context).pleaseSelectValidSize,

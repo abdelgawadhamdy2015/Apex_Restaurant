@@ -47,16 +47,17 @@ Map<String, dynamic> _$RestaurantItemToJson(RestaurantItem instance) =>
     };
 
 ItemSize _$ItemSizeFromJson(Map<String, dynamic> json) => ItemSize(
-  variantId: (json['variantId'] as num).toInt(),
-  sizeId: (json['sizeId'] as num).toInt(),
-  sizeNameAr: json['sizeNameAr'] as String,
-  sizeNameEn: json['sizeNameEn'] as String,
-  price: (json['price'] as num).toDouble(),
-  isActive: json['isActive'] as bool,
-  discount: (json['discount'] as List<dynamic>?)
+  variantId: (json['variantId'] as num?)?.toInt(),
+  sizeId: (json['sizeId'] as num?)?.toInt(),
+  sizeNameAr: json['sizeNameAr'] as String?,
+  sizeNameEn: json['sizeNameEn'] as String?,
+  price: (json['price'] as num?)?.toDouble(),
+  isActive: json['isActive'] as bool?,
+  discounts: (json['discounts'] as List<dynamic>?)
       ?.map(
-        (e) =>
-            e == null ? null : ItemDiscount.fromJson(e as Map<String, dynamic>),
+        (e) => e == null
+            ? null
+            : ItemSizeDiscount.fromJson(e as Map<String, dynamic>),
       )
       .toList(),
 );
@@ -68,11 +69,26 @@ Map<String, dynamic> _$ItemSizeToJson(ItemSize instance) => <String, dynamic>{
   'sizeNameEn': instance.sizeNameEn,
   'price': instance.price,
   'isActive': instance.isActive,
-  'discount': instance.discount,
+  'discounts': instance.discounts,
 };
+
+ItemSizeDiscount _$ItemSizeDiscountFromJson(Map<String, dynamic> json) =>
+    ItemSizeDiscount(
+      discount: json['discount'] == null
+          ? null
+          : ItemDiscount.fromJson(json['discount'] as Map<String, dynamic>),
+      posTypeID: (json['posTypeID'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$ItemSizeDiscountToJson(ItemSizeDiscount instance) =>
+    <String, dynamic>{
+      'discount': instance.discount,
+      'posTypeID': instance.posTypeID,
+    };
 
 ItemDiscount _$ItemDiscountFromJson(Map<String, dynamic> json) => ItemDiscount(
   id: (json['id'] as num).toInt(),
+  code: (json['code'] as num?)?.toInt(),
   arabicName: json['arabicName'] as String?,
   latinName: json['latinName'] as String?,
   discountNatural: (json['discountNatural'] as num).toInt(),
@@ -80,11 +96,15 @@ ItemDiscount _$ItemDiscountFromJson(Map<String, dynamic> json) => ItemDiscount(
   maxDiscountValue: (json['maxDiscountValue'] as num).toDouble(),
   minInvoiceNet: (json['minInvoiceNet'] as num).toDouble(),
   includeFoodAdditions: json['includeFoodAdditions'] as bool,
+  posTypes: (json['posTypes'] as List<dynamic>?)
+      ?.map((e) => (e as num).toInt())
+      .toList(),
 );
 
 Map<String, dynamic> _$ItemDiscountToJson(ItemDiscount instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'code': instance.code,
       'arabicName': instance.arabicName,
       'latinName': instance.latinName,
       'discountNatural': instance.discountNatural,
@@ -92,4 +112,5 @@ Map<String, dynamic> _$ItemDiscountToJson(ItemDiscount instance) =>
       'maxDiscountValue': instance.maxDiscountValue,
       'minInvoiceNet': instance.minInvoiceNet,
       'includeFoodAdditions': instance.includeFoodAdditions,
+      'posTypes': instance.posTypes,
     };

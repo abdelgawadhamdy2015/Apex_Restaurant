@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
+import '../../../pos/data/enums/table_status.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entities/table_entity.dart';

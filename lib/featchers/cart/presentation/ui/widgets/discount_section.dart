@@ -1,14 +1,14 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/shared/widgets/app_radio_group.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/discount_type_toggle.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/helpers/helper_methods.dart';
+import '../../../../../core/shared/widgets/app_radio_group.dart';
+import '../../../data/models/dynamic_discount.dart';
+import '../../../data/models/invoice_request.dart';
+import '../../../data/models/pos_client_model.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../bloc/cart_state.dart';
+import '../../../../pos/presentation/widgets/discount_type_toggle.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -73,7 +73,7 @@ class _DiscountSectionState extends State<DiscountSection> {
       final discountValue = double.tryParse(textValue) ?? 0.0;
       context.read<CartBloc>().add(
         ApplyDiscountEvent(
-          saveDiscountModel: SaveDiscountModel(
+          restaurantPosDiscountRequest: RestaurantPosDiscountRequest(
             type: _isPercentageDiscount ? 1 : 2, // 1 for %, 2 for fixed SAR
             value: discountValue,
           ),

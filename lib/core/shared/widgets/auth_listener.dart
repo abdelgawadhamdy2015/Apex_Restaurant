@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
+import '../../helpers/helper_methods.dart';
+import '../contracts/errorable_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

@@ -1,14 +1,18 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
-import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/screens/daily_close_screen.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/tables_screen_arg.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/router/routes.dart';
+import '../../../../core/shared/widgets/custom_app_bar.dart';
+import '../../../../core/shared/widgets/setup_dialog.dart';
+import '../../../../core/themes/app_colors.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../../../home/presentation/bloc/home_bloc.dart';
+import '../bloc/pos_bloc.dart';
+import '../bloc/pos_event.dart';
+import '../bloc/pos_state.dart';
+import '../screens/close_session_dialog.dart';
+import '../screens/daily_close_screen.dart';
+import '../../../tables/data/models/tables_screen_arg.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -38,6 +42,20 @@ class MoreOptions extends StatelessWidget {
     );
   }
 
+  /// فتح دايالوج إغلاق الجلسة وتمرير sessionId
+  void _showCloseSessionDialog(BuildContext context, int sessionId) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        // نمرر الـ PosBloc نفسه للـ Dialog إذا كان يعتمد عليه
+        return BlocProvider.value(
+          value: context.read<PosBloc>(),
+          child: CloseSessionDialog(sessionId: sessionId),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = S.of(context);
@@ -46,11 +64,6 @@ class MoreOptions extends StatelessWidget {
     final spacing = context.spacing;
 
     final options = <OptionItem>[
-      // OptionItem(
-      //   title: lang.cashierCustody,
-      //   icon: Icons.payments,
-      //   onTap: () => context.pushNamed(Routes.cashierCustodyScreen),
-      // ),
       OptionItem(
         title: lang.tables,
         icon: Icons.receipt_long,
@@ -90,7 +103,10 @@ class MoreOptions extends StatelessWidget {
         title: lang.closeSession,
         icon: Icons.power_settings_new,
         iconColor: colorScheme.errorContainer,
-        onTap: () {},
+        onTap: () {
+          // طلب بيانات الجلسة الحالية من الـ Bloc
+          context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());
+        },
       ),
       OptionItem(
         title: lang.logout,
@@ -106,22 +122,50 @@ class MoreOptions extends StatelessWidget {
       ),
     ];
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: colorScheme.surface,
-        appBar: CustomAppBar(title: lang.more, showBackButton: false),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(spacing.md),
-            child: Column(
-              children: [
-                const Header(customerName: 'Abdelgawad', employeeType: 'Admin'),
-                SizedBox(height: spacing.lg),
-                for (final option in options) ...[
-                  option,
+    return BlocListener<PosBloc, PosState>(
+      listenWhen: (previous, current) {
+        // الاستماع عند النجاح أو تغير بيانات الجلسة أو وجود خطأ
+        return previous.currentSessionId != current.currentSessionId ||
+            previous.status != current.status;
+      },
+      listener: (context, state) {
+        // 1. في حالة تم جلب بيانات الجلسة الحالية بنجاح
+        if (state.currentSessionId != null &&
+            state.status == PosStatus.loaded) {
+          final sessionId = state.currentSessionId ?? 0;
+          _showCloseSessionDialog(context, sessionId);
+        }
+
+        // 2. في حالة حدوث خطأ أثناء جلب الجلسة
+        if (state.status == PosStatus.error && state.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              backgroundColor: colorScheme.error,
+            ),
+          );
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: colorScheme.surface,
+          appBar: CustomAppBar(title: lang.more, showBackButton: false),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(spacing.md),
+              child: Column(
+                children: [
+                  const Header(
+                    customerName: 'Abdelgawad',
+                    employeeType: 'Admin',
+                  ),
                   SizedBox(height: spacing.lg),
+                  for (final option in options) ...[
+                    option,
+                    SizedBox(height: spacing.lg),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

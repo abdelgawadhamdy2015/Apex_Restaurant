@@ -1,7 +1,7 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/quantity_counter.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/themes/app_colors.dart';
+import 'quantity_counter.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class AddToCartBar extends StatelessWidget {

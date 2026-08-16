@@ -1,12 +1,12 @@
-import 'package:apex_restaurant/core/service/api_service.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
+import '../../../../core/service/api_service.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../models/apply_discount_request_model.dart';
+import '../models/client_request_model.dart';
+import '../models/dynamic_discount.dart';
+import '../models/get_client_request.dart';
+import '../models/invoice_request.dart';
+import '../models/pos_client_model.dart';
 
 import '../models/discount_result_model.dart';
 import '../models/waiter_model.dart';
@@ -34,10 +34,10 @@ abstract class CartRemoteDataSource {
   });
   Future<BaseResponse<List<DynamicDiscountModel>?>> getDynamicInvoiceDiscount();
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   );
   Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   );
 }
 
@@ -78,14 +78,14 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
 
   @override
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   ) {
     return _apiService.savePendingRestaurantPosInvoice(request);
   }
 
   @override
   Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   ) {
     return _apiService.saveBookingTableRestaurantPosInvoice(request);
   }

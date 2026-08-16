@@ -1,22 +1,22 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/helpers/transactionid_generator.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/cart_floating_summary_bar.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/item_customization_sheet.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_categories_bar.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_menu_item_card.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_top_app_bar.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../../core/helpers/transactionid_generator.dart';
+import '../../../../core/router/routes.dart';
+import '../../../cart/data/models/get_client_request.dart';
+import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../cart/presentation/bloc/cart_event.dart';
+import '../../../cart/presentation/bloc/cart_state.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../domain/entities/menu_item.dart';
+import '../bloc/pos_bloc.dart';
+import '../bloc/pos_event.dart';
+import '../bloc/pos_state.dart';
+import '../widgets/cart_floating_summary_bar.dart';
+import '../widgets/item_customization_sheet.dart';
+import '../widgets/pos_categories_bar.dart';
+import '../widgets/pos_menu_item_card.dart';
+import '../widgets/pos_top_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +29,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  // int _selectedFilterIndex = 0;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -40,6 +40,29 @@ class _MenuScreenState extends State<MenuScreen> {
         LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
     });
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final nearBottom =
+        _scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300;
+    if (!nearBottom) return;
+
+    final posState = context.read<PosBloc>().state;
+    if (posState.hasMoreItems &&
+        !posState.isLoadingMoreItems &&
+        posState.status != PosStatus.loading) {
+      context.read<PosBloc>().add(const LoadMoreItemsEvent());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -84,16 +107,15 @@ class _MenuScreenState extends State<MenuScreen> {
               PosCategoriesBar(
                 categories: state.categories,
                 selectedCategoryId: state.selectedCategory?.id,
-                onCategorySelected: (cat) =>
-                    context.read<PosBloc>().add(SelectCategoryEvent(cat)),
+                onCategorySelected: (cat) {
+                  if (_scrollController.hasClients) {
+                    _scrollController.jumpTo(0);
+                  }
+                  context.read<PosBloc>().add(SelectCategoryEvent(cat));
+                },
               ),
               SizedBox(height: spacing.sm),
               Divider(),
-              // PosFiltersBar(
-              //   selectedIndex: _selectedFilterIndex,
-              //   onSelected: (index) =>
-              //       setState(() => _selectedFilterIndex = index),
-              // ),
               SizedBox(height: spacing.sm),
 
               Expanded(
@@ -103,10 +125,11 @@ class _MenuScreenState extends State<MenuScreen> {
                     ? const Center(child: CircularProgressIndicator())
                     : _buildItemsGrid(
                         context,
-                        state.selectedCategory?.id, // Pass key identifier
+                        state.selectedCategory?.id,
                         state.currentMenuItems,
                         state.selectedCategory?.additives ?? [],
                         cartState,
+                        state.isLoadingMoreItems,
                       ),
               ),
             ],
@@ -122,6 +145,7 @@ class _MenuScreenState extends State<MenuScreen> {
     List<RestaurantItem> items,
     List<AdditiveModel> additives,
     CartState cartState,
+    bool isLoadingMore,
   ) {
     final spacing = context.spacing;
 
@@ -129,34 +153,54 @@ class _MenuScreenState extends State<MenuScreen> {
       return const Center(child: Text("No items found"));
     }
 
-    return GridView.builder(
+    return CustomScrollView(
       key: ValueKey(categoryId),
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.md,
-        vertical: spacing.xs,
-      ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.72,
-        crossAxisSpacing: spacing.sm,
-        mainAxisSpacing: spacing.sm,
-      ),
-      itemCount: items.length,
-      itemBuilder: (context, index) {
-        final item = items[index];
-        final matchedCategory = context.read<PosBloc>().state.categories.where(
-          (cat) => cat.id == item.categoryId,
-        );
-        final List<AdditiveModel> itemCatAdditives = matchedCategory.isNotEmpty
-            ? matchedCategory.first.additives ?? []
-            : [];
+      controller: _scrollController,
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.symmetric(
+            horizontal: spacing.md,
+            vertical: spacing.xs,
+          ),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.72,
+              crossAxisSpacing: spacing.sm,
+              mainAxisSpacing: spacing.sm,
+            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final item = items[index];
+              final matchedCategory = context
+                  .read<PosBloc>()
+                  .state
+                  .categories
+                  .where((cat) => cat.id == item.categoryId);
+              final List<AdditiveModel> itemCatAdditives =
+                  matchedCategory.isNotEmpty
+                  ? matchedCategory.first.additives ?? []
+                  : [];
 
-        return PosMenuItemCard(
-          item: item,
-          onAddPressed: () =>
-              _onAddPressed(parentContext, item, itemCatAdditives, cartState),
-        );
-      },
+              return PosMenuItemCard(
+                item: item,
+                onAddPressed: () => _onAddPressed(
+                  parentContext,
+                  item,
+                  itemCatAdditives,
+                  cartState,
+                ),
+              );
+            }, childCount: items.length),
+          ),
+        ),
+        if (isLoadingMore)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: spacing.md),
+              child: const Center(child: CircularProgressIndicator()),
+            ),
+          ),
+      ],
     );
   }
 

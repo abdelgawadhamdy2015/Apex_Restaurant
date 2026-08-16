@@ -1,6 +1,9 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_state.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Displays the order number, invoice number and current date in a
 /// single info bar at the top of the cart screen.
@@ -13,43 +16,47 @@ class HeaderInfoCard extends StatelessWidget {
     final spacing = context.spacing;
     final lang = S.of(context);
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: spacing.md,
-        vertical: spacing.sm,
-      ),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.onSurface,
-        borderRadius: BorderRadius.circular(spacing.radiusLg),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
-      ),
-      child: IntrinsicHeight(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            HeaderInfoItem(title: lang.orderNumber, value: '#12345'),
-            VerticalDivider(
-              color: theme.colorScheme.outlineVariant,
-              width: 2,
-              thickness: 1,
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        return Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: spacing.md,
+            vertical: spacing.sm,
+          ),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.onSurface,
+            borderRadius: BorderRadius.circular(spacing.radiusLg),
+            border: Border.all(color: theme.colorScheme.outlineVariant),
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                HeaderInfoItem(title: lang.orderNumber, value: '#12345'),
+                VerticalDivider(
+                  color: theme.colorScheme.outlineVariant,
+                  width: 2,
+                  thickness: 1,
+                ),
+                HeaderInfoItem(
+                  title: lang.invoiceNumber,
+                  value: 'INV-9876',
+                  isValueBlue: true,
+                ),
+                VerticalDivider(
+                  color: theme.colorScheme.outlineVariant,
+                  width: 2,
+                  thickness: 1,
+                ),
+                HeaderInfoItem(
+                  title: lang.date,
+                  value: DateTime.now().toString().split(' ').first,
+                ),
+              ],
             ),
-            HeaderInfoItem(
-              title: lang.invoiceNumber,
-              value: 'INV-9876',
-              isValueBlue: true,
-            ),
-            VerticalDivider(
-              color: theme.colorScheme.outlineVariant,
-              width: 2,
-              thickness: 1,
-            ),
-            HeaderInfoItem(
-              title: lang.date,
-              value: DateTime.now().toString().split(' ').first,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

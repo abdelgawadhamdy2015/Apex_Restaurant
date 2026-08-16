@@ -1,18 +1,18 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/service/api_error_handler.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/tables/data/datasource/tables_remote_data_source.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_floor_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/data/models/reservation_requests.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_data_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
-import 'package:apex_restaurant/featchers/tables/domain/repo/tables_repository.dart';
+import '../../../../core/service/api_error_handler.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../datasource/tables_remote_data_source.dart';
+import '../models/get_floor_request.dart';
+import '../models/get_reservations_request.dart';
+import '../models/get_table_request.dart';
+import '../models/reservation_requests.dart';
+import '../../domain/entities/floor_entity.dart';
+import '../../domain/entities/reservation_data_entity.dart';
+import '../../domain/entities/reservation_entity.dart';
+import '../../domain/entities/table_entity.dart';
+import '../../domain/repo/tables_repository.dart';
 
 class TablesRepositoryImpl implements TablesRepository {
   final TablesRemoteDataSource remoteDataSource;
@@ -37,7 +37,7 @@ class TablesRepositoryImpl implements TablesRepository {
           totalCount: response.totalCount,
           errorMessageAr: response.errorMessageAr,
           errorMessageEn: response.errorMessageEn,
-          alart: response.alart,
+          alert: response.alert,
         ),
       );
     } catch (error, s) {
@@ -113,7 +113,7 @@ class TablesRepositoryImpl implements TablesRepository {
           totalCount: response.totalCount,
           errorMessageAr: response.errorMessageAr,
           errorMessageEn: response.errorMessageEn,
-          alart: response.alart,
+          alert: response.alert,
         ),
       );
     } catch (error, s) {
@@ -138,7 +138,7 @@ class TablesRepositoryImpl implements TablesRepository {
           totalCount: response.totalCount,
           errorMessageAr: response.errorMessageAr,
           errorMessageEn: response.errorMessageEn,
-          alart: response.alart,
+          alert: response.alert,
         ),
       );
     } catch (error, s) {

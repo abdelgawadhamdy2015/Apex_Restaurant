@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
+import '../../../payment/data/model/payment_success_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'order_model.g.dart';
 

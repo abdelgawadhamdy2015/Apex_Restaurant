@@ -1,8 +1,8 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../data/models/waiter_model.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

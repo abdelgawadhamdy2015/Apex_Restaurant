@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+import '../../../../core/shared/entity/base_request.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_table_request.g.dart';
 

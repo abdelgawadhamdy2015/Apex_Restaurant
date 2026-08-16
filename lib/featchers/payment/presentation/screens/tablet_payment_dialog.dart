@@ -1,31 +1,37 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_state.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/bottom_action_buttons.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/paid_amount_input_field.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/payment_method_tabs.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/payment_success.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/reference_number_input_field.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/remaining_amount_card.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/split_methods_list.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/widgets/total_amount_card.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/helpers/helper_methods.dart';
+import '../../../cart/data/models/invoice_request.dart';
+import '../../data/model/payment_request_model.dart';
+import '../bloc/payment_bloc.dart';
+import '../bloc/payment_event.dart';
+import '../bloc/payment_state.dart';
+import '../widgets/bottom_action_buttons.dart';
+import '../widgets/paid_amount_input_field.dart';
+import '../widgets/payment_method_tabs.dart';
+import '../widgets/payment_success.dart';
+import '../widgets/reference_number_input_field.dart';
+import '../widgets/remaining_amount_card.dart';
+import '../widgets/split_methods_list.dart';
+import '../widgets/total_amount_card.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabletPaymentDialog extends StatelessWidget {
   const TabletPaymentDialog({super.key, required this.invoiceRequestModel});
 
-  final SaveInvoiceRequestModel invoiceRequestModel;
+  final SaveRestaurantPosInvoiceRequest invoiceRequestModel;
 
   /// Helper method to show the dialog
   static Future<void> show(
     BuildContext context, {
-    required SaveInvoiceRequestModel invoiceRequestModel,
+    required SaveRestaurantPosInvoiceRequest invoiceRequestModel,
   }) {
+    context.read<PaymentBloc>().add(
+      InitializePaymentEvent(
+        totalAmount: invoiceRequestModel.invoice.totalInvoicePrice,
+      ),
+    );
     return showDialog(
       context: context,
       barrierDismissible: false,

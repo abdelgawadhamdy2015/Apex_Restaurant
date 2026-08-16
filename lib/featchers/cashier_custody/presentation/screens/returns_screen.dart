@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/shared/widgets/custom_app_bar.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/shared/widgets/custom_app_bar.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ReturnsScreen extends StatefulWidget {

@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/cart/domain/usescase/cart_usescase.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import '../../../../core/service/api_result.dart';
+import '../../data/enums/cart_enum.dart';
+import '../../data/models/dynamic_discount.dart';
+import '../../data/models/pos_client_model.dart';
+import '../../data/models/waiter_model.dart';
+import '../../domain/usescase/cart_usescase.dart';
+import '../../../pos/data/models/category_model.dart';
+import '../../../pos/domain/entities/menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -104,7 +104,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       addonsTotal += addon.price;
     }
     double lineTotal =
-        (event.selectedSize.price + addonsTotal) * event.quantity;
+        (event.selectedSize.price ?? 0 + addonsTotal) * event.quantity;
     if (event.isPercentageDiscount) {
       lineTotal = lineTotal * (1 - (event.discount / 100));
     } else {
@@ -131,8 +131,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     // 1. Determine discount strategy based on restored invoice data
     final hasInvoiceDiscount =
-        data.saveDiscountModel != null &&
-        (data.saveDiscountModel!.value ?? 0) > 0;
+        data.restaurantPosDiscountRequest != null &&
+        (data.restaurantPosDiscountRequest!.value) > 0;
 
     // 2. Clear opposing entity selections based on Order Type (Clean State Isolation)
     final isDineIn = data.orderType == CartOrderType.DINE_IN;
@@ -156,12 +156,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         selectedPerson: data.client,
 
         // Discount Configuration
-        saveDiscountModel: data.saveDiscountModel,
+        restaurantPosDiscountRequest: data.restaurantPosDiscountRequest,
         selectedDiscountType: hasInvoiceDiscount
             ? DiscountTypeEnum.direct
             : DiscountTypeEnum.coupon,
         discountAmount: hasInvoiceDiscount
-            ? (data.saveDiscountModel!.value ?? 0.0)
+            ? (data.restaurantPosDiscountRequest!.value)
             : 0.0,
 
         // State Flags & Status
@@ -308,7 +308,31 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onClearCartEvent(ClearCartEvent event, Emitter<CartState> emit) {
-    emit(state.copyWith(items: []));
+    emit(
+      state.copyWith(
+        items: [],
+        successMessage: null,
+        selectedAddress: null,
+        selectedDeliveryCompany: null,
+        selectedDiscountType: null,
+        selectedDeliveryMan: null,
+        selectedOrderType: null,
+        selectedPerson: null,
+        selectedTable: null,
+        selectedWaiter: null,
+        restaurantPosDiscountRequest: null,
+        fromBranchDateTime: null,
+        customerDiscount: null,
+        discountAmount: 0,
+        activeDiscountModel: null,
+        activeDiscounts: const [],
+        couponDiscountvalue: null,
+        clearActiveDiscountModel: true,
+        clearCouponDiscountValue: true,
+        clearCustomerDiscount: true,
+        clearRestaurantPosDiscountRequest: true,
+      ),
+    );
   }
 
   Future<void> _onHoldOrder(
@@ -546,7 +570,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   ) async {
     emit(
       state.copyWith(
-        saveDiscountModel: event.saveDiscountModel,
+        restaurantPosDiscountRequest: event.restaurantPosDiscountRequest,
         couponDiscountvalue: 0.0, // Reset coupon discount
         selectedDiscountType: DiscountTypeEnum.direct,
         activeDiscountModel: null,
@@ -563,7 +587,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(
       state.copyWith(
         couponDiscountvalue: discountVal,
-        saveDiscountModel: null, // Reset direct discount
+        restaurantPosDiscountRequest: null, // Reset direct discount
         selectedDiscountType: DiscountTypeEnum.coupon,
         activeDiscountModel: null,
       ),

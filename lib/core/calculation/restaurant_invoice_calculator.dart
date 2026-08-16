@@ -1,10 +1,10 @@
-/// How a discount value should be interpreted.
+/// طريقة تفسير قيمة الخصم
 enum DiscountType { percentage, fixedAmount }
 
 typedef ItemTypeId = int;
 
 // =====================================================================
-// INPUT MODELS
+// نماذج الإدخال
 // =====================================================================
 
 class InvoiceCalculationInput {
@@ -80,7 +80,7 @@ class VoucherInput {
 }
 
 // =====================================================================
-// OUTPUT MODELS
+// نماذج الإخراج
 // =====================================================================
 
 class InvoiceItemResult {
@@ -186,7 +186,7 @@ class InvoiceCalculationResponse {
 }
 
 // =====================================================================
-// CALCULATOR
+// حاسبة الفاتورة
 // =====================================================================
 
 class InvoiceCalculator {
@@ -231,7 +231,7 @@ class InvoiceCalculator {
       );
     }
 
-    // --- Item-level discounts -----------------------------------------
+    // -- خصومات الأصناف --
     final itemDiscountError = _validateItemDiscounts(calculableItems);
     if (itemDiscountError != null) {
       return InvoiceCalculationResponse.failure(itemDiscountError);
@@ -265,7 +265,7 @@ class InvoiceCalculator {
       totalAfterItemDiscount = 0.0;
     }
 
-    // --- Invoice-level discount candidates ------------------------------
+    // -- خيارات خصم الفاتورة --
     final customerDiscount = input.customerDiscountRatio > 0.0
         ? totalAfterItemDiscount * input.customerDiscountRatio / _hundred
         : 0.0;
@@ -312,7 +312,7 @@ class InvoiceCalculator {
       netAmount = 0.0;
     }
 
-    // --- Proportional allocation of the invoice-level discount ----------
+    // -- توزيع خصم الفاتورة نسبيًا على كل صنف --
     final allocatedDiscounts = <int, double>{};
     for (final item in calculableItems) {
       if (winningDiscount > 0.0 && totalOfItems > 0.0) {
@@ -323,7 +323,7 @@ class InvoiceCalculator {
       }
     }
 
-    // --- VAT and tobacco tax --------------------------------------------
+    // -- الضريبة وضريبة التبغ (تُحسب بعد خصم الصنف وخصم الفاتورة الموزّع) --
     var totalVAT = 0.0;
     var totalTobaccoTax = 0.0;
     final itemResults = <InvoiceItemResult>[];
@@ -332,6 +332,7 @@ class InvoiceCalculator {
       final itemDiscountValue = itemDiscountValues[item.transactionId]!;
       final allocated = allocatedDiscounts[item.transactionId]!;
 
+      // صافي الصنف بعد خصم الصنف وخصم الفاتورة الموزّع عليه
       var itemNet = item.grossValue - itemDiscountValue - allocated;
       if (itemNet < 0.0) itemNet = 0.0;
 
@@ -343,15 +344,13 @@ class InvoiceCalculator {
       }
       totalVAT += itemVAT;
 
+      // ضريبة التبغ تُحسب على الصافي بعد الخصم (وبعد خصم الضريبة إن كان السعر شاملها)
       var itemTobaccoTax = 0.0;
       if (item.isTobacco) {
         final tobaccoBase = input.priceIncludesVAT
             ? itemNet - itemVAT
             : itemNet;
         itemTobaccoTax = tobaccoBase;
-        //  > minimumTobaccoTax
-        //     ? tobaccoBase
-        //     : minimumTobaccoTax;
         totalTobaccoTax += itemTobaccoTax;
       }
 
@@ -366,7 +365,7 @@ class InvoiceCalculator {
       );
     }
 
-    // --- Dine-in service charge ------------------------------------------
+    // -- رسوم خدمة الصالة --
     final dineInCost = input.dineInRatio > 0.0
         ? netAmount * input.dineInRatio / _hundred
         : 0.0;
@@ -381,11 +380,12 @@ class InvoiceCalculator {
         invoiceDiscount: resultInvoiceDiscount,
         totalDiscount: totalItemDiscount + winningDiscount,
         totalVAT: totalVAT,
+        // إذا كان إجمالي ضريبة التبغ أقل من 25 يُضبط على 25، غير ذلك يؤخذ كما هو
         totalTobaccoTax: totalTobaccoTax == 0
             ? 0
             : totalTobaccoTax < 25
             ? 25
-            : totalTobaccoTax, // if total tobaco < 25 set 25 other set total
+            : totalTobaccoTax,
         deliveryCost: input.deliveryCost,
         dineInCost: dineInCost,
       ),

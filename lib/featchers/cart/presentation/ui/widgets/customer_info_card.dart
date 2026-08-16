@@ -1,10 +1,10 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/helpers/size_helper.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/ass_customer_tablet.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/helpers/helper_methods.dart';
+import '../../../../../core/helpers/size_helper.dart';
+import '../../../../../core/router/routes.dart';
+import '../../../data/models/pos_client_model.dart';
+import '../screens/ass_customer_tablet.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

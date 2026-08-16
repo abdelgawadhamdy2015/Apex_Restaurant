@@ -1,41 +1,41 @@
-import 'package:apex_restaurant/core/service/api_service.dart';
-import 'package:apex_restaurant/core/service/dio_factory.dart';
-import 'package:apex_restaurant/core/settings/settings_cubit.dart';
-import 'package:apex_restaurant/featchers/cart/data/datasource/cart_remote_datasource.dart';
-import 'package:apex_restaurant/featchers/cart/data/repo/cart_repo_imp.dart';
-import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
-import 'package:apex_restaurant/featchers/cart/domain/usescase/cart_usescase.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/home/data/datasource/menu_remote_datasource.dart';
-import 'package:apex_restaurant/featchers/home/data/repo_imp/home_repo_imp.dart';
-import 'package:apex_restaurant/featchers/home/domain/repo/home_repo.dart';
-import 'package:apex_restaurant/featchers/home/domain/usecases/home_usecases.dart';
-import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
-import 'package:apex_restaurant/featchers/login/data/datasource/auth_datasource.dart';
-import 'package:apex_restaurant/featchers/login/data/repo_imp/login_repo.dart';
-import 'package:apex_restaurant/featchers/login/domain/repo/auth_repo.dart';
-import 'package:apex_restaurant/featchers/login/domain/usecases/auth_usecase.dart';
-import 'package:apex_restaurant/featchers/login/presentation/bloc/auth_bloc.dart';
-import 'package:apex_restaurant/featchers/orders/data/datasource/orders_remote_data_source.dart';
-import 'package:apex_restaurant/featchers/orders/data/repo/order_repository_imp.dart';
-import 'package:apex_restaurant/featchers/orders/domain/repo/orders_repository.dart';
-import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
-import 'package:apex_restaurant/featchers/payment/data/datasource/payment_remote_data_source.dart';
-import 'package:apex_restaurant/featchers/payment/data/repo/payment_repository_impl.dart';
-import 'package:apex_restaurant/featchers/payment/domain/repo/payment_repository.dart';
-import 'package:apex_restaurant/featchers/payment/domain/usecase/process_payment_usecase.dart';
-import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
-import 'package:apex_restaurant/featchers/pos/data/datasources/pos_remote_datasource.dart';
-import 'package:apex_restaurant/featchers/pos/data/repositories/pos_repository_impl.dart';
-import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
-import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
-import 'package:apex_restaurant/featchers/tables/data/datasource/tables_remote_data_source.dart';
-import 'package:apex_restaurant/featchers/tables/data/repo/tables_repository_impl.dart';
-import 'package:apex_restaurant/featchers/tables/domain/repo/tables_repository.dart';
-import 'package:apex_restaurant/featchers/tables/domain/usescase/get_reservations_usecase.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
+import '../service/api_service.dart';
+import '../service/dio_factory.dart';
+import '../settings/settings_cubit.dart';
+import '../../featchers/cart/data/datasource/cart_remote_datasource.dart';
+import '../../featchers/cart/data/repo/cart_repo_imp.dart';
+import '../../featchers/cart/domain/repo/cart_repo.dart';
+import '../../featchers/cart/domain/usescase/cart_usescase.dart';
+import '../../featchers/cart/presentation/bloc/cart_bloc.dart';
+import '../../featchers/home/data/datasource/menu_remote_datasource.dart';
+import '../../featchers/home/data/repo_imp/home_repo_imp.dart';
+import '../../featchers/home/domain/repo/home_repo.dart';
+import '../../featchers/home/domain/usecases/home_usecases.dart';
+import '../../featchers/home/presentation/bloc/home_bloc.dart';
+import '../../featchers/login/data/datasource/auth_datasource.dart';
+import '../../featchers/login/data/repo_imp/login_repo.dart';
+import '../../featchers/login/domain/repo/auth_repo.dart';
+import '../../featchers/login/domain/usecases/auth_usecase.dart';
+import '../../featchers/login/presentation/bloc/auth_bloc.dart';
+import '../../featchers/orders/data/datasource/orders_remote_data_source.dart';
+import '../../featchers/orders/data/repo/order_repository_imp.dart';
+import '../../featchers/orders/domain/repo/orders_repository.dart';
+import '../../featchers/orders/domain/usescase/orders_usescase.dart';
+import '../../featchers/orders/presentation/bloc/orders_bloc.dart';
+import '../../featchers/payment/data/datasource/payment_remote_data_source.dart';
+import '../../featchers/payment/data/repo/payment_repository_impl.dart';
+import '../../featchers/payment/domain/repo/payment_repository.dart';
+import '../../featchers/payment/domain/usecase/process_payment_usecase.dart';
+import '../../featchers/payment/presentation/bloc/payment_bloc.dart';
+import '../../featchers/pos/data/datasources/pos_remote_datasource.dart';
+import '../../featchers/pos/data/repositories/pos_repository_impl.dart';
+import '../../featchers/pos/domain/repositories/pos_repository.dart';
+import '../../featchers/pos/domain/usecases/pos_usecases.dart';
+import '../../featchers/pos/presentation/bloc/pos_bloc.dart';
+import '../../featchers/tables/data/datasource/tables_remote_data_source.dart';
+import '../../featchers/tables/data/repo/tables_repository_impl.dart';
+import '../../featchers/tables/domain/repo/tables_repository.dart';
+import '../../featchers/tables/domain/usescase/get_reservations_usecase.dart';
+import '../../featchers/tables/presentation/bloc/tables_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -165,10 +165,10 @@ Future<void> setupGetIt() async {
     () => GetMenuItemsByCategoryUseCase(getIt<PosRepository>()),
   );
 
-  getIt.registerLazySingleton(
-    () => SendToKitchenUseCase(getIt<PosRepository>()),
-  );
-  getIt.registerLazySingleton(() => SubmitOrderUseCase(getIt<PosRepository>()));
+  // getIt.registerLazySingleton(
+  //   () => SendToKitchenUseCase(getIt<PosRepository>()),
+  // );
+  // getIt.registerLazySingleton(() => SubmitOrderUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(
     () => GetFoodAdditivesUseCase(getIt<PosRepository>()),
   );
@@ -176,6 +176,13 @@ Future<void> setupGetIt() async {
     () => GetAllDeliveryCompanyUseCase(getIt<PosRepository>()),
   );
   getIt.registerLazySingleton(() => GetSettingsUseCase(getIt<PosRepository>()));
+  getIt.registerLazySingleton(
+    () => CloseRestaurantPosSessionUseCase(getIt<PosRepository>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => CurrentRestaurantPosSessionUseCase(getIt<PosRepository>()),
+  );
 
   // cart
   getIt.registerLazySingleton(() => GetWaitersUseCase(getIt<CartRepository>()));
@@ -206,7 +213,7 @@ Future<void> setupGetIt() async {
 
   // Payment
   getIt.registerLazySingleton(
-    () => SaveRestaurantPosInvoice(getIt<PaymentRepository>()),
+    () => SavePaymentRestaurantPosInvoiceUseCase(getIt<PaymentRepository>()),
   );
 
   // Orders
@@ -269,6 +276,10 @@ Future<void> setupGetIt() async {
       getMenuCategories: getIt<GetMenuCategoriesUseCase>(),
       getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
       itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),
+      closeRestaurantPosSessionUseCase:
+          getIt<CloseRestaurantPosSessionUseCase>(),
+      currentRestaurantPosSessionUseCase:
+          getIt<CurrentRestaurantPosSessionUseCase>(),
     ),
   );
 
@@ -293,7 +304,9 @@ Future<void> setupGetIt() async {
 
   // Payment
   getIt.registerFactory<PaymentBloc>(
-    () => PaymentBloc(processPaymentUseCase: getIt<SaveRestaurantPosInvoice>()),
+    () => PaymentBloc(
+      processPaymentUseCase: getIt<SavePaymentRestaurantPosInvoiceUseCase>(),
+    ),
   );
 
   // Orders

@@ -1,13 +1,12 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/order_model.dart';
-import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_event.dart';
-import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_state.dart';
+import '../../../../core/service/api_result.dart';
+import '../../data/model/get_pinding_invoice.dart';
+import '../../data/model/get_previous_invoice_request.dart';
+import '../../data/model/order_model.dart';
+import '../../domain/usescase/orders_usescase.dart';
+import 'orders_event.dart';
+import 'orders_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-// Events
-
-// Bloc
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final GetRestaurantPosBookingTableUseCase getRestaurantPosBookingTableUseCase;
   final GetPindingInvoicesUseCase getPindingInvoicesUseCase;
@@ -26,18 +25,21 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<SwitchTabEvent>((event, emit) {
       emit(state.copyWith(activeTab: event.tab));
       if (state.activeTab == OrderTab.held) {
-        add(FetchPindingInvoicesEvent());
+        add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
       }
     });
+
     on<FetchPreviousInvoicesEvent>(_onPreviousInvoices);
+    on<LoadMorePreviousInvoicesEvent>(_onLoadMorePrevious);
 
     on<FetchPindingInvoicesEvent>(_onPindingInvoices);
+    on<LoadMorePindingInvoicesEvent>(_onLoadMorePinding);
 
     on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
 
     on<DeleteOrderEvent>((event, emit) async {
       await deleteHeldOrderUseCase(event.orderId);
-      add(FetchPindingInvoicesEvent());
+      add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
     });
     on<RestoreOrderEvent>(_onRestoreOrder);
     on<ClearRestoredInvoiceEvent>((event, emit) {
@@ -45,89 +47,254 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     });
   }
 
+  // ---------------------------------------------------------------------
+  // Previous Orders (paginated)
+  // ---------------------------------------------------------------------
+
+  GetPreviousInvoiceRequest _withPage(
+    GetPreviousInvoiceRequest? base,
+    int page,
+  ) {
+    return GetPreviousInvoiceRequest(
+      pageNumber: page,
+      pageSize: kOrdersPageSize,
+      fromDate: base?.fromDate,
+      toDate: base?.toDate,
+      invoiceCode: base?.invoiceCode,
+      personName: base?.personName,
+    );
+  }
+
   Future<void> _onPreviousInvoices(
     FetchPreviousInvoicesEvent event,
     Emitter<OrdersState> emit,
   ) async {
-    emit(state.copyWith(status: OrdersStatus.loading));
+    final request = _withPage(event.request, 1);
+    emit(
+      state.copyWith(
+        status: OrdersStatus.loading,
+        previousOrdersFilter: request,
+        previousOrdersPage: 1,
+        previousOrdersHasMore: true,
+      ),
+    );
     try {
-      final response = await getPreviousOrdersUseCase(request: event.request);
+      final response = await getPreviousOrdersUseCase(request: request);
       response.when(
         success: (data) {
           if (data.result == 1) {
+            final items = data.data ?? [];
             emit(
               state.copyWith(
-                previousOrders: data.data,
+                previousOrders: items,
                 isLoading: false,
                 status: OrdersStatus.sussess,
+                previousOrdersHasMore: items.length >= kOrdersPageSize,
               ),
             );
           } else {
-            state.copyWith(
-              errorMessage: data.errorMessageAr,
-              isLoading: false,
-              status: OrdersStatus.failure,
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                isLoading: false,
+                status: OrdersStatus.failure,
+              ),
             );
           }
         },
         failure: (errorHandler) {
-          state.copyWith(
-            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
-            isLoading: false,
-            status: OrdersStatus.failure,
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              isLoading: false,
+              status: OrdersStatus.failure,
+            ),
           );
         },
       );
     } catch (e) {
-      state.copyWith(
-        pindingInvoices: [],
-        isLoading: false,
-        status: OrdersStatus.failure,
+      emit(
+        state.copyWith(
+          previousOrders: const [],
+          isLoading: false,
+          status: OrdersStatus.failure,
+        ),
       );
     }
+  }
+
+  Future<void> _onLoadMorePrevious(
+    LoadMorePreviousInvoicesEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    if (state.isLoadingMorePrevious || !state.previousOrdersHasMore) return;
+
+    final nextPage = state.previousOrdersPage + 1;
+    final request = _withPage(state.previousOrdersFilter, nextPage);
+
+    emit(state.copyWith(isLoadingMorePrevious: true));
+    try {
+      final response = await getPreviousOrdersUseCase(request: request);
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            final newItems = data.data ?? [];
+            emit(
+              state.copyWith(
+                previousOrders: [...state.previousOrders, ...newItems],
+                previousOrdersPage: nextPage,
+                previousOrdersHasMore: newItems.length >= kOrdersPageSize,
+                isLoadingMorePrevious: false,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                isLoadingMorePrevious: false,
+                previousOrdersHasMore: false,
+                errorMessage: data.errorMessageAr,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              isLoadingMorePrevious: false,
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(state.copyWith(isLoadingMorePrevious: false));
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Held / Pinding Orders (paginated)
+  // ---------------------------------------------------------------------
+
+  GetPindingInvoicesRequest _withPindingPage(
+    GetPindingInvoicesRequest? base,
+    int page,
+  ) {
+    return GetPindingInvoicesRequest(
+      foodTableId: base?.foodTableId,
+      pageNumber: page,
+      pageSize: kOrdersPageSize,
+    );
   }
 
   Future<void> _onPindingInvoices(
     FetchPindingInvoicesEvent event,
     Emitter<OrdersState> emit,
   ) async {
-    emit(state.copyWith(status: OrdersStatus.loading));
+    final request = _withPindingPage(event.request, 1);
+    emit(
+      state.copyWith(
+        status: OrdersStatus.loading,
+        pindingInvoicesFilter: request,
+        pindingInvoicesPage: 1,
+        pindingInvoicesHasMore: true,
+      ),
+    );
     try {
-      final response = await getPindingInvoicesUseCase(request: event.request);
+      final response = await getPindingInvoicesUseCase(request: request);
       response.when(
         success: (data) {
           if (data.result == 1) {
+            final items = data.data ?? [];
             emit(
               state.copyWith(
-                pindingInvoices: data.data ?? [],
+                pindingInvoices: items,
                 isLoading: false,
                 status: OrdersStatus.sussess,
+                pindingInvoicesHasMore: items.length >= kOrdersPageSize,
               ),
             );
           } else {
-            state.copyWith(
-              errorMessage: data.errorMessageAr,
-              isLoading: false,
-              status: OrdersStatus.failure,
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                isLoading: false,
+                status: OrdersStatus.failure,
+              ),
             );
           }
         },
         failure: (errorHandler) {
-          state.copyWith(
-            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
-            isLoading: false,
-            status: OrdersStatus.failure,
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              isLoading: false,
+              status: OrdersStatus.failure,
+            ),
           );
         },
       );
     } catch (e) {
-      state.copyWith(
-        pindingInvoices: [],
-        isLoading: false,
-        status: OrdersStatus.failure,
+      emit(
+        state.copyWith(
+          pindingInvoices: const [],
+          isLoading: false,
+          status: OrdersStatus.failure,
+        ),
       );
     }
   }
+
+  Future<void> _onLoadMorePinding(
+    LoadMorePindingInvoicesEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    if (state.isLoadingMorePinding || !state.pindingInvoicesHasMore) return;
+
+    final nextPage = state.pindingInvoicesPage + 1;
+    final request = _withPindingPage(state.pindingInvoicesFilter, nextPage);
+
+    emit(state.copyWith(isLoadingMorePinding: true));
+    try {
+      final response = await getPindingInvoicesUseCase(request: request);
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            final newItems = data.data ?? [];
+            emit(
+              state.copyWith(
+                pindingInvoices: [...state.pindingInvoices, ...newItems],
+                pindingInvoicesPage: nextPage,
+                pindingInvoicesHasMore: newItems.length >= kOrdersPageSize,
+                isLoadingMorePinding: false,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                isLoadingMorePinding: false,
+                pindingInvoicesHasMore: false,
+                errorMessage: data.errorMessageAr,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              isLoadingMorePinding: false,
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(state.copyWith(isLoadingMorePinding: false));
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Unchanged
+  // ---------------------------------------------------------------------
 
   Future<void> _onRestaurantPosBookingTable(
     FetchRestaurantPosBookingTableEvent event,
@@ -149,26 +316,32 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
               ),
             );
           } else {
-            state.copyWith(
-              errorMessage: data.errorMessageAr,
-              isLoading: false,
-              status: OrdersStatus.failure,
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                isLoading: false,
+                status: OrdersStatus.failure,
+              ),
             );
           }
         },
         failure: (errorHandler) {
-          state.copyWith(
-            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
-            isLoading: false,
-            status: OrdersStatus.failure,
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              isLoading: false,
+              status: OrdersStatus.failure,
+            ),
           );
         },
       );
     } catch (e) {
-      state.copyWith(
-        pindingInvoices: [],
-        isLoading: false,
-        status: OrdersStatus.failure,
+      emit(
+        state.copyWith(
+          pindingInvoices: [],
+          isLoading: false,
+          status: OrdersStatus.failure,
+        ),
       );
     }
   }
@@ -223,6 +396,6 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       );
     }
 
-    add(FetchPindingInvoicesEvent());
+    add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
   }
 }

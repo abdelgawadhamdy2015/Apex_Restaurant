@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/themes/app_colors.dart';
+import '../themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
 enum AppAccentColor { primary, amber, navy }

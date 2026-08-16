@@ -1,15 +1,15 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/apply_discount_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/client_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/discount_result_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/waiter_model.dart';
-import 'package:apex_restaurant/featchers/cart/domain/repo/cart_repo.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../data/models/apply_discount_request_model.dart';
+import '../../data/models/client_request_model.dart';
+import '../../data/models/discount_result_model.dart';
+import '../../data/models/dynamic_discount.dart';
+import '../../data/models/get_client_request.dart';
+import '../../data/models/invoice_request.dart';
+import '../../data/models/pos_client_model.dart';
+import '../../data/models/waiter_model.dart';
+import '../repo/cart_repo.dart';
 
 class GetWaitersUseCase {
   final CartRepository repository;
@@ -81,7 +81,9 @@ class SavePendingRestaurantPosInvoiceUseCase {
   final CartRepository repository;
   SavePendingRestaurantPosInvoiceUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<dynamic>>> call(SaveInvoiceRequestModel order) {
+  Future<ApiResult<BaseResponse<dynamic>>> call(
+    SaveRestaurantPosInvoiceRequest order,
+  ) {
     return repository.savePendingRestaurantPosInvoice(order);
   }
 }
@@ -90,7 +92,9 @@ class SaveBookingTableRestaurantPosInvoiceUseCase {
   final CartRepository repository;
   SaveBookingTableRestaurantPosInvoiceUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<dynamic>>> call(SaveInvoiceRequestModel order) {
+  Future<ApiResult<BaseResponse<dynamic>>> call(
+    SaveRestaurantPosInvoiceRequest order,
+  ) {
     return repository.saveBookingTableRestaurantPosInvoice(order);
   }
 }

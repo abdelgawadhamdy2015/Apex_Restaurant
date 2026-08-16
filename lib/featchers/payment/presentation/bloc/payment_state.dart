@@ -1,5 +1,6 @@
-import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
-import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
+import '../../data/model/payment_request_model.dart';
+import '../../data/model/payment_success_model.dart';
+import '../../data/model/success_response_model.dart';
 import 'package:equatable/equatable.dart';
 
 enum PaymentStatus { initial, loading, success, error }
@@ -12,6 +13,7 @@ class PaymentState extends Equatable {
   final String referenceNumber;
   final Map<int, double> splitAmounts;
   final PaymentSuccessModel? successModel;
+  final SuccessResponseModel? successResponseModel;
   final String? errorMessage;
 
   const PaymentState({
@@ -23,6 +25,7 @@ class PaymentState extends Equatable {
     this.splitAmounts = const {},
     this.successModel,
     this.errorMessage,
+    this.successResponseModel,
   });
 
   double get remainingAmount =>
@@ -36,6 +39,7 @@ class PaymentState extends Equatable {
     String? referenceNumber,
     Map<int, double>? splitAmounts,
     PaymentSuccessModel? successModel,
+    SuccessResponseModel? successResponseModel,
     String? errorMessage,
   }) {
     return PaymentState(
@@ -46,6 +50,7 @@ class PaymentState extends Equatable {
       referenceNumber: referenceNumber ?? this.referenceNumber,
       splitAmounts: splitAmounts ?? this.splitAmounts,
       successModel: successModel ?? this.successModel,
+      successResponseModel: successResponseModel ?? this.successResponseModel,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

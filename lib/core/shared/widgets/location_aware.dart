@@ -1,6 +1,6 @@
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/shared/widgets/location_service_provider.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../helpers/helper_methods.dart';
+import 'location_service_provider.dart';
+import '../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';

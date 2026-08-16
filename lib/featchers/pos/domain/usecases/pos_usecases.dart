@@ -1,14 +1,13 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/core/shared/model/settings_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_food_additive_request.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/repositories/pos_repository.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/entity/base_request.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../../../core/shared/model/settings_model.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/delivery_company.dart';
+import '../../data/models/restaurant_item.dart';
+import '../entities/get_food_additive_request.dart';
+import '../entities/get_items_request_model.dart';
+import '../repositories/pos_repository.dart';
 
 class GetSettingsUseCase {
   final PosRepository _repository;
@@ -48,14 +47,22 @@ class GetAllDeliveryCompanyUseCase {
   }) => _repository.getAllDeliveryCompany(request: request);
 }
 
-class SendToKitchenUseCase {
+// class SendToKitchenUseCase {
+//   final PosRepository _repository;
+//   SendToKitchenUseCase(this._repository);
+//   Future<void> call(Order order) => _repository.sendToKitchen(order);
+// }
+
+class CloseRestaurantPosSessionUseCase {
   final PosRepository _repository;
-  SendToKitchenUseCase(this._repository);
-  Future<void> call(Order order) => _repository.sendToKitchen(order);
+  CloseRestaurantPosSessionUseCase(this._repository);
+  Future<ApiResult<BaseResponse<dynamic>>> call({required int sessionId}) =>
+      _repository.closeRestaurantPosSession(sessionId: sessionId);
 }
 
-class SubmitOrderUseCase {
+class CurrentRestaurantPosSessionUseCase {
   final PosRepository _repository;
-  SubmitOrderUseCase(this._repository);
-  Future<void> call(Order order) => _repository.submitOrder(order);
+  CurrentRestaurantPosSessionUseCase(this._repository);
+  Future<ApiResult<BaseResponse<dynamic>>> call() =>
+      _repository.getCurrentSession();
 }

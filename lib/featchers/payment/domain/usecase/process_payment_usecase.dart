@@ -1,15 +1,16 @@
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/core/shared/model/base_response.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/invoice_request_model.dart';
-import 'package:apex_restaurant/featchers/payment/domain/repo/payment_repository.dart';
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../../cart/data/models/invoice_request.dart';
+import '../../data/model/success_response_model.dart';
+import '../repo/payment_repository.dart';
 
-class SaveRestaurantPosInvoice {
+class SavePaymentRestaurantPosInvoiceUseCase {
   final PaymentRepository repository;
 
-  SaveRestaurantPosInvoice(this.repository);
+  SavePaymentRestaurantPosInvoiceUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<dynamic>>> call(
-    SaveInvoiceRequestModel request,
+  Future<ApiResult<BaseResponse<SuccessResponseModel>>> call(
+    SaveRestaurantPosInvoiceRequest request,
   ) {
     return repository.saveRestaurantPosInvoice(request);
   }

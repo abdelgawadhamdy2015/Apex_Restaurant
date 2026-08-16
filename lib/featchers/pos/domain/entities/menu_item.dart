@@ -1,5 +1,5 @@
-import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
-import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
+import '../../data/models/category_model.dart';
+import '../../data/models/restaurant_item.dart';
 import 'package:equatable/equatable.dart';
 
 class OrderItem extends Equatable {
@@ -29,10 +29,10 @@ class OrderItem extends Equatable {
   /// Base price based on selected size or default item price
   double get unitBasePrice {
     if (selectedSize != null) {
-      return selectedSize!.price;
+      return selectedSize?.price ?? 0;
     }
     if (itemHasSizes) {
-      return menuItem.sizes.first.price;
+      return menuItem.sizes.first.price ?? 0;
     }
     return menuItem.defaultPrice;
   }
@@ -99,76 +99,5 @@ class OrderItem extends Equatable {
     addons,
     discount,
     isPercentageDiscount,
-  ];
-}
-
-class Order extends Equatable {
-  final String tableId;
-  final List<OrderItem> items;
-  final double taxRate;
-  final double orderDiscount;
-  final bool isOrderDiscountPercentage;
-
-  const Order({
-    required this.tableId,
-    required this.items,
-    this.taxRate = 0.15,
-    this.orderDiscount = 0.0,
-    this.isOrderDiscountPercentage = false,
-  });
-
-  /// Total items count inside the cart
-  int get totalItemCount => items.fold(0, (sum, item) => sum + item.quantity);
-
-  /// Subtotal before order-level tax and discounts
-  double get subtotal => items.fold(0.0, (sum, item) => sum + item.totalPrice);
-
-  /// Order level discount amount
-  double get orderDiscountAmount {
-    if (orderDiscount <= 0) return 0.0;
-    if (isOrderDiscountPercentage) {
-      return (subtotal * orderDiscount) / 100;
-    }
-    {
-      return orderDiscount;
-    }
-  }
-
-  /// Amount after applying order-level discount
-  double get netSubtotal {
-    final net = subtotal - orderDiscountAmount;
-    return net > 0 ? net : 0.0;
-  }
-
-  /// VAT / Tax amount calculated on net subtotal
-  double get tax => netSubtotal * taxRate;
-
-  /// Final order total amount payable
-  double get total => netSubtotal + tax;
-
-  Order copyWith({
-    String? tableId,
-    List<OrderItem>? items,
-    double? taxRate,
-    double? orderDiscount,
-    bool? isOrderDiscountPercentage,
-  }) {
-    return Order(
-      tableId: tableId ?? this.tableId,
-      items: items ?? this.items,
-      taxRate: taxRate ?? this.taxRate,
-      orderDiscount: orderDiscount ?? this.orderDiscount,
-      isOrderDiscountPercentage:
-          isOrderDiscountPercentage ?? this.isOrderDiscountPercentage,
-    );
-  }
-
-  @override
-  List<Object?> get props => [
-    tableId,
-    items,
-    taxRate,
-    orderDiscount,
-    isOrderDiscountPercentage,
   ];
 }

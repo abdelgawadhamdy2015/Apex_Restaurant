@@ -1,13 +1,12 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/core/service/api_error_handler.dart';
-import 'package:apex_restaurant/core/service/api_result.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
-import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import '../../../../core/service/api_error_handler.dart';
+import '../../../../core/service/api_result.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../domain/entities/get_items_request_model.dart';
+import '../../domain/usecases/pos_usecases.dart';
+import 'pos_event.dart';
+import 'pos_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PosBloc extends Bloc<PosEvent, PosState> {
@@ -15,31 +14,150 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   final GetMenuCategoriesUseCase _getMenuCategories;
   final GetMenuItemsByCategoryUseCase _itemsByCategoryUseCase;
   final GetFoodAdditivesUseCase _getfoodAdditivesUseCase;
+  final CloseRestaurantPosSessionUseCase _closeRestaurantPosSessionUseCase;
+  final CurrentRestaurantPosSessionUseCase _currentRestaurantPosSessionUseCase;
+
+  /// Number of items fetched per page for the menu grid (mobile & tablet).
+  static const int _itemsPageSize = 20;
 
   PosBloc({
     required this._getMenuCategories,
     required this._itemsByCategoryUseCase,
     required this._getfoodAdditivesUseCase,
     required this._getSettingsUseCase,
+    required this._closeRestaurantPosSessionUseCase,
+    required this._currentRestaurantPosSessionUseCase,
   }) : super(PosState.initial()) {
     on<LoadSettingsEvent>(_onLoadSettings);
     on<LoadCategoriesEvent>(_onLoadCategories);
     on<SelectCategoryEvent>(_onSelectCategory);
 
     on<LoadItemsEvent>(_onLoadItems);
+    on<LoadMoreItemsEvent>(_onLoadMoreItems);
     on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
 
-    on<UpdateItemAddonsEvent>(_onUpdateItemAddons);
-    on<AddItemToOrderEvent>(_onAddItem);
-    on<RemoveItemFromOrderEvent>(_onRemoveItem);
-    on<IncrementItemEvent>(_onIncrementItem);
-    on<DecrementItemEvent>(_onDecrementItem);
-    on<SendToKitchenEvent>(_onSendToKitchen);
-    on<PayOrderEvent>(_onPayOrder);
-    on<CancelOrderEvent>(_onCancelOrder);
+    //on<UpdateItemAddonsEvent>(_onUpdateItemAddons);
+    // on<AddItemToOrderEvent>(_onAddItem);
+    // on<RemoveItemFromOrderEvent>(_onRemoveItem);
+    // on<IncrementItemEvent>(_onIncrementItem);
+    // on<DecrementItemEvent>(_onDecrementItem);
+    // on<SendToKitchenEvent>(_onSendToKitchen);
+    // on<PayOrderEvent>(_onPayOrder);
     on<ShowToastEvent>(_onShowToast);
     on<DismissToastEvent>(_onDismissToast);
     on<SelectTableEvent>(_onSelectTable);
+
+    //  Session Handler
+    on<CurrentRestaurantPosSessionEvent>(_getCurrentSession);
+    on<CloseRestaurantPosSessionEvent>(_onCloseSession);
+  }
+  Future<void> _getCurrentSession(
+    CurrentRestaurantPosSessionEvent event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(status: PosStatus.loading));
+
+    try {
+      final response = await _currentRestaurantPosSessionUseCase();
+
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: PosStatus.loaded, // أو حالة نجاح مخصصة عند الرغبة
+                currentSessionId: data.id,
+                clear: true,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: PosStatus.error,
+                apiResponse: data,
+                errorMessage:
+                    data.errorMessageAr ?? data.note ?? 'فشل في إغلاق الجلسة',
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              status: PosStatus.error,
+              errorMessage:
+                  errorHandler.apiErrorModel.errorMessageAr ??
+                  'خطأ في الاتصال بالخادم عند إغلاق الجلسة',
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: PosStatus.error,
+          errorMessage:
+              ErrorHandler.handle(e).apiErrorModel.errorMessageAr ??
+              'حدث خطأ غير متوقع عند إغلاق الجلسة',
+        ),
+      );
+    }
+  }
+
+  Future<void> _onCloseSession(
+    CloseRestaurantPosSessionEvent event,
+    Emitter<PosState> emit,
+  ) async {
+    emit(state.copyWith(status: PosStatus.loading));
+
+    try {
+      final response = await _closeRestaurantPosSessionUseCase(
+        sessionId: event.sessionId,
+      );
+
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: PosStatus.loaded, // أو حالة نجاح مخصصة عند الرغبة
+                toastMessage: 'تم إغلاق الجلسة بنجاح',
+                currentSessionId: null,
+                clear: true,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: PosStatus.error,
+                apiResponse: data,
+                errorMessage:
+                    data.errorMessageAr ?? data.note ?? 'فشل في إغلاق الجلسة',
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              status: PosStatus.error,
+              errorMessage:
+                  errorHandler.apiErrorModel.errorMessageAr ??
+                  'خطأ في الاتصال بالخادم عند إغلاق الجلسة',
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: PosStatus.error,
+          errorMessage:
+              ErrorHandler.handle(e).apiErrorModel.errorMessageAr ??
+              'حدث خطأ غير متوقع عند إغلاق الجلسة',
+        ),
+      );
+    }
   }
 
   Future<void> _onLoadSettings(
@@ -210,16 +328,52 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     LoadItemsEvent event,
     Emitter<PosState> emit,
   ) async {
-    emit(state.copyWith(status: PosStatus.loading));
+    final isFirstPage = !event.loadMore;
+
+    if (isFirstPage) {
+      emit(
+        state.copyWith(
+          status: PosStatus.loading,
+          currentMenuItems: const [],
+          itemsPageNumber: 1,
+          hasMoreItems: true,
+        ),
+      );
+    } else {
+      if (!state.hasMoreItems || state.isLoadingMoreItems) return;
+      emit(state.copyWith(isLoadingMoreItems: true));
+    }
+
+    final nextPage = isFirstPage ? 1 : state.itemsPageNumber + 1;
+    final baseRequest = event.requestModel ?? state.currentItemsRequest;
+    final requestWithPaging = GetItemsRequest(
+      pageNumber: nextPage,
+      pageSize: _itemsPageSize,
+      statues: baseRequest?.statues,
+      name: baseRequest?.name,
+      categoryId: baseRequest?.categoryId,
+      companyId: baseRequest?.companyId,
+      searchKey: baseRequest?.searchKey,
+    );
+
     try {
-      final response = await _itemsByCategoryUseCase(event.requestModel);
+      final response = await _itemsByCategoryUseCase(requestWithPaging);
       response.when(
         success: (data) {
           if (data.result == 1) {
+            final newItems = data.data ?? [];
+            final combinedItems = isFirstPage
+                ? newItems
+                : [...state.currentMenuItems, ...newItems];
+
             emit(
               state.copyWith(
                 status: PosStatus.loaded,
-                currentMenuItems: data.data ?? [],
+                currentMenuItems: combinedItems,
+                itemsPageNumber: nextPage,
+                hasMoreItems: newItems.length >= _itemsPageSize,
+                isLoadingMoreItems: false,
+                currentItemsRequest: requestWithPaging,
               ),
             );
           } else {
@@ -228,6 +382,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
                 status: PosStatus.error,
                 apiResponse: data,
                 errorMessage: data.errorMessageAr ?? 'فشل في تحميل المنتجات',
+                isLoadingMoreItems: false,
               ),
             );
           }
@@ -239,6 +394,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
               errorMessage:
                   errorHandler.apiErrorModel.errorMessageAr ??
                   'خطأ في الاتصال بالخادم',
+              isLoadingMoreItems: false,
             ),
           );
         },
@@ -250,9 +406,14 @@ class PosBloc extends Bloc<PosEvent, PosState> {
           errorMessage:
               ErrorHandler.handle(e).apiErrorModel.errorMessageAr ??
               'حدث خطأ غير متوقع عند تحميل المنتجات',
+          isLoadingMoreItems: false,
         ),
       );
     }
+  }
+
+  void _onLoadMoreItems(LoadMoreItemsEvent event, Emitter<PosState> emit) {
+    add(LoadItemsEvent(state.currentItemsRequest, loadMore: true));
   }
 
   void _onSelectCategory(SelectCategoryEvent event, Emitter<PosState> emit) {
@@ -276,112 +437,33 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     );
   }
 
-  void _onUpdateItemAddons(
-    UpdateItemAddonsEvent event,
-    Emitter<PosState> emit,
-  ) {
+  Future<RestaurantItem?> fetchItemDetails({
+    required int categoryId,
+    required int itemId,
+  }) async {
     try {
-      final currentItems = List<OrderItem>.from(state.currentOrder.items);
-
-      // 1. Find the target item index to update
-      final targetIndex = currentItems.indexWhere(
-        (item) => item.menuItem.itemId == event.item.menuItem.itemId,
+      final response = await _itemsByCategoryUseCase(
+        GetItemsRequest(categoryId: categoryId, itemId: itemId),
       );
 
-      if (targetIndex == -1) return;
-
-      // 2. Create the updated item with the new addons
-      final updatedItem = currentItems[targetIndex].copyWith(
-        addons: event.addons,
-      );
-
-      // 3. Remove the target item temporarily from the list to check for existing duplicates
-      currentItems.removeAt(targetIndex);
-
-      // 4. Look for an existing item that matches itemId, size, AND the new addons
-      final duplicateIndex = currentItems.indexWhere(
-        (i) =>
-            i.menuItem.itemId == updatedItem.menuItem.itemId &&
-            i.selectedSize?.sizeId == updatedItem.selectedSize?.sizeId &&
-            _areAddonsEqual(i.addons, updatedItem.addons),
-      );
-
-      if (duplicateIndex >= 0) {
-        // Match found: Merge quantity into the existing matching item
-        currentItems[duplicateIndex] = currentItems[duplicateIndex].copyWith(
-          quantity:
-              currentItems[duplicateIndex].quantity + updatedItem.quantity,
-        );
-      } else {
-        // No match found: Re-insert the updated item at its original position
-        currentItems.insert(targetIndex, updatedItem);
-      }
-
-      emit(
-        state.copyWith(
-          currentOrder: state.currentOrder.copyWith(items: currentItems),
-        ),
-      );
-    } catch (e) {
-      emit(state.copyWith(errorMessage: 'فشل في تحديث الإضافات'));
-    }
-  }
-
-  void _onAddItem(AddItemToOrderEvent event, Emitter<PosState> emit) {
-    try {
-      final existingItems = List<OrderItem>.from(state.currentOrder.items);
-
-      final exactMatchIndex = existingItems.indexWhere(
-        (i) =>
-            i.menuItem.itemId == event.item.menuItem.itemId &&
-            i.selectedSize?.sizeId == event.item.selectedSize?.sizeId &&
-            _areAddonsEqual(i.addons, event.item.addons),
-      );
-
-      if (exactMatchIndex >= 0) {
-        existingItems[exactMatchIndex] = existingItems[exactMatchIndex]
-            .copyWith(
-              quantity:
-                  existingItems[exactMatchIndex].quantity + event.item.quantity,
-            );
-      } else {
-        // 2. Look for a partial match (Same Item ID & Same Size, but different/new addons)
-        final partialMatchIndex = existingItems.indexWhere(
-          (i) =>
-              i.menuItem.itemId == event.item.menuItem.itemId &&
-              i.selectedSize?.sizeId == event.item.selectedSize?.sizeId,
-        );
-
-        if (partialMatchIndex >= 0) {
-          // Merge unique addons from both items
-          final mergedAddons = HelperMethods.mergeAddons(
-            existingItems[partialMatchIndex].addons,
-            event.item.addons,
+      RestaurantItem? result;
+      response.when(
+        success: (data) {
+          final items = data.data ?? [];
+          if (items.isNotEmpty) {
+            result = items.first;
+          }
+        },
+        failure: (errorHandler) {
+          log(
+            "fetchItemDetails failure: ${errorHandler.apiErrorModel.errorMessageAr}",
           );
-
-          // Update existing item with merged addons and increased quantity
-          existingItems[partialMatchIndex] = existingItems[partialMatchIndex]
-              .copyWith(
-                quantity:
-                    existingItems[partialMatchIndex].quantity +
-                    event.item.quantity,
-                addons: mergedAddons,
-              );
-        } else {
-          // 3. Completely new item/variant: Add as a new entry
-          existingItems.add(event.item);
-        }
-      }
-
-      emit(
-        state.copyWith(
-          currentOrder: state.currentOrder.copyWith(items: existingItems),
-          toastMessage:
-              'تمت إضافة "${event.item.menuItem.itemNameAr}" إلى الطلب',
-        ),
+        },
       );
-    } catch (e) {
-      emit(state.copyWith(errorMessage: 'فشل في إضافة العنصر إلى السلة'));
+      return result;
+    } catch (e, s) {
+      log("fetchItemDetails error: $e\n$s");
+      return null;
     }
   }
 
@@ -391,68 +473,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       if (addons1[i] != addons2[i]) return false;
     }
     return true;
-  }
-
-  void _onRemoveItem(RemoveItemFromOrderEvent event, Emitter<PosState> emit) {
-    try {
-      final targetId = int.tryParse(event.itemId);
-      final items = state.currentOrder.items
-          .where((i) => i.menuItem.itemId != targetId)
-          .toList();
-
-      emit(
-        state.copyWith(currentOrder: state.currentOrder.copyWith(items: items)),
-      );
-    } catch (e) {
-      emit(state.copyWith(errorMessage: 'فشل في حذف العنصر من السلة'));
-    }
-  }
-
-  void _onIncrementItem(IncrementItemEvent event, Emitter<PosState> emit) {
-    final items = state.currentOrder.items.map((item) {
-      if (item.menuItem.itemId == event.itemId) {
-        return item.copyWith(quantity: item.quantity + 1);
-      }
-      return item;
-    }).toList();
-
-    emit(
-      state.copyWith(currentOrder: state.currentOrder.copyWith(items: items)),
-    );
-  }
-
-  void _onDecrementItem(DecrementItemEvent event, Emitter<PosState> emit) {
-    final items = state.currentOrder.items
-        .map((item) {
-          if (item.menuItem.itemId == event.itemId) {
-            if (item.quantity <= 1) return null;
-            return item.copyWith(quantity: item.quantity - 1);
-          }
-          return item;
-        })
-        .whereType<OrderItem>()
-        .toList();
-
-    emit(
-      state.copyWith(currentOrder: state.currentOrder.copyWith(items: items)),
-    );
-  }
-
-  void _onSendToKitchen(SendToKitchenEvent event, Emitter<PosState> emit) {
-    emit(state.copyWith(isKitchenSent: true));
-  }
-
-  void _onPayOrder(PayOrderEvent event, Emitter<PosState> emit) {
-    // Standard pay order handler logic
-  }
-
-  void _onCancelOrder(CancelOrderEvent event, Emitter<PosState> emit) {
-    emit(
-      state.copyWith(
-        currentOrder: const Order(tableId: '12', items: []),
-        isKitchenSent: false,
-      ),
-    );
   }
 
   void _onShowToast(ShowToastEvent event, Emitter<PosState> emit) {

@@ -1,7 +1,7 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../core/helpers/extensions.dart';
+import '../../../../core/themes/app_colors.dart';
+import '../../../../core/themes/app_spacing_theme.dart';
+import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class PosBottomNavBar extends StatelessWidget {

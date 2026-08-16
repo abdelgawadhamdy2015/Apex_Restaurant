@@ -119,6 +119,65 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<BaseResponse<SessionModel?>> currentPOSsession() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<SessionModel?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/POSSession/currentPOSsession',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<SessionModel?> _value;
+    try {
+      _value = BaseResponse<SessionModel?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : SessionModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<void>> closeRestaurantPosSession(int sessionId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<void>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/POSSession/ClosePOSSeassion/${sessionId}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<void> _value;
+    try {
+      _value = BaseResponse<void>.fromJson(_result.data!, (json) => () {}());
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<BaseResponse<SettingsModel?>> getSettings() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -830,15 +889,15 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<dynamic>> saveRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
+    SaveRestaurantPosInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(request.toJson());
-    final _options = _setStreamType<BaseResponse<dynamic>>(
+    final _options = _setStreamType<BaseResponse<SuccessResponseModel>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -849,11 +908,11 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<dynamic> _value;
+    late BaseResponse<SuccessResponseModel> _value;
     try {
-      _value = BaseResponse<dynamic>.fromJson(
+      _value = BaseResponse<SuccessResponseModel>.fromJson(
         _result.data!,
-        (json) => json as dynamic,
+        (json) => SuccessResponseModel.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
@@ -864,7 +923,7 @@ class _ApiService implements ApiService {
 
   @override
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -897,7 +956,7 @@ class _ApiService implements ApiService {
 
   @override
   Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
-    SaveInvoiceRequestModel request,
+    SaveRestaurantPosInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -983,6 +1042,38 @@ class _ApiService implements ApiService {
           .compose(
             _dio.options,
             'api/Restaurants/RestaurantPos/GetPosInvoiceDataById',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<RestoredInvoiceModel?> _value;
+    try {
+      _value = BaseResponse<RestoredInvoiceModel?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : RestoredInvoiceModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<RestoredInvoiceModel?>> getItemById(int itemId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'Id': itemId};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<RestoredInvoiceModel?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/RestaurantItemCard/GetItemById',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1126,6 +1217,40 @@ class _ApiService implements ApiService {
                   )
                   .toList()
             : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<UserDataModel?>> deletetPendingInvoiceAndBokkingTable(
+    int id,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'Id': id};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<UserDataModel?>>(
+      Options(method: 'DELETE', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Restaurants/RestaurantPos/DeletetPendingInvoiceAndBokkingTable',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<UserDataModel?> _value;
+    try {
+      _value = BaseResponse<UserDataModel?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : UserDataModel.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/shared/entity/base_request.dart';
+import '../../../../core/shared/entity/base_request.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'get_reservations_request.g.dart';
