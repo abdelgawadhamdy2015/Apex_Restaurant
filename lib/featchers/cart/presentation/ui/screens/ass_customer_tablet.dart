@@ -665,12 +665,8 @@ class _CityDropdown extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
-    return DropdownButtonFormField<String>(
-      initialValue: controller.text.isEmpty ? null : controller.text,
-      icon: Icon(
-        Icons.keyboard_arrow_down,
-        color: theme.colorScheme.onSecondary,
-      ),
+    return TextFormField(
+      controller: controller,
       decoration: InputDecoration(
         hintText: 'اختر المدينة',
         filled: true,
@@ -688,10 +684,6 @@ class _CityDropdown extends StatelessWidget {
           borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
         ),
       ),
-      items: _kCities
-          .map((city) => DropdownMenuItem(value: city, child: Text(city)))
-          .toList(),
-      onChanged: (value) => controller.text = value ?? '',
     );
   }
 }

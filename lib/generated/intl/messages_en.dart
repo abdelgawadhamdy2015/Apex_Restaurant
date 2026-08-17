@@ -24,33 +24,35 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m1(addons) => "Add-ons: ${addons}";
 
-  static String m2(year, month, day, hour, minute) =>
+  static String m2(version) => "App Version ${version}";
+
+  static String m3(year, month, day, hour, minute) =>
       "${year}/${month}/${day} - ${hour}:${minute}";
 
-  static String m3(hours) => "${hours} hours ago";
+  static String m4(hours) => "${hours} hours ago";
 
-  static String m4(count) => "${count} Item";
+  static String m5(count) => "${count} Item";
 
-  static String m5(count) =>
+  static String m6(count) =>
       "${Intl.plural(count, one: '1 Item', other: '${count} Items')}";
 
-  static String m6(minutes) => "${minutes} min ago";
+  static String m7(minutes) => "${minutes} min ago";
 
-  static String m7(notes) => "Notes: ${notes}";
+  static String m8(notes) => "Notes: ${notes}";
 
-  static String m8(count) => "${count} Orders";
+  static String m9(count) => "${count} Orders";
 
-  static String m9(price) => "+${price} SAR";
+  static String m10(price) => "+${price} SAR";
 
-  static String m10(price) => "${price} SAR";
+  static String m11(price) => "${price} SAR";
 
-  static String m11(quantity) => "Qty: ${quantity}";
+  static String m12(quantity) => "Qty: ${quantity}";
 
-  static String m12(minutes) => "Reservation Period (${minutes} min)";
+  static String m13(minutes) => "Reservation Period (${minutes} min)";
 
-  static String m13(size) => "Size: ${size}";
+  static String m14(size) => "Size: ${size}";
 
-  static String m14(vat) => "VAT : % ${vat} ";
+  static String m15(vat) => "VAT : % ${vat} ";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -65,6 +67,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accessDenied": MessageLookupByLibrary.simpleMessage("Access Denied"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
+    "actions": MessageLookupByLibrary.simpleMessage("actions"),
     "active": MessageLookupByLibrary.simpleMessage("Active"),
     "activeNow": MessageLookupByLibrary.simpleMessage("Active Now"),
     "actualCashInDrawer": MessageLookupByLibrary.simpleMessage(
@@ -85,6 +88,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "addNewAddress": MessageLookupByLibrary.simpleMessage("Add new address"),
     "addNewCustomer": MessageLookupByLibrary.simpleMessage("Add New Customer"),
+    "addNewItem": MessageLookupByLibrary.simpleMessage("Add New Item"),
     "addNewReservation": MessageLookupByLibrary.simpleMessage(
       "Add New Reservation",
     ),
@@ -96,6 +100,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "additionalNotes": MessageLookupByLibrary.simpleMessage("Additional Notes"),
     "additionalNotesHint": MessageLookupByLibrary.simpleMessage(
       "Write operation details here...",
+    ),
+    "additionalOperations": MessageLookupByLibrary.simpleMessage(
+      "Additional Operations",
     ),
     "additions": MessageLookupByLibrary.simpleMessage("Additions"),
     "addons": MessageLookupByLibrary.simpleMessage("Add-ons"),
@@ -113,6 +120,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "annual": MessageLookupByLibrary.simpleMessage("Annual"),
     "annualLeave": MessageLookupByLibrary.simpleMessage("Annual leave"),
     "apartmentNumber": MessageLookupByLibrary.simpleMessage("Apartment Number"),
+    "appVersion": m2,
     "apply": MessageLookupByLibrary.simpleMessage("Apply"),
     "approvals": MessageLookupByLibrary.simpleMessage("Approvals"),
     "approve": MessageLookupByLibrary.simpleMessage("Approve"),
@@ -186,10 +194,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "buildingNumber": MessageLookupByLibrary.simpleMessage("Building Number"),
     "camera": MessageLookupByLibrary.simpleMessage("Camera"),
     "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+    "cancelOrder": MessageLookupByLibrary.simpleMessage("Cancel Order"),
     "cancelled": MessageLookupByLibrary.simpleMessage("Cancelled"),
     "card": MessageLookupByLibrary.simpleMessage("Card"),
     "cardNetwork": MessageLookupByLibrary.simpleMessage("Network"),
     "cart": MessageLookupByLibrary.simpleMessage("Cart"),
+    "cartEmpty": MessageLookupByLibrary.simpleMessage("No items in cart yet"),
     "cartIsEmpty": MessageLookupByLibrary.simpleMessage("Your cart is empty."),
     "cash": MessageLookupByLibrary.simpleMessage("Cash"),
     "cashCustomer": MessageLookupByLibrary.simpleMessage("Walk-in Customer"),
@@ -225,6 +235,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "confirmed": MessageLookupByLibrary.simpleMessage("Confirmed"),
     "controlBoard": MessageLookupByLibrary.simpleMessage("Control Board"),
     "coupon": MessageLookupByLibrary.simpleMessage("Coupon"),
+    "couponDiscount": MessageLookupByLibrary.simpleMessage("Discount (Coupon)"),
     "currencySar": MessageLookupByLibrary.simpleMessage("SAR"),
     "currencySarShort": MessageLookupByLibrary.simpleMessage("SAR"),
     "currencySymbol": MessageLookupByLibrary.simpleMessage("SAR"),
@@ -356,7 +367,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "floor": MessageLookupByLibrary.simpleMessage("Floor"),
     "floors": MessageLookupByLibrary.simpleMessage("Floors"),
     "forgetPassword": MessageLookupByLibrary.simpleMessage("Forget Password?"),
-    "formattedDateTime": m2,
+    "formattedDateTime": m3,
     "free": MessageLookupByLibrary.simpleMessage("Free"),
     "from": MessageLookupByLibrary.simpleMessage("from"),
     "fromBranch": MessageLookupByLibrary.simpleMessage("From Branch"),
@@ -379,7 +390,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "hour": MessageLookupByLibrary.simpleMessage("hour"),
     "hours": MessageLookupByLibrary.simpleMessage("Hour"),
-    "hoursAgo": m3,
+    "hoursAgo": m4,
     "identityConfirmed": MessageLookupByLibrary.simpleMessage(
       "Identity Confirmed",
     ),
@@ -398,11 +409,12 @@ class MessageLookup extends MessageLookupByLibrary {
     "invoiceNumberLabel": MessageLookupByLibrary.simpleMessage(
       "Invoice Number",
     ),
+    "invoices": MessageLookupByLibrary.simpleMessage("Invoices"),
     "isDefaultAddress": MessageLookupByLibrary.simpleMessage(
       "Is Default Address",
     ),
-    "itemCountSingle": m4,
-    "itemsCount": m5,
+    "itemCountSingle": m5,
+    "itemsCount": m6,
     "language": MessageLookupByLibrary.simpleMessage("Language"),
     "lastCheckOut": MessageLookupByLibrary.simpleMessage("Last check out"),
     "lastCheckOutValue": MessageLookupByLibrary.simpleMessage(
@@ -433,7 +445,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menu": MessageLookupByLibrary.simpleMessage("Menu"),
     "microfone": MessageLookupByLibrary.simpleMessage("Microfone"),
     "minutes": MessageLookupByLibrary.simpleMessage("Minutes"),
-    "minutesAgo": m6,
+    "minutesAgo": m7,
     "mobile": MessageLookupByLibrary.simpleMessage("Mobile"),
     "more": MessageLookupByLibrary.simpleMessage("More"),
     "myRequests": MessageLookupByLibrary.simpleMessage("Requests"),
@@ -475,7 +487,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "This company is not a restaurant.",
     ),
     "notes": MessageLookupByLibrary.simpleMessage("Notes"),
-    "notesWithVal": m7,
+    "notesWithVal": m8,
     "notice": MessageLookupByLibrary.simpleMessage("Notice"),
     "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
     "okDialog": MessageLookupByLibrary.simpleMessage("OK"),
@@ -495,7 +507,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Order processed successfully and sent to kitchen",
     ),
     "orders": MessageLookupByLibrary.simpleMessage("Orders"),
-    "ordersCount": m8,
+    "ordersCount": m9,
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "outdoorArea": MessageLookupByLibrary.simpleMessage("Outdoor Area"),
     "overallReport": MessageLookupByLibrary.simpleMessage("Overall"),
@@ -512,6 +524,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "paymentMethodCard": MessageLookupByLibrary.simpleMessage("Card"),
     "paymentMethodCash": MessageLookupByLibrary.simpleMessage("Cash"),
     "paymentMethodCredit": MessageLookupByLibrary.simpleMessage("Credit"),
+    "paymentMethodLoyalty": MessageLookupByLibrary.simpleMessage("Loyalty"),
     "paymentMethodLoyaltyPoints": MessageLookupByLibrary.simpleMessage(
       "Loyalty Points",
     ),
@@ -569,13 +582,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseSelectValidTakeawayDateTime": MessageLookupByLibrary.simpleMessage(
       "Please select a valid takeaway date and time.",
     ),
-    "plusPriceWithCurrency": m9,
+    "plusPriceWithCurrency": m10,
     "pm": MessageLookupByLibrary.simpleMessage("P.M"),
     "popular": MessageLookupByLibrary.simpleMessage("Popular"),
     "pos": MessageLookupByLibrary.simpleMessage("POS"),
     "preview": MessageLookupByLibrary.simpleMessage("Preview"),
     "previousOrders": MessageLookupByLibrary.simpleMessage("Previous Orders"),
-    "priceWithCurrency": m10,
+    "priceWithCurrency": m11,
     "print": MessageLookupByLibrary.simpleMessage("Print"),
     "printReceipt": MessageLookupByLibrary.simpleMessage("Print Receipt"),
     "printWithApproval": MessageLookupByLibrary.simpleMessage(
@@ -583,7 +596,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "productSize": MessageLookupByLibrary.simpleMessage("Product Size"),
     "project": MessageLookupByLibrary.simpleMessage("Project"),
-    "quantityWithCount": m11,
+    "quantityWithCount": m12,
     "quickAccessList": MessageLookupByLibrary.simpleMessage(
       "Quick access list",
     ),
@@ -624,7 +637,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reservationPeriod": MessageLookupByLibrary.simpleMessage(
       "Reservation Period",
     ),
-    "reservationPeriodInMinutes": m12,
+    "reservationPeriodInMinutes": m13,
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(
       "Reservation added successfully",
     ),
@@ -635,6 +648,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Restaurant Manager",
     ),
     "restoreOrder": MessageLookupByLibrary.simpleMessage("Restore Order"),
+    "resumeSession": MessageLookupByLibrary.simpleMessage("Resume Session"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
     "returns": MessageLookupByLibrary.simpleMessage("Returns"),
     "salaries": MessageLookupByLibrary.simpleMessage("Salaries"),
@@ -708,7 +722,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "signOut": MessageLookupByLibrary.simpleMessage("Check-out "),
     "signOutTitle": MessageLookupByLibrary.simpleMessage("Sign Out"),
     "singleItemCount": MessageLookupByLibrary.simpleMessage("1 Item"),
-    "sizeWithVal": m13,
+    "sizeWithVal": m14,
     "skip": MessageLookupByLibrary.simpleMessage("Skip"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage(
       "Something went wrong",
@@ -788,7 +802,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vacations Reports",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("VAT"),
-    "vatPrecentage": m14,
+    "vatPrecentage": m15,
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Verification Failed",
     ),

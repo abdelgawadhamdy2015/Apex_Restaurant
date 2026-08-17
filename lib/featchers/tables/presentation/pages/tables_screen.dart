@@ -17,7 +17,7 @@ import '../widgets/main_segmented_tab.dart';
 import '../widgets/reservation_cards_list.dart';
 import '../widgets/reservation_search_filter_card.dart';
 import '../widgets/reservation_status_filters.dart';
-import '../widgets/tables_grid.dart';
+import '../tablet_widgets/tables_grid.dart';
 import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

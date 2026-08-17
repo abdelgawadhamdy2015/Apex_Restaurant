@@ -18,10 +18,7 @@ class RestaurantConstants {
   static const List<String> languages = ["English", "العربية"];
 
   static DateFormat dayDateFormat = DateFormat('EEE, y,M,d  ');
-  static DateFormat hoursFormat = DateFormat(
-    "hh:mma",
-    RestaurantConstants.english,
-  );
+  static DateFormat hoursFormat = DateFormat("hh:mm a");
   static DateFormat hours24Format = DateFormat(
     "HH:mm",
     RestaurantConstants.english,

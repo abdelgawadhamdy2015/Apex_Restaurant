@@ -1,10 +1,12 @@
-import '../../../../core/helpers/extensions.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../../../cart/presentation/bloc/cart_event.dart';
-import '../../../pos/data/enums/table_status.dart';
-import '../../domain/entities/table_entity.dart';
-import 'add_reservation_bottom_sheet.dart';
-import '../../../../generated/l10n.dart';
+import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/pos/data/enums/table_status.dart';
+import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/table_invoice_dialog.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/table_order_entity.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/widgets/add_reservation_bottom_sheet.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +34,53 @@ class _TableCardState extends State<TableCard> {
     _overlayEntry?.remove();
     _overlayEntry = null;
     if (mounted) setState(() => _isOpen = false);
+  }
+
+  /// Opens the invoice dialog. If the table already has an open order
+  /// (reserved/occupied) this should show that order — wire [order] up to
+  /// a real fetch (e.g. a `GetTableOrderUseCase` via `TablesBloc`) once the
+  /// backend endpoint for it is available. If the table is free, it opens
+  /// as a blank invoice ready for items to be added.
+  void _openInvoice(BuildContext context) {
+    final isExistingOrder = widget.table.status != TableStatus.available;
+
+    // TODO: replace with the real order fetched for widget.table.id.
+    final order = isExistingOrder
+        ? TableOrderEntity(
+            orderNumber: '12345',
+            invoiceNumber: 'INV-9876',
+            date: DateTime.now(),
+          )
+        : TableOrderEntity.empty();
+
+    TableInvoiceDialog.show(
+      context,
+      tableName: widget.table.arabicName ?? '',
+      seatsCount: widget.table.seatNumbers ?? 0,
+      order: order,
+      onApplyCoupon: (code) {
+        // TODO: dispatch coupon application to the order/cart bloc.
+      },
+      onQuantityChanged: (itemId, quantity) {
+        // TODO: dispatch quantity update to the order/cart bloc.
+      },
+      onDeleteItem: (itemId) {
+        // TODO: dispatch item removal to the order/cart bloc.
+      },
+      onClearAll: () {
+        // TODO: dispatch clear-cart to the order/cart bloc.
+      },
+      onAddItem: () {
+        // TODO: navigate to the menu/item picker for this table.
+      },
+      onCancelOrder: () {
+        // TODO: dispatch order cancellation, then close the dialog.
+        Navigator.of(context).pop();
+      },
+      onPrintReceipt: () {
+        // TODO: trigger receipt printing for this order.
+      },
+    );
   }
 
   OverlayEntry _createOverlayEntry() {
@@ -69,7 +118,10 @@ class _TableCardState extends State<TableCard> {
                       child: Text(S.of(parentContext).addNewReservation),
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _closeMenu();
+                        _openInvoice(parentContext);
+                      },
                       child: Text(S.of(parentContext).openInvoice),
                     ),
                   ],

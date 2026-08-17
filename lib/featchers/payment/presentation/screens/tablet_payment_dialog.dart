@@ -1,19 +1,17 @@
-import '../../../../core/helpers/extensions.dart';
-import '../../../../core/helpers/helper_methods.dart';
-import '../../../cart/data/models/invoice_request.dart';
-import '../../data/model/payment_request_model.dart';
-import '../bloc/payment_bloc.dart';
-import '../bloc/payment_event.dart';
-import '../bloc/payment_state.dart';
-import '../widgets/bottom_action_buttons.dart';
-import '../widgets/paid_amount_input_field.dart';
-import '../widgets/payment_method_tabs.dart';
-import '../widgets/payment_success.dart';
-import '../widgets/reference_number_input_field.dart';
-import '../widgets/remaining_amount_card.dart';
-import '../widgets/split_methods_list.dart';
-import '../widgets/total_amount_card.dart';
-import '../../../../generated/l10n.dart';
+import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
+import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_state.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/tablet_widgets/amount_summary_row.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/tablet_widgets/split_payment_grid.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/tablet_widgets/tablet_payment_success.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/widgets/bottom_action_buttons.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/widgets/payment_method_tabs.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/widgets/reference_number_input_field.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/widgets/total_amount_card.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,16 +20,10 @@ class TabletPaymentDialog extends StatelessWidget {
 
   final SaveRestaurantPosInvoiceRequest invoiceRequestModel;
 
-  /// Helper method to show the dialog
   static Future<void> show(
     BuildContext context, {
     required SaveRestaurantPosInvoiceRequest invoiceRequestModel,
   }) {
-    context.read<PaymentBloc>().add(
-      InitializePaymentEvent(
-        totalAmount: invoiceRequestModel.invoice.totalInvoicePrice,
-      ),
-    );
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -65,6 +57,7 @@ class TabletPaymentDialog extends StatelessWidget {
         builder: (context, state) {
           if (state.status == PaymentStatus.success &&
               state.successModel != null) {
+            // context.pop();
             return Container(
               width: 540,
               constraints: const BoxConstraints(maxHeight: 680),
@@ -74,7 +67,7 @@ class TabletPaymentDialog extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(spacing.radiusLg),
-                child: PaymentSuccess(model: state.successModel!),
+                child: TabletPaymentSuccess(model: state.successModel!),
               ),
             );
           }
@@ -92,7 +85,7 @@ class TabletPaymentDialog extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Dialog Header
+                  // Header — close (X) on the leading edge, title centered.
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: spacing.md,
@@ -101,45 +94,40 @@ class TabletPaymentDialog extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: const Icon(Icons.close),
-                        ),
+                        const SizedBox(width: 48), // balances the close icon
                         Text(
                           lang.payment,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 48), // Spacer to balance icon
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close),
+                        ),
                       ],
                     ),
                   ),
                   const Divider(height: 1),
 
-                  // Content Body
+                  // Content
                   Flexible(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(spacing.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const TotalAmountCard(),
-                          SizedBox(height: spacing.md),
                           const PaymentMethodTabs(),
+                          SizedBox(height: spacing.md),
+                          const TotalAmountCard(),
                           SizedBox(height: spacing.md),
                           if (state.selectedMethod ==
                               PaymentMethodType.split) ...[
-                            const SplitMethodsList(),
+                            const SplitPaymentGrid(),
                           ] else ...[
+                            const AmountSummaryRow(),
                             if (state.selectedMethod ==
-                                PaymentMethodType.cash) ...[
-                              const PaidAmountInputField(),
-                              SizedBox(height: spacing.md),
-                              const RemainingAmountCard(),
-                            ] else if (state.selectedMethod ==
                                 PaymentMethodType.card) ...[
-                              const PaidAmountInputField(),
                               SizedBox(height: spacing.md),
                               const ReferenceNumberInputField(),
                             ],
@@ -149,7 +137,7 @@ class TabletPaymentDialog extends StatelessWidget {
                     ),
                   ),
 
-                  // Actions Footer
+                  // Footer
                   BottomActionButtons(
                     state: state,
                     invoiceRequestModel: invoiceRequestModel,

@@ -62,12 +62,15 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       child: Scaffold(
         backgroundColor: theme.colorScheme.surface,
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: context.spacing.md),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [_buildHeader(context), _buildLoginForm(context)],
-            ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isTablet = constraints.maxWidth >= 600;
+
+              if (isTablet) {
+                return _buildTabletLayout(context);
+              }
+              return _buildMobileLayout(context);
+            },
           ),
         ),
       ),
@@ -91,6 +94,76 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     }
   }
 
+  // ---------------- MOBILE LAYOUT ----------------
+  Widget _buildMobileLayout(BuildContext context) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: context.spacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context),
+          Form(
+            key: context.read<AuthBloc>().formKey,
+            child: _buildFormFields(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------- TABLET LAYOUT (DIALOG CARD) ----------------
+  Widget _buildTabletLayout(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Top Logo
+            _buildTabletLogo(context),
+            const SizedBox(height: 32),
+
+            // Card Container (Dialog style)
+            Container(
+              width: 480,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Form(
+                key: context.read<AuthBloc>().formKey,
+                child: _buildFormFields(context),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTabletLogo(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final double dpr = mediaQuery.devicePixelRatio;
+    const double logoW = 200;
+    const double logoH = 80;
+
+    return Assets.images.apexLogo.image(
+      width: logoW,
+      cacheWidth: (logoW * dpr).round(),
+      cacheHeight: (logoH * dpr).round(),
+    );
+  }
+
   Widget _buildHeader(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     final double dpr = mediaQuery.devicePixelRatio;
@@ -108,102 +181,50 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
               padding: const EdgeInsets.all(16),
               child: Assets.images.apexLogo.image(
                 width: logoW,
-                // color: theme.colorScheme.onPrimary,
                 cacheWidth: (logoW * dpr).round(),
                 cacheHeight: (logoH * dpr).round(),
               ),
             ),
           ),
-          const SizedBox(width: 24),
-          // _buildLanguageDropdown(context),
         ],
       ),
     );
   }
 
-  // Widget _buildLanguageDropdown(BuildContext context) {
-  //   final theme = Theme.of(context);
-
-  //   return DropdownButton<String>(
-  //     value: selectedLanguage,
-  //     icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.onPrimary),
-  //     dropdownColor: Colors.transparent,
-  //     borderRadius: BorderRadius.circular(12),
-  //     underline: const SizedBox(),
-  //     onChanged: (String? newValue) {
-  //       if (newValue != null) {
-  //         setState(() {
-  //           selectedLanguage = newValue;
-  //           widget.changeLanguage(
-  //             selectedLanguage == lang.arabic
-  //                 ? const Locale("ar")
-  //                 : const Locale("en"),
-  //           );
-  //         });
-  //       }
-  //     },
-  //     items: [S.of(context).english, lang.arabic].map((value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(
-  //           value,
-  //           style: theme.textTheme.titleMedium?.copyWith(
-  //             color: theme.colorScheme.onPrimary,
-  //             fontWeight: FontWeight.bold,
-  //           ),
-  //         ),
-  //       );
-  //     }).toList(),
-  //   );
-  // }
-
-  Widget _buildLoginForm(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
+  // ---------------- SHARED FORM FIELDS ----------------
+  Widget _buildFormFields(BuildContext context) {
     final spacing = context.spacing;
-    return SizedBox(
-      height: mediaQuery.size.height * 0.8,
-      child: SingleChildScrollView(
-        child: SafeArea(
-          top: false,
-          child: Form(
-            key: context.read<AuthBloc>().formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                _buildLoginTitle(context),
-                const SizedBox(height: 16),
 
-                _buildTextField(
-                  context,
-                  lang.email,
-                  context.read<AuthBloc>().emailController,
-                  lang.insertEmail,
-                ),
-                _buildTextField(
-                  context,
-                  lang.password,
-                  context.read<AuthBloc>().passwordController,
-                  lang.insertPassword,
-                  obsecure: true,
-                ),
-                _buildTextField(
-                  context,
-                  lang.dbName,
-                  context.read<AuthBloc>().dbController,
-                  lang.insertDBName,
-                ),
-                //   _buildRememberAndForget(context),
-                const SizedBox(height: 8),
-                _buildLoginButton(context),
-                SizedBox(height: spacing.lg),
-                _buildForgetPasswordLink(context),
-                AuthBlocListener(rememberMe: rememberMe),
-              ],
-            ),
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildLoginTitle(context),
+        const SizedBox(height: 24),
+        _buildTextField(
+          context,
+          lang.email,
+          context.read<AuthBloc>().emailController,
+          lang.insertEmail,
         ),
-      ),
+        _buildTextField(
+          context,
+          lang.password,
+          context.read<AuthBloc>().passwordController,
+          lang.insertPassword,
+          obsecure: true,
+        ),
+        _buildTextField(
+          context,
+          lang.dbName,
+          context.read<AuthBloc>().dbController,
+          lang.insertDBName,
+        ),
+        const SizedBox(height: 16),
+        _buildLoginButton(context),
+        SizedBox(height: spacing.lg),
+        _buildForgetPasswordLink(context),
+        AuthBlocListener(rememberMe: rememberMe),
+      ],
     );
   }
 
@@ -219,9 +240,6 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     );
   }
 
-  /// Now relies entirely on the app's InputDecorationTheme + textTheme
-  /// (defined in AppTheme) instead of passing custom fill colors, hint
-  /// styles or input styles per field.
   Widget _buildTextField(
     BuildContext context,
     String label,
@@ -232,7 +250,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -247,8 +265,8 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
             obscureText: obsecure ?? false,
             decoration: InputDecoration(
               hintText: hint,
-              fillColor: theme.colorScheme.onSurface,
               border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
                 borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
               ),
             ),
@@ -259,66 +277,17 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     );
   }
 
-  Widget _buildRememberAndForget(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              _buildRememberCheckbox(context),
-              const SizedBox(width: 12),
-              Text(
-                lang.rememberMe,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-          _buildForgetPasswordLink(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRememberCheckbox(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return GestureDetector(
-      onTap: () => setState(() => rememberMe = !rememberMe),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: theme.colorScheme.outline, width: 2),
-          borderRadius: BorderRadius.circular(6),
-          color: rememberMe ? theme.colorScheme.primary : Colors.transparent,
-        ),
-        padding: const EdgeInsets.all(2),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          width: 20,
-          height: 20,
-          child: rememberMe
-              ? Icon(Icons.check, size: 16, color: theme.colorScheme.onPrimary)
-              : null,
-        ),
-      ),
-    );
-  }
-
   Widget _buildForgetPasswordLink(BuildContext context) {
     final theme = Theme.of(context);
 
     return Center(
       child: InkWell(
-        onTap: () {
-          // context.read<AuthBloc>().formKey.currentState!.reset();
-          // context.pushNamed(Routes.forgetPasswordScreen);
-        },
+        onTap: () {},
         child: Text(
           lang.forgetPassword,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.primary,
-            decoration: TextDecoration.underline,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
@@ -352,10 +321,5 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
     if (context.read<AuthBloc>().formKey.currentState!.validate()) {
       context.read<AuthBloc>().add(const AuthEvent.loginSubmitted());
     }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

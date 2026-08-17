@@ -1,4 +1,3 @@
-import '../../../../core/helpers/crashlytics_logger.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/restaurant_constants.dart';
 import '../../../../core/service/api_result.dart';
@@ -58,13 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           loadingLogin = false;
         },
       );
-    } catch (error, stackTrace) {
-      await CrashlyticsLogger.logError(
-        screen: "Login",
-        error: error,
-        stackTrace: stackTrace,
-      );
-
+    } catch (error) {
       emit(AuthState.error(error: RestaurantConstants.unexpectedError));
 
       loadingLogin = false;

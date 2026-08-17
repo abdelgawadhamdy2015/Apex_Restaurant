@@ -486,5 +486,14 @@
     "voucher": "قسيمة شراء",
     "loyaltyPoints": "نقاط الولاء",
     "dineInCost": "تكلفة الصالة",
-    "tobaccoVat": "ضريبة التبغ"
+    "tobaccoVat": "ضريبة التبغ",
+    "paymentMethodLoyalty": "نقاط الولاء",
+    "appVersion": "إصدار التطبيق{version}",
+    "additionalOperations": "العمليات الإضافية",
+    "resumeSession": "استئناف الجلسة",
+    "invoices": "الفواتير",
+    "couponDiscount": "الخصم (كوبون)",
+    "addNewItem": "إضافة صنف جديد",
+    "cartEmpty": "لا توجد أصناف في السلة بعد",
+    "cancelOrder": "إلغاء الطلب"
 }

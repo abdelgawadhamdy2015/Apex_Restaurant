@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
+
 import 'core/di/debandancy_injection.dart';
 import 'core/helpers/restaurant_constants.dart';
 import 'core/helpers/size_helper.dart';
@@ -31,8 +34,8 @@ class ApexRestaurantApp extends StatefulWidget {
 
 class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
   late final AppRouter _appRouter;
-
   Locale _locale = Locale(Intl.defaultLocale ?? RestaurantConstants.arabic);
+  bool _isOrientationInitialized = false;
 
   @override
   void initState() {
@@ -52,22 +55,30 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
 
   @override
   Widget build(BuildContext context) {
-    SizeHelper.init(
-      width: MediaQuery.sizeOf(context).width,
-      height: MediaQuery.sizeOf(context).height,
-    );
+    // Initialize orientation logic once using MediaQuery
+    if (!_isOrientationInitialized) {
+      SizeHelper.init(context);
+      _isOrientationInitialized = true;
+    }
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<CartBloc>(create: (_) => getIt<CartBloc>()),
         BlocProvider<HomeBloc>(create: (_) => getIt<HomeBloc>()),
         BlocProvider<PosBloc>(create: (_) => getIt<PosBloc>()),
         BlocProvider(create: (_) => getIt<PaymentBloc>()),
+        BlocProvider(create: (_) => getIt<OrdersBloc>()),
+        BlocProvider(create: (_) => getIt<TablesBloc>()),
+
         BlocProvider<SettingsCubit>(create: (_) => getIt<SettingsCubit>()),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settings) {
           return ScreenUtilInit(
-            designSize: const Size(393, 852),
+            // Adjust design size conditionally if tablet design specs differ
+            designSize: SizeHelper.isTablet
+                ? const Size(1024, 768)
+                : const Size(393, 852),
             minTextAdapt: false,
             splitScreenMode: true,
             builder: (context, child) {
@@ -78,6 +89,7 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
 
                 // 🌗 DYNAMIC THEME MODES & SCALING
                 themeMode: settings.themeMode,
+
                 theme: AppTheme.theme(
                   settings.fontScale.scale,
                   accent: settings.accentColor.color,
@@ -102,10 +114,8 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
                 supportedLocales: S.delegate.supportedLocales,
 
                 // 🔄 INJECT SETTINGS INTO CONTEXT FOR EXTENSIONS
-                // This ensures context.spacing and context.iconSizes rebuild automatically
                 builder: (context, child) {
                   return MediaQuery(
-                    // Scales all system text natively based on fontScale setting
                     data: MediaQuery.of(context).copyWith(
                       textScaler: TextScaler.linear(settings.fontScale.scale),
                     ),

@@ -485,5 +485,15 @@
     "voucher": "Voucher",
     "loyaltyPoints": "Loyalty Points",
     "dineInCost": "Dine-in Cost",
-    "tobaccoVat": "Tobacco VAT"
+    "tobaccoVat": "Tobacco VAT",
+    "paymentMethodLoyalty": "Loyalty",
+    "actions": "actions",
+    "appVersion": "App Version {version}",
+    "additionalOperations": "Additional Operations",
+    "resumeSession": "Resume Session",
+    "invoices": "Invoices",
+    "couponDiscount": "Discount (Coupon)",
+    "addNewItem": "Add New Item",
+    "cartEmpty": "No items in cart yet",
+    "cancelOrder": "Cancel Order"
 }

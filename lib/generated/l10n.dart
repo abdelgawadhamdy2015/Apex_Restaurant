@@ -3856,6 +3856,91 @@ class S {
   String get tobaccoVat {
     return Intl.message('Tobacco VAT', name: 'tobaccoVat', desc: '', args: []);
   }
+
+  /// `Loyalty`
+  String get paymentMethodLoyalty {
+    return Intl.message(
+      'Loyalty',
+      name: 'paymentMethodLoyalty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `actions`
+  String get actions {
+    return Intl.message('actions', name: 'actions', desc: '', args: []);
+  }
+
+  /// `App Version {version}`
+  String appVersion(Object version) {
+    return Intl.message(
+      'App Version $version',
+      name: 'appVersion',
+      desc: '',
+      args: [version],
+    );
+  }
+
+  /// `Additional Operations`
+  String get additionalOperations {
+    return Intl.message(
+      'Additional Operations',
+      name: 'additionalOperations',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Resume Session`
+  String get resumeSession {
+    return Intl.message(
+      'Resume Session',
+      name: 'resumeSession',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Invoices`
+  String get invoices {
+    return Intl.message('Invoices', name: 'invoices', desc: '', args: []);
+  }
+
+  /// `Discount (Coupon)`
+  String get couponDiscount {
+    return Intl.message(
+      'Discount (Coupon)',
+      name: 'couponDiscount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add New Item`
+  String get addNewItem {
+    return Intl.message('Add New Item', name: 'addNewItem', desc: '', args: []);
+  }
+
+  /// `No items in cart yet`
+  String get cartEmpty {
+    return Intl.message(
+      'No items in cart yet',
+      name: 'cartEmpty',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel Order`
+  String get cancelOrder {
+    return Intl.message(
+      'Cancel Order',
+      name: 'cancelOrder',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

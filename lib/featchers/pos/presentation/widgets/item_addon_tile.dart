@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/category_model.dart';
 import '../../../../generated/l10n.dart';
@@ -27,16 +29,14 @@ class ItemAddonTile extends StatelessWidget {
     final lang = S.of(context);
 
     final bool isSelected = quantity > 0;
-    const Color activeGreenColor = Color(
-      0xFF10B981,
-    ); // Bright green border color
+    const Color activeGreenColor = AppColors.green; // Bright green border color
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       margin: EdgeInsets.only(bottom: spacing.xs),
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusMd),
         border: Border.all(
           color: isSelected
@@ -72,14 +72,14 @@ class ItemAddonTile extends StatelessWidget {
                           Text(
                             lang.popular,
                             style: textTheme.labelSmall?.copyWith(
-                              color: const Color(0xFFE53935),
+                              color: theme.colorScheme.errorContainer,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           SizedBox(width: spacing.xxs / 2),
-                          const Icon(
+                          Icon(
                             Icons.whatshot_outlined,
-                            color: Color(0xFFE53935),
+                            color: theme.colorScheme.errorContainer,
                             size: 12,
                           ),
                         ],
@@ -109,7 +109,7 @@ class ItemAddonTile extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: theme.colorScheme.onSurface,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(spacing.radiusSm),
               border: Border.all(color: theme.colorScheme.outlineVariant),
             ),
@@ -121,6 +121,7 @@ class ItemAddonTile extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _buildStepperButton(
+                  context: context,
                   icon: Icons.remove,
                   onTap: onDecrement,
                   theme: theme,
@@ -136,6 +137,7 @@ class ItemAddonTile extends StatelessWidget {
                   ),
                 ),
                 _buildStepperButton(
+                  context: context,
                   icon: Icons.add,
                   onTap: onIncrement,
                   theme: theme,
@@ -152,13 +154,18 @@ class ItemAddonTile extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
     required ThemeData theme,
+    required BuildContext context,
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(4),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: Icon(icon, size: 18, color: theme.colorScheme.onSecondary),
+        child: Icon(
+          icon,
+          size: context.iconSizes.md,
+          color: theme.colorScheme.onSecondary,
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../domain/entities/table_entity.dart';
 import '../../../../generated/l10n.dart';
@@ -37,10 +39,10 @@ class TablesGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemCount: tables.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: SizeHelper.isMobile ? 2 : 3,
         crossAxisSpacing: spacing.md,
         mainAxisSpacing: spacing.md,
-        childAspectRatio: 0.85,
+        childAspectRatio: SizeHelper.isMobile ? 1.1 : 1.8,
       ),
       itemBuilder: (context, index) =>
           TableCard(table: tables[index], inCartScreen: inCartScreen),
