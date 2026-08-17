@@ -13,8 +13,7 @@ abstract class OrdersRemoteDataSource {
   Future<BaseResponse<List<PindingInvoiceModel>?>> getPindingInvoices({
     GetPindingInvoicesRequest? request,
   });
-  Future<BaseResponse<List<PindingInvoiceModel>?>>
-  getRestaurantPosBookingTable({GetPindingInvoicesRequest? request});
+
   Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
     int invoiceId,
   );
@@ -36,12 +35,6 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     GetPindingInvoicesRequest? request,
   }) async {
     return await apiService.getPendingRestaurantPosInvoiceDetails(request);
-  }
-
-  @override
-  Future<BaseResponse<List<PindingInvoiceModel>?>>
-  getRestaurantPosBookingTable({GetPindingInvoicesRequest? request}) async {
-    return await apiService.getRestaurantPosBookingTable(request);
   }
 
   @override

@@ -18,7 +18,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PosTabletMenuScreen extends StatefulWidget {
   const PosTabletMenuScreen({super.key});
-
   @override
   State<PosTabletMenuScreen> createState() => _PosTabletMenuScreenState();
 }
@@ -34,6 +33,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       context.read<CartBloc>().add(
         LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
+      context.read<CartBloc>().add(LoadCartDataEvent());
     });
   }
 

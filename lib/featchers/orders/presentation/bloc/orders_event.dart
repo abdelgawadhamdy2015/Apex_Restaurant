@@ -40,11 +40,6 @@ class LoadMorePreviousInvoicesEvent extends OrdersEvent {
   const LoadMorePreviousInvoicesEvent();
 }
 
-class FetchRestaurantPosBookingTableEvent extends OrdersEvent {
-  final GetPindingInvoicesRequest? request;
-  const FetchRestaurantPosBookingTableEvent({this.request});
-}
-
 class RestoreOrderEvent extends OrdersEvent {
   final int invoiceId;
   final bool canEdite;

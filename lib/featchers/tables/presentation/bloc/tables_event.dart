@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+
 import '../../data/models/get_floor_request.dart';
 import '../../data/models/get_reservations_request.dart';
 import '../../data/models/get_table_request.dart';
@@ -53,6 +55,23 @@ class FetchTablesEvent extends TablesEvent {
   final GetTablesRequest request;
   const FetchTablesEvent(this.request);
 
+  @override
+  List<Object?> get props => [request];
+}
+
+class RestoreOrderEvent extends TablesEvent {
+  final int invoiceId;
+  final bool canEdite;
+  const RestoreOrderEvent({required this.invoiceId, this.canEdite = true});
+}
+
+class ClearRestoredInvoiceEvent extends TablesEvent {
+  const ClearRestoredInvoiceEvent();
+}
+
+class FetchRestaurantPosBookingTableEvent extends TablesEvent {
+  final GetPindingInvoicesRequest request;
+  const FetchRestaurantPosBookingTableEvent({required this.request});
   @override
   List<Object?> get props => [request];
 }

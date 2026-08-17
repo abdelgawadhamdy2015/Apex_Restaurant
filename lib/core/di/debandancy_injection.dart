@@ -34,7 +34,7 @@ import '../../featchers/pos/presentation/bloc/pos_bloc.dart';
 import '../../featchers/tables/data/datasource/tables_remote_data_source.dart';
 import '../../featchers/tables/data/repo/tables_repository_impl.dart';
 import '../../featchers/tables/domain/repo/tables_repository.dart';
-import '../../featchers/tables/domain/usescase/get_reservations_usecase.dart';
+import '../../featchers/tables/domain/usescase/tables_usecase.dart';
 import '../../featchers/tables/presentation/bloc/tables_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -220,9 +220,7 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetPindingInvoicesUseCase(getIt<OrdersRepository>()),
   );
-  getIt.registerLazySingleton(
-    () => GetRestaurantPosBookingTableUseCase(getIt<OrdersRepository>()),
-  );
+
   getIt.registerLazySingleton(
     () => GetPreviousOrdersUseCase(getIt<OrdersRepository>()),
   );
@@ -248,6 +246,9 @@ Future<void> setupGetIt() async {
   );
   getIt.registerLazySingleton(
     () => CancelReservationUseCase(getIt<TablesRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetPindingTableInvoiceUseCase(getIt<TablesRepository>()),
   );
 
   /// ─────────────────────────────────────────────────────────
@@ -314,8 +315,7 @@ Future<void> setupGetIt() async {
     () => OrdersBloc(
       getPreviousOrdersUseCase: getIt<GetPreviousOrdersUseCase>(),
       getPindingInvoicesUseCase: getIt<GetPindingInvoicesUseCase>(),
-      getRestaurantPosBookingTableUseCase:
-          getIt<GetRestaurantPosBookingTableUseCase>(),
+
       restoreHeldOrderUseCase: getIt<RestoreHeldOrderUseCase>(),
       deleteHeldOrderUseCase: getIt<DeleteHeldOrderUseCase>(),
     ),
@@ -324,6 +324,8 @@ Future<void> setupGetIt() async {
   // Tables
   getIt.registerFactory(
     () => TablesBloc(
+      restoreHeldOrderUseCase: getIt<RestoreHeldOrderUseCase>(),
+      getPindingTableInvoiceUseCase: getIt<GetPindingTableInvoiceUseCase>(),
       getReservationsUseCase: getIt<GetReservationsUseCase>(),
       createReservationUseCase: getIt<CreateReservationUseCase>(),
       cancelReservationUseCase: getIt<CancelReservationUseCase>(),

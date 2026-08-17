@@ -84,7 +84,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     final cartData = restored.toRestoredCartData(context);
 
-    context.read<CartBloc>().add(SyncRestoredInvoiceEvent(cartData));
+    context.read<CartBloc>().add(
+      SyncRestoredInvoiceEvent(
+        cartData,
+        canEdit: state.restoredInvoice?.invoice?.canEdit ?? true,
+      ),
+    );
     context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());
     context.pushNamed(
       Routes.cartScreen,

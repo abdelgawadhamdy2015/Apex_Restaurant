@@ -16,15 +16,17 @@ class TabletAddReservationBottomSheet extends StatefulWidget {
     super.key,
     required this.tables,
     required this.personList,
+    required this.selectedTable,
   });
 
   final List<TableEntity> tables;
   final List<PosClientModel> personList;
-
+  final TableEntity selectedTable;
   static Future<void> show(
     BuildContext context,
     List<TableEntity> tables,
     List<PosClientModel> personList,
+    TableEntity selectedTable,
   ) {
     return showDialog(
       context: context,
@@ -37,6 +39,7 @@ class TabletAddReservationBottomSheet extends StatefulWidget {
           child: TabletAddReservationBottomSheet(
             tables: tables,
             personList: personList,
+            selectedTable: selectedTable,
           ),
         ),
       ),
@@ -65,7 +68,7 @@ class _TabletAddReservationBottomSheetState
   void initState() {
     super.initState();
     if (widget.tables.isNotEmpty) {
-      _selectedTable = widget.tables.first;
+      _selectedTable = widget.selectedTable;
     }
   }
 
@@ -198,17 +201,21 @@ class _TabletAddReservationBottomSheetState
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, size: 20),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
                   Text(
                     lang.addNewReservation,
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(
+                      Icons.close,
+                      size: context.iconSizes.lg,
+                      color: theme.colorScheme.onSecondary,
+                    ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                   ),
                 ],
               ),
@@ -237,21 +244,22 @@ class _TabletAddReservationBottomSheetState
                         child: _labeledField(
                           theme: theme,
                           spacing: spacing,
+                          label: lang.table,
+                          field: _buildTableDropdown(theme, lang),
+                        ),
+                      ),
+                      SizedBox(width: spacing.md),
+
+                      Expanded(
+                        child: _labeledField(
+                          theme: theme,
+                          spacing: spacing,
                           label: lang.guestsCount,
                           field: _buildTextField(
                             controller: _seatsController,
                             hint: 'مثال : 3',
                             keyboardType: TextInputType.number,
                           ),
-                        ),
-                      ),
-                      SizedBox(width: spacing.md),
-                      Expanded(
-                        child: _labeledField(
-                          theme: theme,
-                          spacing: spacing,
-                          label: lang.table,
-                          field: _buildTableDropdown(theme, lang),
                         ),
                       ),
                     ],
@@ -265,26 +273,27 @@ class _TabletAddReservationBottomSheetState
                         child: _labeledField(
                           theme: theme,
                           spacing: spacing,
-                          label: lang.time,
-                          field: _buildDateField(
-                            controller: _timeController,
-                            hint: '-- : --',
-                            icon: Icons.access_time_rounded,
-                            onTap: _pickTime,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: spacing.md),
-                      Expanded(
-                        child: _labeledField(
-                          theme: theme,
-                          spacing: spacing,
                           label: lang.date,
                           field: _buildDateField(
                             controller: _dateController,
                             hint: 'mm/dd/yyyy',
                             icon: Icons.calendar_today_outlined,
                             onTap: _pickDate,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: spacing.md),
+
+                      Expanded(
+                        child: _labeledField(
+                          theme: theme,
+                          spacing: spacing,
+                          label: lang.time,
+                          field: _buildDateField(
+                            controller: _timeController,
+                            hint: '-- : --',
+                            icon: Icons.access_time_rounded,
+                            onTap: _pickTime,
                           ),
                         ),
                       ),

@@ -11,7 +11,15 @@ import '../../domain/entities/menu_item.dart';
 import '../../../tables/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
 
-enum PosStatus { initial, loading, loaded, error, submitting, submitted }
+enum PosStatus {
+  initial,
+  loading,
+  loaded,
+  closeSession,
+  error,
+  submitting,
+  submitted,
+}
 
 class PosState extends Equatable implements ErrorableState {
   final PosStatus status;

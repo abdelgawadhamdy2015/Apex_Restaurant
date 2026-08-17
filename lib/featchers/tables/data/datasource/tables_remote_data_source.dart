@@ -1,3 +1,7 @@
+import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
+
 import '../../../../core/service/api_service.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../pos/data/models/floor_model.dart';
@@ -29,6 +33,12 @@ abstract class TablesRemoteDataSource {
   Future<BaseResponse<List<TableModel>?>> getTables({
     required GetTablesRequest request,
   });
+
+  Future<BaseResponse<List<PindingInvoiceModel>?>>
+  getRestaurantPosBookingTableInvoice({GetPindingInvoicesRequest? request});
+  Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
+    int invoiceId,
+  );
 }
 
 class TablesRemoteDataSourceImpl implements TablesRemoteDataSource {
@@ -76,5 +86,20 @@ class TablesRemoteDataSourceImpl implements TablesRemoteDataSource {
     CancelReserveFoodTableRequest request,
   ) async {
     return await _apiService.cancelReserveFoodTable(request);
+  }
+
+  @override
+  Future<BaseResponse<List<PindingInvoiceModel>?>>
+  getRestaurantPosBookingTableInvoice({
+    GetPindingInvoicesRequest? request,
+  }) async {
+    return await _apiService.getRestaurantPosBookingTable(request);
+  }
+
+  @override
+  Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
+    int invoiceId,
+  ) async {
+    return await _apiService.getPosInvoiceDataById(invoiceId);
   }
 }

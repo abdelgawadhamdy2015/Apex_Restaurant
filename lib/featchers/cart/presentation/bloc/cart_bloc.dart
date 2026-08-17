@@ -145,7 +145,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         items: data.items,
         selectedOrderType: data.orderType,
         fromBranchDateTime: null,
-
+        canEdit: event.canEdit,
         // Entities mapped according to active order type
         selectedTable: isDineIn ? data.table : null,
         selectedWaiter: isDineIn ? data.waiter : null,
@@ -324,10 +324,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         fromBranchDateTime: null,
         customerDiscount: null,
         discountAmount: 0,
-        activeDiscountModel: null,
-        activeDiscounts: const [],
+
         couponDiscountvalue: null,
-        clearActiveDiscountModel: true,
+
         clearCouponDiscountValue: true,
         clearCustomerDiscount: true,
         clearRestaurantPosDiscountRequest: true,

@@ -42,8 +42,8 @@ class InvoiceItemInput {
   final DiscountType discountType;
   final ItemTypeId itemTypeId;
   final bool isTobacco;
-  final int transactionId;
-  final int? parentTransactionId;
+  final String transactionId;
+  final String? parentTransactionId;
 
   const InvoiceItemInput({
     required this.itemId,
@@ -237,7 +237,7 @@ class InvoiceCalculator {
       return InvoiceCalculationResponse.failure(itemDiscountError);
     }
 
-    final itemDiscountValues = <int, double>{};
+    final itemDiscountValues = <String, double>{};
     for (final item in calculableItems) {
       itemDiscountValues[item.transactionId] = _resolveDiscountValue(
         base: item.grossValue,
@@ -313,7 +313,7 @@ class InvoiceCalculator {
     }
 
     // -- توزيع خصم الفاتورة نسبيًا على كل صنف --
-    final allocatedDiscounts = <int, double>{};
+    final allocatedDiscounts = <String, double>{};
     for (final item in calculableItems) {
       if (winningDiscount > 0.0 && totalOfItems > 0.0) {
         allocatedDiscounts[item.transactionId] =
@@ -519,7 +519,7 @@ class InvoiceCalculator {
       // 2. إذا كان الصنف تابعة لعرض (Offer)، يتم استبعاده لمنع التكرار
       final isChildOfOffer =
           parentId != null &&
-          parentId > 0 &&
+          parentId.isNotEmpty &&
           offerTransactionIds.contains(parentId) &&
           item.itemTypeId != offerItemTypeId;
 

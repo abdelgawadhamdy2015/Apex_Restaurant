@@ -292,7 +292,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
             previous.status != current.status,
         listener: (context, state) {
           if (state.currentSessionId != null &&
-              state.status == PosStatus.loaded) {
+              state.status == PosStatus.closeSession) {
             _showCloseSessionDialog(context, state.currentSessionId ?? 0);
           }
 

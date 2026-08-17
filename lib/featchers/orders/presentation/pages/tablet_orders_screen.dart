@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/router/routes.dart';
 import '../../../../generated/l10n.dart';
-import '../../../cart/data/models/cart_screen_args.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../data/model/get_previous_invoice_request.dart';
@@ -81,13 +80,10 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
     if (restored == null) return;
 
     final cartData = restored.toRestoredCartData(context);
+    context.pushNamed(Routes.posScreen);
 
     context.read<CartBloc>().add(SyncRestoredInvoiceEvent(cartData));
     context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());
-    context.pushNamed(
-      Routes.cartScreen,
-      extra: CartScreenArgs(isRestored: true, canEdite: state.canEdite),
-    );
   }
 
   @override

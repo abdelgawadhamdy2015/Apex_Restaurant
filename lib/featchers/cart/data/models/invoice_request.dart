@@ -89,6 +89,8 @@ class RestaurantPosInvoiceInfoRequest {
   @JsonKey(name: 'PrintingKitchenKey')
   final String? printingKitchenKey;
 
+  @JsonKey(name: 'InvoiceDate')
+  final DateTime invoiceDate;
   @JsonKey(name: 'isArabic')
   final bool isArabic;
 
@@ -113,6 +115,7 @@ class RestaurantPosInvoiceInfoRequest {
     this.deliveryCost = 0,
     this.printingKitchenKey,
     this.isArabic = false,
+    required this.invoiceDate,
   });
 
   factory RestaurantPosInvoiceInfoRequest.fromJson(Map<String, dynamic> json) =>
@@ -142,6 +145,8 @@ class RestaurantPosDiscountRequest {
 class RestaurantPosInvoiceItemRequest {
   @JsonKey(name: 'ItemId')
   final int itemId;
+  @JsonKey(name: 'TransactionID')
+  final String? transactionID;
 
   @JsonKey(name: 'SizeId')
   final int? sizeId;
@@ -166,6 +171,7 @@ class RestaurantPosInvoiceItemRequest {
 
   const RestaurantPosInvoiceItemRequest({
     required this.itemId,
+    this.transactionID,
     this.sizeId,
     required this.quantity,
     required this.price,
@@ -189,10 +195,15 @@ class RestaurantPosItemAdditiveRequest {
 
   @JsonKey(name: 'Quantity')
   final double quantity;
-
+  @JsonKey(name: 'TransactionID')
+  final String? transactionID;
+  @JsonKey(name: 'ParentTransactionId')
+  final String? parentTransactionId;
   const RestaurantPosItemAdditiveRequest({
     required this.additiveId,
     required this.quantity,
+    this.transactionID,
+    this.parentTransactionId,
   });
 
   factory RestaurantPosItemAdditiveRequest.fromJson(

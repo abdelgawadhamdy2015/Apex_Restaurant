@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
+
 import '../../../../core/calculation/restaurant_invoice_calculator.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../data/enums/cart_enum.dart';
@@ -51,7 +55,7 @@ class CartState extends Equatable {
   final WaiterModel? selectedWaiter;
   final WaiterModel? selectedDeliveryMan;
   final double discountAmount;
-
+  final bool canEdit;
   final bool isLoading;
   final bool isSubmitting;
   final String? errorMessage;
@@ -86,6 +90,7 @@ class CartState extends Equatable {
     this.customerDiscount,
     this.selectedTable,
     this.settingsModel,
+    this.canEdit = true,
   });
 
   // الخصومات الديناميكية
@@ -211,14 +216,20 @@ class CartState extends Equatable {
   // محرك حساب الفاتورة
   List<InvoiceItemInput> _mapItemsToCalculationInputs() {
     final inputs = <InvoiceItemInput>[];
-    int additiveCounter = 100000;
+    int generatedTxCounter = 100000;
 
     final defaultVatRatio = (settingsModel?.vat?.vatActive ?? false)
         ? (settingsModel?.vat?.vatDefaultValue ?? 0).toDouble()
         : 0.0;
 
-    for (final item in items) {
-      final parentTxId = item.transactionId;
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+
+      // Use existing transactionId if restored; generate one if it's new
+      final parentTxId = (item.transactionId.isNotEmpty)
+          ? item.transactionId
+          : 'item_${i}_${DateTime.now().millisecondsSinceEpoch}';
+
       final unitPrice =
           item.selectedSize?.price ??
           (item.menuItem.sizes.isNotEmpty
@@ -249,22 +260,38 @@ class CartState extends Equatable {
       // تجميع الإضافات
       final groupedAddons = <String, Map<String, dynamic>>{};
       for (var addon in item.addons) {
-        if (!groupedAddons.containsKey(addon.id)) {
-          groupedAddons[addon.id] = {'addon': addon, 'count': 0};
+        // Group key takes restored transactionId or addon id into account
+        final key = addon.id;
+        if (!groupedAddons.containsKey(key)) {
+          groupedAddons[key] = {'addon': addon, 'count': 0};
         }
-        groupedAddons[addon.id]!['count'] =
-            (groupedAddons[addon.id]!['count'] as int) + 1;
+        groupedAddons[key]!['count'] =
+            (groupedAddons[key]!['count'] as int) + 1;
       }
 
       // إضافة بند لكل نوع من الإضافات
       for (final entry in groupedAddons.values) {
-        final addon = entry['addon'];
+        final AdditiveModel addon = entry['addon'];
         final countPerItem = entry['count'] as int;
+
+        // Use restored transactionId if available, otherwise generate a unique string ID
+        final addonTxId =
+            (addon.transactionId != null && addon.transactionId!.isNotEmpty)
+            ? addon.transactionId!
+            : (generatedTxCounter++).toString();
+
+        final resolvedParentTxId =
+            (addon.parentTransactionId != null &&
+                addon.parentTransactionId!.isNotEmpty)
+            ? addon.parentTransactionId!
+            : parentTxId;
+
+        log("parentTxId: $resolvedParentTxId, addonTxId: $addonTxId");
 
         inputs.add(
           InvoiceItemInput(
-            transactionId: additiveCounter++,
-            parentTransactionId: parentTxId,
+            transactionId: addonTxId,
+            parentTransactionId: resolvedParentTxId,
             itemId: item.menuItem.itemId,
             additiveId: int.tryParse(addon.id),
             quantity: countPerItem.toDouble(),
@@ -365,12 +392,17 @@ class CartState extends Equatable {
   double get tobaccoTaxAmount => calculationResult?.totalTobaccoTax ?? 0.0;
   double get dineInCost => calculationResult?.dineInCost ?? 0.0;
   double get grandTotal => calculationResult?.netTotal ?? 0.0;
+  DateTime get invoiceDate =>
+      (settingsModel?.posRestaurant?.editingOnDate ?? false)
+      ? fromBranchDateTime ?? DateTime.now()
+      : DateTime.now();
 
   // تحويل البيانات لطلب الحفظ (API)
   SaveRestaurantPosInvoiceRequest get toSaveRestaurantPosInvoiceRequest {
     RestaurantPosDiscountRequest? appliedDiscount;
     int? activeInvoiceDiscountId;
     String? voucherCode;
+    int generatedTxCounter = 100000;
 
     switch (activeDiscountSource) {
       case DiscountSource.dynamic:
@@ -406,42 +438,73 @@ class CartState extends Equatable {
       voucherCode = 'COUPON';
     }
 
-    final invoiceItems = items.map((item) {
-      final grouped = <String, int>{};
-      for (var addon in item.addons) {
-        grouped[addon.id] = (grouped[addon.id] ?? 0) + 1;
+    final invoiceItems = <RestaurantPosInvoiceItemRequest>[];
+
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+
+      final parentTxId = (item.transactionId.isNotEmpty)
+          ? item.transactionId
+          : 'item_${i}_${DateTime.now().millisecondsSinceEpoch}';
+
+      final grouped = <String, AdditiveModel>{};
+      final quantities = <String, int>{};
+
+      for (final addon in item.addons) {
+        final key =
+            '${addon.id}_${addon.transactionId}_${addon.parentTransactionId}';
+        grouped[key] = addon;
+        quantities[key] = (quantities[key] ?? 0) + 1;
       }
 
       final resolvedDiscount = _resolveItemDiscount(item);
 
-      return RestaurantPosInvoiceItemRequest(
-        itemId: item.menuItem.itemId,
-        sizeId: item.selectedSize?.sizeId ?? 0,
-        quantity: item.quantity.toDouble(),
-        price:
-            item.selectedSize?.price ??
-            (item.menuItem.sizes.isNotEmpty
-                ? item.menuItem.sizes.first.price
-                : item.menuItem.defaultPrice) ??
-            0.0,
-        notes: item.notes,
-        discount: resolvedDiscount.value > 0
-            ? RestaurantPosDiscountRequest(
-                type: resolvedDiscount.isPercentage ? 1 : 2,
-                value: resolvedDiscount.value,
-              )
-            : null,
-        itemDiscountId: resolvedDiscount.discountId,
-        additives: grouped.entries
-            .map(
-              (e) => RestaurantPosItemAdditiveRequest(
-                additiveId: int.parse(e.key),
-                quantity: e.value.toDouble(),
-              ),
-            )
-            .toList(),
+      final additivesList = grouped.entries.map((entry) {
+        final addon = entry.value;
+
+        final addonTxId =
+            (addon.transactionId != null && addon.transactionId!.isNotEmpty)
+            ? addon.transactionId!
+            : (generatedTxCounter++).toString();
+
+        final resolvedParentTxId =
+            (addon.parentTransactionId != null &&
+                addon.parentTransactionId!.isNotEmpty)
+            ? addon.parentTransactionId!
+            : parentTxId;
+
+        return RestaurantPosItemAdditiveRequest(
+          transactionID: addonTxId,
+          parentTransactionId: resolvedParentTxId,
+          additiveId: int.parse(addon.id),
+          quantity: quantities[entry.key]!.toDouble(),
+        );
+      }).toList();
+
+      invoiceItems.add(
+        RestaurantPosInvoiceItemRequest(
+          transactionID: parentTxId,
+          itemId: item.menuItem.itemId,
+          sizeId: item.selectedSize?.sizeId ?? 0,
+          quantity: item.quantity.toDouble(),
+          price:
+              item.selectedSize?.price ??
+              (item.menuItem.sizes.isNotEmpty
+                  ? item.menuItem.sizes.first.price
+                  : item.menuItem.defaultPrice) ??
+              0.0,
+          notes: item.notes,
+          discount: resolvedDiscount.value > 0
+              ? RestaurantPosDiscountRequest(
+                  type: resolvedDiscount.isPercentage ? 1 : 2,
+                  value: resolvedDiscount.value,
+                )
+              : null,
+          itemDiscountId: resolvedDiscount.discountId,
+          additives: additivesList,
+        ),
       );
-    }).toList();
+    }
 
     double calculatedDeliveryCost = 0.0;
     if (selectedOrderType == CartOrderType.DELIVERY ||
@@ -467,6 +530,7 @@ class CartState extends Equatable {
       totalInvoicePrice: grandTotal,
       invoiceDiscountId: activeInvoiceDiscountId,
       deliveryCost: calculatedDeliveryCost,
+      invoiceDate: invoiceDate,
     );
 
     return SaveRestaurantPosInvoiceRequest(
@@ -483,6 +547,7 @@ class CartState extends Equatable {
     CartOrderType? selectedOrderType,
     DiscountTypeEnum? selectedDiscountType,
     bool? justRestored,
+    bool? canEdit,
     ClientAddressModel? selectedAddress,
     RestaurantPosDiscountRequest? restaurantPosDiscountRequest,
     RestaurantPosDiscountRequest? customerDiscount,
@@ -525,6 +590,7 @@ class CartState extends Equatable {
           ? null
           : (couponDiscountvalue ?? this.couponDiscountvalue),
       justRestored: justRestored ?? this.justRestored,
+      canEdit: canEdit ?? this.canEdit,
       activeDiscountModel: clearActiveDiscountModel
           ? null
           : (activeDiscountModel ?? this.activeDiscountModel),

@@ -41,6 +41,8 @@ class AdditiveModel {
   final double price;
   final String? notes;
   final String? imagePath;
+  final String? transactionId;
+  final String? parentTransactionId;
 
   const AdditiveModel({
     required this.id,
@@ -49,6 +51,8 @@ class AdditiveModel {
     required this.price,
     this.notes,
     this.imagePath,
+    this.transactionId,
+    this.parentTransactionId,
   });
 
   factory AdditiveModel.fromJson(Map<String, dynamic> json) =>

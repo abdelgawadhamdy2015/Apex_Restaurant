@@ -24,7 +24,7 @@ class RestoredInvoiceInfo {
   final String? invoiceCode;
   final DateTime? invoiceDate;
   final int? posType;
-
+  final bool canEdit;
   final int? foodTableId;
   final String? foodTableArabicName;
   final String? foodTableLatinName;
@@ -111,6 +111,7 @@ class RestoredInvoiceInfo {
     this.deliveryMan,
     this.foodTable,
     this.voucherId,
+    this.canEdit = true,
   });
 
   factory RestoredInvoiceInfo.fromJson(Map<String, dynamic> json) =>

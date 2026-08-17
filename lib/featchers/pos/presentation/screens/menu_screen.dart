@@ -219,7 +219,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
     if (!needsCustomization) {
       final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId,
+        transactionId: TransactionIdGenerator.nextId.toString(),
         menuItem: item,
         selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
         quantity: 1,
@@ -241,7 +241,7 @@ class _MenuScreenState extends State<MenuScreen> {
       required quantity,
     }) {
       final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId,
+        transactionId: TransactionIdGenerator.nextId.toString(),
         menuItem: customItem,
         selectedSize: selectedSize,
         addons: selectedAddons,

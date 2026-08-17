@@ -8,7 +8,6 @@ import 'orders_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
-  final GetRestaurantPosBookingTableUseCase getRestaurantPosBookingTableUseCase;
   final GetPindingInvoicesUseCase getPindingInvoicesUseCase;
   final GetPreviousOrdersUseCase getPreviousOrdersUseCase;
 
@@ -17,7 +16,6 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   OrdersBloc({
     required this.getPindingInvoicesUseCase,
-    required this.getRestaurantPosBookingTableUseCase,
     required this.restoreHeldOrderUseCase,
     required this.deleteHeldOrderUseCase,
     required this.getPreviousOrdersUseCase,
@@ -34,8 +32,6 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
     on<FetchPindingInvoicesEvent>(_onPindingInvoices);
     on<LoadMorePindingInvoicesEvent>(_onLoadMorePinding);
-
-    on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
 
     on<DeleteOrderEvent>((event, emit) async {
       await deleteHeldOrderUseCase(event.orderId);
@@ -289,60 +285,6 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       );
     } catch (e) {
       emit(state.copyWith(isLoadingMorePinding: false));
-    }
-  }
-
-  // ---------------------------------------------------------------------
-  // Unchanged
-  // ---------------------------------------------------------------------
-
-  Future<void> _onRestaurantPosBookingTable(
-    FetchRestaurantPosBookingTableEvent event,
-    Emitter<OrdersState> emit,
-  ) async {
-    emit(state.copyWith(status: OrdersStatus.loading));
-    try {
-      final response = await getRestaurantPosBookingTableUseCase(
-        request: event.request,
-      );
-      response.when(
-        success: (data) {
-          if (data.result == 1) {
-            emit(
-              state.copyWith(
-                pindingInvoices: data.data,
-                isLoading: false,
-                status: OrdersStatus.sussess,
-              ),
-            );
-          } else {
-            emit(
-              state.copyWith(
-                errorMessage: data.errorMessageAr,
-                isLoading: false,
-                status: OrdersStatus.failure,
-              ),
-            );
-          }
-        },
-        failure: (errorHandler) {
-          emit(
-            state.copyWith(
-              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
-              isLoading: false,
-              status: OrdersStatus.failure,
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          pindingInvoices: [],
-          isLoading: false,
-          status: OrdersStatus.failure,
-        ),
-      );
     }
   }
 

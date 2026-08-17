@@ -3,7 +3,7 @@ import '../../data/models/restaurant_item.dart';
 import 'package:equatable/equatable.dart';
 
 class OrderItem extends Equatable {
-  final int transactionId;
+  final String transactionId;
   final RestaurantItem menuItem;
   final ItemSize? selectedSize;
   final int quantity;
@@ -68,7 +68,7 @@ class OrderItem extends Equatable {
   }
 
   OrderItem copyWith({
-    int? transactionId,
+    String? transactionId,
     RestaurantItem? menuItem,
     ItemSize? selectedSize,
     int? quantity,

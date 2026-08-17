@@ -27,6 +27,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   ) {
     emit(
       state.copyWith(
+        status: PaymentStatus.initial,
         totalAmount: event.totalAmount,
         paidAmount: event.totalAmount,
       ),

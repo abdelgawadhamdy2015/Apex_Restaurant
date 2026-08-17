@@ -23,14 +23,6 @@ class GetPindingInvoicesUseCase {
   }) => repository.getPindingInvoices(request: request);
 }
 
-class GetRestaurantPosBookingTableUseCase {
-  final OrdersRepository repository;
-  GetRestaurantPosBookingTableUseCase(this.repository);
-  Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>> call({
-    GetPindingInvoicesRequest? request,
-  }) => repository.getRestaurantPosBookingTable(request: request);
-}
-
 class RestoreHeldOrderUseCase {
   final OrdersRepository repository;
   RestoreHeldOrderUseCase(this.repository);

@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,6 +33,12 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CartBloc>().add(
+        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
+      );
+    });
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -195,7 +202,7 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
 
     if (!needsCustomization) {
       final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId,
+        transactionId: TransactionIdGenerator.nextId.toString(),
         menuItem: item,
         selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
         quantity: 1,
@@ -217,7 +224,7 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
       required quantity,
     }) {
       final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId,
+        transactionId: TransactionIdGenerator.nextId.toString(),
         menuItem: customItem,
         selectedSize: selectedSize,
         addons: selectedAddons,

@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../data/models/get_floor_request.dart';
@@ -57,4 +60,12 @@ class GetTablesUseCase {
   Future<ApiResult<BaseResponse<List<TableEntity>?>>> call({
     required GetTablesRequest request,
   }) => repository.getTables(request: request);
+}
+
+class GetPindingTableInvoiceUseCase {
+  final TablesRepository repository;
+  GetPindingTableInvoiceUseCase(this.repository);
+  Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>> call({
+    required GetPindingInvoicesRequest request,
+  }) => repository.getRestaurantPosBookingTable(request: request);
 }

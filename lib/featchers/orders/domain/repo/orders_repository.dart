@@ -11,8 +11,6 @@ abstract class OrdersRepository {
   getPreviousOrders({required GetPreviousInvoiceRequest request});
   Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>>
   getPindingInvoices({GetPindingInvoicesRequest? request});
-  Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>>
-  getRestaurantPosBookingTable({GetPindingInvoicesRequest? request});
 
   Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
   restorePosRestuarantInvoice(int invoiceId);

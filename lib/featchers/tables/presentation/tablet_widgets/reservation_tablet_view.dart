@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
-import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_add_customer_sheet.dart';
+import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet-add_reservation.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_list.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_search_filter.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_status_filter.dart';
@@ -55,7 +55,7 @@ class _ReservationsTabletViewState extends State<ReservationsTabletView> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () {
-                      TabletAddReservationBottomSheet.show(
+                      TabletAddReservationDialog.show(
                         context,
                         widget.tables,
                         widget.personList,

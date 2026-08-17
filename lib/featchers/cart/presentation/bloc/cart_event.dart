@@ -33,7 +33,8 @@ class AcknowledgeCartRestoredEvent extends CartEvent {
 
 class SyncRestoredInvoiceEvent extends CartEvent {
   final RestoredCartData data;
-  const SyncRestoredInvoiceEvent(this.data);
+  final bool canEdit;
+  const SyncRestoredInvoiceEvent(this.data, {this.canEdit = true});
 
   @override
   List<Object?> get props => [data];

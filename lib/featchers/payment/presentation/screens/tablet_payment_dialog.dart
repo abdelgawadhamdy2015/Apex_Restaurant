@@ -3,6 +3,7 @@ import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
+import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_state.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/tablet_widgets/amount_summary_row.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/tablet_widgets/split_payment_grid.dart';
@@ -27,8 +28,14 @@ class TabletPaymentDialog extends StatelessWidget {
     return showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) =>
-          TabletPaymentDialog(invoiceRequestModel: invoiceRequestModel),
+      builder: (context) {
+        context.read<PaymentBloc>().add(
+          InitializePaymentEvent(
+            totalAmount: invoiceRequestModel.invoice.totalInvoicePrice,
+          ),
+        );
+        return TabletPaymentDialog(invoiceRequestModel: invoiceRequestModel);
+      },
     );
   }
 

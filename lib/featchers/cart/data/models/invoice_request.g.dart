@@ -70,6 +70,7 @@ RestaurantPosInvoiceInfoRequest _$RestaurantPosInvoiceInfoRequestFromJson(
   deliveryCost: (json['DeliveryCost'] as num?)?.toDouble() ?? 0,
   printingKitchenKey: json['PrintingKitchenKey'] as String?,
   isArabic: json['isArabic'] as bool? ?? false,
+  invoiceDate: DateTime.parse(json['InvoiceDate'] as String),
 );
 
 Map<String, dynamic> _$RestaurantPosInvoiceInfoRequestToJson(
@@ -94,6 +95,7 @@ Map<String, dynamic> _$RestaurantPosInvoiceInfoRequestToJson(
   'OrderReceivedTime': instance.orderReceivedTime?.toIso8601String(),
   'DeliveryCost': instance.deliveryCost,
   'PrintingKitchenKey': instance.printingKitchenKey,
+  'InvoiceDate': instance.invoiceDate.toIso8601String(),
   'isArabic': instance.isArabic,
 };
 
@@ -112,6 +114,7 @@ RestaurantPosInvoiceItemRequest _$RestaurantPosInvoiceItemRequestFromJson(
   Map<String, dynamic> json,
 ) => RestaurantPosInvoiceItemRequest(
   itemId: (json['ItemId'] as num).toInt(),
+  transactionID: json['TransactionID'] as String?,
   sizeId: (json['SizeId'] as num?)?.toInt(),
   quantity: (json['Quantity'] as num).toDouble(),
   price: (json['Price'] as num).toDouble(),
@@ -137,6 +140,7 @@ Map<String, dynamic> _$RestaurantPosInvoiceItemRequestToJson(
   RestaurantPosInvoiceItemRequest instance,
 ) => <String, dynamic>{
   'ItemId': instance.itemId,
+  'TransactionID': instance.transactionID,
   'SizeId': instance.sizeId,
   'Quantity': instance.quantity,
   'Price': instance.price,
@@ -151,6 +155,8 @@ RestaurantPosItemAdditiveRequest _$RestaurantPosItemAdditiveRequestFromJson(
 ) => RestaurantPosItemAdditiveRequest(
   additiveId: (json['AdditiveId'] as num).toInt(),
   quantity: (json['Quantity'] as num).toDouble(),
+  transactionID: json['TransactionID'] as String?,
+  parentTransactionId: json['ParentTransactionId'] as String?,
 );
 
 Map<String, dynamic> _$RestaurantPosItemAdditiveRequestToJson(
@@ -158,6 +164,8 @@ Map<String, dynamic> _$RestaurantPosItemAdditiveRequestToJson(
 ) => <String, dynamic>{
   'AdditiveId': instance.additiveId,
   'Quantity': instance.quantity,
+  'TransactionID': instance.transactionID,
+  'ParentTransactionId': instance.parentTransactionId,
 };
 
 RestaurantPosPaymentRequest _$RestaurantPosPaymentRequestFromJson(

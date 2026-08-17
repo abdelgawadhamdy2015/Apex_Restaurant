@@ -45,20 +45,6 @@ class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>>
-  getRestaurantPosBookingTable({GetPindingInvoicesRequest? request}) async {
-    try {
-      final response = await remoteDataSource.getPindingInvoices(
-        request: request,
-      );
-      return ApiResult.success(response);
-    } catch (e, s) {
-      log("$e , \n $s");
-      return ApiResult.failure(ErrorHandler.handle(e));
-    }
-  }
-
-  @override
   Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
   restorePosRestuarantInvoice(int invoiceId) async {
     try {

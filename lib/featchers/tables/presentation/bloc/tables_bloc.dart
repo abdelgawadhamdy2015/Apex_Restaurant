@@ -1,8 +1,9 @@
 // presentation/bloc/tables_bloc.dart
 
 import 'package:apex_restaurant/core/service/api_result.dart';
+import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
-import 'package:apex_restaurant/featchers/tables/domain/usescase/get_reservations_usecase.dart';
+import 'package:apex_restaurant/featchers/tables/domain/usescase/tables_usecase.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +14,8 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
   final CancelReservationUseCase cancelReservationUseCase;
   final GetFloorsUseCase getFloorsUseCase;
   final GetTablesUseCase getTablesUseCase;
+  final GetPindingTableInvoiceUseCase getPindingTableInvoiceUseCase;
+  final RestoreHeldOrderUseCase restoreHeldOrderUseCase;
 
   TablesBloc({
     required this.getReservationsUseCase,
@@ -20,6 +23,8 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     required this.cancelReservationUseCase,
     required this.getFloorsUseCase,
     required this.getTablesUseCase,
+    required this.getPindingTableInvoiceUseCase,
+    required this.restoreHeldOrderUseCase,
   }) : super(const TablesState()) {
     on<FetchReservationsEvent>(_onFetchReservations);
     on<SwitchMainTabEvent>(_onSwitchMainTab);
@@ -27,6 +32,11 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<CancelReservationEvent>(_onCancelReservation);
     on<FetchFloorsEvent>(_onFetchFloors);
     on<FetchTablesEvent>(_onFetchTables);
+    on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
+    on<RestoreOrderEvent>(_onRestoreOrder);
+    on<ClearRestoredInvoiceEvent>((event, emit) {
+      emit(state.copyWith());
+    });
   }
 
   Future<void> _handleApiCall<T>({
@@ -73,6 +83,100 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
         ),
       );
     }
+  }
+
+  Future<void> _onRestaurantPosBookingTable(
+    FetchRestaurantPosBookingTableEvent event,
+    Emitter<TablesState> emit,
+  ) async {
+    emit(state.copyWith(status: TablesStatus.loading));
+    try {
+      final response = await getPindingTableInvoiceUseCase(
+        request: event.request,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                pindingInvoices: data.data,
+                status: TablesStatus.pindingSussess,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                status: TablesStatus.failure,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              status: TablesStatus.failure,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(state.copyWith(pindingInvoices: [], status: TablesStatus.failure));
+    }
+  }
+
+  Future<void> _onRestoreOrder(
+    RestoreOrderEvent event,
+    Emitter<TablesState> emit,
+  ) async {
+    emit(state.copyWith(restoringInvoiceId: event.invoiceId));
+
+    try {
+      final response = await restoreHeldOrderUseCase(event.invoiceId);
+      response.when(
+        success: (data) {
+          if (data.result == 1 && data.data != null) {
+            emit(
+              state.copyWith(
+                status: TablesStatus.success,
+                restoredInvoiceModel: data.data,
+                clearRestoringId: true,
+                canEdit: event.canEdite,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: TablesStatus.failure,
+                errorMessage: data.errorMessageAr ?? 'فشل استرجاع الفاتورة',
+                clearRestoringId: true,
+              ),
+            );
+          }
+        },
+        failure: (err) {
+          emit(
+            state.copyWith(
+              status: TablesStatus.failure,
+              errorMessage:
+                  err.apiErrorModel.errorMessageAr ?? 'خطأ في الاتصال بالخادم',
+              clearRestoringId: true,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: TablesStatus.failure,
+          errorMessage: 'حدث خطأ غير متوقع أثناء استرجاع الفاتورة',
+          clearRestoringId: true,
+        ),
+      );
+    }
+
+    //add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
   }
 
   Future<void> _onFetchReservations(

@@ -1,3 +1,7 @@
+import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../data/models/get_floor_request.dart';
@@ -27,4 +31,9 @@ abstract class TablesRepository {
   Future<ApiResult<BaseResponse<List<TableEntity>?>>> getTables({
     required GetTablesRequest request,
   });
+  Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>>
+  getRestaurantPosBookingTable({GetPindingInvoicesRequest? request});
+
+  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
+  restorePosRestuarantInvoice(int invoiceId);
 }

@@ -179,7 +179,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
 
       orderItems.add(
         OrderItem(
-          transactionId: transId,
+          transactionId: transId.toString(),
           menuItem: restaurantItem,
           selectedSize: selectedSize,
           quantity: (mainItem.quantity ?? 1).toInt(),
