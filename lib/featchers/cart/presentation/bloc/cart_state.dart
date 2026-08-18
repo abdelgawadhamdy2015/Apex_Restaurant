@@ -48,9 +48,10 @@ class CartState extends Equatable {
 
   final List<WaiterModel> waiters;
   final List<WaiterModel> deliveryAgents;
+  final List<DeliveryCompanyModel> companiesList;
+
   final List<PosClientModel> persons;
   final PosClientModel? selectedPerson;
-  final List<DeliveryCompanyModel> deliveryCompanies;
   final DeliveryCompanyModel? selectedDeliveryCompany;
   final WaiterModel? selectedWaiter;
   final WaiterModel? selectedDeliveryMan;
@@ -60,6 +61,7 @@ class CartState extends Equatable {
   final bool isSubmitting;
   final String? errorMessage;
   final String? successMessage;
+  final int? invoiceId;
 
   const CartState({
     this.selectedOrderType = CartOrderType.TAKEAWAY,
@@ -73,7 +75,6 @@ class CartState extends Equatable {
     this.waiters = const [],
     this.deliveryAgents = const [],
     this.persons = const [],
-    this.deliveryCompanies = const [],
     this.selectedDeliveryCompany,
     this.selectedWaiter,
     this.selectedDeliveryMan,
@@ -91,6 +92,8 @@ class CartState extends Equatable {
     this.selectedTable,
     this.settingsModel,
     this.canEdit = true,
+    this.companiesList = const [],
+    this.invoiceId,
   });
 
   // الخصومات الديناميكية
@@ -394,8 +397,9 @@ class CartState extends Equatable {
   double get grandTotal => calculationResult?.netTotal ?? 0.0;
   DateTime get invoiceDate =>
       (settingsModel?.posRestaurant?.editingOnDate ?? false)
-      ? fromBranchDateTime ?? DateTime.now()
-      : DateTime.now();
+            ? fromBranchDateTime ?? DateTime.now().add(Duration(minutes: 1))
+            : DateTime.now()
+        ..add(Duration(minutes: 1));
 
   // تحويل البيانات لطلب الحفظ (API)
   SaveRestaurantPosInvoiceRequest get toSaveRestaurantPosInvoiceRequest {
@@ -515,16 +519,32 @@ class CartState extends Equatable {
     }
 
     final invoiceModel = RestaurantPosInvoiceInfoRequest(
+      invoiceId: invoiceId,
+      pendingInvoiceId: invoiceId,
       postype: selectedOrderType.apiValue,
-      foodTableId: int.tryParse(selectedTable?.id ?? ''),
-      waiterId: int.tryParse(selectedWaiter?.id?.toString() ?? ''),
-      deliveryManId: int.tryParse(selectedDeliveryMan?.id?.toString() ?? ''),
-      deliveryCompanyId: selectedDeliveryCompany?.id,
+      foodTableId: selectedOrderType == CartOrderType.DINE_IN
+          ? int.tryParse(selectedTable?.id ?? '')
+          : null,
+      waiterId: selectedOrderType == CartOrderType.DINE_IN
+          ? int.tryParse(selectedWaiter?.id?.toString() ?? '')
+          : null,
+      deliveryManId: selectedOrderType == CartOrderType.DELIVERY
+          ? int.tryParse(selectedDeliveryMan?.id?.toString() ?? '')
+          : null,
+      deliveryCompanyId: selectedOrderType == CartOrderType.DELIVERY_COMPANY
+          ? selectedDeliveryCompany?.id
+          : null,
       voucherCode: voucherCode,
       clientId: selectedPerson?.id ?? 0,
-      personAddressId: int.tryParse(selectedAddress?.id.toString() ?? '') ?? 0,
-      personPhoneId: selectedPerson?.personPhones?.first.id ?? 0,
-      orderReceivedTime: fromBranchDateTime,
+      personAddressId: selectedOrderType == CartOrderType.DELIVERY
+          ? (int.tryParse(selectedAddress?.id.toString() ?? '') ?? 0)
+          : 0,
+      personPhoneId: selectedOrderType == CartOrderType.DELIVERY
+          ? selectedPerson?.personPhones?.first.id ?? 0
+          : 0,
+      orderReceivedTime: selectedOrderType == CartOrderType.FROMBRANCH
+          ? fromBranchDateTime
+          : null,
       discount: appliedDiscount?.value == 0 ? null : appliedDiscount,
       paidAmount: grandTotal,
       totalInvoicePrice: grandTotal,
@@ -543,6 +563,7 @@ class CartState extends Equatable {
 
   // نسخ ومقارنة الحالة
   CartState copyWith({
+    int? invoiceId,
     SettingsModel? settingsModel,
     CartOrderType? selectedOrderType,
     DiscountTypeEnum? selectedDiscountType,
@@ -558,9 +579,10 @@ class CartState extends Equatable {
     DynamicDiscountModel? activeDiscountModel,
     List<WaiterModel>? waiters,
     List<WaiterModel>? deliveryAgents,
+    List<DeliveryCompanyModel>? companiesList,
+
     List<PosClientModel>? persons,
     PosClientModel? selectedPerson,
-    List<DeliveryCompanyModel>? deliveryCompanies,
     DeliveryCompanyModel? selectedDeliveryCompany,
     WaiterModel? selectedWaiter,
     WaiterModel? selectedDeliveryMan,
@@ -577,12 +599,16 @@ class CartState extends Equatable {
     bool clearRestaurantPosDiscountRequest = false,
     bool clearCustomerDiscount = false,
     bool clearCouponDiscountValue = false,
+    bool clearAddress = false,
+    bool clearInvoiceId = false,
   }) {
     return CartState(
       settingsModel: settingsModel ?? this.settingsModel,
       selectedOrderType: selectedOrderType ?? this.selectedOrderType,
       selectedDiscountType: selectedDiscountType ?? this.selectedDiscountType,
-      selectedAddress: selectedAddress ?? this.selectedAddress,
+      selectedAddress: clearAddress
+          ? null
+          : selectedAddress ?? this.selectedAddress,
       status: status ?? this.status,
       items: items ?? this.items,
       activeDiscounts: activeDiscounts ?? this.activeDiscounts,
@@ -598,7 +624,6 @@ class CartState extends Equatable {
       persons: persons ?? this.persons,
       selectedPerson: selectedPerson ?? this.selectedPerson,
       deliveryAgents: deliveryAgents ?? this.deliveryAgents,
-      deliveryCompanies: deliveryCompanies ?? this.deliveryCompanies,
       selectedDeliveryCompany:
           selectedDeliveryCompany ?? this.selectedDeliveryCompany,
       selectedWaiter: selectedWaiter ?? this.selectedWaiter,
@@ -616,6 +641,8 @@ class CartState extends Equatable {
           : (customerDiscount ?? this.customerDiscount),
       selectedTable: selectedTable ?? this.selectedTable,
       fromBranchDateTime: fromBranchDateTime ?? this.fromBranchDateTime,
+      companiesList: companiesList ?? this.companiesList,
+      invoiceId: clearInvoiceId ? null : invoiceId ?? this.invoiceId,
     );
   }
 
@@ -637,7 +664,7 @@ class CartState extends Equatable {
     deliveryAgents,
     persons,
     selectedPerson,
-    deliveryCompanies,
+    companiesList,
     selectedDeliveryCompany,
     selectedWaiter,
     selectedDeliveryMan,

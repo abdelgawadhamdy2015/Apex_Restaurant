@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/featchers/cashier_custody/presentation/screens/tablet_return_screen.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/screens/tablet_return_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

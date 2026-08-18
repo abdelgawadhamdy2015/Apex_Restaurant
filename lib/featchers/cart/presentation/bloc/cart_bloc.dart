@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../data/enums/cart_enum.dart';
 import '../../data/models/dynamic_discount.dart';
@@ -8,7 +10,6 @@ import '../../data/models/waiter_model.dart';
 import '../../domain/usescase/cart_usescase.dart';
 import '../../../pos/data/models/category_model.dart';
 import '../../../pos/domain/entities/menu_item.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'cart_event.dart';
@@ -22,6 +23,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   savePendingRestaurantPosInvoiceUseCase;
   final SaveBookingTableRestaurantPosInvoiceUseCase
   saveBookingTableRestaurantPosInvoiceUseCase;
+  final GetAllDeliveryCompanyUseCase getAllDeliveryCompanyUseCase;
 
   final GetAllPosClientsUseCase getAllPersonsUseCase;
   final AddPosClientUseCase addPosClientUseCase;
@@ -38,9 +40,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.addPosClientUseCase,
     required this.updatePosClientUseCase,
     required this.getDynamicInvoiceDiscountUseCase,
+    required this.getAllDeliveryCompanyUseCase,
   }) : super(const CartState()) {
-    debugPrint('CartBloc instance created: $hashCode');
-
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
@@ -143,6 +144,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         // Primary Restored Data
         items: data.items,
+        invoiceId: data.invoiceID,
         selectedOrderType: data.orderType,
         fromBranchDateTime: null,
         canEdit: event.canEdit,
@@ -182,8 +184,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     final waitersRes = await getWaitersUseCase();
     final agentsRes = await getDeliveryAgentsUseCase();
+    final deliveryCompaniesRes = await getAllDeliveryCompanyUseCase();
+
     List<WaiterModel> waitersList = [];
     List<WaiterModel> agentsList = [];
+    List<DeliveryCompanyModel> companiesList = [];
 
     waitersRes.when(
       success: (data) => waitersList = data.data ?? [],
@@ -194,12 +199,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       success: (data) => agentsList = data.data ?? [],
       failure: (_) {},
     );
+    deliveryCompaniesRes.when(
+      success: (data) => companiesList = data.data ?? [],
+      failure: (_) {},
+    );
 
     emit(
       state.copyWith(
         isLoading: false,
         waiters: waitersList,
         deliveryAgents: agentsList,
+        companiesList: companiesList,
       ),
     );
   }
@@ -266,7 +276,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onSelectPerson(SelectPersonEvent event, Emitter<CartState> emit) {
-    emit(state.copyWith(selectedPerson: event.person));
+    emit(state.copyWith(selectedPerson: event.person, clearAddress: true));
   }
 
   void _onChangeOrderType(ChangeOrderTypeEvent event, Emitter<CartState> emit) {

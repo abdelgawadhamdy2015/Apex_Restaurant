@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
 
@@ -69,6 +70,7 @@ class _ApexRestaurantAppState extends State<ApexRestaurantApp> {
         BlocProvider(create: (_) => getIt<PaymentBloc>()),
         BlocProvider(create: (_) => getIt<OrdersBloc>()),
         BlocProvider(create: (_) => getIt<TablesBloc>()),
+        BlocProvider(create: (_) => getIt<MoreActionsBloc>()),
 
         BlocProvider<SettingsCubit>(create: (_) => getIt<SettingsCubit>()),
       ],

@@ -326,7 +326,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Restaurants/Floors/GetAllFloors',
+            'api/Restaurants/Floors/GetAllFloorsPOS',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -365,7 +365,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Restaurants/FoodTables/GetAllFoodTables',
+            'api/Restaurants/FoodTables/GetAllFoodTablesPOS',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -550,18 +550,19 @@ class _ApiService implements ApiService {
 
   @override
   Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany(
-    BaseRequest request,
+    GetDeliveryCompaniesRequest? request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(request.toJson());
+    queryParameters.addAll(request?.toJson() ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<List<DeliveryCompanyModel>?>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Restaurants/DeliveryCompany/GetAllDeliveryCompany',
+            'api/Restaurants/DeliveryCompany/GetAllDeliveryCompanyPOS',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -602,7 +603,7 @@ class _ApiService implements ApiService {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Store/Persons/GetListOfPersons',
+            'api/Store/Persons/GetListOfPersonsPOS',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1226,11 +1227,16 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<UserDataModel?>> deletetPendingInvoiceAndBokkingTable(
-    int id,
-  ) async {
+  Future<BaseResponse<UserDataModel?>> deletetPendingInvoiceAndBokkingTable({
+    int? id,
+    String? foodTableId,
+  }) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'Id': id};
+    final queryParameters = <String, dynamic>{
+      r'Id': id,
+      r'foodTableId': foodTableId,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<UserDataModel?>>(
@@ -1251,6 +1257,118 @@ class _ApiService implements ApiService {
         (json) => json == null
             ? null
             : UserDataModel.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<List<PosInvoiceData>?>> getAllPOSInvoices(
+    GetAllPosInvoiceRequest request,
+    int financialYearId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'financialYearId': financialYearId,
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<BaseResponse<List<PosInvoiceData>?>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/POS/GetAllPOSInvoices',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<List<PosInvoiceData>?> _value;
+    try {
+      _value = BaseResponse<List<PosInvoiceData>?>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<PosInvoiceData>(
+                    (i) => PosInvoiceData.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
+            : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice(
+    GetAllPosInvoiceRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<BaseResponse<PosInvoiceData?>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/POS/AddPOSResturnInvoice',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<PosInvoiceData?> _value;
+    try {
+      _value = BaseResponse<PosInvoiceData?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : PosInvoiceData.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<PosInvoiceData?>> addPOSTotalReturnInvoice(
+    AddPOSTotalReturnInvoiceRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(request.toJson());
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<PosInvoiceData?>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/POS/AddPOSTotalReturnInvoice',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<PosInvoiceData?> _value;
+    try {
+      _value = BaseResponse<PosInvoiceData?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : PosInvoiceData.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

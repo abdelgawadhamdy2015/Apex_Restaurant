@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+
 import '../../../../core/service/api_service.dart';
 import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -15,7 +18,9 @@ abstract class CartRemoteDataSource {
   Future<BaseResponse<List<WaiterModel>?>> getDeliveryAgents({
     BaseRequest? request,
   });
-
+  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
+    GetDeliveryCompaniesRequest? request,
+  });
   Future<BaseResponse<List<WaiterModel>?>> getWaiters({BaseRequest? request});
   Future<BaseResponse<List<PosClientModel>?>> getPersons({
     required GetClientsRequest request,
@@ -56,6 +61,13 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
     );
 
     return _apiService.getListOfDeliveryMen(queryRequest);
+  }
+
+  @override
+  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
+    GetDeliveryCompaniesRequest? request,
+  }) async {
+    return await _apiService.getAllDeliveryCompany(request);
   }
 
   @override

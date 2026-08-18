@@ -495,5 +495,11 @@
     "couponDiscount": "Discount (Coupon)",
     "addNewItem": "Add New Item",
     "cartEmpty": "No items in cart yet",
-    "cancelOrder": "Cancel Order"
+    "cancelOrder": "Cancel Order",
+    "notPrinted": "Not Printed",
+    "printed": "Printed",
+    "unknown": "Unknown",
+    "paid": "Paid",
+    "remaining": "Remaining",
+    "discount": "Discount"
 }

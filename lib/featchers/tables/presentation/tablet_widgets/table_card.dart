@@ -2,6 +2,7 @@ import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+import 'package:apex_restaurant/featchers/orders/domain/mapper/restored_invoice_mapper.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
@@ -125,6 +126,22 @@ class _TableCardState extends State<TableCard> {
     );
   }
 
+  void _onTableStateChanged(BuildContext context, TablesState state) {
+    final restored = state.restoredInvoiceModel;
+    if (restored == null) return;
+
+    final cartData = restored.toRestoredCartData(context);
+
+    context.read<CartBloc>().add(
+      SyncRestoredInvoiceEvent(
+        cartData,
+        canEdit: state.restoredInvoiceModel?.invoice?.canEdit ?? true,
+      ),
+    );
+    context.read<TablesBloc>().add(const ClearRestoredInvoiceEvent());
+    context.pushNamed(Routes.posScreen);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -136,7 +153,7 @@ class _TableCardState extends State<TableCard> {
     return BlocListener<TablesBloc, TablesState>(
       listener: (context, state) {
         if (state.status == TablesStatus.pindingSussess) {
-          context.pushNamed(Routes.posScreen);
+          _onTableStateChanged(context, state);
         }
       },
       child: GestureDetector(

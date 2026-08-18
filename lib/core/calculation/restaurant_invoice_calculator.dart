@@ -17,6 +17,7 @@ class InvoiceCalculationInput {
   final bool applyVAT;
   final List<InvoiceItemInput> items;
   final VoucherInput? voucher;
+  final DynamicDiscountInput? dynamicDiscount;
 
   const InvoiceCalculationInput({
     this.discountOnTotal = 0.0,
@@ -28,6 +29,7 @@ class InvoiceCalculationInput {
     this.applyVAT = false,
     this.items = const [],
     this.voucher,
+    this.dynamicDiscount,
   });
 }
 
@@ -79,6 +81,52 @@ class VoucherInput {
   });
 }
 
+/// خصم ديناميكي (مبني على DiscountModel القادم من السيرفر)
+class DynamicDiscountInput {
+  /// معرّف الخصم (اختياري، للعرض فقط)
+  final String? id;
+
+  /// نوع الخصم: نسبة أو قيمة ثابتة
+  final DiscountType discountType;
+
+  /// قيمة الخصم (نسبة أو مبلغ حسب discountType)
+  final double discountValue;
+
+  /// أقل قيمة صافي للفاتورة عشان الخصم يتفعّل (null = بدون حد أدنى)
+  final double? minInvoiceNET;
+
+  /// أعلى قيمة يقدر يوصلها الخصم (null = بدون حد أقصى)
+  final double? maxDiscountValue;
+
+  const DynamicDiscountInput({
+    this.id,
+    required this.discountType,
+    required this.discountValue,
+    this.minInvoiceNET,
+    this.maxDiscountValue,
+  });
+
+  /// تحويل من موديل الـ API (DiscountModel) لموديل الحساب
+  /// ملاحظة: 1 = نسبة، غير كده = قيمة ثابتة (عدّل حسب اتفاقية الباك إند)
+  factory DynamicDiscountInput.fromDiscountType({
+    required String? id,
+    required int? discountType,
+    required double? discountValue,
+    required double? minInvoiceNET,
+    required double? maxDiscountValue,
+  }) {
+    return DynamicDiscountInput(
+      id: id,
+      discountType: discountType == 1
+          ? DiscountType.percentage
+          : DiscountType.fixedAmount,
+      discountValue: discountValue ?? 0.0,
+      minInvoiceNET: minInvoiceNET,
+      maxDiscountValue: maxDiscountValue,
+    );
+  }
+}
+
 // =====================================================================
 // نماذج الإخراج
 // =====================================================================
@@ -118,6 +166,7 @@ class InvoiceCalculationResult {
   final double totalItemDiscount;
   final double voucherDiscount;
   final double invoiceDiscount;
+  final double dynamicDiscount;
   final double totalDiscount;
   final double totalVAT;
   final double totalTobaccoTax;
@@ -131,6 +180,7 @@ class InvoiceCalculationResult {
     required this.totalItemDiscount,
     required this.voucherDiscount,
     required this.invoiceDiscount,
+    this.dynamicDiscount = 0.0,
     required this.totalDiscount,
     required this.totalVAT,
     required this.totalTobaccoTax,
@@ -184,6 +234,9 @@ class InvoiceCalculationResponse {
   bool get isSuccess => data != null;
   bool get isFailure => !isSuccess;
 }
+
+/// مصدر الخصم اللي كسب المقارنة (داخلي فقط)
+enum _DiscountSource { customer, invoice, voucher, dynamic }
 
 // =====================================================================
 // حاسبة الفاتورة
@@ -292,20 +345,38 @@ class InvoiceCalculator {
       totalAfterItemDiscount: totalAfterItemDiscount,
     );
 
-    double winningDiscount = customerDiscount;
-    var wonByVoucher = false;
+    // خصم ديناميكي: بيتفعل لو الفاتورة >= الحد الأدنى، ومحدود بالحد الأقصى
+    final dynamicDiscountValue = _resolveDynamicDiscount(
+      dynamicDiscount: input.dynamicDiscount,
+      totalAfterItemDiscount: totalAfterItemDiscount,
+    );
+
+    // -- المقارنة بين كل مصادر الخصم واختيار الأعلى --
+    var winningDiscount = customerDiscount;
+    var winningSource = _DiscountSource.customer;
 
     if (directInvoiceDiscount > winningDiscount) {
       winningDiscount = directInvoiceDiscount;
-      wonByVoucher = false;
+      winningSource = _DiscountSource.invoice;
     }
     if (voucherDiscount >= winningDiscount && voucherDiscount > 0.0) {
       winningDiscount = voucherDiscount;
-      wonByVoucher = true;
+      winningSource = _DiscountSource.voucher;
+    }
+    if (dynamicDiscountValue >= winningDiscount && dynamicDiscountValue > 0.0) {
+      winningDiscount = dynamicDiscountValue;
+      winningSource = _DiscountSource.dynamic;
     }
 
-    final resultVoucherDiscount = wonByVoucher ? winningDiscount : 0.0;
-    final resultInvoiceDiscount = wonByVoucher ? 0.0 : winningDiscount;
+    final resultVoucherDiscount = winningSource == _DiscountSource.voucher
+        ? winningDiscount
+        : 0.0;
+    final resultInvoiceDiscount = winningSource == _DiscountSource.invoice
+        ? winningDiscount
+        : 0.0;
+    final resultDynamicDiscount = winningSource == _DiscountSource.dynamic
+        ? winningDiscount
+        : 0.0;
 
     var netAmount = totalAfterItemDiscount - winningDiscount;
     if (netAmount < 0.0) {
@@ -378,6 +449,7 @@ class InvoiceCalculator {
         totalItemDiscount: totalItemDiscount,
         voucherDiscount: resultVoucherDiscount,
         invoiceDiscount: resultInvoiceDiscount,
+        dynamicDiscount: resultDynamicDiscount,
         totalDiscount: totalItemDiscount + winningDiscount,
         totalVAT: totalVAT,
         // إذا كان إجمالي ضريبة التبغ أقل من 25 يُضبط على 25، غير ذلك يؤخذ كما هو
@@ -440,6 +512,14 @@ class InvoiceCalculator {
               "Can't use manual discount on items and on invoice together",
         );
       }
+    }
+
+    if (input.dynamicDiscount != null &&
+        input.dynamicDiscount!.discountValue < 0.0) {
+      return const InvoiceCalculationError(
+        messageAr: 'قيمة الخصم الديناميكي لا يمكن أن تكون بالسالب',
+        messageEn: 'Dynamic discount value cannot be negative',
+      );
     }
 
     for (final item in input.items) {
@@ -561,5 +641,38 @@ class InvoiceCalculator {
     }
 
     return discount;
+  }
+
+  /// حساب الخصم الديناميكي مع مراعاة الحد الأدنى والحد الأقصى
+  double _resolveDynamicDiscount({
+    required DynamicDiscountInput? dynamicDiscount,
+    required double totalAfterItemDiscount,
+  }) {
+    if (dynamicDiscount == null) return 0.0;
+    if (dynamicDiscount.discountValue <= 0.0) return 0.0;
+
+    // الحد الأدنى: لازم صافي الفاتورة يكون أكبر منه عشان الخصم يتفعل
+    final minInvoice = dynamicDiscount.minInvoiceNET;
+    if (minInvoice != null && totalAfterItemDiscount < minInvoice) {
+      return 0.0;
+    }
+
+    var value = _resolveDiscountValue(
+      base: totalAfterItemDiscount,
+      discount: dynamicDiscount.discountValue,
+      type: dynamicDiscount.discountType,
+    );
+
+    // الحد الأقصى: يقصّ قيمة الخصم لو موجود
+    final maxValue = dynamicDiscount.maxDiscountValue;
+    if (maxValue != null && maxValue > 0.0 && value > maxValue) {
+      value = maxValue;
+    }
+
+    if (value > totalAfterItemDiscount) {
+      value = totalAfterItemDiscount;
+    }
+
+    return value;
   }
 }

@@ -41,7 +41,7 @@ class AppTheme {
       colorScheme: colorScheme,
       extensions: [
         AppExtraTheme(
-          background: AppColors.background,
+          background: AppColors.primaryLight,
           secondaryBackground: AppColors.secondaryButtonColor,
           iconColor: AppColors.primaryLight,
           subtitleColor: AppColors.primaryLight,

@@ -33,5 +33,8 @@ class RestoreHeldOrderUseCase {
 class DeleteHeldOrderUseCase {
   final OrdersRepository repository;
   DeleteHeldOrderUseCase(this.repository);
-  Future<void> call(String orderId) => repository.deleteHeldOrder(orderId);
+  Future<ApiResult<BaseResponse<dynamic>>> call({
+    int? id,
+    String? foodTableId,
+  }) => repository.deleteHeldOrder(id: id, foodTableId: foodTableId);
 }

@@ -56,7 +56,9 @@ class TablesState extends Equatable {
       restoringInvoiceId: clearRestoringId == true
           ? null
           : restoringInvoiceId ?? this.restoringInvoiceId,
-      restoredInvoiceModel: restoredInvoiceModel ?? this.restoredInvoiceModel,
+      restoredInvoiceModel: clearRestoringId == true
+          ? null
+          : restoredInvoiceModel ?? this.restoredInvoiceModel,
       canEdit: canEdit ?? this.canEdit,
     );
   }

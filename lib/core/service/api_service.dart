@@ -1,3 +1,8 @@
+import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+
 import 'api_constants.dart';
 import '../shared/entity/base_request.dart';
 import '../shared/model/base_response.dart';
@@ -92,7 +97,7 @@ abstract class ApiService {
   );
   @GET(ApiConstants.getAllDeliveryCompany)
   Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany(
-    @Queries() BaseRequest request,
+    @Queries() GetDeliveryCompaniesRequest? request,
   );
   @GET(ApiConstants.getAllPersons)
   Future<BaseResponse<List<PosClientModel>?>> getAllPersons(
@@ -180,7 +185,24 @@ abstract class ApiService {
   getDynamicInvoiceDiscounts();
 
   @DELETE(ApiConstants.deletetPendingInvoiceAndBokkingTable)
-  Future<BaseResponse<UserDataModel?>> deletetPendingInvoiceAndBokkingTable(
-    @Query("Id") int id,
+  Future<BaseResponse<UserDataModel?>> deletetPendingInvoiceAndBokkingTable({
+    @Query("Id") int? id,
+    @Query("foodTableId") String? foodTableId,
+  });
+
+  @POST(ApiConstants.getAllPOSInvoices)
+  Future<BaseResponse<List<PosInvoiceData>?>> getAllPOSInvoices(
+    @Body() GetAllPosInvoiceRequest request,
+    @Query("financialYearId") int financialYearId,
+  );
+
+  @POST(ApiConstants.addPOSResturnInvoice)
+  Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice(
+    @Body() GetAllPosInvoiceRequest request,
+  );
+
+  @POST(ApiConstants.addPOSTotalReturnInvoice)
+  Future<BaseResponse<PosInvoiceData?>> addPOSTotalReturnInvoice(
+    @Queries() AddPOSTotalReturnInvoiceRequest request,
   );
 }

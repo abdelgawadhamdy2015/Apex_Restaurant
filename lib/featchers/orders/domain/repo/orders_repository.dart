@@ -14,5 +14,8 @@ abstract class OrdersRepository {
 
   Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
   restorePosRestuarantInvoice(int invoiceId);
-  Future<void> deleteHeldOrder(String orderId);
+  Future<ApiResult<BaseResponse<dynamic>>> deleteHeldOrder({
+    int? id,
+    String? foodTableId,
+  });
 }

@@ -17,7 +17,7 @@ abstract class OrdersRemoteDataSource {
   Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
     int invoiceId,
   );
-  Future<void> deleteHeldOrder(String orderId);
+  Future<BaseResponse<dynamic>> deleteHeldOrder({int? id, String? foodTableId});
 }
 
 class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
@@ -45,5 +45,13 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   }
 
   @override
-  Future<void> deleteHeldOrder(String orderId) async {}
+  Future<BaseResponse<dynamic>> deleteHeldOrder({
+    int? id,
+    String? foodTableId,
+  }) async {
+    return await apiService.deletetPendingInvoiceAndBokkingTable(
+      id: id,
+      foodTableId: foodTableId,
+    );
+  }
 }

@@ -19,9 +19,9 @@ class ApiConstants {
   static const String currentPOSsession =
       "api/Store/POSSession/currentPOSsession";
 
-  static const String getAllFloors = "api/Restaurants/Floors/GetAllFloors";
+  static const String getAllFloors = "api/Restaurants/Floors/GetAllFloorsPOS";
   static const String getAllFoodTables =
-      "api/Restaurants/FoodTables/GetAllFoodTables";
+      "api/Restaurants/FoodTables/GetAllFoodTablesPOS";
   static const String getAllReservations =
       "api/Restaurants/FoodTables/GetAllReservations";
   static const String reserveFoodTable =
@@ -40,14 +40,14 @@ class ApiConstants {
       "api/Restaurants/RestaurantPos/GetRestaurantItemsPOS";
   static const String getAllDeliveryAgents = '/api/DeliveryAgent/GetAll';
   static const String getAllDeliveryCompany =
-      "api/Restaurants/DeliveryCompany/GetAllDeliveryCompany";
+      "api/Restaurants/DeliveryCompany/GetAllDeliveryCompanyPOS";
   static const String getListOfWaiters = 'api/Store/Employee/GetListOfWaiter';
   static const String getListOfDeliveryMen =
       'api/Store/Employee/GetListOfDeliveryMen';
   static const String applyDiscountCode = 'api/Order/ApplyDiscount';
   static const String holdOrder = 'api/Order/Hold';
 
-  static const String getAllPersons = "api/Store/Persons/GetListOfPersons";
+  static const String getAllPersons = "api/Store/Persons/GetListOfPersonsPOS";
   static const String getPendingRestaurantPosInvoiceDetails =
       "api/Restaurants/RestaurantPos/GetPendingRestaurantPosInvoiceDetails";
   static const String getRestaurantPosBookingTable =
@@ -72,6 +72,13 @@ class ApiConstants {
 
   static const String getDynamicInvoiceDiscounts =
       "api/Restaurants/ItemDiscounts/GetInvoiceDiscounts";
+
+  // return
+  static const String getAllPOSInvoices = "api/Store/POS/GetAllPOSInvoices";
+  static const String addPOSResturnInvoice =
+      "api/Store/POS/AddPOSResturnInvoice";
+  static const String addPOSTotalReturnInvoice =
+      "api/Store/POS/AddPOSTotalReturnInvoice";
 
   // General apis
   static const String getEmployeeBranches =

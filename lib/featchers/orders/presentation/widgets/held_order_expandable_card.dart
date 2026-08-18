@@ -271,7 +271,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                                 ? null
                                 : () {
                                     context.read<OrdersBloc>().add(
-                                      DeleteOrderEvent(invoiceId.toString()),
+                                      DeleteOrderEvent(id: invoiceId),
                                     );
                                   },
                             icon: Icon(

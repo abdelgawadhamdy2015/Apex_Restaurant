@@ -47,6 +47,7 @@ class RestoreOrderEvent extends OrdersEvent {
 }
 
 class DeleteOrderEvent extends OrdersEvent {
-  final String orderId;
-  const DeleteOrderEvent(this.orderId);
+  final String? foodTableId;
+  final int? id;
+  const DeleteOrderEvent({this.foodTableId, this.id});
 }

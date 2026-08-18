@@ -35,7 +35,13 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
     on<RestoreOrderEvent>(_onRestoreOrder);
     on<ClearRestoredInvoiceEvent>((event, emit) {
-      emit(state.copyWith());
+      emit(
+        state.copyWith(
+          status: TablesStatus.initial,
+          restoredInvoiceModel: null,
+          clearRestoringId: true,
+        ),
+      );
     });
   }
 

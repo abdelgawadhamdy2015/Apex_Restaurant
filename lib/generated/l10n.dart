@@ -3941,6 +3941,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Not Printed`
+  String get notPrinted {
+    return Intl.message('Not Printed', name: 'notPrinted', desc: '', args: []);
+  }
+
+  /// `Printed`
+  String get printed {
+    return Intl.message('Printed', name: 'printed', desc: '', args: []);
+  }
+
+  /// `Unknown`
+  String get unknown {
+    return Intl.message('Unknown', name: 'unknown', desc: '', args: []);
+  }
+
+  /// `Paid`
+  String get paid {
+    return Intl.message('Paid', name: 'paid', desc: '', args: []);
+  }
+
+  /// `Remaining`
+  String get remaining {
+    return Intl.message('Remaining', name: 'remaining', desc: '', args: []);
+  }
+
+  /// `Discount`
+  String get discount {
+    return Intl.message('Discount', name: 'discount', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,3 +1,9 @@
+import 'package:apex_restaurant/featchers/more_actions/data/datasource/more_action_datasource.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/repo/more_action_repo_imp.dart';
+import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
+import 'package:apex_restaurant/featchers/more_actions/domain/usescase/more_actions_usescase.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_bloc.dart';
+
 import '../service/api_service.dart';
 import '../service/dio_factory.dart';
 import '../settings/settings_cubit.dart';
@@ -94,6 +100,11 @@ Future<void> setupGetIt() async {
     () => TablesRemoteDataSourceImpl(getIt<ApiService>()),
   );
 
+  // More Actions
+  getIt.registerLazySingleton<MoreActionDatasource>(
+    () => MoreActionsRemoteDataSourceImpl(getIt<ApiService>()),
+  );
+
   /// ─────────────────────────────────────────────────────────
   /// Repositories
   /// ─────────────────────────────────────────────────────────
@@ -132,6 +143,10 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton<TablesRepository>(
     () => TablesRepositoryImpl(getIt<TablesRemoteDataSource>()),
   );
+  // More Actions
+  getIt.registerLazySingleton<MoreActionsRepo>(
+    () => MoreActionRepoImp(getIt<MoreActionDatasource>()),
+  );
 
   /// ─────────────────────────────────────────────────────────
   /// Use Cases
@@ -165,16 +180,10 @@ Future<void> setupGetIt() async {
     () => GetMenuItemsByCategoryUseCase(getIt<PosRepository>()),
   );
 
-  // getIt.registerLazySingleton(
-  //   () => SendToKitchenUseCase(getIt<PosRepository>()),
-  // );
-  // getIt.registerLazySingleton(() => SubmitOrderUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(
     () => GetFoodAdditivesUseCase(getIt<PosRepository>()),
   );
-  getIt.registerLazySingleton(
-    () => GetAllDeliveryCompanyUseCase(getIt<PosRepository>()),
-  );
+
   getIt.registerLazySingleton(() => GetSettingsUseCase(getIt<PosRepository>()));
   getIt.registerLazySingleton(
     () => CloseRestaurantPosSessionUseCase(getIt<PosRepository>()),
@@ -191,6 +200,9 @@ Future<void> setupGetIt() async {
   );
   getIt.registerLazySingleton(
     () => ApplyDiscountUseCase(getIt<CartRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetAllDeliveryCompanyUseCase(getIt<CartRepository>()),
   );
   getIt.registerLazySingleton(
     () => SavePendingRestaurantPosInvoiceUseCase(getIt<CartRepository>()),
@@ -251,6 +263,18 @@ Future<void> setupGetIt() async {
     () => GetPindingTableInvoiceUseCase(getIt<TablesRepository>()),
   );
 
+  // Tables
+  getIt.registerLazySingleton(
+    () => GetAllPOSInvoicesUseCase(getIt<MoreActionsRepo>()),
+  );
+  getIt.registerLazySingleton(
+    () => AddPOSResturnInvoiceUseCase(getIt<MoreActionsRepo>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => AddPOSTotalReturnInvoiceUseCase(getIt<MoreActionsRepo>()),
+  );
+
   /// ─────────────────────────────────────────────────────────
   /// BLoCs
   /// ─────────────────────────────────────────────────────────
@@ -287,6 +311,7 @@ Future<void> setupGetIt() async {
   // Cart
   getIt.registerFactory<CartBloc>(
     () => CartBloc(
+      getAllDeliveryCompanyUseCase: getIt<GetAllDeliveryCompanyUseCase>(),
       getDeliveryAgentsUseCase: getIt<GetDeliveryAgentsUseCase>(),
       getWaitersUseCase: getIt<GetWaitersUseCase>(),
       applyDiscountUseCase: getIt<ApplyDiscountUseCase>(),
@@ -331,6 +356,15 @@ Future<void> setupGetIt() async {
       cancelReservationUseCase: getIt<CancelReservationUseCase>(),
       getFloorsUseCase: getIt<GetFloorsUseCase>(),
       getTablesUseCase: getIt<GetTablesUseCase>(),
+    ),
+  );
+
+  // More Actions
+  getIt.registerFactory(
+    () => MoreActionsBloc(
+      getAllPOSInvoicesUseCase: getIt<GetAllPOSInvoicesUseCase>(),
+      addPOSResturnInvoiceUseCase: getIt<AddPOSResturnInvoiceUseCase>(),
+      addPOSTotalReturnInvoiceUseCase: getIt<AddPOSTotalReturnInvoiceUseCase>(),
     ),
   );
 }

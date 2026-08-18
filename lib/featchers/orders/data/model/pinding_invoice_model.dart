@@ -5,6 +5,7 @@ part 'pinding_invoice_model.g.dart';
 @JsonSerializable()
 class PindingInvoiceModel {
   final int? invoiceId;
+  final String? foodTableId;
   final int? orderNumber;
   final String? code;
   final DateTime? invoiceDate;
@@ -20,6 +21,7 @@ class PindingInvoiceModel {
     this.itemsCount,
     this.items,
     this.invoiceTotal,
+    this.foodTableId,
   });
 
   factory PindingInvoiceModel.fromJson(Map<String, dynamic> json) =>

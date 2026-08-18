@@ -34,7 +34,10 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<LoadMorePindingInvoicesEvent>(_onLoadMorePinding);
 
     on<DeleteOrderEvent>((event, emit) async {
-      await deleteHeldOrderUseCase(event.orderId);
+      await deleteHeldOrderUseCase(
+        id: event.id,
+        foodTableId: event.foodTableId,
+      );
       add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
     });
     on<RestoreOrderEvent>(_onRestoreOrder);

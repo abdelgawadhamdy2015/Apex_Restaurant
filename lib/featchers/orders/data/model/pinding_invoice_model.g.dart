@@ -21,12 +21,14 @@ PindingInvoiceModel _$PindingInvoiceModelFromJson(Map<String, dynamic> json) =>
           )
           .toList(),
       invoiceTotal: (json['invoiceTotal'] as num?)?.toDouble(),
+      foodTableId: json['foodTableId'] as String?,
     );
 
 Map<String, dynamic> _$PindingInvoiceModelToJson(
   PindingInvoiceModel instance,
 ) => <String, dynamic>{
   'invoiceId': instance.invoiceId,
+  'foodTableId': instance.foodTableId,
   'orderNumber': instance.orderNumber,
   'code': instance.code,
   'invoiceDate': instance.invoiceDate?.toIso8601String(),

@@ -89,7 +89,6 @@ class AppColors {
     0xFF0D1C2E,
   ); // Selected chip background / Cart navy
   static const Color white = Color(0xFFFFFFFF);
-  static const Color blueDark = Color(0xFF005BB2); // Pressed/darker blue
   static const Color blueTint = Color(0xFFEFF4FF); // Light blue surfaces
   static const Color ink = Color(0xFF0F172A); // Near-black headings
   static const Color amberAccent = Color(0xFFF8AD56); // Price / addon accent

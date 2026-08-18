@@ -1,9 +1,7 @@
 import '../../../../core/service/api_result.dart';
-import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../data/models/category_model.dart';
-import '../../data/models/delivery_company.dart';
 import '../../data/models/restaurant_item.dart';
 import '../entities/get_food_additive_request.dart';
 import '../entities/get_items_request_model.dart';
@@ -37,14 +35,6 @@ class GetMenuItemsByCategoryUseCase {
   Future<ApiResult<BaseResponse<List<RestaurantItem>?>>> call(
     GetItemsRequest? request,
   ) => _repository.getMenuItemsByCategory(request);
-}
-
-class GetAllDeliveryCompanyUseCase {
-  final PosRepository _repository;
-  GetAllDeliveryCompanyUseCase(this._repository);
-  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>> call({
-    BaseRequest? request,
-  }) => _repository.getAllDeliveryCompany(request: request);
 }
 
 // class SendToKitchenUseCase {

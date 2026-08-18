@@ -2,13 +2,11 @@ import 'dart:developer';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
-import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../../home/data/models/session_model.dart';
 import '../datasources/pos_remote_datasource.dart';
 import '../models/category_model.dart';
-import '../models/delivery_company.dart';
 import '../models/floor_model.dart';
 import '../models/restaurant_item.dart';
 import '../../../tables/data/models/get_floor_request.dart';
@@ -119,21 +117,6 @@ class PosRepositoryImpl implements PosRepository {
       return ApiResult.success(response);
     } catch (e, s) {
       log("$e\n$s");
-      return ApiResult.failure(ErrorHandler.handle(e));
-    }
-  }
-
-  @override
-  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>>
-  getAllDeliveryCompany({BaseRequest? request}) async {
-    try {
-      final response = await _remoteDataSource.getAllDeliveryCompany(
-        request: request,
-      );
-      return ApiResult.success(response);
-    } catch (e, s) {
-      log("$e\n$s");
-
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }

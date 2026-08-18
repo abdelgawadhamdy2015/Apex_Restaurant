@@ -59,6 +59,19 @@ class OrdersRepositoryImpl implements OrdersRepository {
   }
 
   @override
-  Future<void> deleteHeldOrder(String orderId) =>
-      remoteDataSource.deleteHeldOrder(orderId);
+  Future<ApiResult<BaseResponse<dynamic>>> deleteHeldOrder({
+    int? id,
+    String? foodTableId,
+  }) async {
+    try {
+      final response = await remoteDataSource.deleteHeldOrder(
+        id: id,
+        foodTableId: foodTableId,
+      );
+      return ApiResult.success(response);
+    } catch (e, s) {
+      log("$e , \n $s");
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
 }

@@ -30,7 +30,7 @@ class SaveRestaurantPosInvoiceRequest {
       _$SaveRestaurantPosInvoiceRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class RestaurantPosInvoiceInfoRequest {
   @JsonKey(name: 'InvoiceId')
   final int? invoiceId;
@@ -125,7 +125,7 @@ class RestaurantPosInvoiceInfoRequest {
       _$RestaurantPosInvoiceInfoRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class RestaurantPosDiscountRequest {
   @JsonKey(name: 'Type')
   final int type;
@@ -141,7 +141,7 @@ class RestaurantPosDiscountRequest {
   Map<String, dynamic> toJson() => _$RestaurantPosDiscountRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class RestaurantPosInvoiceItemRequest {
   @JsonKey(name: 'ItemId')
   final int itemId;
@@ -188,7 +188,7 @@ class RestaurantPosInvoiceItemRequest {
       _$RestaurantPosInvoiceItemRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class RestaurantPosItemAdditiveRequest {
   @JsonKey(name: 'AdditiveId')
   final int additiveId;
@@ -214,7 +214,7 @@ class RestaurantPosItemAdditiveRequest {
       _$RestaurantPosItemAdditiveRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class RestaurantPosPaymentRequest {
   @JsonKey(name: 'PaymentMethodId')
   final int paymentMethodId;

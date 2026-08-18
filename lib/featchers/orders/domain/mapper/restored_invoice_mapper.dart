@@ -192,6 +192,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     return RestoredCartData(
+      invoiceID: inv?.invoiceId,
       items: orderItems,
       orderType: orderType,
       client: client,

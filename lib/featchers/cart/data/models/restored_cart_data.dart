@@ -7,6 +7,7 @@ import '../../../pos/domain/entities/menu_item.dart';
 import '../../../tables/domain/entities/table_entity.dart';
 
 class RestoredCartData {
+  final int? invoiceID;
   final List<OrderItem> items;
   final CartOrderType orderType;
   final PosClientModel? client;
@@ -25,5 +26,6 @@ class RestoredCartData {
     this.deliveryCompany,
     this.table,
     this.restaurantPosDiscountRequest,
+    this.invoiceID,
   });
 }

@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/entity/base_request.dart';
@@ -47,6 +50,21 @@ class CartRepositoryImpl implements CartRepository {
       log("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>>
+  getAllDeliveryCompany({GetDeliveryCompaniesRequest? request}) async {
+    try {
+      final response = await _remoteDataSource.getAllDeliveryCompany(
+        request: request,
+      );
+      return ApiResult.success(response);
+    } catch (e, s) {
+      log("$e\n$s");
+
+      return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
 

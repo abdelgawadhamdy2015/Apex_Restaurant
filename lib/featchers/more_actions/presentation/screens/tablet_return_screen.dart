@@ -1,4 +1,11 @@
+import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_bloc.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_event.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
@@ -36,6 +43,10 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Left Side: Invoices List
+          Expanded(flex: 2, child: _buildSearchCard(context)),
+          SizedBox(width: spacing.lg),
+
+          // Right Side: Search Filter Card
           Expanded(
             flex: 3,
             child: Container(
@@ -46,77 +57,47 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
                 border: Border.all(color: colorScheme.outlineVariant),
               ),
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(bottom: spacing.sm),
-                      child: Text(
-                        lang.invoices,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                child: BlocBuilder<MoreActionsBloc, MoreActionsState>(
+                  builder: (context, state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: spacing.sm),
+                          child: Text(
+                            lang.invoices,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    _InvoiceCard(
-                      invoiceNumber: "INV-2012",
-                      time: "09:30 ص",
-                      itemsCountText: lang.itemsCount(5),
-                      totalAmount: "240.50 ${lang.currencySar}",
-                      isExpanded: _expandedIndex == 0,
-                      onTap: () => setState(() {
-                        _expandedIndex = _expandedIndex == 0 ? null : 0;
-                      }),
-                    ),
-                    SizedBox(height: spacing.sm),
-                    _InvoiceCard(
-                      invoiceNumber: "INV-2030",
-                      time: "10:15 ص",
-                      itemsCountText: lang.itemCountSingle(1),
-                      totalAmount: "25.00 ${lang.currencySar}",
-                      isExpanded: _expandedIndex == 1,
-                      onTap: () => setState(() {
-                        _expandedIndex = _expandedIndex == 1 ? null : 1;
-                      }),
-                    ),
-                    SizedBox(height: spacing.sm),
-                    _InvoiceCard(
-                      invoiceNumber: "INV-2039",
-                      time: "11:45 ص",
-                      itemsCountText: lang.itemsCount(3),
-                      totalAmount: "132.00 ${lang.currencySar}",
-                      isExpanded: _expandedIndex == 2,
-                      onTap: () => setState(() {
-                        _expandedIndex = _expandedIndex == 2 ? null : 2;
-                      }),
-                      items: [
-                        _OrderSubItem(
-                          name: "برجر لحم كلاسيك",
-                          quantity: "1x",
-                          price: "45.00 ${lang.currencySar}",
-                        ),
-                        _OrderSubItem(
-                          name: "بطاطس مقلية (وسط)",
-                          quantity: "2x",
-                          price: "30.00 ${lang.currencySar}",
-                        ),
-                        _OrderSubItem(
-                          name: "مشروب غازي",
-                          quantity: "3x",
-                          price: "57.00 ${lang.currencySar}",
-                        ),
+
+                        ...state.invoices.map((e) {
+                          return _InvoiceCard(
+                            invoiceNumber: e.invoiceType,
+                            time: RestaurantConstants.hoursFormat.format(
+                              e.invoiceDate,
+                            ),
+                            itemsCountText: lang.itemsCount(5),
+                            totalAmount: "${e.totalPrice} ${lang.currencySar}",
+                            isExpanded:
+                                _expandedIndex == state.invoices.indexOf(e) + 1,
+                            onTap: () => setState(() {
+                              _expandedIndex =
+                                  _expandedIndex ==
+                                      state.invoices.indexOf(e) + 1
+                                  ? null
+                                  : state.invoices.indexOf(e) + 1;
+                            }),
+                          );
+                        }),
                       ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ),
           ),
-          SizedBox(width: spacing.lg),
-
-          // Right Side: Search Filter Card
-          Expanded(flex: 2, child: _buildSearchCard(context)),
         ],
       ),
     );
@@ -127,11 +108,11 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final spacing = context.spacing;
-
+    final moreActionState = context.read<MoreActionsBloc>().state;
     return Container(
       padding: EdgeInsets.all(spacing.lg),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: colorScheme.outlineVariant),
       ),
@@ -142,7 +123,7 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
           Text(
             lang.invoiceNumber,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: colorScheme.onSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -152,7 +133,7 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
             decoration: InputDecoration(
               hintText: lang.invoiceNumberExample,
               hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.outline,
+                color: colorScheme.onSecondary,
               ),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
@@ -174,7 +155,7 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
           Text(
             lang.date,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: colorScheme.onSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -183,24 +164,30 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
             controller: _dateController,
             readOnly: true,
             onTap: () async {
-              await showDatePicker(
+              final date = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now(),
                 firstDate: DateTime(2020),
                 lastDate: DateTime(2030),
               );
+              if (date == null) return;
+              setState(() {
+                _dateController.text = RestaurantConstants.dateFormat.format(
+                  date,
+                );
+              });
             },
             decoration: InputDecoration(
               hintText: lang.dateFormatHint,
               hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.outline,
+                color: colorScheme.onSecondary,
               ),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
-              suffixIcon: Icon(
+              prefixIcon: Icon(
                 Icons.calendar_today_outlined,
                 size: context.iconSizes.sm,
-                color: colorScheme.onSurfaceVariant,
+                color: colorScheme.onSecondary,
               ),
               contentPadding: EdgeInsets.symmetric(
                 horizontal: spacing.md,
@@ -220,13 +207,30 @@ class _TabletReturnsScreenState extends State<TabletReturnsScreen> {
           SizedBox(
             height: 48,
             child: ElevatedButton.icon(
-              onPressed: () {},
-              icon: Icon(Icons.search, size: context.iconSizes.sm),
+              onPressed: () {
+                context.read<MoreActionsBloc>().add(
+                  FetchAllInvoicesEvent(
+                    request: GetAllPosInvoiceRequest(
+                      pageNumber: 1,
+                      pageSize: 20,
+                      invoiceTypeId: 11,
+                      financialYearId: 1,
+                      invoiceDate: moreActionState.fromDate,
+                      invoiceType: _invoiceController.text,
+                    ),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.search,
+                size: context.iconSizes.md,
+                color: AppColors.white,
+              ),
               label: Text(
                 lang.search,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: colorScheme.onPrimary,
+                  color: AppColors.white,
                 ),
               ),
               style: ElevatedButton.styleFrom(
@@ -252,7 +256,6 @@ class _InvoiceCard extends StatelessWidget {
   final String totalAmount;
   final bool isExpanded;
   final VoidCallback onTap;
-  final List<_OrderSubItem>? items;
 
   const _InvoiceCard({
     required this.invoiceNumber,
@@ -261,7 +264,6 @@ class _InvoiceCard extends StatelessWidget {
     required this.totalAmount,
     required this.isExpanded,
     required this.onTap,
-    this.items,
   });
 
   @override
@@ -286,33 +288,6 @@ class _InvoiceCard extends StatelessWidget {
               padding: EdgeInsets.all(spacing.md),
               child: Row(
                 children: [
-                  Icon(
-                    isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const Spacer(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        itemsCountText,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      SizedBox(height: spacing.xxs),
-                      Text(
-                        totalAmount,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: spacing.xl),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -320,7 +295,6 @@ class _InvoiceCard extends StatelessWidget {
                         invoiceNumber,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
                         ),
                       ),
                       SizedBox(height: spacing.xxs),
@@ -330,24 +304,51 @@ class _InvoiceCard extends StatelessWidget {
                           Text(
                             time,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
+                              color: colorScheme.onSecondary,
                             ),
                           ),
                           SizedBox(width: spacing.xxs),
                           Icon(
                             Icons.access_time,
                             size: context.iconSizes.xs,
-                            color: colorScheme.onSurfaceVariant,
+                            color: colorScheme.onSecondary,
                           ),
                         ],
                       ),
                     ],
                   ),
+                  const Spacer(),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        itemsCountText,
+                        style: theme.textTheme.bodySmall?.copyWith(),
+                      ),
+                      SizedBox(height: spacing.xxs),
+                      Text(
+                        totalAmount,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(width: spacing.xl),
+
+                  Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    color: colorScheme.onSecondary,
+                  ),
                 ],
               ),
             ),
           ),
-          if (isExpanded && items != null) ...[
+          if (isExpanded) ...[
             Divider(height: 1, color: colorScheme.outlineVariant),
             Padding(
               padding: EdgeInsets.all(spacing.md),
@@ -358,57 +359,52 @@ class _InvoiceCard extends StatelessWidget {
                     alignment: Alignment.centerRight,
                     child: Text(
                       lang.orderDetails,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.outline,
-                      ),
+                      style: theme.textTheme.bodySmall?.copyWith(),
                     ),
                   ),
                   SizedBox(height: spacing.sm),
-                  ...items!.map(
-                    (item) => Padding(
-                      padding: EdgeInsets.only(bottom: spacing.xs),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                item.price,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onSurface,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    item.quantity,
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ),
-                                  SizedBox(width: spacing.xs),
-                                  Text(
-                                    item.name,
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: spacing.xs),
-                          Divider(
-                            height: 1,
-                            color: colorScheme.outlineVariant.withOpacity(0.5),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // ...items!.map(
+                  //   (item) => Padding(
+                  //     padding: EdgeInsets.only(bottom: spacing.xs),
+                  //     child: Column(
+                  //       children: [
+                  //         Row(
+                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //           children: [
+                  //             Row(
+                  //               children: [
+                  //                 Text(
+                  //                   item.quantity,
+                  //                   style: theme.textTheme.bodyMedium?.copyWith(
+                  //                     fontWeight: FontWeight.bold,
+                  //                   ),
+                  //                 ),
+                  //                 SizedBox(width: spacing.xs),
+                  //                 Text(
+                  //                   item.name,
+                  //                   style: theme.textTheme.bodyMedium?.copyWith(
+                  //                     fontWeight: FontWeight.w600,
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             Text(
+                  //               item.price,
+                  //               style: theme.textTheme.bodyMedium?.copyWith(
+                  //                 fontWeight: FontWeight.bold,
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         SizedBox(height: spacing.xs),
+                  //         Divider(
+                  //           height: 1,
+                  //           color: colorScheme.outlineVariant.withOpacity(0.5),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(height: spacing.md),
                   Row(
                     children: [
@@ -416,38 +412,15 @@ class _InvoiceCard extends StatelessWidget {
                         child: OutlinedButton(
                           onPressed: () {},
                           style: OutlinedButton.styleFrom(
-                            backgroundColor: colorScheme.primaryContainer
-                                .withOpacity(0.3),
-                            foregroundColor: colorScheme.primary,
+                            backgroundColor: context
+                                .appExtraTheme
+                                .greenBackground
+                                .withOpacity(.1),
+                            foregroundColor:
+                                context.appExtraTheme.greenBackground,
                             side: BorderSide(
-                              color: colorScheme.primaryContainer,
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: spacing.sm),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                spacing.radiusSm,
-                              ),
-                            ),
-                          ),
-                          child: Text(
-                            lang.partialReturn,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: spacing.sm),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () {},
-                          style: OutlinedButton.styleFrom(
-                            backgroundColor: colorScheme.tertiaryContainer
-                                .withOpacity(0.3),
-                            foregroundColor: colorScheme.tertiary,
-                            side: BorderSide(
-                              color: colorScheme.tertiaryContainer,
+                              color: context.appExtraTheme.greenBackground
+                                  .withOpacity(.2),
                             ),
                             padding: EdgeInsets.symmetric(vertical: spacing.sm),
                             shape: RoundedRectangleBorder(
@@ -460,7 +433,36 @@ class _InvoiceCard extends StatelessWidget {
                             lang.fullReturn,
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: colorScheme.tertiary,
+                              color: context.appExtraTheme.greenBackground,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: spacing.sm),
+
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: context.appExtraTheme.background
+                                .withOpacity(.1),
+                            foregroundColor: context.appExtraTheme.background,
+                            side: BorderSide(
+                              color: context.appExtraTheme.background
+                                  .withOpacity(.2),
+                            ),
+                            padding: EdgeInsets.symmetric(vertical: spacing.sm),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                spacing.radiusSm,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            lang.partialReturn,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.appExtraTheme.background,
                             ),
                           ),
                         ),

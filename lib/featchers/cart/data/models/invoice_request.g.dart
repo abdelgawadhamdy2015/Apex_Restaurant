@@ -76,25 +76,25 @@ RestaurantPosInvoiceInfoRequest _$RestaurantPosInvoiceInfoRequestFromJson(
 Map<String, dynamic> _$RestaurantPosInvoiceInfoRequestToJson(
   RestaurantPosInvoiceInfoRequest instance,
 ) => <String, dynamic>{
-  'InvoiceId': instance.invoiceId,
-  'PendingInvoiceId': instance.pendingInvoiceId,
+  'InvoiceId': ?instance.invoiceId,
+  'PendingInvoiceId': ?instance.pendingInvoiceId,
   'Postype': instance.postype,
-  'FoodTableId': instance.foodTableId,
-  'WaiterId': instance.waiterId,
-  'DeliveryCompanyId': instance.deliveryCompanyId,
-  'VoucherCode': instance.voucherCode,
-  'DeliveryManId': instance.deliveryManId,
-  'Notes': instance.notes,
-  'Discount': instance.discount,
+  'FoodTableId': ?instance.foodTableId,
+  'WaiterId': ?instance.waiterId,
+  'DeliveryCompanyId': ?instance.deliveryCompanyId,
+  'VoucherCode': ?instance.voucherCode,
+  'DeliveryManId': ?instance.deliveryManId,
+  'Notes': ?instance.notes,
+  'Discount': ?instance.discount,
   'PaidAmount': instance.paidAmount,
   'TotalInvoicePrice': instance.totalInvoicePrice,
   'ClientId': instance.clientId,
-  'InvoiceDiscountId': instance.invoiceDiscountId,
+  'InvoiceDiscountId': ?instance.invoiceDiscountId,
   'PersonAddressId': instance.personAddressId,
   'PersonPhoneId': instance.personPhoneId,
-  'OrderReceivedTime': instance.orderReceivedTime?.toIso8601String(),
+  'OrderReceivedTime': ?instance.orderReceivedTime?.toIso8601String(),
   'DeliveryCost': instance.deliveryCost,
-  'PrintingKitchenKey': instance.printingKitchenKey,
+  'PrintingKitchenKey': ?instance.printingKitchenKey,
   'InvoiceDate': instance.invoiceDate.toIso8601String(),
   'isArabic': instance.isArabic,
 };
@@ -140,13 +140,13 @@ Map<String, dynamic> _$RestaurantPosInvoiceItemRequestToJson(
   RestaurantPosInvoiceItemRequest instance,
 ) => <String, dynamic>{
   'ItemId': instance.itemId,
-  'TransactionID': instance.transactionID,
-  'SizeId': instance.sizeId,
+  'TransactionID': ?instance.transactionID,
+  'SizeId': ?instance.sizeId,
   'Quantity': instance.quantity,
   'Price': instance.price,
-  'Notes': instance.notes,
-  'Discount': instance.discount,
-  'ItemDiscountId': instance.itemDiscountId,
+  'Notes': ?instance.notes,
+  'Discount': ?instance.discount,
+  'ItemDiscountId': ?instance.itemDiscountId,
   'Additives': instance.additives,
 };
 
@@ -164,8 +164,8 @@ Map<String, dynamic> _$RestaurantPosItemAdditiveRequestToJson(
 ) => <String, dynamic>{
   'AdditiveId': instance.additiveId,
   'Quantity': instance.quantity,
-  'TransactionID': instance.transactionID,
-  'ParentTransactionId': instance.parentTransactionId,
+  'TransactionID': ?instance.transactionID,
+  'ParentTransactionId': ?instance.parentTransactionId,
 };
 
 RestaurantPosPaymentRequest _$RestaurantPosPaymentRequestFromJson(

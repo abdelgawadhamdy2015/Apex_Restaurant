@@ -1,10 +1,8 @@
 import '../../../../core/service/api_result.dart';
-import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../../home/data/models/session_model.dart';
 import '../../data/models/category_model.dart';
-import '../../data/models/delivery_company.dart';
 import '../../data/models/floor_model.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../../tables/data/models/get_floor_request.dart';
@@ -36,7 +34,4 @@ abstract class PosRepository {
   );
   // Future<void> submitOrder(Order order);
   // Future<void> sendToKitchen(Order order);
-
-  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>>
-  getAllDeliveryCompany({BaseRequest? request});
 }

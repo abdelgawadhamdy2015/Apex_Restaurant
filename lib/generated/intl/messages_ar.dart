@@ -278,6 +278,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dineInOrder": MessageLookupByLibrary.simpleMessage("طلب صالة"),
     "directDiscount": MessageLookupByLibrary.simpleMessage("خصم مباشر"),
     "directManager": MessageLookupByLibrary.simpleMessage("المدير المباشر"),
+    "discount": MessageLookupByLibrary.simpleMessage("الخصم"),
     "discountCoupon": MessageLookupByLibrary.simpleMessage("الخصم (كوبون)"),
     "district": MessageLookupByLibrary.simpleMessage("الحي"),
     "duration": MessageLookupByLibrary.simpleMessage("المدة"),
@@ -464,6 +465,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "notLeave": MessageLookupByLibrary.simpleMessage(
       "لم تقم بتسجيل الانصراف بعد",
     ),
+    "notPrinted": MessageLookupByLibrary.simpleMessage("لم تتم الطباعة"),
     "notRestaurantCompany": MessageLookupByLibrary.simpleMessage(
       "هذه الشركة ليست شركة مطاعم.",
     ),
@@ -492,6 +494,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "other": MessageLookupByLibrary.simpleMessage("أخرى"),
     "outdoorArea": MessageLookupByLibrary.simpleMessage("المنطقة الخارجية"),
     "overallReport": MessageLookupByLibrary.simpleMessage("الإجمالي"),
+    "paid": MessageLookupByLibrary.simpleMessage("المدفوع"),
     "paidAmount": MessageLookupByLibrary.simpleMessage("المسدد"),
     "partialReturn": MessageLookupByLibrary.simpleMessage("مرتجع جزئي"),
     "password": MessageLookupByLibrary.simpleMessage("كلمة المرور"),
@@ -569,6 +572,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "printWithApproval": MessageLookupByLibrary.simpleMessage(
       "طباعة مع الإعتماد",
     ),
+    "printed": MessageLookupByLibrary.simpleMessage("تمت الطباعة"),
     "productSize": MessageLookupByLibrary.simpleMessage("حجم المنتج"),
     "project": MessageLookupByLibrary.simpleMessage("المشروع"),
     "quantityWithCount": m12,
@@ -590,6 +594,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("رفض"),
     "rejected": MessageLookupByLibrary.simpleMessage("مرفوض"),
     "religion": MessageLookupByLibrary.simpleMessage("الديانة"),
+    "remaining": MessageLookupByLibrary.simpleMessage("المتبقي"),
     "remainingAmount": MessageLookupByLibrary.simpleMessage("المتبقي"),
     "rememberMe": MessageLookupByLibrary.simpleMessage("تذكرني"),
     "reports": MessageLookupByLibrary.simpleMessage("تقارير "),
@@ -756,6 +761,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ غير متوقع. حاول مرة أخرى.",
     ),
+    "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
     "userProfile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "vacations": MessageLookupByLibrary.simpleMessage("الإجازات"),
     "vaccations": MessageLookupByLibrary.simpleMessage("إجازات"),

@@ -57,9 +57,7 @@ class ItemCustomizationHeader extends StatelessWidget {
               SizedBox(height: spacing.xxs),
               Text(
                 lang.customizationSubtitle,
-                style: textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSecondary,
-                ),
+                style: textTheme.bodySmall?.copyWith(),
               ),
             ],
           ),
@@ -68,7 +66,7 @@ class ItemCustomizationHeader extends StatelessWidget {
             icon: Icon(
               Icons.close,
               size: iconSizes.lg,
-              color: theme.colorScheme.onSecondary,
+              color: theme.colorScheme.onPrimary,
             ),
             onPressed: () => Navigator.pop(context),
           ),

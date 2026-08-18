@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -31,6 +34,14 @@ class GetDeliveryAgentsUseCase {
   }) {
     return repository.getDeliveryAgents(request: request);
   }
+}
+
+class GetAllDeliveryCompanyUseCase {
+  final CartRepository _repository;
+  GetAllDeliveryCompanyUseCase(this._repository);
+  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>> call({
+    GetDeliveryCompaniesRequest? request,
+  }) => _repository.getAllDeliveryCompany(request: request);
 }
 
 class GetAllPosClientsUseCase {

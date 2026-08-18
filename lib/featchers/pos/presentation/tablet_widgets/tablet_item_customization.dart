@@ -470,7 +470,7 @@ class _TabletItemCustomizationDialogState
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, color: theme.colorScheme.onSecondary),
             onPressed: () => Navigator.pop(context),
           ),
           if (_isEditMode) ...[

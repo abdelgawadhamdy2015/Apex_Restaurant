@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -16,6 +19,8 @@ abstract class CartRepository {
     BaseRequest? request,
   });
 
+  Future<ApiResult<BaseResponse<List<DeliveryCompanyModel>?>>>
+  getAllDeliveryCompany({GetDeliveryCompaniesRequest? request});
   Future<ApiResult<BaseResponse<List<WaiterModel>?>>> getWaiters({
     BaseRequest? request,
   });

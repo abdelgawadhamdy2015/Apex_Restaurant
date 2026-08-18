@@ -1,10 +1,8 @@
 import '../../../../core/service/api_service.dart';
-import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../../home/data/models/session_model.dart';
 import '../models/category_model.dart';
-import '../models/delivery_company.dart';
 import '../models/floor_model.dart';
 import '../models/restaurant_item.dart';
 import '../../domain/entities/get_food_additive_request.dart';
@@ -42,10 +40,6 @@ abstract class PosRemoteDataSource {
   Future<void> submitOrder(Map<String, dynamic> orderData);
 
   Future<void> sendToKitchen(Map<String, dynamic> orderData);
-
-  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
-    BaseRequest? request,
-  });
 }
 
 class PosRemoteDataSourceImpl implements PosRemoteDataSource {
@@ -86,19 +80,6 @@ class PosRemoteDataSourceImpl implements PosRemoteDataSource {
     GetFoodAdditivesRequest? request,
   }) async {
     return await _apiService.getAllFoodAdditives(request);
-  }
-
-  @override
-  Future<BaseResponse<List<DeliveryCompanyModel>?>> getAllDeliveryCompany({
-    BaseRequest? request,
-  }) async {
-    final queryRequest = BaseRequest(
-      pageNumber: request?.pageNumber,
-      pageSize: request?.pageSize,
-      name: request?.name,
-    );
-
-    return await _apiService.getAllDeliveryCompany(queryRequest);
   }
 
   @override

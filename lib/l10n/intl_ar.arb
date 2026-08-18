@@ -495,5 +495,11 @@
     "couponDiscount": "الخصم (كوبون)",
     "addNewItem": "إضافة صنف جديد",
     "cartEmpty": "لا توجد أصناف في السلة بعد",
-    "cancelOrder": "إلغاء الطلب"
+    "cancelOrder": "إلغاء الطلب",
+    "notPrinted": "لم تتم الطباعة",
+    "printed": "تمت الطباعة",
+    "unknown": "غير معروف",
+    "paid": "المدفوع",
+    "remaining": "المتبقي",
+    "discount": "الخصم"
 }

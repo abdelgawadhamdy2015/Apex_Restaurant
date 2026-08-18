@@ -297,6 +297,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dineInOrder": MessageLookupByLibrary.simpleMessage("Dine-in "),
     "directDiscount": MessageLookupByLibrary.simpleMessage("Direct Discount"),
     "directManager": MessageLookupByLibrary.simpleMessage("Direct Manager"),
+    "discount": MessageLookupByLibrary.simpleMessage("Discount"),
     "discountCoupon": MessageLookupByLibrary.simpleMessage("Discount (Coupon)"),
     "district": MessageLookupByLibrary.simpleMessage("District"),
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
@@ -483,6 +484,7 @@ class MessageLookup extends MessageLookupByLibrary {
       " you not signIn yet",
     ),
     "notLeave": MessageLookupByLibrary.simpleMessage("you not signOut yet"),
+    "notPrinted": MessageLookupByLibrary.simpleMessage("Not Printed"),
     "notRestaurantCompany": MessageLookupByLibrary.simpleMessage(
       "This company is not a restaurant.",
     ),
@@ -511,6 +513,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "other": MessageLookupByLibrary.simpleMessage("Other"),
     "outdoorArea": MessageLookupByLibrary.simpleMessage("Outdoor Area"),
     "overallReport": MessageLookupByLibrary.simpleMessage("Overall"),
+    "paid": MessageLookupByLibrary.simpleMessage("Paid"),
     "paidAmount": MessageLookupByLibrary.simpleMessage("Paid Amount"),
     "partialReturn": MessageLookupByLibrary.simpleMessage("Partial Return"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
@@ -594,6 +597,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "printWithApproval": MessageLookupByLibrary.simpleMessage(
       "Print with Approval",
     ),
+    "printed": MessageLookupByLibrary.simpleMessage("Printed"),
     "productSize": MessageLookupByLibrary.simpleMessage("Product Size"),
     "project": MessageLookupByLibrary.simpleMessage("Project"),
     "quantityWithCount": m12,
@@ -617,6 +621,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "reject": MessageLookupByLibrary.simpleMessage("Reject"),
     "rejected": MessageLookupByLibrary.simpleMessage("Rejected"),
     "religion": MessageLookupByLibrary.simpleMessage("Religion"),
+    "remaining": MessageLookupByLibrary.simpleMessage("Remaining"),
     "remainingAmount": MessageLookupByLibrary.simpleMessage("Remaining"),
     "rememberMe": MessageLookupByLibrary.simpleMessage("Remember me"),
     "reports": MessageLookupByLibrary.simpleMessage("Reports"),
@@ -795,6 +800,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "An unexpected error occurred. Please try again.",
     ),
+    "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
     "userProfile": MessageLookupByLibrary.simpleMessage("User Profile"),
     "vacations": MessageLookupByLibrary.simpleMessage("Vacations"),
     "vaccations": MessageLookupByLibrary.simpleMessage("Vacations"),

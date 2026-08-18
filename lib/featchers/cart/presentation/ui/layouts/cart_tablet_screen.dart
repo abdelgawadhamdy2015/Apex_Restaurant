@@ -99,9 +99,7 @@ class _PosTabletCartContent extends StatelessWidget {
           ),
         );
       case CartOrderType.DELIVERY_COMPANY:
-        return DeliveryCompanySelector(
-          deliveryCompanies: state.deliveryCompanies,
-        );
+        return DeliveryCompanySelector(deliveryCompanies: state.companiesList);
     }
   }
 

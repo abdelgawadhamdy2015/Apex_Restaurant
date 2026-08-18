@@ -186,7 +186,7 @@ class _DiscountSectionState extends State<DiscountSection> {
                 padding: EdgeInsets.symmetric(horizontal: spacing.sm),
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
-                  color: buttonTheme.background,
+                  color: buttonTheme.background.withOpacity(.1),
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
 
