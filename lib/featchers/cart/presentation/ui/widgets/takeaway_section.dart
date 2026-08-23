@@ -16,23 +16,28 @@ class TakeawaySection extends StatefulWidget {
 class _TakeawaySectionState extends State<TakeawaySection> {
   @override
   Widget build(BuildContext context) {
+    final canEdit = context.select((CartBloc b) => b.state.canEdit);
     return DateTextField(
       type: DateTextFieldType.dateTime,
       controller: widget.controller,
-      onTap: () async {
-        final dateTime = await DateTextField.pickDateTime(
-          context,
-          type: DateTextFieldType.dateTime,
-        );
-        if (dateTime != null) {
-          widget.controller.text = RestaurantConstants.dateTimeFormat.format(
-            dateTime,
-          );
-          context.read<CartBloc>().add(
-            UpdateTakeawayDateTimeEvent(takeawayDateTime: dateTime),
-          );
-        }
+      onTap: () {
+        if (canEdit) _pickTakeawayDateTime(context);
       },
+    );
+  }
+
+  Future<void> _pickTakeawayDateTime(BuildContext context) async {
+    final dateTime = await DateTextField.pickDateTime(
+      context,
+      type: DateTextFieldType.dateTime,
+    );
+    if (!mounted || dateTime == null) return;
+
+    widget.controller.text = RestaurantConstants.dateTimeFormat.format(
+      dateTime,
+    );
+    context.read<CartBloc>().add(
+      UpdateTakeawayDateTimeEvent(takeawayDateTime: dateTime),
     );
   }
 }

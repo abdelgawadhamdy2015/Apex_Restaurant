@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/featchers/orders/presentation/widgets/tablet_previous_orders.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/extensions.dart';
-import '../../../../core/router/routes.dart';
 import '../../../../generated/l10n.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
@@ -80,9 +82,15 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
     if (restored == null) return;
 
     final cartData = restored.toRestoredCartData(context);
-    context.pushNamed(Routes.posScreen);
-
-    context.read<CartBloc>().add(SyncRestoredInvoiceEvent(cartData));
+    context.read<PosBloc>().add(SelectedNavIndexEvent(selectedNavIndex: 0));
+    log("can edit : ${state.restoredInvoice?.invoice?.canEdit}");
+    context.read<CartBloc>().add(
+      SyncRestoredInvoiceEvent(
+        cartData,
+        canEdit: state.restoredInvoice?.invoice?.canEdit ?? true,
+        isPending: state.isPending,
+      ),
+    );
     context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());
   }
 

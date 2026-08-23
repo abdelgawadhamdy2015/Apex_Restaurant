@@ -3,7 +3,7 @@ import '../../helpers/shared_prf_helper.dart';
 import '../../router/routes.dart';
 import '../../service/api_constants.dart';
 import '../../service/dio_factory.dart';
-import '../../../featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../../../featchers/auth/presentation/pages/login_mobile_screen.dart';
 import '../../../generated/l10n.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';

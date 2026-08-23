@@ -34,7 +34,12 @@ class AcknowledgeCartRestoredEvent extends CartEvent {
 class SyncRestoredInvoiceEvent extends CartEvent {
   final RestoredCartData data;
   final bool canEdit;
-  const SyncRestoredInvoiceEvent(this.data, {this.canEdit = true});
+  final bool isPending;
+  const SyncRestoredInvoiceEvent(
+    this.data, {
+    this.canEdit = true,
+    this.isPending = false,
+  });
 
   @override
   List<Object?> get props => [data];

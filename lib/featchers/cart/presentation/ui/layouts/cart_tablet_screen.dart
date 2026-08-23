@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/helpers/helper_methods.dart';
 import '../../../../../core/helpers/restaurant_constants.dart';
@@ -110,7 +112,7 @@ class _PosTabletCartContent extends StatelessWidget {
     final selectedPerson =
         state.selectedPerson ??
         (state.persons.isNotEmpty ? state.persons.first : null);
-
+    log("teblet can edit : ${state.canEdit}");
     return Column(
       children: [
         Expanded(
@@ -152,7 +154,7 @@ class _PosTabletCartContent extends StatelessWidget {
             ),
           ),
         ),
-        if (state.canEdit) const BottomActionBar(canEdit: false),
+        if (state.canEdit) BottomActionBar(canEdit: state.canEdit),
       ],
     );
   }

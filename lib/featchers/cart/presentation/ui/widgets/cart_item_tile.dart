@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_item_customization.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
@@ -47,35 +50,67 @@ class CartItemTile extends StatelessWidget {
 
     // Note: additives still resolve from PosState.categories by categoryId,
     // handled inside ItemCustomizationSheet itself — no change needed there.
-    ItemCustomizationSheet.show(
-      context,
-      restaurantItem,
-      posBloc,
-      (
+    if (SizeHelper.isMobile) {
+      ItemCustomizationSheet.show(
+        context,
         restaurantItem,
-        additives, {
-        required selectedSize,
-        required selectedAddons,
-        required discount,
-        required isPercentageDiscount,
-        required String notes,
-        required int quantity,
-      }) {
-        cartBloc.add(
-          EditCartItemEvent(
-            index: index,
-            selectedSize: selectedSize,
-            selectedAddons: selectedAddons,
-            discount: discount,
-            isPercentageDiscount: isPercentageDiscount,
-            notes: notes,
-            quantity: quantity,
-          ),
-        );
-      },
-      existingItem: item,
-      cartIndex: index,
-    );
+        posBloc,
+        (
+          restaurantItem,
+          additives, {
+          required selectedSize,
+          required selectedAddons,
+          required discount,
+          required isPercentageDiscount,
+          required String notes,
+          required int quantity,
+        }) {
+          cartBloc.add(
+            EditCartItemEvent(
+              index: index,
+              selectedSize: selectedSize,
+              selectedAddons: selectedAddons,
+              discount: discount,
+              isPercentageDiscount: isPercentageDiscount,
+              notes: notes,
+              quantity: quantity,
+            ),
+          );
+        },
+        existingItem: item,
+        cartIndex: index,
+      );
+    } else {
+      TabletItemCustomizationDialog.show(
+        context,
+        restaurantItem,
+        posBloc,
+        (
+          restaurantItem,
+          additives, {
+          required selectedSize,
+          required selectedAddons,
+          required discount,
+          required isPercentageDiscount,
+          required String notes,
+          required int quantity,
+        }) {
+          cartBloc.add(
+            EditCartItemEvent(
+              index: index,
+              selectedSize: selectedSize,
+              selectedAddons: selectedAddons,
+              discount: discount,
+              isPercentageDiscount: isPercentageDiscount,
+              notes: notes,
+              quantity: quantity,
+            ),
+          );
+        },
+        existingItem: item,
+        cartIndex: index,
+      );
+    }
   }
 
   @override
@@ -88,7 +123,7 @@ class CartItemTile extends StatelessWidget {
     final sizeName = item.selectedSize?.sizeNameAr ?? '';
     final formattedAddons = _formattedAddons();
     final hasNotes = item.notes != null && item.notes!.isNotEmpty;
-
+    final cartState = context.read<CartBloc>().state;
     return Container(
       color: theme.colorScheme.onSurface,
       padding: EdgeInsets.symmetric(
@@ -96,7 +131,7 @@ class CartItemTile extends StatelessWidget {
         vertical: spacing.sm,
       ),
       child: InkWell(
-        onTap: () => _openEditSheet(context),
+        onTap: cartState.canEdit ? () => _openEditSheet(context) : null,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         child: Column(
           children: [
@@ -194,9 +229,11 @@ class CartItemTile extends StatelessWidget {
                                 color: theme.colorScheme.error,
                                 size: icons.md,
                               ),
-                              onPressed: () => context.read<CartBloc>().add(
-                                RemoveItemEvent(index),
-                              ),
+                              onPressed: cartState.canEdit
+                                  ? () => context.read<CartBloc>().add(
+                                      RemoveItemEvent(index),
+                                    )
+                                  : null,
                             ),
                             const Spacer(),
                             Container(
@@ -213,9 +250,11 @@ class CartItemTile extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.add, size: 18),
                                     color: theme.colorScheme.onSecondary,
-                                    onPressed: () => context
-                                        .read<CartBloc>()
-                                        .add(UpdateItemQuantityEvent(index, 1)),
+                                    onPressed: cartState.canEdit
+                                        ? () => context.read<CartBloc>().add(
+                                            UpdateItemQuantityEvent(index, 1),
+                                          )
+                                        : null,
                                   ),
                                   Padding(
                                     padding: EdgeInsets.symmetric(
@@ -232,10 +271,11 @@ class CartItemTile extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.remove, size: 18),
                                     color: theme.colorScheme.onSecondary,
-                                    onPressed: () =>
-                                        context.read<CartBloc>().add(
-                                          UpdateItemQuantityEvent(index, -1),
-                                        ),
+                                    onPressed: cartState.canEdit
+                                        ? () => context.read<CartBloc>().add(
+                                            UpdateItemQuantityEvent(index, -1),
+                                          )
+                                        : null,
                                   ),
                                 ],
                               ),

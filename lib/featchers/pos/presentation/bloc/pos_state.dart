@@ -26,6 +26,7 @@ class PosState extends Equatable implements ErrorableState {
   final SettingsModel? settings;
   @override
   final BaseResponse? apiResponse;
+  final int selectedNavIndex;
   final List<FloorModel> floors;
   final List<TableModel> tables;
   final List<CategoryModel> categories;
@@ -80,6 +81,7 @@ class PosState extends Equatable implements ErrorableState {
     this.additives,
     this.settings,
     this.currentSessionId,
+    this.selectedNavIndex = 0,
   });
 
   // ── ErrorableState contract ──
@@ -89,6 +91,7 @@ class PosState extends Equatable implements ErrorableState {
   factory PosState.initial() => PosState();
 
   PosState copyWith({
+    int? selectedNavIndex,
     SettingsModel? settings,
     BaseResponse? apiResponse,
     PosStatus? status,
@@ -116,6 +119,7 @@ class PosState extends Equatable implements ErrorableState {
     bool clear = false,
   }) {
     return PosState(
+      selectedNavIndex: selectedNavIndex ?? this.selectedNavIndex,
       settings: settings ?? this.settings,
       apiResponse: apiResponse ?? this.apiResponse,
       status: status ?? this.status,
@@ -147,6 +151,7 @@ class PosState extends Equatable implements ErrorableState {
 
   @override
   List<Object?> get props => [
+    selectedNavIndex,
     settings,
     apiResponse,
     status,

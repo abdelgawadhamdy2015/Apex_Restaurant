@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_state.dart';
@@ -15,7 +17,6 @@ class HeaderInfoCard extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final lang = S.of(context);
-
     return BlocBuilder<CartBloc, CartState>(
       builder: (context, state) {
         return Container(
@@ -32,7 +33,10 @@ class HeaderInfoCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                HeaderInfoItem(title: lang.orderNumber, value: '#12345'),
+                HeaderInfoItem(
+                  title: lang.orderNumber,
+                  value: state.orderNumber?.toString() ?? "0",
+                ),
                 VerticalDivider(
                   color: theme.colorScheme.outlineVariant,
                   width: 2,
@@ -40,7 +44,7 @@ class HeaderInfoCard extends StatelessWidget {
                 ),
                 HeaderInfoItem(
                   title: lang.invoiceNumber,
-                  value: 'INV-9876',
+                  value: state.invoiceCode ?? "",
                   isValueBlue: true,
                 ),
                 VerticalDivider(
@@ -50,7 +54,9 @@ class HeaderInfoCard extends StatelessWidget {
                 ),
                 HeaderInfoItem(
                   title: lang.date,
-                  value: DateTime.now().toString().split(' ').first,
+                  value: RestaurantConstants.dateFormat.format(
+                    state.restoredInvoiceDate ?? DateTime.now(),
+                  ), // DateTime.now().toString().split(' ').first,
                 ),
               ],
             ),

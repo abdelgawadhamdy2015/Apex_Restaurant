@@ -36,17 +36,15 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<LoadMoreItemsEvent>(_onLoadMoreItems);
     on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
 
-    //on<UpdateItemAddonsEvent>(_onUpdateItemAddons);
-    // on<AddItemToOrderEvent>(_onAddItem);
-    // on<RemoveItemFromOrderEvent>(_onRemoveItem);
-    // on<IncrementItemEvent>(_onIncrementItem);
-    // on<DecrementItemEvent>(_onDecrementItem);
-    // on<SendToKitchenEvent>(_onSendToKitchen);
-    // on<PayOrderEvent>(_onPayOrder);
     on<ShowToastEvent>(_onShowToast);
     on<DismissToastEvent>(_onDismissToast);
     on<SelectTableEvent>(_onSelectTable);
-
+    on<SelectedNavIndexEvent>((
+      SelectedNavIndexEvent event,
+      Emitter<PosState> emit,
+    ) {
+      emit(state.copyWith(selectedNavIndex: event.selectedNavIndex));
+    });
     //  Session Handler
     on<CurrentRestaurantPosSessionEvent>(_getCurrentSession);
     on<CloseRestaurantPosSessionEvent>(_onCloseSession);

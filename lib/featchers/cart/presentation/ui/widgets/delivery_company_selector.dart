@@ -14,6 +14,11 @@ class DeliveryCompanySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canEdit = context.select((CartBloc b) => b.state.canEdit);
+    final selectedCompany = context.select(
+      (CartBloc b) => b.state.selectedDeliveryCompany,
+    );
+
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final lang = S.of(context);
@@ -26,6 +31,7 @@ class DeliveryCompanySelector extends StatelessWidget {
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: DropdownButtonFormField<DeliveryCompanyModel?>(
+        initialValue: selectedCompany,
         decoration: InputDecoration(
           hintText: lang.deliveryCompanyDetails,
           prefixIcon: Icon(
@@ -42,12 +48,14 @@ class DeliveryCompanySelector extends StatelessWidget {
               ),
             )
             .toList(),
-        onChanged: (val) {
-          if (val == null) return;
-          context.read<CartBloc>().add(
-            SelectDeliveryCompanyEvent(deliveryCompanyModel: val),
-          );
-        },
+        onChanged: canEdit
+            ? (val) {
+                if (val == null) return;
+                context.read<CartBloc>().add(
+                  SelectDeliveryCompanyEvent(deliveryCompanyModel: val),
+                );
+              }
+            : null,
       ),
     );
   }

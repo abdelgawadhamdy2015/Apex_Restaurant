@@ -31,7 +31,7 @@ class DineInSelector extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
     final selectedTable = context.select((CartBloc b) => b.state.selectedTable);
-
+    final canEdit = context.select((CartBloc b) => b.state.canEdit);
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
@@ -58,14 +58,16 @@ class DineInSelector extends StatelessWidget {
                   ),
                 )
                 .toList(),
-            onChanged: (waiterId) {
-              final waiter = waiters.cast<WaiterModel?>().firstWhere(
-                (waiter) => waiter?.id == waiterId,
-                orElse: () => null,
-              );
+            onChanged: canEdit
+                ? (waiterId) {
+                    final waiter = waiters.cast<WaiterModel?>().firstWhere(
+                      (waiter) => waiter?.id == waiterId,
+                      orElse: () => null,
+                    );
 
-              context.read<CartBloc>().add(SelectWaiterEvent(waiter));
-            },
+                    context.read<CartBloc>().add(SelectWaiterEvent(waiter));
+                  }
+                : null,
           ),
           SizedBox(height: spacing.xs + spacing.xxs / 2),
           Row(
@@ -90,14 +92,16 @@ class DineInSelector extends StatelessWidget {
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
               ),
-              onPressed: () => context.pushNamed(
-                Routes.tableScreen,
-                extra: TablesScreenArgs(
-                  branchId: state.selectedEmployeeBranch?.branchId ?? 0,
-                  personList: persons,
-                  inCartScreen: true,
-                ),
-              ),
+              onPressed: canEdit
+                  ? () => context.pushNamed(
+                      Routes.tableScreen,
+                      extra: TablesScreenArgs(
+                        branchId: state.selectedEmployeeBranch?.branchId ?? 0,
+                        personList: persons,
+                        inCartScreen: true,
+                      ),
+                    )
+                  : null,
               icon: Icon(
                 Icons.table_restaurant,
                 color: theme.colorScheme.tertiary,

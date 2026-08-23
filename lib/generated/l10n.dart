@@ -3971,6 +3971,16 @@ class S {
   String get discount {
     return Intl.message('Discount', name: 'discount', desc: '', args: []);
   }
+
+  /// `Select Floor`
+  String get selectFloor {
+    return Intl.message(
+      'Select Floor',
+      name: 'selectFloor',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

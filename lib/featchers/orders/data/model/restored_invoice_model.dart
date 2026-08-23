@@ -172,7 +172,7 @@ class RestoredPhone {
 
 @JsonSerializable()
 class RestoredInvoiceDiscount {
-  final int? id;
+  final String? id;
   final String? arabicName;
   final String? latinName;
   final int? discountType;
@@ -286,7 +286,7 @@ class RestoredDeliveryMan {
 
 @JsonSerializable()
 class RestoredFoodTable {
-  final int? id;
+  final String? id;
   final String? arabicName;
   final String? latinName;
   final double? price;
@@ -362,7 +362,7 @@ class RestoredInvoiceItem {
 
 @JsonSerializable()
 class RestoredItemDiscount {
-  final int? id;
+  final String? id;
   final String? arabicName;
   final String? latinName;
   final int? discountType;
@@ -388,7 +388,7 @@ class RestoredItemDiscount {
 
 @JsonSerializable()
 class RestoredInvoiceAdditive {
-  final int? additiveId;
+  final String? additiveId;
   final String? arabicName;
   final String? latinName;
   final String? imagePath;

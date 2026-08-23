@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 
 import '../../../../core/calculation/restaurant_invoice_calculator.dart';
@@ -43,7 +41,6 @@ class CartState extends Equatable {
   final RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
   final double? couponDiscountvalue;
   final DynamicDiscountModel? activeDiscountModel;
-
   final RestaurantPosDiscountRequest? customerDiscount;
 
   final List<WaiterModel> waiters;
@@ -62,7 +59,11 @@ class CartState extends Equatable {
   final String? errorMessage;
   final String? successMessage;
   final int? invoiceId;
-
+  final bool isPending;
+  final int? orderNumber;
+  final String? invoiceCode;
+  final int? voucherId;
+  final DateTime? restoredInvoiceDate;
   const CartState({
     this.selectedOrderType = CartOrderType.TAKEAWAY,
     this.selectedDiscountType = DiscountTypeEnum.coupon,
@@ -94,6 +95,11 @@ class CartState extends Equatable {
     this.canEdit = true,
     this.companiesList = const [],
     this.invoiceId,
+    this.isPending = false,
+    this.orderNumber,
+    this.invoiceCode,
+    this.voucherId,
+    this.restoredInvoiceDate,
   });
 
   // الخصومات الديناميكية
@@ -288,8 +294,6 @@ class CartState extends Equatable {
                 addon.parentTransactionId!.isNotEmpty)
             ? addon.parentTransactionId!
             : parentTxId;
-
-        log("parentTxId: $resolvedParentTxId, addonTxId: $addonTxId");
 
         inputs.add(
           InvoiceItemInput(
@@ -519,7 +523,7 @@ class CartState extends Equatable {
     }
 
     final invoiceModel = RestaurantPosInvoiceInfoRequest(
-      invoiceId: invoiceId,
+      invoiceId: isPending ? 0 : invoiceId,
       pendingInvoiceId: invoiceId,
       postype: selectedOrderType.apiValue,
       foodTableId: selectedOrderType == CartOrderType.DINE_IN
@@ -593,7 +597,11 @@ class CartState extends Equatable {
     String? successMessage,
     TableEntity? selectedTable,
     DateTime? fromBranchDateTime,
-
+    bool? isPending,
+    int? orderNumber,
+    String? invoiceCode,
+    int? voucherId,
+    DateTime? restoredInvoiceDate,
     // Optional flag helpers to force explicit null assignment
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
@@ -643,6 +651,13 @@ class CartState extends Equatable {
       fromBranchDateTime: fromBranchDateTime ?? this.fromBranchDateTime,
       companiesList: companiesList ?? this.companiesList,
       invoiceId: clearInvoiceId ? null : invoiceId ?? this.invoiceId,
+      isPending: isPending ?? this.isPending,
+      voucherId: clearInvoiceId ? null : voucherId ?? this.voucherId,
+      orderNumber: clearInvoiceId ? null : orderNumber ?? this.orderNumber,
+      invoiceCode: clearInvoiceId ? null : invoiceCode ?? this.invoiceCode,
+      restoredInvoiceDate: clearInvoiceId
+          ? null
+          : restoredInvoiceDate ?? restoredInvoiceDate,
     );
   }
 
@@ -674,6 +689,12 @@ class CartState extends Equatable {
     isSubmitting,
     errorMessage,
     successMessage,
+    isPending,
+    canEdit,
     selectedTable,
+    voucherId,
+    invoiceCode,
+    orderNumber,
+    restoredInvoiceDate,
   ];
 }

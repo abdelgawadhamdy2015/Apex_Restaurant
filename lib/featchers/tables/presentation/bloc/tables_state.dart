@@ -12,7 +12,9 @@ class TablesState extends Equatable {
   final TablesStatus status;
   final int activeTab; // 0: Tables, 1: Reservations
   final List<TableEntity> tables;
+  final TableEntity? selectedTable;
   final List<FloorEntity> floors;
+  final FloorEntity? selectedFloor;
   final List<ReservationEntity> reservations;
   final String? errorMessage;
   final List<PindingInvoiceModel>? pindingInvoices;
@@ -30,13 +32,17 @@ class TablesState extends Equatable {
     this.restoringInvoiceId,
     this.restoredInvoiceModel,
     this.canEdit = true,
+    this.selectedTable,
+    this.selectedFloor,
   });
 
   TablesState copyWith({
     TablesStatus? status,
     int? activeTab,
     List<TableEntity>? tables,
+    TableEntity? selectedTable,
     List<FloorEntity>? floors,
+    FloorEntity? selectedFloor,
     List<ReservationEntity>? reservations,
     List<PindingInvoiceModel>? pindingInvoices,
     String? errorMessage,
@@ -49,6 +55,8 @@ class TablesState extends Equatable {
       status: status ?? this.status,
       activeTab: activeTab ?? this.activeTab,
       tables: tables ?? this.tables,
+      selectedTable: selectedTable ?? this.selectedTable,
+      selectedFloor: selectedFloor ?? this.selectedFloor,
       floors: floors ?? this.floors,
       pindingInvoices: pindingInvoices ?? this.pindingInvoices,
       reservations: reservations ?? this.reservations,

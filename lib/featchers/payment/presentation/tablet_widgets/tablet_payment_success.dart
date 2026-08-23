@@ -1,13 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_success_model.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -278,7 +280,7 @@ class _SuccessActionButtons extends StatelessWidget {
     final spacing = context.spacing;
     final theme = Theme.of(context);
     final lang = S.of(context);
-
+    final state = context.read<PaymentBloc>().state;
     return Column(
       children: [
         Row(
@@ -289,8 +291,12 @@ class _SuccessActionButtons extends StatelessWidget {
                 icon: Icons.shopping_bag_outlined,
                 onTap: () {
                   final cartBloc = context.read<CartBloc>();
+                  context.read<PaymentBloc>().add(ClearPaymentEvent());
                   cartBloc.add(ClearCartEvent());
-                  context.goNamed(Routes.ordersScreen);
+                  context.pop();
+                  context.read<PosBloc>().add(
+                    SelectedNavIndexEvent(selectedNavIndex: 1),
+                  );
                 },
               ),
             ),
@@ -319,7 +325,11 @@ class _SuccessActionButtons extends StatelessWidget {
               child: _CustomActionButton(
                 label: lang.btnPrintKitchen,
                 icon: Icons.soup_kitchen_outlined,
-                onTap: () {},
+                onTap: () {
+                  final fileUrl =
+                      state.successResponseModel?.printingCheque?.fileURL;
+                  HelperMethods.printDirectPdf(context, fileUrl, 'Receipt');
+                },
               ),
             ),
             SizedBox(width: spacing.sm),
@@ -327,7 +337,11 @@ class _SuccessActionButtons extends StatelessWidget {
               child: _CustomActionButton(
                 label: lang.btnPrintReceipt,
                 icon: Icons.print_outlined,
-                onTap: () {},
+                onTap: () {
+                  final fileUrl =
+                      state.successResponseModel?.printingCheque?.fileURL;
+                  HelperMethods.printDirectPdf(context, fileUrl, 'Receipt');
+                },
               ),
             ),
           ],

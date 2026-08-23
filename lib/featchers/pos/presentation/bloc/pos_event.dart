@@ -99,6 +99,14 @@ class SelectTableEvent extends PosEvent {
   List<Object?> get props => [table];
 }
 
+class SelectedNavIndexEvent extends PosEvent {
+  final int selectedNavIndex;
+  const SelectedNavIndexEvent({required this.selectedNavIndex});
+
+  @override
+  List<Object?> get props => [selectedNavIndex];
+}
+
 class CloseRestaurantPosSessionEvent extends PosEvent {
   final int sessionId;
   const CloseRestaurantPosSessionEvent({required this.sessionId});

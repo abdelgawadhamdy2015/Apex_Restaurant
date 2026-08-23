@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/helpers/helper_methods.dart';
 import '../../../../../core/helpers/size_helper.dart';
@@ -27,7 +30,7 @@ class CustomerInfoCard extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
     final phones = selectedPerson?.personPhones;
-
+    final cartState = context.read<CartBloc>().state;
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
@@ -49,7 +52,9 @@ class CustomerInfoCard extends StatelessWidget {
           SizedBox(width: spacing.sm),
           Expanded(
             child: GestureDetector(
-              onTap: () => HelperMethods.openPicker(context, persons),
+              onTap: cartState.canEdit
+                  ? () => HelperMethods.openPicker(context, persons)
+                  : null,
               behavior: HitTestBehavior.opaque,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,19 +3,24 @@ import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/shared/widgets/date_text_field.dart';
 import '../../../cart/data/models/pos_client_model.dart';
 import '../../data/models/get_reservations_request.dart';
+import '../../data/models/get_table_request.dart';
+import '../../domain/entities/floor_entity.dart';
 import '../../domain/entities/table_entity.dart';
 import '../../../../generated/l10n.dart';
+import '../bloc/tables_bloc.dart';
+import '../bloc/tables_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReservationSearchFilterCard extends StatefulWidget {
   const ReservationSearchFilterCard({
     super.key,
-    required this.tables,
+    required this.floors,
     required this.onSearch,
     this.clients = const [],
   });
 
-  final List<TableEntity>? tables;
+  final List<FloorEntity> floors;
   final List<PosClientModel> clients;
 
   final Function(GetReservationRequest request) onSearch;
@@ -31,7 +36,6 @@ class _ReservationSearchFilterCardState
   final _toDateController = TextEditingController();
 
   PosClientModel? _selectedClient;
-  TableEntity? _selectedTable;
 
   @override
   void dispose() {
@@ -88,6 +92,29 @@ class _ReservationSearchFilterCardState
     _pickDate(_toDateController, firstDate: fromDate);
   }
 
+  // Selecting a floor resets the table choice and re-fetches the tables
+  // that belong to that floor -- the table dropdown below is populated from
+  // TablesBloc.state.tables, so this is what drives the cascade.
+  void _onFloorSelected(FloorEntity? floor) {
+    if (floor == null) return;
+    context.read<TablesBloc>().add(SelectFloorEvent(floorEntity: floor));
+    context.read<TablesBloc>().add(
+      FetchTablesEvent(
+        GetTablesRequest(
+          floorID: floor.id,
+          pageNumber: 1,
+          pageSize: 100,
+          forPOS: false,
+        ),
+      ),
+    );
+  }
+
+  void _onTableSelected(TableEntity? table) {
+    if (table == null) return;
+    context.read<TablesBloc>().add(SelectTableEvent(tableEntity: table));
+  }
+
   void _onSearchPressed() {
     final fromDate = _parseDate(_fromDateController.text);
     final toDate = _parseDate(_toDateController.text);
@@ -101,6 +128,8 @@ class _ReservationSearchFilterCardState
       return;
     }
 
+    final selectedTable = context.read<TablesBloc>().state.selectedTable;
+
     widget.onSearch(
       GetReservationRequest(
         pageNumber: 1,
@@ -108,7 +137,7 @@ class _ReservationSearchFilterCardState
         dateFrom: _fromDateController.text,
         dateTo: _toDateController.text,
         customerName: _selectedClient?.arabicName,
-        foodTableName: _selectedTable?.arabicName,
+        foodTableName: selectedTable?.arabicName,
       ),
     );
   }
@@ -119,6 +148,17 @@ class _ReservationSearchFilterCardState
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final l10n = S.of(context);
+
+    // Narrow, independent selectors: this widget only rebuilds when one of
+    // these specific fields changes, instead of on every TablesBloc
+    // emission.
+    final selectedFloor = context.select(
+      (TablesBloc b) => b.state.selectedFloor,
+    );
+    final tables = context.select((TablesBloc b) => b.state.tables);
+    final selectedTable = context.select(
+      (TablesBloc b) => b.state.selectedTable,
+    );
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
@@ -131,71 +171,91 @@ class _ReservationSearchFilterCardState
         children: [
           Row(
             children: [
+              // Floor Selector Dropdown
               Expanded(
-                child: DropdownButtonFormField<TableEntity?>(
-                  initialValue: _selectedTable,
+                child: DropdownButtonFormField<FloorEntity?>(
+                  initialValue: selectedFloor,
                   decoration: InputDecoration(
                     labelText: l10n.floor,
                     fillColor: theme.colorScheme.surface,
                   ),
                   items: [
-                    DropdownMenuItem<TableEntity?>(
+                    DropdownMenuItem<FloorEntity?>(
                       value: null,
-                      child: Text(S.of(context).all),
+                      child: Text(l10n.selectFloor),
                     ),
-                    ...?(widget.tables
-                        ?.map(
-                          (t) => DropdownMenuItem<TableEntity?>(
-                            value: t,
-                            child: Text(t.arabicName ?? ""),
-                          ),
-                        )
-                        .toList()),
+                    ...widget.floors.map(
+                      (f) => DropdownMenuItem<FloorEntity?>(
+                        value: f,
+                        child: Text(f.arabicName),
+                      ),
+                    ),
                   ],
-                  onChanged: (val) {
-                    setState(() => _selectedTable = val);
-                  },
+                  onChanged: _onFloorSelected,
                 ),
               ),
-              SizedBox(width: spacing.sm),
+              SizedBox(width: spacing.xxs),
+
               Expanded(
-                child: DropdownButtonFormField<PosClientModel>(
-                  initialValue: _selectedClient,
-                  alignment: AlignmentDirectional.topCenter,
-                  isExpanded: true,
+                child: DropdownButtonFormField<TableEntity?>(
+                  initialValue: selectedTable,
                   decoration: InputDecoration(
-                    labelText: l10n.customerName,
+                    labelText: l10n.table,
                     fillColor: theme.colorScheme.surface,
                   ),
                   items: [
-                    DropdownMenuItem<PosClientModel>(
+                    DropdownMenuItem<TableEntity?>(
                       value: null,
-                      child: Text(S.of(context).all),
+                      child: Text(l10n.selectTable),
                     ),
-                    ...widget.clients.map((f) {
-                      return DropdownMenuItem<PosClientModel>(
-                        value: f,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            f.arabicName ?? "",
-                            overflow: TextOverflow.ellipsis,
-                            textDirection: TextDirection.rtl,
-                          ),
+                    ...tables.map(
+                      (t) => DropdownMenuItem<TableEntity?>(
+                        value: t,
+                        child: Text(
+                          t.arabicName ?? "",
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      );
-                    }),
+                      ),
+                    ),
                   ],
-                  onChanged: (val) {
-                    setState(() {
-                      _selectedClient = val;
-                    });
-                  },
+                  onChanged: _onTableSelected,
                 ),
               ),
             ],
           ),
-          SizedBox(height: spacing.sm),
+          SizedBox(height: spacing.xxs),
+          DropdownButtonFormField<PosClientModel?>(
+            initialValue: _selectedClient,
+            alignment: AlignmentDirectional.topCenter,
+            isExpanded: true,
+            decoration: InputDecoration(
+              labelText: l10n.customerName,
+              fillColor: theme.colorScheme.surface,
+            ),
+            items: [
+              DropdownMenuItem<PosClientModel?>(
+                value: null,
+                child: Text(l10n.all),
+              ),
+              ...widget.clients.map(
+                (c) => DropdownMenuItem<PosClientModel?>(
+                  value: c,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      c.arabicName ?? "",
+                      overflow: TextOverflow.ellipsis,
+                      textDirection: TextDirection.rtl,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            onChanged: (val) {
+              setState(() => _selectedClient = val);
+            },
+          ),
+          SizedBox(height: spacing.xxs),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -206,7 +266,7 @@ class _ReservationSearchFilterCardState
                   onTap: _pickFromDate,
                 ),
               ),
-              SizedBox(width: spacing.sm),
+              SizedBox(width: spacing.xxs),
               Expanded(
                 child: DateTextField(
                   label: l10n.toDate,

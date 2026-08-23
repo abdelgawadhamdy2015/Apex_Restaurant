@@ -21,6 +21,7 @@ class DiscountSection extends StatefulWidget {
   });
 
   final bool dynamicIsActive;
+
   final DynamicDiscountModel? dynamicDiscountModel;
   final PosClientModel? selectedPerson;
 
@@ -97,8 +98,9 @@ class _DiscountSectionState extends State<DiscountSection> {
 
     final lang = S.of(context);
     final discountEnabled =
-        !widget.dynamicIsActive &&
-        !HelperMethods.anyItemHasDiscount(state.items);
+        (!widget.dynamicIsActive &&
+            !HelperMethods.anyItemHasDiscount(state.items)) &&
+        state.canEdit;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
         if (widget.dynamicIsActive) return;
@@ -191,7 +193,7 @@ class _DiscountSectionState extends State<DiscountSection> {
                 ),
 
                 child: TextButton(
-                  onPressed: widget.dynamicIsActive
+                  onPressed: widget.dynamicIsActive || !state.canEdit
                       ? null
                       : () => _applyDiscount(state),
                   child: Text(

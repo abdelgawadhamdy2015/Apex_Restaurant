@@ -5,7 +5,7 @@ import '../router/router.dart';
 import 'api_constants.dart';
 import 'api_error_model.dart';
 import '../shared/widgets/setup_dialog.dart';
-import '../../featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../../featchers/auth/presentation/pages/login_mobile_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:signalr_netcore/signalr_client.dart';

@@ -8,7 +8,11 @@ import '../../../tables/domain/entities/table_entity.dart';
 
 class RestoredCartData {
   final int? invoiceID;
+  final String? invoiceCode;
+  final int? orderNumber;
   final List<OrderItem> items;
+  final int? voucherId;
+  final DateTime? invoiceDate;
   final CartOrderType orderType;
   final PosClientModel? client;
   final WaiterModel? waiter;
@@ -27,5 +31,9 @@ class RestoredCartData {
     this.table,
     this.restaurantPosDiscountRequest,
     this.invoiceID,
+    this.invoiceCode,
+    this.orderNumber,
+    this.voucherId,
+    this.invoiceDate,
   });
 }

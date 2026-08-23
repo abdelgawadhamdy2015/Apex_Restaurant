@@ -17,6 +17,7 @@ class DeliveryAgentSelector extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final lang = S.of(context);
+    final canEdit = context.select((CartBloc b) => b.state.canEdit);
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -42,8 +43,9 @@ class DeliveryAgentSelector extends StatelessWidget {
               ),
             )
             .toList(),
-        onChanged: (val) =>
-            context.read<CartBloc>().add(SelectDeliveryManEvent(val)),
+        onChanged: canEdit
+            ? (val) => context.read<CartBloc>().add(SelectDeliveryManEvent(val))
+            : null,
       ),
     );
   }

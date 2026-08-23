@@ -308,6 +308,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
                 restoredInvoice: data.data,
                 clearRestoringId: true,
                 canEdite: event.canEdite,
+                isPending: event.isPending,
               ),
             );
           } else {

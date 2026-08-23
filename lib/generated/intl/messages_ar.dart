@@ -659,6 +659,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectDeliveryAgent": MessageLookupByLibrary.simpleMessage(
       "اختر عامل التوصيل",
     ),
+    "selectFloor": MessageLookupByLibrary.simpleMessage("اختر الطابق"),
     "selectInvoiceType": MessageLookupByLibrary.simpleMessage(
       "اختر نوع الفاتورة",
     ),

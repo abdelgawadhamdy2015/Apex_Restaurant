@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -49,32 +50,7 @@ class TabletPosTopHeader extends StatelessWidget
       child: Row(
         children: [
           // Logo Placeholder
-          Image.asset(
-            'assets/images/logo.png',
-            height: 32,
-            errorBuilder: (context, error, stackTrace) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'APEX',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  Text(
-                    ' ERP',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.tertiary,
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
+          Assets.images.apexLogo.image(),
           const Spacer(),
 
           // Centered Search Bar

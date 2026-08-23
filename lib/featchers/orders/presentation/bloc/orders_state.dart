@@ -18,6 +18,7 @@ class OrdersState {
   final List<PindingInvoiceModel> pindingInvoices;
   final String? errorMessage;
   final bool canEdite;
+  final bool isPending;
 
   /// Set while a specific held order's restore call is in flight —
   /// lets the card for that exact invoice show a spinner / disable itself.
@@ -60,6 +61,7 @@ class OrdersState {
     this.pindingInvoicesHasMore = true,
     this.isLoadingMorePinding = false,
     this.pindingInvoicesFilter,
+    this.isPending = false,
   });
 
   OrdersState copyWith({
@@ -74,6 +76,7 @@ class OrdersState {
     bool clearRestoringId = false,
     bool clearRestoredInvoice = false,
     bool? canEdite,
+    bool? isPending,
     int? previousOrdersPage,
     bool? previousOrdersHasMore,
     bool? isLoadingMorePrevious,
@@ -109,6 +112,7 @@ class OrdersState {
       isLoadingMorePinding: isLoadingMorePinding ?? this.isLoadingMorePinding,
       pindingInvoicesFilter:
           pindingInvoicesFilter ?? this.pindingInvoicesFilter,
+      isPending: isPending ?? this.isPending,
     );
   }
 }

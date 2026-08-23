@@ -72,9 +72,13 @@ class _OrderTypeChip extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final icons = context.iconSizes;
+
     final isSelected = context.select(
       (CartBloc b) => b.state.selectedOrderType == type,
     );
+    final canEdit = context.select(
+      (CartBloc b) => b.state.canEdit,
+    ); // ✅ now reactive
 
     final activeColor = theme.colorScheme.primary;
     final inactiveColor = theme.colorScheme.surfaceContainerHighest;
@@ -82,7 +86,9 @@ class _OrderTypeChip extends StatelessWidget {
     final inactiveTextColor = theme.colorScheme.onPrimary;
 
     return InkWell(
-      onTap: () => context.read<CartBloc>().add(ChangeOrderTypeEvent(type)),
+      onTap: canEdit
+          ? () => context.read<CartBloc>().add(ChangeOrderTypeEvent(type))
+          : null,
       borderRadius: BorderRadius.circular(spacing.radiusPill),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

@@ -224,6 +224,13 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                                         context.read<OrdersBloc>().add(
                                           RestoreOrderEvent(
                                             invoiceId: invoiceId,
+                                            canEdite:
+                                                state
+                                                    .restoredInvoice
+                                                    ?.invoice
+                                                    ?.canEdit ??
+                                                false,
+                                            isPending: true,
                                           ),
                                         );
                                       },

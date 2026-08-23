@@ -1,5 +1,5 @@
 import '../../featchers/home/data/enums/app_permissions.dart';
-import '../../featchers/login/data/models/login_data.dart';
+import '../../featchers/auth/data/models/login_data.dart';
 
 class PermissionChecker {
   final Map<int, SubPermissionModel> _permissionsMap;

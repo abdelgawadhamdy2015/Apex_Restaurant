@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
@@ -129,7 +130,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) {
     final data = event.data;
-
+    log("can edit: ${event.canEdit}");
     // 1. Determine discount strategy based on restored invoice data
     final hasInvoiceDiscount =
         data.restaurantPosDiscountRequest != null &&
@@ -139,7 +140,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     final isDineIn = data.orderType == CartOrderType.DINE_IN;
     final isDelivery = data.orderType == CartOrderType.DELIVERY;
     final isDeliveryCompany = data.orderType == CartOrderType.DELIVERY_COMPANY;
-
+    final selectedDeliveryCompany = isDeliveryCompany
+        ? state.companiesList.firstWhere(
+            (c) => c.id == data.deliveryCompany?.id,
+          )
+        : null;
     emit(
       state.copyWith(
         // Primary Restored Data
@@ -148,15 +153,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         selectedOrderType: data.orderType,
         fromBranchDateTime: null,
         canEdit: event.canEdit,
-        // Entities mapped according to active order type
+        isPending: event.isPending,
         selectedTable: isDineIn ? data.table : null,
         selectedWaiter: isDineIn ? data.waiter : null,
         selectedDeliveryMan: isDelivery ? data.deliveryMan : null,
-        selectedDeliveryCompany: isDeliveryCompany
-            ? data.deliveryCompany
-            : null,
+        selectedDeliveryCompany: selectedDeliveryCompany,
         selectedPerson: data.client,
-
+        voucherId: data.voucherId,
+        invoiceCode: data.invoiceCode,
+        orderNumber: data.orderNumber,
         // Discount Configuration
         restaurantPosDiscountRequest: data.restaurantPosDiscountRequest,
         selectedDiscountType: hasInvoiceDiscount
@@ -334,12 +339,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         fromBranchDateTime: null,
         customerDiscount: null,
         discountAmount: 0,
-
+        canEdit: true,
         couponDiscountvalue: null,
-
+        invoiceCode: null,
+        invoiceId: null,
+        voucherId: null,
+        restoredInvoiceDate: null,
+        orderNumber: 0,
+        isPending: false,
         clearCouponDiscountValue: true,
         clearCustomerDiscount: true,
         clearRestaurantPosDiscountRequest: true,
+        clearInvoiceId: true,
       ),
     );
   }

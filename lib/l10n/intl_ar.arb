@@ -501,5 +501,6 @@
     "unknown": "غير معروف",
     "paid": "المدفوع",
     "remaining": "المتبقي",
-    "discount": "الخصم"
+    "discount": "الخصم",
+    "selectFloor": "اختر الطابق"
 }

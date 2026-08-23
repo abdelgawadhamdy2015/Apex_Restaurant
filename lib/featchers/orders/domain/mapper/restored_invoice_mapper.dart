@@ -64,18 +64,12 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     DeliveryCompanyModel? deliveryCompany;
-    final compId = inv?.deliveryCompanyId ?? inv?.deliveryCompany?.id;
+    final compId = inv?.deliveryCompany?.id;
     if (compId != null && compId != 0) {
       deliveryCompany = DeliveryCompanyModel(
         id: compId,
-        arabicName:
-            inv?.deliveryCompanyArabicName ??
-            inv?.deliveryCompany?.arabicName ??
-            '',
-        latinName:
-            inv?.deliveryCompanyLatinName ??
-            inv?.deliveryCompany?.latinName ??
-            '',
+        arabicName: inv?.deliveryCompany?.arabicName ?? '',
+        latinName: inv?.deliveryCompany?.latinName ?? '',
       );
     }
 
@@ -99,7 +93,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       final double val = discount.discountValue ?? 0.0;
       if (val > 0) {
         // discountType 1 = Percentage, 2 = Fixed Value
-        final bool isPerc = discount.discountType == 1;
+        final bool isPerc = discount.discountNatural == 1;
         restaurantPosDiscountRequest = RestaurantPosDiscountRequest(
           type: isPerc ? 1 : 2,
           value: val,
@@ -193,6 +187,10 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
 
     return RestoredCartData(
       invoiceID: inv?.invoiceId,
+      orderNumber: inv?.orderNumber,
+      invoiceCode: inv?.invoiceCode,
+      invoiceDate: inv?.invoiceDate,
+      voucherId: inv?.voucherId,
       items: orderItems,
       orderType: orderType,
       client: client,

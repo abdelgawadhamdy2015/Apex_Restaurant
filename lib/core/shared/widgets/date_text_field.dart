@@ -38,22 +38,23 @@ class DateTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label != null) ...[
-          Text(
-            label!,
-            style: textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: theme.colorScheme.onSecondary,
-            ),
-          ),
-          SizedBox(height: context.spacing.sm),
-        ],
+        // if (label != null) ...[
+        //   Text(
+        //     label!,
+        //     style: textTheme.bodyMedium?.copyWith(
+        //       fontWeight: FontWeight.w600,
+        //       color: theme.colorScheme.onSecondary,
+        //     ),
+        //   ),
+        //   SizedBox(height: context.spacing.sm),
+        // ],
         TextFormField(
           controller: controller,
           readOnly: true,
           onTap: onTap,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
+            label: Text(label ?? ""),
             fillColor: fillColor ?? theme.colorScheme.surface,
             hintText: S.of(context).selectDateAndTimeError,
             contentPadding: EdgeInsets.symmetric(

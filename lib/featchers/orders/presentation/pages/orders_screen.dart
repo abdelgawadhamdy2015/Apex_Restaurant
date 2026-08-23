@@ -88,6 +88,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
       SyncRestoredInvoiceEvent(
         cartData,
         canEdit: state.restoredInvoice?.invoice?.canEdit ?? true,
+        isPending: state.isPending,
       ),
     );
     context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());

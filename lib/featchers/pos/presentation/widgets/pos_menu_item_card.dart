@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../../../generated/l10n.dart';
@@ -19,6 +22,7 @@ class PosMenuItemCard extends StatelessWidget {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
+    final canEdit = context.select((CartBloc b) => b.state.canEdit);
 
     return Container(
       decoration: BoxDecoration(
@@ -116,7 +120,7 @@ class PosMenuItemCard extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: onAddPressed,
+                      onTap: canEdit ? onAddPressed : null,
                       child: Container(
                         padding: EdgeInsets.all(spacing.xxs),
                         decoration: BoxDecoration(

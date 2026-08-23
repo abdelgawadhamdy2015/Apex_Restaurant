@@ -196,7 +196,7 @@ class _CartContent extends StatelessWidget {
             // Re-enabled touch events for BottomActionBar if you need actions like print/exit
             // while passing down `canEdit` to disable save/submit buttons internally.
             IgnorePointer(
-              ignoring: false,
+              ignoring: state.canEdit,
               child: BottomActionBar(canEdit: canEdit),
             ),
           ],

@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet-add_reservation.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_list.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
 import '../../../cart/data/models/pos_client_model.dart';
-import '../../domain/entities/table_entity.dart';
 import '../bloc/tables_bloc.dart';
 import '../bloc/tables_event.dart';
 import '../bloc/tables_state.dart';
@@ -17,11 +17,11 @@ import '../bloc/tables_state.dart';
 class ReservationsTabletView extends StatefulWidget {
   const ReservationsTabletView({
     super.key,
-    required this.tables,
+    required this.floors,
     required this.personList,
   });
 
-  final List<TableEntity> tables;
+  final List<FloorEntity> floors;
   final List<PosClientModel> personList;
 
   @override
@@ -30,6 +30,7 @@ class ReservationsTabletView extends StatefulWidget {
 
 class _ReservationsTabletViewState extends State<ReservationsTabletView> {
   int _selectedStatusIndex = 0;
+  bool _searchFilterOpen = true;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,6 @@ class _ReservationsTabletViewState extends State<ReservationsTabletView> {
 
         return Column(
           children: [
-            // Top Action & Search Bar Area
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -57,7 +57,7 @@ class _ReservationsTabletViewState extends State<ReservationsTabletView> {
                     onPressed: () {
                       TabletAddReservationDialog.show(
                         context,
-                        widget.tables,
+                        state.tables,
                         widget.personList,
                       );
                     },
@@ -79,20 +79,59 @@ class _ReservationsTabletViewState extends State<ReservationsTabletView> {
                     ),
                   ),
                 ),
-                SizedBox(width: spacing.md),
+                SizedBox(width: spacing.sm),
 
-                // Filter Fields (Floor, Customer, Date Range, Search)
-                Expanded(
-                  child: TabletReservationSearchFilterCard(
-                    tables: widget.tables,
-                    clients: widget.personList,
-                    onSearch: (request) {
-                      context.read<TablesBloc>().add(
-                        FetchReservationsEvent(request),
-                      );
-                    },
+                // Toggle button: show/hide the search filter card
+                SizedBox(
+                  height: 48,
+                  width: 48,
+                  child: Tooltip(
+                    message: _searchFilterOpen
+                        ? 'Hide filters'
+                        : 'Show filters',
+                    child: OutlinedButton(
+                      onPressed: () => setState(
+                        () => _searchFilterOpen = !_searchFilterOpen,
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: _searchFilterOpen
+                            ? theme.colorScheme.primary.withOpacity(.1)
+                            : null,
+                        side: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(spacing.radiusMd),
+                        ),
+                      ),
+                      child: Icon(
+                        _searchFilterOpen
+                            ? Icons.filter_alt_off_outlined
+                            : Icons.filter_alt_outlined,
+                        color: _searchFilterOpen
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface,
+                      ),
+                    ),
                   ),
                 ),
+                SizedBox(width: spacing.md),
+
+                // Filter Fields (Floor, Customer, Date Range, Search) —
+                // only takes up space in the row when open.
+                if (_searchFilterOpen)
+                  Expanded(
+                    child: TabletReservationSearchFilterCard(
+                      floors: widget.floors,
+                      clients: widget.personList,
+                      onSearch: (request) {
+                        context.read<TablesBloc>().add(
+                          FetchReservationsEvent(request),
+                        );
+                      },
+                    ),
+                  ),
               ],
             ),
             SizedBox(height: spacing.md),

@@ -32,6 +32,13 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<CancelReservationEvent>(_onCancelReservation);
     on<FetchFloorsEvent>(_onFetchFloors);
     on<FetchTablesEvent>(_onFetchTables);
+    on<SelectFloorEvent>(
+      (event, emit) => emit(state.copyWith(selectedFloor: event.floorEntity)),
+    );
+    on<SelectTableEvent>(
+      (event, emit) => emit(state.copyWith(selectedTable: event.tableEntity)),
+    );
+
     on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
     on<RestoreOrderEvent>(_onRestoreOrder);
     on<ClearRestoredInvoiceEvent>((event, emit) {
@@ -128,7 +135,13 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
         },
       );
     } catch (e) {
-      emit(state.copyWith(pindingInvoices: [], status: TablesStatus.failure));
+      emit(
+        state.copyWith(
+          pindingInvoices: [],
+          status: TablesStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -247,7 +260,13 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       errorMessage: (data) => data.errorMessageAr,
       onSuccess: (data) {
         final floorsList = data.data ?? [];
-        emit(state.copyWith(status: TablesStatus.success, floors: floorsList));
+        emit(
+          state.copyWith(
+            status: TablesStatus.success,
+            floors: floorsList,
+            selectedFloor: floorsList.isNotEmpty ? floorsList.first : null,
+          ),
+        );
         if (floorsList.isNotEmpty) {
           add(
             FetchTablesEvent(
@@ -274,9 +293,16 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       call: () => getTablesUseCase(request: event.request),
       isSuccessful: (data) => data.result == 1,
       errorMessage: (data) => data.errorMessageAr,
-      onSuccess: (data) => emit(
-        state.copyWith(status: TablesStatus.success, tables: data.data ?? []),
-      ),
+      onSuccess: (data) {
+        final tablesList = data.data ?? [];
+        emit(
+          state.copyWith(
+            status: TablesStatus.success,
+            tables: tablesList,
+            selectedTable: tablesList.isNotEmpty ? tablesList.first : null,
+          ),
+        );
+      },
     );
   }
 }

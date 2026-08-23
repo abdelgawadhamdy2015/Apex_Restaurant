@@ -1,3 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:http/http.dart' as http;
+import 'package:printing/printing.dart';
+
 import 'restaurant_constants.dart';
 import 'shared_prf_helper.dart';
 import '../router/routes.dart';
@@ -11,7 +19,7 @@ import '../../featchers/cart/data/models/pos_client_model.dart';
 import '../../featchers/cart/presentation/bloc/cart_bloc.dart';
 import '../../featchers/cart/presentation/bloc/cart_event.dart';
 import '../../featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
-import '../../featchers/login/presentation/widget/login_mobile_screen.dart';
+import '../../featchers/auth/presentation/pages/login_mobile_screen.dart';
 import '../../featchers/pos/data/models/category_model.dart';
 import '../../featchers/pos/domain/entities/menu_item.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +33,79 @@ import '../../generated/l10n.dart';
 class HelperMethods {
   static bool anyItemHasDiscount(List<OrderItem> items) {
     return items.any((item) => item.discount > 0);
+  }
+
+  /// Helper to send raw PDF file/bytes or PDF URL directly to the printing service
+  static Future<void> printDirectPdf(
+    BuildContext context,
+    dynamic pdfSource,
+    String jobName,
+  ) async {
+    if (pdfSource == null) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: "No PDF file available to print",
+        isError: true,
+      );
+      return;
+    }
+
+    try {
+      Uint8List? pdfBytes;
+
+      if (pdfSource is Uint8List) {
+        pdfBytes = pdfSource;
+      } else if (pdfSource is File) {
+        pdfBytes = await pdfSource.readAsBytes();
+      } else if (pdfSource is String) {
+        final uri = Uri.tryParse(pdfSource);
+
+        // 1. Web / Remote URL
+        if (uri != null && (uri.scheme == 'http' || uri.scheme == 'https')) {
+          final response = await http.get(uri);
+          if (response.statusCode == 200) {
+            pdfBytes = response.bodyBytes;
+          } else {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: "Failed to download PDF (${response.statusCode})",
+              isError: true,
+            );
+            return;
+          }
+        }
+        // 2. Local File Path
+        else if (pdfSource.startsWith('/')) {
+          final file = File(pdfSource);
+          if (await file.exists()) {
+            pdfBytes = await file.readAsBytes();
+          }
+        }
+        // 3. Base64 String
+        else {
+          pdfBytes = base64Decode(pdfSource);
+        }
+      }
+
+      if (pdfBytes != null && pdfBytes.isNotEmpty) {
+        await Printing.layoutPdf(
+          onLayout: (format) async => pdfBytes!,
+          name: jobName,
+        );
+      } else {
+        HelperMethods.showSnackBar(
+          context: context,
+          message: "Could not read PDF file bytes.",
+          isError: true,
+        );
+      }
+    } catch (e) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: "Error printing file: $e.",
+        isError: true,
+      );
+    }
   }
 
   static Future<void> openPicker(

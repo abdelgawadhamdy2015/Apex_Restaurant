@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+
 import '../../../../core/di/debandancy_injection.dart';
 import '../../../../core/router/routes.dart';
 import '../../../home/presentation/widgets/side_nav.dart';
@@ -20,8 +22,6 @@ class PosMenuScreen extends StatefulWidget {
 }
 
 class _PosMenuScreenState extends State<PosMenuScreen> {
-  int _selectedNavIndex = 2;
-
   @override
   void initState() {
     super.initState();
@@ -31,34 +31,37 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      drawer: SideNav(
-        changeLanguage: widget.changeLanguage,
-        currentRoute: Routes.posScreen,
-      ),
-      body: _getWidget(),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Builder(
-            builder: (bottomNavContext) => PosBottomNavBar(
-              currentIndex: _selectedNavIndex,
-              onTap: (m) {
-                setState(() {
-                  _selectedNavIndex = m;
-                });
-              },
-            ),
+    return BlocBuilder<PosBloc, PosState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          drawer: SideNav(
+            changeLanguage: widget.changeLanguage,
+            currentRoute: Routes.posScreen,
           ),
-        ],
-      ),
+          body: _getWidget(state),
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Builder(
+                builder: (bottomNavContext) => PosBottomNavBar(
+                  currentIndex: state.selectedNavIndex,
+                  onTap: (m) {
+                    context.read<PosBloc>().add(
+                      SelectedNavIndexEvent(selectedNavIndex: m),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _getWidget() {
-    switch (_selectedNavIndex) {
+  Widget _getWidget(PosState state) {
+    switch (state.selectedNavIndex) {
       case 0:
         return MoreOptions();
 

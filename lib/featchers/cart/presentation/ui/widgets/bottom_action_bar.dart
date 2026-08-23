@@ -164,7 +164,7 @@ class BottomActionBar extends StatelessWidget {
                         borderRadius: BorderRadius.circular(spacing.radiusMd),
                       ),
                     ),
-                    onPressed: () => _checkout(context),
+                    onPressed: canEdit ? () => _checkout(context) : null,
                     icon: Icon(Icons.payments_outlined, size: icons.md),
                     label: Text(
                       lang.checkout,
@@ -190,23 +190,27 @@ class BottomActionBar extends StatelessWidget {
                       borderRadius: BorderRadius.circular(spacing.radiusMd),
                     ),
                   ),
-                  onPressed: () {
-                    final state = context.read<CartBloc>().state;
+                  onPressed: canEdit
+                      ? () {
+                          final state = context.read<CartBloc>().state;
 
-                    if (selectedOrderType == CartOrderType.DINE_IN) {
-                      context.read<CartBloc>().add(
-                        SaveTableOrderEvent(
-                          request: state.toSaveRestaurantPosInvoiceRequest,
-                        ),
-                      );
-                    } else {
-                      context.read<CartBloc>().add(
-                        HoldOrderEvent(
-                          request: state.toSaveRestaurantPosInvoiceRequest,
-                        ),
-                      );
-                    }
-                  },
+                          if (selectedOrderType == CartOrderType.DINE_IN) {
+                            context.read<CartBloc>().add(
+                              SaveTableOrderEvent(
+                                request:
+                                    state.toSaveRestaurantPosInvoiceRequest,
+                              ),
+                            );
+                          } else {
+                            context.read<CartBloc>().add(
+                              HoldOrderEvent(
+                                request:
+                                    state.toSaveRestaurantPosInvoiceRequest,
+                              ),
+                            );
+                          }
+                        }
+                      : null,
                   icon: Icon(
                     Icons.pause_circle_outline,
                     color: theme.colorScheme.onPrimary,

@@ -43,7 +43,12 @@ class LoadMorePreviousInvoicesEvent extends OrdersEvent {
 class RestoreOrderEvent extends OrdersEvent {
   final int invoiceId;
   final bool canEdite;
-  const RestoreOrderEvent({required this.invoiceId, this.canEdite = true});
+  final bool isPending;
+  const RestoreOrderEvent({
+    required this.invoiceId,
+    this.canEdite = true,
+    this.isPending = false,
+  });
 }
 
 class DeleteOrderEvent extends OrdersEvent {

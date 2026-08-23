@@ -501,5 +501,6 @@
     "unknown": "Unknown",
     "paid": "Paid",
     "remaining": "Remaining",
-    "discount": "Discount"
+    "discount": "Discount",
+    "selectFloor": "Select Floor"
 }

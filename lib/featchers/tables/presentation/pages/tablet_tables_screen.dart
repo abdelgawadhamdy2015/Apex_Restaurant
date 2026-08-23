@@ -35,7 +35,7 @@ class TablesTabletScreen extends StatefulWidget {
 
 class _TablesTabletScreenState extends State<TablesTabletScreen> {
   int _selectedFloorIndex = 0;
-  int _selectedFilterIndex = 0;
+  final int _selectedFilterIndex = 0;
 
   @override
   void initState() {
@@ -159,64 +159,12 @@ class _TablesTabletScreenState extends State<TablesTabletScreen> {
                   ]
                   // TAB 2: Reservations View
                   else ...[
-                    // Search & Actions Bar
                     Expanded(
                       child: ReservationsTabletView(
-                        tables: state.tables,
+                        floors: state.floors,
                         personList: context.read<CartBloc>().state.persons,
                       ),
                     ),
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: ReservationSearchFilterCard(
-                    //         tables: state.tables,
-                    //         clients: widget.personList,
-                    //         onSearch: (GetReservationRequest request) {
-                    //           context.read<TablesBloc>().add(
-                    //             FetchReservationsEvent(request),
-                    //           );
-                    //         },
-                    //       ),
-                    //     ),
-                    //     SizedBox(width: spacing.md),
-                    //     SizedBox(
-                    //       height: 48,
-                    //       child: AddReservationButton(
-                    //         onPressed: () {
-                    //           AddReservationBottomSheet.show(
-                    //             context,
-                    //             state.tables,
-                    //             widget.personList,
-                    //           );
-                    //         },
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    // SizedBox(height: spacing.md),
-
-                    // // Filter Status Pills
-                    // ReservationStatusFilters(
-                    //   selectedIndex: _selectedFilterIndex,
-                    //   reservations: state.reservations,
-                    //   onFilterChanged: (index) =>
-                    //       setState(() => _selectedFilterIndex = index),
-                    // ),
-                    // SizedBox(height: spacing.md),
-
-                    // // Reservations Grid
-                    // Expanded(
-                    //   child: isLoading
-                    //       ? const Center(child: CircularProgressIndicator())
-                    //       : SingleChildScrollView(
-                    //           child: ReservationCardsList(
-                    //             reservations: _filterReservations(
-                    //               state.reservations,
-                    //             ),
-                    //           ),
-                    //         ),
-                    // ),
                   ],
                 ],
               ),

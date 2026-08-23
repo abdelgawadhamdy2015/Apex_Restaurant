@@ -3,6 +3,9 @@ import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/tablet_orders_screen.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/screens/customers_tablet_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_menu_tab.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_more_option.dart';
@@ -23,8 +26,6 @@ class PosTabletMenuScreen extends StatefulWidget {
 }
 
 class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
-  int _selectedNavIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -42,6 +43,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final homeState = context.read<HomeBloc>().state;
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
@@ -59,55 +61,66 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
           },
         ),
       ),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Row(
-          children: [
-            Expanded(flex: 1, child: _buildSideNavigationRail(theme, isDark)),
-            VerticalDivider(
-              width: 1,
-              thickness: 1,
-              color: theme.dividerColor.withOpacity(0.1),
-            ),
-            Expanded(
-              flex: 9,
-              child: IndexedStack(
-                index: _selectedNavIndex,
-                children: [
-                  PosTabletMenuTab(),
-                  OrdersTabletScreen(),
-                  CustomersTabletView(),
-                  TablesTabletScreen(
-                    inCartScreen: false,
-                    personList: context.read<CartBloc>().state.persons,
-                    branchId: context
-                        .read<HomeBloc>()
-                        .state
-                        .selectedEmployeeBranch!
-                        .branchId,
+      body: BlocBuilder<PosBloc, PosState>(
+        builder: (context, state) {
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: _buildSideNavigationRail(theme, isDark, state),
+                ),
+                VerticalDivider(
+                  width: 1,
+                  thickness: 1,
+                  color: theme.dividerColor.withOpacity(0.1),
+                ),
+                Expanded(
+                  flex: 9,
+                  child: IndexedStack(
+                    index: state.selectedNavIndex,
+                    children: [
+                      PosTabletMenuTab(),
+                      OrdersTabletScreen(),
+                      CustomersTabletView(),
+                      TablesTabletScreen(
+                        inCartScreen: false,
+                        personList: context.read<CartBloc>().state.persons,
+                        branchId: context
+                            .read<HomeBloc>()
+                            .state
+                            .selectedEmployeeBranch!
+                            .branchId,
+                      ),
+                      TabletMoreOptions(),
+                    ],
                   ),
-                  TabletMoreOptions(),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildSideNavigationRail(ThemeData theme, bool isDark) {
+  Widget _buildSideNavigationRail(
+    ThemeData theme,
+    bool isDark,
+    PosState posState,
+  ) {
     return Container(
       color: theme.colorScheme.surface,
       padding: EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
           const SizedBox(height: 20),
-          _buildRailItem(0, Icons.restaurant_menu, 'القائمة', theme),
-          _buildRailItem(1, Icons.receipt_long, 'الطلبات', theme),
-          _buildRailItem(2, Icons.people, 'العملاء', theme),
-          _buildRailItem(3, Icons.table_bar, 'الطاولات', theme),
-          _buildRailItem(4, Icons.more_horiz, 'المزيد', theme),
+          _buildRailItem(0, Icons.restaurant_menu, 'القائمة', theme, posState),
+          _buildRailItem(1, Icons.receipt_long, 'الطلبات', theme, posState),
+          _buildRailItem(2, Icons.people, 'العملاء', theme, posState),
+          _buildRailItem(3, Icons.table_bar, 'الطاولات', theme, posState),
+          _buildRailItem(4, Icons.more_horiz, 'المزيد', theme, posState),
           const SizedBox(height: 20),
         ],
       ),
@@ -119,11 +132,14 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     IconData icon,
     String label,
     ThemeData theme,
+    PosState posState,
   ) {
-    final isSelected = _selectedNavIndex == index;
+    final isSelected = posState.selectedNavIndex == index;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
-      onTap: () => setState(() => _selectedNavIndex = index),
+      onTap: () => context.read<PosBloc>().add(
+        SelectedNavIndexEvent(selectedNavIndex: index),
+      ),
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
