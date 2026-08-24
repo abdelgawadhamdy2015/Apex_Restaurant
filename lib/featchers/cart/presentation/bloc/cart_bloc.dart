@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
@@ -50,6 +49,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SelectPersonEvent>(_onSelectPerson);
+    on<ClearVoucherDiscountEvent>(
+      (event, emit) => emit(
+        state.copyWith(voucherData: null, clearVoucherDiscountValue: true),
+      ),
+    );
     on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
       emit(state.copyWith(settingsModel: event.settings));
@@ -92,7 +96,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<ChangeAddressEvent>(_onChangeAddress);
     on<EditCartItemEvent>(_onEditCartItem);
     on<ApplyDiscountEvent>(_onApplyDiscount);
-    on<ApplyVoucherDiscountEvent>(_onApplyCouponDiscount);
+    on<ApplyVoucherDiscountEvent>(_onApplyVoucherDiscount);
   }
 
   void _onChangeAddress(ChangeAddressEvent event, Emitter<CartState> emit) {
@@ -132,7 +136,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) {
     final data = event.data;
-    log("can edit: ${event.canEdit}");
     // 1. Determine discount strategy based on restored invoice data
     final hasInvoiceDiscount =
         data.restaurantPosDiscountRequest != null &&
@@ -349,7 +352,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         restoredInvoiceDate: null,
         orderNumber: 0,
         isPending: false,
-        clearCouponDiscountValue: true,
+        clearVoucherDiscountValue: true,
         clearCustomerDiscount: true,
         clearRestaurantPosDiscountRequest: true,
         clearInvoiceId: true,
@@ -596,22 +599,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         couponDiscountvalue: 0.0, // Reset coupon discount
         selectedDiscountType: DiscountTypeEnum.direct,
         activeDiscountModel: null,
+        voucherData: null,
       ),
     );
   }
 
-  Future<void> _onApplyCouponDiscount(
+  Future<void> _onApplyVoucherDiscount(
     ApplyVoucherDiscountEvent event,
     Emitter<CartState> emit,
   ) async {
-    emit(state.copyWith(status: CartStatus.loading));
     final response = await checkVoucherUseCase(event.request);
 
     response.when(
       success: (data) {
         if (data.result == 1) {
           emit(
-            state.copyWith(voucherData: data.data, status: CartStatus.success),
+            state.copyWith(
+              selectedDiscountType: DiscountTypeEnum.coupon,
+              voucherData: data.data,
+            ),
           );
         } else {
           emit(

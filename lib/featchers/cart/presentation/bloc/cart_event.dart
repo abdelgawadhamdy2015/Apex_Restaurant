@@ -191,6 +191,13 @@ class ApplyVoucherDiscountEvent extends CartEvent {
   List<Object?> get props => [request];
 }
 
+class ClearVoucherDiscountEvent extends CartEvent {
+  const ClearVoucherDiscountEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class AddOrderItemToCartEvent extends CartEvent {
   final OrderItem item;
   const AddOrderItemToCartEvent(this.item);

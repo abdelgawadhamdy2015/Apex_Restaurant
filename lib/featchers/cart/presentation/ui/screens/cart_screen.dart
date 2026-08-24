@@ -134,7 +134,6 @@ class _CartContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 700;
@@ -185,7 +184,8 @@ class _CartContent extends StatelessWidget {
                           dynamicIsActive: state.dynamicDiscountIsActive,
                           dynamicDiscountModel: state.activeDiscountModel,
                         ),
-                        SizedBox(height: spacing.md),
+
+                        SizedBox(height: spacing.xxs),
                         const OrderSummaryCard(),
                       ],
                     ),

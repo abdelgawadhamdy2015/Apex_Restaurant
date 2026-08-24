@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/router/routes.dart';
@@ -182,9 +180,7 @@ class _SessionStartContent extends StatelessWidget {
           final bool hasActiveSession =
               posState.currentSessionId != null &&
               posState.currentSessionId != 0;
-          log(
-            " hasActive : $hasActiveSession , id : ${posState.currentSessionId}",
-          );
+
           return Center(
             child: SingleChildScrollView(
               padding: EdgeInsets.all(spacing.lg),

@@ -54,6 +54,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(vat) => "ضريبة القيمة المضافة : % ${vat} ";
 
+  static String m16(value) => "تم تطبيق القسيمة (${value} ريال)";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "Email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
@@ -779,6 +781,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "visa": MessageLookupByLibrary.simpleMessage("فيزا"),
     "voucher": MessageLookupByLibrary.simpleMessage("قسيمة شراء"),
+    "voucherApplied": m16,
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "يرجى الانتظار حتي يتم تحميل بيانات الموقع الحالى",
     ),

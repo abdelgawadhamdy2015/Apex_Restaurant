@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/shared_prf_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
@@ -122,8 +120,6 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
     ApiConstants.userId = int.parse(userInfo?.userId ?? '0');
     ApiConstants.empId = userInfo?.employeesId;
     DioFactory.setToken(token);
-
-    log('Login success — userId: ${ApiConstants.userId}');
 
     // ── Navigate ──────────────────────────────────────────────────────────
     if (!context.mounted) return;

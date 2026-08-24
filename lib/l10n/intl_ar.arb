@@ -502,5 +502,6 @@
     "paid": "المدفوع",
     "remaining": "المتبقي",
     "discount": "الخصم",
-    "selectFloor": "اختر الطابق"
+    "selectFloor": "اختر الطابق",
+    "voucherApplied": "تم تطبيق القسيمة ({value} ريال)"
 }

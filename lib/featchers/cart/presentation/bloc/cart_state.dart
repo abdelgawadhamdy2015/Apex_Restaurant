@@ -40,7 +40,6 @@ class CartState extends Equatable {
   final List<OrderItem> items;
   final List<DynamicDiscountModel> activeDiscounts;
   final RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
-  final double? couponDiscountvalue;
   final DynamicDiscountModel? activeDiscountModel;
   final RestaurantPosDiscountRequest? customerDiscount;
   final CheckVoucherResponse? voucherData;
@@ -72,7 +71,6 @@ class CartState extends Equatable {
 
     this.status = CartStatus.initial,
     this.items = const [],
-    this.couponDiscountvalue,
     this.fromBranchDateTime,
     this.waiters = const [],
     this.deliveryAgents = const [],
@@ -261,8 +259,8 @@ class CartState extends Equatable {
           vatRatio: defaultVatRatio,
           discount: resolvedDiscount.value,
           discountType: resolvedDiscount.isPercentage
-              ? DiscountType.percentage
-              : DiscountType.fixedAmount,
+              ? DiscountNatural.percentage
+              : DiscountNatural.fixedAmount,
           itemTypeId: item.menuItem.itemTypeId ?? 0,
           isTobacco: item.menuItem.isTobaccoTax ?? false,
         ),
@@ -320,27 +318,27 @@ class CartState extends Equatable {
     if (items.isEmpty) return null;
 
     double discountOnTotal = 0.0;
-    DiscountType calcDiscountType = DiscountType.percentage;
+    DiscountNatural calcDiscountType = DiscountNatural.percentage;
 
     switch (activeDiscountSource) {
       case DiscountSource.dynamic:
         final matchedDiscount = matchedDynamicDiscount;
         discountOnTotal = matchedDiscount?.discount?.discountValue ?? 0.0;
         calcDiscountType = matchedDiscount?.discount?.discountNatural == 1
-            ? DiscountType.percentage
-            : DiscountType.fixedAmount;
+            ? DiscountNatural.percentage
+            : DiscountNatural.fixedAmount;
         break;
       case DiscountSource.customer:
         discountOnTotal = customerDiscount?.value ?? 0.0;
         calcDiscountType = customerDiscount?.type == 1
-            ? DiscountType.percentage
-            : DiscountType.fixedAmount;
+            ? DiscountNatural.percentage
+            : DiscountNatural.fixedAmount;
         break;
       case DiscountSource.manualInvoice:
         discountOnTotal = restaurantPosDiscountRequest?.value ?? 0.0;
         calcDiscountType = restaurantPosDiscountRequest?.type == 1
-            ? DiscountType.percentage
-            : DiscountType.fixedAmount;
+            ? DiscountNatural.percentage
+            : DiscountNatural.fixedAmount;
         break;
       case DiscountSource.size:
       case DiscountSource.manualItem:
@@ -352,11 +350,15 @@ class CartState extends Equatable {
     // إدخال القسيمة/الكوبون
     VoucherInput? voucherInput;
     if (selectedDiscountType == DiscountTypeEnum.coupon &&
-        couponDiscountvalue != null) {
+        voucherData != null) {
       voucherInput = VoucherInput(
-        code: 'COUPON',
-        discountType: DiscountType.fixedAmount,
-        value: couponDiscountvalue!,
+        code: voucherData!.voucherCode!,
+        discountType: voucherData!.discountNatural == 1
+            ? DiscountNatural.percentage
+            : DiscountNatural.fixedAmount,
+        value: voucherData!.discountValue ?? 0,
+        minimumCharge: voucherData?.minimumCharge ?? 0,
+        maximumDiscount: voucherData?.maximumDiscountValue ?? 0,
       );
     }
 
@@ -440,12 +442,14 @@ class CartState extends Equatable {
 
     if (appliedDiscount == null &&
         selectedDiscountType == DiscountTypeEnum.coupon &&
-        couponDiscountvalue != null) {
-      appliedDiscount = RestaurantPosDiscountRequest(
-        type: 2,
-        value: couponDiscountvalue ?? 0,
-      );
-      voucherCode = 'COUPON';
+        voucherData != null) {
+      if ((voucherData?.minimumCharge ?? 0) < netSubtotal) {
+        voucherCode = voucherData?.voucherCode;
+        appliedDiscount = RestaurantPosDiscountRequest(
+          type: voucherData?.discountNatural ?? 0,
+          value: voucherData?.discountValue ?? 0,
+        );
+      }
     }
 
     final invoiceItems = <RestaurantPosInvoiceItemRequest>[];
@@ -540,7 +544,9 @@ class CartState extends Equatable {
       deliveryCompanyId: selectedOrderType == CartOrderType.DELIVERY_COMPANY
           ? selectedDeliveryCompany?.id
           : null,
-      voucherCode: voucherCode,
+      voucherCode: selectedDiscountType == DiscountTypeEnum.coupon
+          ? voucherCode
+          : null,
       clientId: selectedPerson?.id ?? 0,
       personAddressId: selectedOrderType == CartOrderType.DELIVERY
           ? (int.tryParse(selectedAddress?.id.toString() ?? '') ?? 0)
@@ -551,7 +557,11 @@ class CartState extends Equatable {
       orderReceivedTime: selectedOrderType == CartOrderType.FROMBRANCH
           ? fromBranchDateTime
           : null,
-      discount: appliedDiscount?.value == 0 ? null : appliedDiscount,
+      discount:
+          appliedDiscount?.value == 0 ||
+              selectedDiscountType != DiscountTypeEnum.direct
+          ? null
+          : appliedDiscount,
       paidAmount: grandTotal,
       totalInvoicePrice: grandTotal,
       invoiceDiscountId: activeInvoiceDiscountId,
@@ -608,7 +618,7 @@ class CartState extends Equatable {
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
     bool clearCustomerDiscount = false,
-    bool clearCouponDiscountValue = false,
+    bool clearVoucherDiscountValue = false,
     bool clearAddress = false,
     bool clearInvoiceId = false,
   }) {
@@ -622,9 +632,6 @@ class CartState extends Equatable {
       status: status ?? this.status,
       items: items ?? this.items,
       activeDiscounts: activeDiscounts ?? this.activeDiscounts,
-      couponDiscountvalue: clearCouponDiscountValue
-          ? null
-          : (couponDiscountvalue ?? this.couponDiscountvalue),
       justRestored: justRestored ?? this.justRestored,
       canEdit: canEdit ?? this.canEdit,
       activeDiscountModel: clearActiveDiscountModel
@@ -639,7 +646,9 @@ class CartState extends Equatable {
       selectedWaiter: selectedWaiter ?? this.selectedWaiter,
       selectedDeliveryMan: selectedDeliveryMan ?? this.selectedDeliveryMan,
       discountAmount: discountAmount ?? this.discountAmount,
-      voucherData: voucherData ?? this.voucherData,
+      voucherData: clearVoucherDiscountValue
+          ? null
+          : voucherData ?? this.voucherData,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage,
@@ -674,7 +683,6 @@ class CartState extends Equatable {
     status,
     items,
     activeDiscounts,
-    couponDiscountvalue,
     restaurantPosDiscountRequest,
     customerDiscount,
     activeDiscountModel,

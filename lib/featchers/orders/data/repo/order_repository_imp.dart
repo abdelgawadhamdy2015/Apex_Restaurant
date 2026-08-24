@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:flutter/material.dart';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
@@ -25,7 +25,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -39,7 +39,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -53,7 +53,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -70,7 +70,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }

@@ -38,7 +38,6 @@ class SignalRService {
 
     try {
       await _hubConnection!.start();
-      log('SignalR connected — state: ${_hubConnection?.state?.name}');
       log('Connected ID: ${_hubConnection?.connectionId}');
 
       // ── Assign global AFTER successful start ──────────────────────────────

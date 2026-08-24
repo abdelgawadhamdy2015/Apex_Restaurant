@@ -502,5 +502,6 @@
     "paid": "Paid",
     "remaining": "Remaining",
     "discount": "Discount",
-    "selectFloor": "Select Floor"
+    "selectFloor": "Select Floor",
+    "voucherApplied": "Voucher applied ({value} SAR)"
 }

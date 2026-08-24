@@ -218,6 +218,41 @@ class _DiscountSectionState extends State<DiscountSection> {
               ),
             ],
           ),
+          SizedBox(height: spacing.xs),
+
+          if (state.voucherData != null &&
+              state.selectedDiscountType == DiscountTypeEnum.coupon)
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: spacing.md,
+                vertical: spacing.xxs,
+              ),
+              decoration: BoxDecoration(
+                color: context.appExtraTheme.greenBackground.withOpacity(.3),
+                border: BoxBorder.all(
+                  color: context.appExtraTheme.greenBackground,
+                ),
+                borderRadius: BorderRadius.circular(spacing.radiusLg),
+              ),
+              child: Row(
+                children: [
+                  Text(
+                    lang.voucherApplied(state.voucherData?.discountValue ?? 0),
+                  ),
+                  Spacer(),
+                  InkWell(
+                    onTap: () {
+                      context.read<CartBloc>().add(ClearVoucherDiscountEvent());
+                      _discountCodeController.clear();
+                    },
+                    child: Icon(
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

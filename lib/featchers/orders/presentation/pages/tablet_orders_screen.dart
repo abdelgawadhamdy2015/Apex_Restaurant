@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/featchers/orders/presentation/widgets/tablet_previous_orders.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
@@ -83,7 +81,6 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
 
     final cartData = restored.toRestoredCartData(context);
     context.read<PosBloc>().add(SelectedNavIndexEvent(selectedNavIndex: 0));
-    log("can edit : ${state.restoredInvoice?.invoice?.canEdit}");
     context.read<CartBloc>().add(
       SyncRestoredInvoiceEvent(
         cartData,

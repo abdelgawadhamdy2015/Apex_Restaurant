@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
@@ -45,7 +44,7 @@ class TablesRepositoryImpl implements TablesRepository {
         ),
       );
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -59,7 +58,7 @@ class TablesRepositoryImpl implements TablesRepository {
       final response = await remoteDataSource.addReservation(request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -83,7 +82,7 @@ class TablesRepositoryImpl implements TablesRepository {
       final response = await remoteDataSource.editReservation(request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -96,7 +95,7 @@ class TablesRepositoryImpl implements TablesRepository {
       final response = await remoteDataSource.cancelReservation(request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -121,7 +120,7 @@ class TablesRepositoryImpl implements TablesRepository {
         ),
       );
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -146,7 +145,7 @@ class TablesRepositoryImpl implements TablesRepository {
         ),
       );
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -159,7 +158,7 @@ class TablesRepositoryImpl implements TablesRepository {
           .getRestaurantPosBookingTableInvoice(request: request);
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -173,7 +172,7 @@ class TablesRepositoryImpl implements TablesRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
