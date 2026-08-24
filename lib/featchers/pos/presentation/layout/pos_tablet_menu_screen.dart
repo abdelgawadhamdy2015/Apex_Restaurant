@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/tablet_orders_screen.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
@@ -26,6 +29,24 @@ class PosTabletMenuScreen extends StatefulWidget {
 }
 
 class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
+  static const int _pageSize = 100;
+  static const Duration _searchDebounceDuration = Duration(milliseconds: 400);
+  static const Duration _loadMoreThrottleDuration = Duration(milliseconds: 600);
+
+  Timer? _searchDebounce;
+
+  /// The search key currently applied to the item list. Kept here (rather
+  /// than only inside the TextField) so pagination requests triggered while
+  /// a filter is active keep reusing the same key instead of silently
+  /// dropping back to an unfiltered list.
+  String _currentSearchKey = '';
+  int _currentPage = 1;
+
+  /// Simple timestamp-based throttle guard so rapid-fire "load more"
+  /// triggers (e.g. multiple scroll events near the bottom of the grid)
+  /// don't fan out into duplicate in-flight requests.
+  DateTime? _lastLoadMoreAt;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +60,58 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   }
 
   @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    super.dispose();
+  }
+
+  /// Debounced search handler. Waits for the user to stop typing before
+  /// firing a request, and always resets pagination back to page 1 since a
+  /// new search key means a brand-new result set.
+  void _onSearchChanged(String value) {
+    final trimmed = value.trim();
+
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(_searchDebounceDuration, () {
+      if (!mounted) return;
+      // Skip re-fetching if the debounced value didn't actually change
+      // (e.g. user typed then quickly deleted back to the same text).
+      if (trimmed == _currentSearchKey && _currentPage == 1) return;
+
+      _currentSearchKey = trimmed;
+      _currentPage = 1;
+      _fetchItems(page: 1, searchKey: _currentSearchKey);
+    });
+  }
+
+  /// Loads the next page for whatever search key is currently active.
+  /// Throttled so it can be safely called from a scroll listener without
+  /// worrying about duplicate calls near the end of the list.
+  void loadNextPage() {
+    final now = DateTime.now();
+    if (_lastLoadMoreAt != null &&
+        now.difference(_lastLoadMoreAt!) < _loadMoreThrottleDuration) {
+      return;
+    }
+    _lastLoadMoreAt = now;
+
+    _currentPage += 1;
+    _fetchItems(page: _currentPage, searchKey: _currentSearchKey);
+  }
+
+  void _fetchItems({required int page, required String searchKey}) {
+    context.read<PosBloc>().add(
+      LoadItemsEvent(
+        GetItemsRequest(
+          pageNumber: page,
+          pageSize: _pageSize,
+          searchKey: searchKey.isEmpty ? null : searchKey,
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -49,6 +122,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: TabletPosTopHeader(
+          onSearchChanged: _onSearchChanged,
           branchName: homeState.selectedEmployeeBranch?.arabicName ?? "",
           userRole: homeState.userDataModel?.employees?.arabicName ?? "",
           onSettingsPressed: () {

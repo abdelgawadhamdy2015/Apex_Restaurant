@@ -26,6 +26,14 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
       }
     });
+    on<SelectDateEvent>((event, emit) {
+      emit(
+        state.copyWith(
+          fromDate: event.isFrom ? event.dateTime : null,
+          toDate: event.isFrom ? null : event.dateTime,
+        ),
+      );
+    });
 
     on<FetchPreviousInvoicesEvent>(_onPreviousInvoices);
     on<LoadMorePreviousInvoicesEvent>(_onLoadMorePrevious);
@@ -68,7 +76,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     FetchPreviousInvoicesEvent event,
     Emitter<OrdersState> emit,
   ) async {
-    final request = _withPage(event.request, 1);
+    final request = _withPage(event.request, event.request.pageNumber ?? 1);
     emit(
       state.copyWith(
         status: OrdersStatus.loading,
@@ -87,6 +95,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
               state.copyWith(
                 previousOrders: items,
                 isLoading: false,
+                totalPreviousCount: data.totalCount,
                 status: OrdersStatus.sussess,
                 previousOrdersHasMore: items.length >= kOrdersPageSize,
               ),
@@ -207,6 +216,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
             emit(
               state.copyWith(
                 pindingInvoices: items,
+                totalPindingCount: data.totalCount,
                 isLoading: false,
                 status: OrdersStatus.sussess,
                 pindingInvoicesHasMore: items.length >= kOrdersPageSize,

@@ -222,6 +222,9 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetDynamicInvoiceDiscountUseCase(getIt<CartRepository>()),
   );
+  getIt.registerLazySingleton(
+    () => CheckVoucherUseCase(getIt<CartRepository>()),
+  );
 
   // Payment
   getIt.registerLazySingleton(
@@ -325,6 +328,7 @@ Future<void> setupGetIt() async {
       updatePosClientUseCase: getIt<UpdatePosClientUseCase>(),
       getDynamicInvoiceDiscountUseCase:
           getIt<GetDynamicInvoiceDiscountUseCase>(),
+      checkVoucherUseCase: getIt<CheckVoucherUseCase>(),
     ),
   );
 

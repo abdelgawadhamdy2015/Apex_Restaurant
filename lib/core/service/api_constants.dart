@@ -46,6 +46,10 @@ class ApiConstants {
       'api/Store/Employee/GetListOfDeliveryMen';
   static const String applyDiscountCode = 'api/Order/ApplyDiscount';
   static const String holdOrder = 'api/Order/Hold';
+  static const String getAllVouchers =
+      'api/Restaurants/Vouchers/GetAllVouchers';
+  static const String checkPOSVoucher =
+      'api/Restaurants/Vouchers/CheckPOSVoucher';
 
   static const String getAllPersons = "api/Store/Persons/GetListOfPersonsPOS";
   static const String getPendingRestaurantPosInvoiceDetails =

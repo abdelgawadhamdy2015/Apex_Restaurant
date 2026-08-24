@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 
 import '../../../../core/calculation/restaurant_invoice_calculator.dart';
@@ -42,7 +43,7 @@ class CartState extends Equatable {
   final double? couponDiscountvalue;
   final DynamicDiscountModel? activeDiscountModel;
   final RestaurantPosDiscountRequest? customerDiscount;
-
+  final CheckVoucherResponse? voucherData;
   final List<WaiterModel> waiters;
   final List<WaiterModel> deliveryAgents;
   final List<DeliveryCompanyModel> companiesList;
@@ -100,6 +101,7 @@ class CartState extends Equatable {
     this.invoiceCode,
     this.voucherId,
     this.restoredInvoiceDate,
+    this.voucherData,
   });
 
   // الخصومات الديناميكية
@@ -584,7 +586,7 @@ class CartState extends Equatable {
     List<WaiterModel>? waiters,
     List<WaiterModel>? deliveryAgents,
     List<DeliveryCompanyModel>? companiesList,
-
+    CheckVoucherResponse? voucherData,
     List<PosClientModel>? persons,
     PosClientModel? selectedPerson,
     DeliveryCompanyModel? selectedDeliveryCompany,
@@ -637,6 +639,7 @@ class CartState extends Equatable {
       selectedWaiter: selectedWaiter ?? this.selectedWaiter,
       selectedDeliveryMan: selectedDeliveryMan ?? this.selectedDeliveryMan,
       discountAmount: discountAmount ?? this.discountAmount,
+      voucherData: voucherData ?? this.voucherData,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
       errorMessage: errorMessage,
@@ -696,5 +699,6 @@ class CartState extends Equatable {
     invoiceCode,
     orderNumber,
     restoredInvoiceDate,
+    voucherData,
   ];
 }

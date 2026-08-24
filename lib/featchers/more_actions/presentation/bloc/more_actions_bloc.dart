@@ -19,6 +19,9 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
     required this.addPOSTotalReturnInvoiceUseCase,
   }) : super(const MoreActionsState()) {
     on<FetchAllInvoicesEvent>(_onFetchInvoices);
+    on<SelectInvoiceDateEvent>(
+      (event, emit) => emit(state.copyWith(invoiceDate: event.invoiceDate)),
+    );
   }
 
   Future<void> _onFetchInvoices(

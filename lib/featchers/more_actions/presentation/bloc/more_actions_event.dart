@@ -12,8 +12,17 @@ abstract class MoreActionsEvent extends Equatable {
 class FetchAllInvoicesEvent extends MoreActionsEvent {
   final GetAllPosInvoiceRequest request;
   const FetchAllInvoicesEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
 }
 
 class LoadMoreAllInvoicesEvent extends MoreActionsEvent {
   const LoadMoreAllInvoicesEvent();
+}
+
+class SelectInvoiceDateEvent extends MoreActionsEvent {
+  final DateTime invoiceDate;
+  const SelectInvoiceDateEvent({required this.invoiceDate});
+  @override
+  List<Object?> get props => [invoiceDate];
 }

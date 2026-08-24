@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
@@ -27,6 +29,10 @@ abstract class CartRepository {
 
   Future<ApiResult<BaseResponse<DiscountResultModel?>>> applyDiscount(
     ApplyDiscountRequestModel request,
+  );
+
+  Future<ApiResult<BaseResponse<CheckVoucherResponse?>>> checkVoucher(
+    CheckVoucherRequest request,
   );
 
   Future<ApiResult<BaseResponse<dynamic>>> savePendingRestaurantPosInvoice(

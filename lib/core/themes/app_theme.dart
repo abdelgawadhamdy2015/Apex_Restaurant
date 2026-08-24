@@ -1,4 +1,4 @@
-import 'app_button_theme.dart';
+import 'app_extra_theme.dart';
 import 'app_icon_theme.dart';
 import 'app_spacing_theme.dart';
 import 'app_text_style.dart';
@@ -50,6 +50,7 @@ class AppTheme {
           togelBackground: AppColors.blueTint,
           totalAmountColor: AppColors.white,
           successGradient: AppColors.lightSuceesGrad,
+          shadowColor: AppColors.primaryLight.withOpacity(.2),
         ),
         AppTextStyles.build(
           scale: fontScale,
@@ -144,6 +145,7 @@ class AppTheme {
           togelBackground: AppColors.onSurface,
           totalAmountColor: accent.withOpacity(.2),
           successGradient: AppColors.darkSuceesGrad,
+          shadowColor: AppColors.primaryDark,
         ),
         AppTextStyles.build(
           scale: fontScale,

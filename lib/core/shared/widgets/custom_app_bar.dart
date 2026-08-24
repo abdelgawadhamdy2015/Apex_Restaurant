@@ -22,7 +22,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     final iconSizes = context.iconSizes;
 
     return AppBar(
-      backgroundColor: theme.colorScheme.onSurface,
+      backgroundColor: theme.colorScheme.surface,
       elevation: 0,
       automaticallyImplyLeading: false,
       foregroundColor: theme.colorScheme.onSurface,

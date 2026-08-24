@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
@@ -160,6 +162,20 @@ class CartRepositoryImpl implements CartRepository {
   getDynamicInvoiceDiscount() async {
     try {
       final response = await _remoteDataSource.getDynamicInvoiceDiscount();
+      return ApiResult.success(response);
+    } catch (error, s) {
+      log("$error, \n $s");
+
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<CheckVoucherResponse?>>> checkVoucher(
+    CheckVoucherRequest request,
+  ) async {
+    try {
+      final response = await _remoteDataSource.checkVoucher(request);
       return ApiResult.success(response);
     } catch (error, s) {
       log("$error, \n $s");

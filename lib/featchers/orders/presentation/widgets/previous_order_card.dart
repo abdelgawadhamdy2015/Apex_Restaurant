@@ -29,9 +29,15 @@ class PreviousOrderCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: spacing.md),
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
+        boxShadow: [
+          BoxShadow(
+            color: context.appExtraTheme.shadowColor,
+            offset: Offset(-5, 0),
+          ),
+        ],
       ),
       child: Column(
         children: [

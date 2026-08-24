@@ -1,4 +1,3 @@
-import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -264,12 +263,6 @@ class _TabletItemCustomizationDialogState
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
-                                'بحد أقصى 3 إضافات',
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: AppColors.amber,
-                                ),
-                              ),
                             ],
                           ),
                           SizedBox(height: spacing.sm),
@@ -390,10 +383,13 @@ class _TabletItemCustomizationDialogState
                               ),
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.remove),
+                                    icon: Icon(
+                                      Icons.remove,
+                                      color: theme.colorScheme.onSecondary,
+                                    ),
                                     onPressed: _quantity > 1
                                         ? () => setState(() => _quantity--)
                                         : null,
@@ -405,7 +401,10 @@ class _TabletItemCustomizationDialogState
                                     ),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.add),
+                                    icon: Icon(
+                                      Icons.add,
+                                      color: theme.colorScheme.onSecondary,
+                                    ),
                                     onPressed: () =>
                                         setState(() => _quantity++),
                                   ),

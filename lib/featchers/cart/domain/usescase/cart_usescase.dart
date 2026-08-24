@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
@@ -85,6 +87,17 @@ class ApplyDiscountUseCase {
     ApplyDiscountRequestModel request,
   ) {
     return repository.applyDiscount(request);
+  }
+}
+
+class CheckVoucherUseCase {
+  final CartRepository repository;
+  CheckVoucherUseCase(this.repository);
+
+  Future<ApiResult<BaseResponse<CheckVoucherResponse?>>> call(
+    CheckVoucherRequest request,
+  ) {
+    return repository.checkVoucher(request);
   }
 }
 

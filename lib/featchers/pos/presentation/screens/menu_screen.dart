@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/helpers/transactionid_generator.dart';
@@ -8,6 +10,7 @@ import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../../cart/presentation/bloc/cart_state.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
+import '../../domain/entities/get_items_request_model.dart';
 import '../../domain/entities/menu_item.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
@@ -29,7 +32,17 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  static const int _pageSize = 20;
+  static const Duration _searchDebounceDuration = Duration(milliseconds: 400);
+
   final ScrollController _scrollController = ScrollController();
+
+  Timer? _searchDebounce;
+
+  /// Tracked here (rather than only inside the search field) so the
+  /// existing infinite-scroll `LoadMoreItemsEvent` keeps whatever filter is
+  /// active instead of silently falling back to the unfiltered list.
+  String _currentSearchKey = '';
 
   @override
   void initState() {
@@ -54,12 +67,45 @@ class _MenuScreenState extends State<MenuScreen> {
     if (posState.hasMoreItems &&
         !posState.isLoadingMoreItems &&
         posState.status != PosStatus.loading) {
+      // NOTE: LoadMoreItemsEvent takes no params — it relies on the bloc
+      // remembering the last search key/page internally from the most
+      // recent LoadItemsEvent dispatched in `_onSearchChanged` below.
       context.read<PosBloc>().add(const LoadMoreItemsEvent());
     }
   }
 
+  /// Debounced search handler passed down to [PosTopAppBar]. Waits for the
+  /// user to stop typing before firing a request, and always resets
+  /// pagination/scroll since a new search key means a brand-new result set.
+  void _onSearchChanged(String value) {
+    final trimmed = value.trim();
+
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(_searchDebounceDuration, () {
+      if (!mounted) return;
+      if (trimmed == _currentSearchKey) return;
+
+      _currentSearchKey = trimmed;
+
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+
+      context.read<PosBloc>().add(
+        LoadItemsEvent(
+          GetItemsRequest(
+            pageNumber: 1,
+            pageSize: _pageSize,
+            searchKey: trimmed.isEmpty ? null : trimmed,
+          ),
+        ),
+      );
+    });
+  }
+
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
@@ -70,7 +116,7 @@ class _MenuScreenState extends State<MenuScreen> {
     final spacing = context.spacing;
 
     return Scaffold(
-      appBar: const PosTopAppBar(),
+      appBar: PosTopAppBar(onSearchChanged: _onSearchChanged),
       bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
         builder: (context, cartState) {
           if (cartState.items.isEmpty) return const SizedBox.shrink();

@@ -40,7 +40,7 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
 
     // Fetch initial page for previous orders on screen mount
     context.read<OrdersBloc>().add(
-      const FetchPreviousInvoicesEvent(
+      FetchPreviousInvoicesEvent(
         request: GetPreviousInvoiceRequest(
           pageNumber: 1,
           pageSize: kOrdersPageSize,
@@ -57,11 +57,11 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
     final state = context.read<OrdersBloc>().state;
     if (state.activeTab == OrderTab.previous) {
       if (!state.isLoadingMorePrevious && state.previousOrdersHasMore) {
-        context.read<OrdersBloc>().add(const LoadMorePreviousInvoicesEvent());
+        context.read<OrdersBloc>().add(LoadMorePreviousInvoicesEvent());
       }
     } else {
       if (!state.isLoadingMorePinding && state.pindingInvoicesHasMore) {
-        context.read<OrdersBloc>().add(const LoadMorePindingInvoicesEvent());
+        context.read<OrdersBloc>().add(LoadMorePindingInvoicesEvent());
       }
     }
   }
@@ -91,7 +91,7 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
         isPending: state.isPending,
       ),
     );
-    context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());
+    context.read<OrdersBloc>().add(ClearRestoredInvoiceEvent());
   }
 
   @override

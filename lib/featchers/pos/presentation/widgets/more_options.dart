@@ -10,7 +10,7 @@ import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
 import '../screens/close_session_dialog.dart';
-import '../screens/daily_close_screen.dart';
+import '../../../more_actions/presentation/screens/daily_close_screen.dart';
 import '../../../tables/data/models/tables_screen_arg.dart';
 import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';

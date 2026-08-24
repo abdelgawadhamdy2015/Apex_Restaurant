@@ -20,6 +20,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final GetWaitersUseCase getWaitersUseCase;
   final GetDeliveryAgentsUseCase getDeliveryAgentsUseCase;
   final ApplyDiscountUseCase applyDiscountUseCase;
+  final CheckVoucherUseCase checkVoucherUseCase;
   final SavePendingRestaurantPosInvoiceUseCase
   savePendingRestaurantPosInvoiceUseCase;
   final SaveBookingTableRestaurantPosInvoiceUseCase
@@ -42,6 +43,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.updatePosClientUseCase,
     required this.getDynamicInvoiceDiscountUseCase,
     required this.getAllDeliveryCompanyUseCase,
+    required this.checkVoucherUseCase,
   }) : super(const CartState()) {
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
@@ -90,7 +92,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<ChangeAddressEvent>(_onChangeAddress);
     on<EditCartItemEvent>(_onEditCartItem);
     on<ApplyDiscountEvent>(_onApplyDiscount);
-    on<ApplyCouponDiscountEvent>(_onApplyCouponDiscount);
+    on<ApplyVoucherDiscountEvent>(_onApplyCouponDiscount);
   }
 
   void _onChangeAddress(ChangeAddressEvent event, Emitter<CartState> emit) {
@@ -599,18 +601,46 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onApplyCouponDiscount(
-    ApplyCouponDiscountEvent event,
+    ApplyVoucherDiscountEvent event,
     Emitter<CartState> emit,
   ) async {
-    final double discountVal = double.tryParse(event.code) ?? 0.0;
+    emit(state.copyWith(status: CartStatus.loading));
+    final response = await checkVoucherUseCase(event.request);
 
-    emit(
-      state.copyWith(
-        couponDiscountvalue: discountVal,
-        restaurantPosDiscountRequest: null, // Reset direct discount
-        selectedDiscountType: DiscountTypeEnum.coupon,
-        activeDiscountModel: null,
-      ),
+    response.when(
+      success: (data) {
+        if (data.result == 1) {
+          emit(
+            state.copyWith(voucherData: data.data, status: CartStatus.success),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              voucherData: null,
+              status: CartStatus.failure,
+              errorMessage: data.errorMessageAr,
+            ),
+          );
+        }
+      },
+      failure: (errorHandler) {
+        emit(
+          state.copyWith(
+            voucherData: null,
+            status: CartStatus.failure,
+            errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+          ),
+        );
+      },
     );
+
+    // emit(
+    //   state.copyWith(
+    //     couponDiscountvalue: discountVal,
+    //     restaurantPosDiscountRequest: null, // Reset direct discount
+    //     selectedDiscountType: DiscountTypeEnum.coupon,
+    //     activeDiscountModel: null,
+    //   ),
+    // );
   }
 }

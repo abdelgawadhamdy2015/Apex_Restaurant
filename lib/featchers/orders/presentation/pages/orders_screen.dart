@@ -40,7 +40,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     _scrollController.addListener(_onScroll);
     // Initial load for the default (previous orders) tab.
     context.read<OrdersBloc>().add(
-      const FetchPreviousInvoicesEvent(
+      FetchPreviousInvoicesEvent(
         request: GetPreviousInvoiceRequest(
           pageNumber: 1,
           pageSize: kOrdersPageSize,
@@ -58,11 +58,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
     final state = context.read<OrdersBloc>().state;
     if (state.activeTab == OrderTab.previous) {
       if (!state.isLoadingMorePrevious && state.previousOrdersHasMore) {
-        context.read<OrdersBloc>().add(const LoadMorePreviousInvoicesEvent());
+        context.read<OrdersBloc>().add(LoadMorePreviousInvoicesEvent());
       }
     } else {
       if (!state.isLoadingMorePinding && state.pindingInvoicesHasMore) {
-        context.read<OrdersBloc>().add(const LoadMorePindingInvoicesEvent());
+        context.read<OrdersBloc>().add(LoadMorePindingInvoicesEvent());
       }
     }
   }
@@ -91,7 +91,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         isPending: state.isPending,
       ),
     );
-    context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());
+    context.read<OrdersBloc>().add(ClearRestoredInvoiceEvent());
     context.pushNamed(
       Routes.cartScreen,
       extra: CartScreenArgs(isRestored: true, canEdite: state.canEdite),

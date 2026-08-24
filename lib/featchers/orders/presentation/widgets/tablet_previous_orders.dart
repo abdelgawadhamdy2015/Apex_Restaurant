@@ -110,7 +110,7 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
     BuildContext context,
     ThemeData theme,
     AppSpacing spacing,
-    S l10n,
+    S lang,
   ) {
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -134,28 +134,9 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
               ),
               icon: const Icon(Icons.search, color: Colors.white, size: 18),
               label: Text(
-                l10n.search,
+                lang.search,
                 style: const TextStyle(color: Colors.white),
               ),
-            ),
-          ),
-          SizedBox(width: spacing.sm),
-
-          // To Date
-          Expanded(
-            child: DateTextField(
-              controller: _toDateController,
-              type: DateTextFieldType.date,
-              onTap: () async {
-                final date = await DateTextField.pickDateTime(
-                  context,
-                  type: DateTextFieldType.date,
-                );
-                if (date != null) {
-                  _toDateController.text = RestaurantConstants.dateTimeFormat
-                      .format(date);
-                }
-              },
             ),
           ),
           SizedBox(width: spacing.sm),
@@ -163,6 +144,7 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
           // From Date
           Expanded(
             child: DateTextField(
+              label: lang.fromDate,
               controller: _fromDateController,
               type: DateTextFieldType.date,
               onTap: () async {
@@ -171,7 +153,33 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
                   type: DateTextFieldType.date,
                 );
                 if (date != null) {
-                  _fromDateController.text = RestaurantConstants.dateTimeFormat
+                  context.read<OrdersBloc>().add(
+                    SelectDateEvent(dateTime: date, isFrom: true),
+                  );
+                  _fromDateController.text = RestaurantConstants.dateFormat
+                      .format(date);
+                }
+              },
+            ),
+          ),
+          SizedBox(width: spacing.sm),
+
+          // To Date
+          Expanded(
+            child: DateTextField(
+              label: lang.toDate,
+              controller: _toDateController,
+              type: DateTextFieldType.date,
+              onTap: () async {
+                final date = await DateTextField.pickDateTime(
+                  context,
+                  type: DateTextFieldType.date,
+                );
+                if (date != null) {
+                  context.read<OrdersBloc>().add(
+                    SelectDateEvent(dateTime: date, isFrom: false),
+                  );
+                  _toDateController.text = RestaurantConstants.dateFormat
                       .format(date);
                 }
               },
@@ -184,7 +192,7 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
             child: TextField(
               controller: _customerController,
               decoration: InputDecoration(
-                hintText: l10n.customerNameHint,
+                hintText: lang.customerNameHint,
                 fillColor: theme.colorScheme.surface,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -200,7 +208,7 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
             child: TextField(
               controller: _invoiceController,
               decoration: InputDecoration(
-                hintText: l10n.invoiceNumberHint,
+                hintText: lang.invoiceNumberHint,
                 fillColor: theme.colorScheme.surface,
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -387,23 +395,62 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
     AppSpacing spacing,
     OrdersState state,
   ) {
+    final totalPages = state.totalPreviouspages;
+    final currentPage = state.previousOrdersPage;
+
     return Padding(
       padding: EdgeInsets.all(spacing.sm),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              _buildPageButton('<', enabled: false, onPressed: () {}),
-              _buildPageButton('...', enabled: false, onPressed: () {}),
-              _buildPageButton('3', enabled: false, onPressed: () {}),
-              _buildPageButton('2', enabled: false, onPressed: () {}),
-              _buildPageButton('1', selected: true, onPressed: () {}),
-              _buildPageButton('>', enabled: false, onPressed: () {}),
-            ],
+          Flexible(
+            child: SizedBox(
+              height: 32,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: totalPages + 2, // +2 for '<' and '>'
+                itemBuilder: (context, index) {
+                  // Previous button '<'
+                  if (index == 0) {
+                    final canGoPrevious = currentPage > 1;
+                    return _buildPageButton(
+                      '<',
+                      enabled: canGoPrevious,
+                      onPressed: canGoPrevious
+                          ? () => _fetchPage(context, currentPage - 1)
+                          : () {},
+                    );
+                  }
+
+                  // Next button '>'
+                  if (index == totalPages + 1) {
+                    final canGoNext = currentPage < totalPages;
+                    return _buildPageButton(
+                      '>',
+                      enabled: canGoNext,
+                      onPressed: canGoNext
+                          ? () => _fetchPage(context, currentPage + 1)
+                          : () {},
+                    );
+                  }
+
+                  // Page Numbers (1 to totalPages)
+                  final pageNumber = index;
+                  final isSelected = pageNumber == currentPage;
+
+                  return _buildPageButton(
+                    '$pageNumber',
+                    selected: isSelected,
+                    enabled: !isSelected,
+                    onPressed: () => _fetchPage(context, pageNumber),
+                  );
+                },
+              ),
+            ),
           ),
           Text(
-            'عرض 1 إلى ${state.previousOrders.length} نتيجة',
+            'عرض 1 إلى ${state.totalPreviousCount ?? 0} نتيجة',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSecondary,
             ),
@@ -421,51 +468,60 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
   }) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 2),
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: selected ? const Color(0xFF005DB9) : Colors.transparent,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: selected ? const Color(0xFF005DB9) : Colors.grey.shade300,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            color: selected ? Colors.white : Colors.black87,
-            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: enabled ? onPressed : null,
+          borderRadius: BorderRadius.circular(6),
+          child: Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: selected ? const Color(0xFF005DB9) : Colors.transparent,
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: selected
+                    ? const Color(0xFF005DB9)
+                    : Colors.grey.shade300,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                text,
+                style: TextStyle(
+                  color: selected
+                      ? Colors.white
+                      : (enabled ? Colors.black87 : Colors.grey),
+                  fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+                ),
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _triggerSearch(BuildContext context) {
-    context.read<OrdersBloc>().add(
+  void _fetchPage(BuildContext context, int page) {
+    final bloc = context.read<OrdersBloc>();
+    final invoiceCode = _invoiceController.text.trim();
+    final personName = _customerController.text.trim();
+
+    bloc.add(
       FetchPreviousInvoicesEvent(
         request: GetPreviousInvoiceRequest(
-          pageNumber: 1,
+          pageNumber: page,
           pageSize: kOrdersPageSize,
-          invoiceCode: _invoiceController.text.trim().isEmpty
-              ? null
-              : _invoiceController.text.trim(),
-          personName: _customerController.text.trim().isEmpty
-              ? null
-              : _customerController.text.trim(),
-          fromDate: _fromDateController.text.trim().isEmpty
-              ? null
-              : RestaurantConstants.dateTimeFormat.parse(
-                  _fromDateController.text.trim(),
-                ),
-          toDate: _toDateController.text.trim().isEmpty
-              ? null
-              : RestaurantConstants.dateTimeFormat.parse(
-                  _toDateController.text.trim(),
-                ),
+          invoiceCode: invoiceCode.isEmpty ? null : invoiceCode,
+          personName: personName.isEmpty ? null : personName,
+          fromDate: bloc.state.fromDate,
+          toDate: bloc.state.toDate,
         ),
       ),
     );
+  }
+
+  void _triggerSearch(BuildContext context) {
+    _fetchPage(context, 1);
   }
 }
