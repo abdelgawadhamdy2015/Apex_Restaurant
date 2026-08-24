@@ -15,7 +15,6 @@ import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
 import '../widgets/pos_categories_bar.dart';
-import '../widgets/pos_filters_bar.dart';
 import '../widgets/pos_menu_item_card.dart';
 import 'tablet_item_customization.dart';
 
@@ -27,7 +26,7 @@ class PosTabletMenuTab extends StatefulWidget {
 }
 
 class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
-  int _selectedFilterIndex = 0;
+  // int _selectedFilterIndex = 0;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -100,15 +99,15 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
                     },
                   ),
                   const SizedBox(height: 12),
-                  PosFiltersBar(
-                    selectedIndex: _selectedFilterIndex,
-                    onSelected: (index) {
-                      setState(() {
-                        _selectedFilterIndex = index;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
+                  // PosFiltersBar(
+                  //   selectedIndex: _selectedFilterIndex,
+                  //   onSelected: (index) {
+                  //     setState(() {
+                  //       _selectedFilterIndex = index;
+                  //     });
+                  //   },
+                  // ),
+                  // const SizedBox(height: 12),
                   Expanded(
                     child:
                         posState.status == PosStatus.loading &&
