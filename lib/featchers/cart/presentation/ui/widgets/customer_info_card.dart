@@ -1,0 +1,110 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/helpers/helper_methods.dart';
+import '../../../../../core/helpers/size_helper.dart';
+import '../../../../../core/router/routes.dart';
+import '../../../data/models/pos_client_model.dart';
+import '../screens/ass_customer_tablet.dart';
+import '../../../../../generated/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+/// Shows the currently selected customer (or a placeholder) with
+/// shortcuts to add or edit a customer.
+class CustomerInfoCard extends StatelessWidget {
+  const CustomerInfoCard({
+    super.key,
+    required this.persons,
+    this.selectedPerson,
+  });
+
+  final List<PosClientModel> persons;
+  final PosClientModel? selectedPerson;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final icons = context.iconSizes;
+    final lang = S.of(context);
+    final phones = selectedPerson?.personPhones;
+    final cartState = context.read<CartBloc>().state;
+    return Container(
+      padding: EdgeInsets.all(spacing.sm),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onSurface,
+        borderRadius: BorderRadius.circular(spacing.radiusLg),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            backgroundColor: theme.colorScheme.primary.withOpacity(.5),
+            radius: icons.lg - icons.sm / 2,
+            child: Icon(
+              Icons.person,
+              color: theme.colorScheme.primary,
+              size: icons.lg,
+            ),
+          ),
+          SizedBox(width: spacing.sm),
+          Expanded(
+            child: GestureDetector(
+              onTap: cartState.canEdit
+                  ? () => HelperMethods.openPicker(context, persons)
+                  : null,
+              behavior: HitTestBehavior.opaque,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    selectedPerson?.arabicName ?? lang.noCustomerSelected,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                  if (phones != null && phones.isNotEmpty)
+                    Text(
+                      phones.first.phoneNumber.toString(),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSecondary,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () => SizeHelper.isMobile
+                ? context.pushNamed(Routes.addCustomerScreen)
+                : AddCustomerDialog.show(context),
+            icon: Icon(
+              Icons.person_add_outlined,
+              size: icons.lg,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+          IconButton(
+            onPressed: () => SizeHelper.isMobile
+                ? context.pushNamed(
+                    Routes.addCustomerScreen,
+                    extra: selectedPerson,
+                  )
+                : AddCustomerDialog.show(
+                    context,
+                    selectedPerson: selectedPerson,
+                  ),
+            icon: Icon(
+              Icons.edit,
+              size: icons.lg,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

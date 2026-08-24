@@ -3,8 +3,86 @@ import 'package:dio/dio.dart';
 class ApiConstants {
   static const String baseUsrl = localUrl;
 
-  static const String localUrl = "http://192.168.1.253:1313/api/";
-  static const String login = "Login";
+  static const String localUrl = "http://192.168.1.253:1313/";
+  static const String login = "api/Login";
+  static const String getUserData = "api/General/UsersManager/getUserById";
+
+  // Restaurants apis
+
+  static const String getSettings = "api/Store/InvGeneralSettings/GetSettings";
+  static const String openRestaurantPos =
+      "api/Restaurants/RestaurantPos/OpenRestaurantPos";
+  static const String openRestaurantPosSession =
+      "api/Restaurants/RestaurantPos/OpenRestaurantPosSession";
+  static const String closePOSSeassion =
+      "api/Store/POSSession/ClosePOSSeassion";
+  static const String currentPOSsession =
+      "api/Store/POSSession/currentPOSsession";
+
+  static const String getAllFloors = "api/Restaurants/Floors/GetAllFloorsPOS";
+  static const String getAllFoodTables =
+      "api/Restaurants/FoodTables/GetAllFoodTablesPOS";
+  static const String getAllReservations =
+      "api/Restaurants/FoodTables/GetAllReservations";
+  static const String reserveFoodTable =
+      "api/Restaurants/FoodTables/ReserveFoodTable";
+  static const String cancelReserveFoodTable =
+      "api/Restaurants/FoodTables/CancelReserveFoodTable";
+  static const String editReserveFoodTable =
+      "api/Restaurants/FoodTables/EditReserveFoodTable";
+
+  static const String getAllFoodAdditives =
+      "api/Restaurants/FoodAdditives/GetAllFoodAdditivesForPOS";
+
+  static const String getAllCategoriesDropDown =
+      "api/Restaurants/RestaurantPos/GetRestaurantCategoryPOS";
+  static const String getRestaurantItemsPOS =
+      "api/Restaurants/RestaurantPos/GetRestaurantItemsPOS";
+  static const String getAllDeliveryAgents = '/api/DeliveryAgent/GetAll';
+  static const String getAllDeliveryCompany =
+      "api/Restaurants/DeliveryCompany/GetAllDeliveryCompanyPOS";
+  static const String getListOfWaiters = 'api/Store/Employee/GetListOfWaiter';
+  static const String getListOfDeliveryMen =
+      'api/Store/Employee/GetListOfDeliveryMen';
+  static const String applyDiscountCode = 'api/Order/ApplyDiscount';
+  static const String holdOrder = 'api/Order/Hold';
+
+  static const String getAllPersons = "api/Store/Persons/GetListOfPersonsPOS";
+  static const String getPendingRestaurantPosInvoiceDetails =
+      "api/Restaurants/RestaurantPos/GetPendingRestaurantPosInvoiceDetails";
+  static const String getRestaurantPosBookingTable =
+      "api/Restaurants/RestaurantPos/GetRestaurantPosBookingTable";
+
+  static const String updatePosClient = "api/Store/Persons/UpdatePosClient";
+  static const String addPosClient = "api/Store/Persons/AddPosClient";
+  static const String saveRestaurantPosInvoice =
+      "api/Restaurants/RestaurantPos/SaveRestaurantPosInvoice";
+  static const String savePendingRestaurantPosInvoice =
+      "api/Restaurants/RestaurantPos/SavePendingRestaurantPosInvoice";
+  static const String saveBookingTableRestaurantPosInvoice =
+      "api/Restaurants/RestaurantPos/SaveBookingTableRestaurantPosInvoice";
+  static const String deletetPendingInvoiceAndBokkingTable =
+      "api/Restaurants/RestaurantPos/DeletetPendingInvoiceAndBokkingTable";
+
+  static const String getListPosInvoiceData =
+      "api/Restaurants/RestaurantPos/GetListPosInvoiceData";
+  static const String getPosInvoiceDataById =
+      "api/Restaurants/RestaurantPos/GetPosInvoiceDataById";
+  static const String getItemById = "api/Store/RestaurantItemCard/GetItemById";
+
+  static const String getDynamicInvoiceDiscounts =
+      "api/Restaurants/ItemDiscounts/GetInvoiceDiscounts";
+
+  // return
+  static const String getAllPOSInvoices = "api/Store/POS/GetAllPOSInvoices";
+  static const String addPOSResturnInvoice =
+      "api/Store/POS/AddPOSResturnInvoice";
+  static const String addPOSTotalReturnInvoice =
+      "api/Store/POS/AddPOSTotalReturnInvoice";
+
+  // General apis
+  static const String getEmployeeBranches =
+      "api/Store/GeneralAPIs/getEmployeeBranchs";
 
   static DioExceptionType dioExceptionType = DioExceptionType.unknown;
 

@@ -1,178 +1,100 @@
-import 'package:apex_restaurant/core/theme/colors.dart';
-import 'package:apex_restaurant/core/theme/size_config.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class MyTextForm extends StatefulWidget {
+class MyTextForm extends StatelessWidget {
   final String? hint;
   final String? excep;
-  final InputBorder? foucesedBorder;
-  final InputBorder? enabeledBorder;
-  final bool? obsecure;
+  final InputBorder? focusedBorder;
+  final InputBorder? enabledBorder;
   final Widget? suffixIcon;
+  final Widget? icon;
   final String? labelText;
   final TextStyle? hintStyle;
   final TextStyle? inputTextStyle;
-  final String? hintText;
   final EdgeInsetsGeometry? contentPadding;
   final Color? fillColor;
-  final Function(String?)? validator;
+  final String? initialValue;
+  final bool? obsecure;
+  final FormFieldValidator<String>? validator;
+  final FormFieldSetter<String>? onSaved;
+  final ValueChanged<String>? onChanged;
+
   final TextEditingController? controller;
-  final Function(String?)? onChanged;
-  final InputBorder? errorBorder;
-  final Function()? onTab;
-  final bool? readOnly;
-  final Function(String?)? onSaved;
-  final bool? enabled;
-  final int? maxLines;
-  final Widget? icon;
-  final double? hight;
-  final TextAlign? textAllign;
-  final Function()? onEditingComplete;
+  final VoidCallback? onTap;
+  final VoidCallback? onEditingComplete;
+
+  final bool readOnly;
+  final bool enabled;
+  final int maxLines;
+  final double? height;
+  final TextAlign textAlign;
 
   const MyTextForm({
     super.key,
     this.hint,
     this.excep,
     this.controller,
-    this.foucesedBorder,
-    this.enabeledBorder,
-    this.obsecure,
+    this.focusedBorder,
+    this.enabledBorder,
     this.suffixIcon,
+    this.icon,
     this.labelText,
     this.hintStyle,
     this.inputTextStyle,
-    this.hintText,
     this.contentPadding,
     this.fillColor,
     this.validator,
     this.onChanged,
-    this.errorBorder,
-    this.onTab,
-    this.readOnly,
     this.onSaved,
+    this.onTap,
     this.onEditingComplete,
-    this.enabled,
-    this.maxLines,
-    this.icon,
-    this.hight,
-    this.textAllign,
+    this.initialValue,
+    this.readOnly = false,
+    this.enabled = true,
+    this.maxLines = 1,
+    this.height,
+    this.textAlign = TextAlign.start,
+    this.obsecure = false,
   });
 
   @override
-  State<MyTextForm> createState() => _MyTextFormState();
-}
-
-class _MyTextFormState extends State<MyTextForm> {
-  late double hight;
-  @override
-  void initState() {
-    hight = SizeConfig.screenHeight! * .06;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return SizedBox(
-      height: widget.hight ?? hight,
-      child: Center(
-        child: TextFormField(
-          textAlign: widget.textAllign ?? TextAlign.start,
-          style: widget.inputTextStyle,
-          maxLines: widget.maxLines ?? 1,
-          enabled: widget.enabled ?? true,
-          onEditingComplete: widget.onEditingComplete,
-          onSaved: widget.onSaved,
-          readOnly: widget.readOnly ?? false,
-          onTap: widget.onTab,
-          controller: widget.controller,
-          decoration: InputDecoration(
-            contentPadding: widget.contentPadding,
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: ColorManger.textFormBorderColor),
-              borderRadius: BorderRadius.circular(
-                SizeConfig.screenWidth! * .02,
-              ),
-            ),
-            prefixIcon: widget.icon,
-            labelStyle: widget.hintStyle,
-            labelText: widget.labelText,
-            fillColor: widget.fillColor ?? ColorManger.morelightGray,
-            filled: true,
-            suffixIcon: widget.suffixIcon,
-            hintText: widget.hint,
-            hintStyle: widget.hintStyle ?? TextStyle(fontSize: 10.sp),
-            focusedBorder:
-                widget.foucesedBorder ??
-                OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    SizeConfig.screenWidth! * .02,
-                  ),
-                  borderSide: BorderSide(
-                    color: ColorManger.textFormBorderColor,
-                    width: .6.w,
-                  ),
-                  //borderRadius: BorderRadius.circular(16),
-                ),
-            enabledBorder:
-                widget.enabeledBorder ??
-                OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    SizeConfig.screenWidth! * .02,
-                  ),
-                  borderSide: BorderSide(
-                    color: ColorManger.textFormBorderColor,
-                    width: 0.9.w,
-                  ),
-                ),
-            errorBorder:
-                widget.errorBorder ??
-                OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    SizeConfig.screenWidth! * .02,
-                  ),
-                  borderSide: BorderSide(color: Colors.red, width: 0.6.w),
-                ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(
-                SizeConfig.screenWidth! * .02,
-              ),
-              borderSide: BorderSide(color: Colors.red.shade300, width: 0.6.w),
-            ),
-            errorStyle: TextStyle(fontSize: 15.sp),
-            disabledBorder:
-                widget.enabeledBorder ??
-                OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    SizeConfig.screenWidth! * .02,
-                  ),
-                  borderSide: BorderSide(
-                    color: ColorManger.lighterGray,
-                    width: 0.6.w,
-                  ),
-                ),
-          ),
-          validator: (val) {
-            if (widget.validator == null) {
-              if (val!.isEmpty) {
-                setState(() {
-                  hight = SizeConfig.screenHeight! * .07;
-                });
-                return "\u26A0 ${S.of(context).pleaseFill} ${widget.excep}";
-              } else {
-                setState(() {
-                  hight = SizeConfig.screenHeight! * .05;
-                });
-                return null;
+      height: height,
+      child: TextFormField(
+        obscureText: obsecure ?? false,
+        controller: controller,
+        initialValue: controller == null ? initialValue : null,
+        textAlign: textAlign,
+        style: inputTextStyle ?? textTheme.bodyMedium,
+        maxLines: maxLines,
+        enabled: enabled,
+        readOnly: readOnly,
+        onTap: onTap,
+        onSaved: onSaved,
+        onChanged: onChanged,
+        onEditingComplete: onEditingComplete,
+        validator:
+            validator ??
+            (value) {
+              if (value == null || value.trim().isEmpty) {
+                return "⚠ ${S.of(context).pleaseFill} ${excep ?? ''}";
               }
-            } else {
-              setState(() {
-                hight = SizeConfig.screenHeight! * .07;
-              });
-              return widget.validator!(val);
-            }
-          },
+              return null;
+            },
+        decoration: InputDecoration(
+          hintText: hint,
+          labelText: labelText,
+          hintStyle: hintStyle,
+          labelStyle: hintStyle,
+          prefixIcon: icon,
+          suffixIcon: suffixIcon,
+          contentPadding: contentPadding,
+          fillColor: fillColor,
+          focusedBorder: focusedBorder,
+          enabledBorder: enabledBorder,
         ),
       ),
     );

@@ -1,0 +1,146 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/helpers/extensions.dart';
+import '../../data/models/restaurant_item.dart';
+import '../../../../generated/l10n.dart';
+import 'package:flutter/material.dart';
+
+class PosMenuItemCard extends StatelessWidget {
+  const PosMenuItemCard({
+    super.key,
+    required this.item,
+    required this.onAddPressed,
+  });
+
+  final RestaurantItem item;
+  final VoidCallback onAddPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final iconSizes = context.iconSizes;
+    final lang = S.of(context);
+    final canEdit = context.select((CartBloc b) => b.state.canEdit);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.onSurface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 2)),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
+                  child: item.imagePath != null
+                      ? Image.network(
+                          item.imagePath!,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          color: theme.colorScheme.surface,
+                          child: Center(
+                            child: Icon(
+                              Icons.fastfood,
+                              size: iconSizes.xl,
+                              color: theme.colorScheme.onPrimary,
+                            ),
+                          ),
+                        ),
+                ),
+                Positioned(
+                  top: spacing.xs,
+                  left: spacing.xs,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: spacing.xs,
+                      vertical: spacing.xxs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(spacing.radiusLg),
+                    ),
+                    child: Text(
+                      item.isOffer ? lang.badgeOffer : lang.badgeNew,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(spacing.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.itemNameAr,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                ),
+                SizedBox(height: spacing.xxs / 2),
+                Text(
+                  item.itemNameEn,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onPrimary,
+                  ),
+                ),
+                SizedBox(height: spacing.xs),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      item.sizes.isNotEmpty
+                          ? lang.priceWithCurrency(item.sizes.first.price ?? 0)
+                          : "",
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: canEdit ? onAddPressed : null,
+                      child: Container(
+                        padding: EdgeInsets.all(spacing.xxs),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: theme.colorScheme.surface,
+                          size: iconSizes.md,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,24 +1,19 @@
-import 'package:apex_restaurant/core/theme/colors.dart';
+import '../../themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class GradientContainer extends StatelessWidget {
-  final PreferredSizeWidget? appBar;
   final Widget child;
-  final Widget? floatingActionButton;
-  final Widget? bottomNavigationBar;
 
-  const GradientContainer({
-    super.key,
-    this.appBar,
-    required this.child,
-    this.floatingActionButton,
-    this.bottomNavigationBar,
-  });
+  const GradientContainer({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(gradient: ColorManger.mainBlueGrediant),
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.primaryLight, AppColors.primaryLight],
+        ),
+      ),
       child: child,
     );
   }

@@ -1,0 +1,126 @@
+import '../../../../../core/helpers/extensions.dart';
+import '../../../data/enums/cart_enum.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../../../../generated/l10n.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+/// Horizontal row of chips letting the user pick the order type
+/// (takeaway, dine-in, delivery or delivery company).
+class OrderTypeSelector extends StatelessWidget {
+  const OrderTypeSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final spacing = context.spacing;
+    final lang = S.of(context);
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          _OrderTypeChip(
+            type: CartOrderType.TAKEAWAY,
+            label: lang.takeaway,
+            icon: Icons.shopping_bag_outlined,
+          ),
+          SizedBox(width: spacing.xs),
+
+          _OrderTypeChip(
+            type: CartOrderType.DELIVERY,
+            label: lang.delivery,
+            icon: Icons.two_wheeler,
+          ),
+          SizedBox(width: spacing.xs),
+          _OrderTypeChip(
+            type: CartOrderType.DINE_IN,
+            label: lang.dineIn,
+            icon: Icons.restaurant,
+          ),
+          SizedBox(width: spacing.xs),
+          _OrderTypeChip(
+            type: CartOrderType.FROMBRANCH,
+            label: lang.fromBranch,
+            icon: Icons.store,
+          ),
+          SizedBox(width: spacing.xs),
+          _OrderTypeChip(
+            type: CartOrderType.DELIVERY_COMPANY,
+            label: lang.deliveryCompanies,
+            icon: Icons.storefront,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OrderTypeChip extends StatelessWidget {
+  const _OrderTypeChip({
+    required this.type,
+    required this.label,
+    required this.icon,
+  });
+
+  final CartOrderType type;
+  final String label;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final icons = context.iconSizes;
+
+    final isSelected = context.select(
+      (CartBloc b) => b.state.selectedOrderType == type,
+    );
+    final canEdit = context.select(
+      (CartBloc b) => b.state.canEdit,
+    ); // ✅ now reactive
+
+    final activeColor = theme.colorScheme.primary;
+    final inactiveColor = theme.colorScheme.surfaceContainerHighest;
+    final activeTextColor = Colors.white;
+    final inactiveTextColor = theme.colorScheme.onPrimary;
+
+    return InkWell(
+      onTap: canEdit
+          ? () => context.read<CartBloc>().add(ChangeOrderTypeEvent(type))
+          : null,
+      borderRadius: BorderRadius.circular(spacing.radiusPill),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(
+          horizontal: spacing.md,
+          vertical: spacing.xs,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor : inactiveColor,
+          borderRadius: BorderRadius.circular(spacing.radiusPill),
+          border: Border.all(
+            color: isSelected ? activeColor : theme.colorScheme.outlineVariant,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: icons.sm,
+              color: isSelected ? activeTextColor : inactiveTextColor,
+            ),
+            SizedBox(width: spacing.xxs + spacing.xxs / 2),
+            Text(
+              label,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: isSelected ? activeTextColor : inactiveTextColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,22 +1,73 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'base_response.g.dart';
 
 @JsonSerializable(genericArgumentFactories: true)
 class BaseResponse<T> {
   final int? result;
+  final int? dataCount;
   final T? data;
+  final dynamic printingData;
+
+  @JsonKey(name: 'alart')
+  final AlertModel? alert;
+
+  final dynamic id;
+  final dynamic code;
+  final String? note;
   final int? totalCount;
+
+  final dynamic errors;
   final String? errorMessageAr;
   final String? errorMessageEn;
-  final AlertModel? alart;
 
-  BaseResponse({
+  final double? total;
+  final DateTime? dateTimeNow;
+  final int? updateNumber;
+  final int? isUpdate;
+  final bool? isPrint;
+
+  final int? permissionListId;
+
+  @JsonKey(name: 'employyeNameAr')
+  final String? employeeNameAr;
+
+  @JsonKey(name: 'employyeNameEn')
+  final String? employeeNameEn;
+
+  final dynamic posPrintFilesAr;
+  final dynamic posPrintFilesEn;
+  final dynamic returnPosPrintFilesAr;
+  final dynamic returnPosPrintFilesEn;
+
+  final bool? isAuthorizedOnDashboardData;
+
+  const BaseResponse({
     this.result,
+    this.dataCount,
     this.data,
+    this.printingData,
+    this.alert,
+    this.id,
+    this.code,
+    this.note,
     this.totalCount,
+    this.errors,
     this.errorMessageAr,
     this.errorMessageEn,
-    this.alart,
+    this.total,
+    this.dateTimeNow,
+    this.updateNumber,
+    this.isUpdate,
+    this.isPrint,
+    this.permissionListId,
+    this.employeeNameAr,
+    this.employeeNameEn,
+    this.posPrintFilesAr,
+    this.posPrintFilesEn,
+    this.returnPosPrintFilesAr,
+    this.returnPosPrintFilesEn,
+    this.isAuthorizedOnDashboardData,
   });
 
   factory BaseResponse.fromJson(
@@ -37,7 +88,7 @@ class AlertModel {
   final String? messageAr;
   final String? messageEn;
 
-  AlertModel({
+  const AlertModel({
     this.alartType,
     this.type,
     this.titleAr,

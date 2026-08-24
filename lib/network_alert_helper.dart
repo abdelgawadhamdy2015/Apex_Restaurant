@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/no_internet_screen.dart';
+import 'no_internet_screen.dart';
 import 'package:flutter/material.dart';
 
 class NetworkBanner extends StatelessWidget {

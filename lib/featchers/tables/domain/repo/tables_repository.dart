@@ -1,0 +1,39 @@
+import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
+
+import '../../../../core/service/api_result.dart';
+import '../../../../core/shared/model/base_response.dart';
+import '../../data/models/get_floor_request.dart';
+import '../../data/models/get_reservations_request.dart';
+import '../../data/models/get_table_request.dart';
+import '../../data/models/reservation_requests.dart';
+import '../entities/floor_entity.dart';
+import '../entities/reservation_data_entity.dart';
+import '../entities/reservation_entity.dart';
+import '../entities/table_entity.dart';
+
+abstract class TablesRepository {
+  Future<ApiResult<BaseResponse<ReservationsDataEntity>>> getReservations(
+    GetReservationRequest request,
+  );
+  Future<ApiResult<BaseResponse<dynamic>>> createReservation(
+    ReserveFoodTableRequest reservation,
+  );
+  Future<ApiResult<BaseResponse<dynamic>>> editReservation(
+    ReservationEntity reservation,
+  );
+  Future<ApiResult<BaseResponse<dynamic>>> cancelReservation(String id);
+  Future<ApiResult<BaseResponse<List<FloorEntity>?>>> getFloors({
+    required GetFloorsRequest request,
+  });
+
+  Future<ApiResult<BaseResponse<List<TableEntity>?>>> getTables({
+    required GetTablesRequest request,
+  });
+  Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>>
+  getRestaurantPosBookingTable({GetPindingInvoicesRequest? request});
+
+  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
+  restorePosRestuarantInvoice(int invoiceId);
+}

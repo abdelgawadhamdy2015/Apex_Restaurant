@@ -1,7 +1,11 @@
-import 'package:apex_restaurant/featchers/login/data/models/user_info.dart';
+import '../../featchers/home/data/models/employee_branch.dart';
+import '../../featchers/auth/data/models/login_data.dart';
 import 'package:intl/intl.dart';
 
 class RestaurantConstants {
+  static const String appName = "ApexRestaurant";
+  static const String logOutMessage = "User Logged In From Another Place";
+
   static const String pushNotification = "pushNotification";
   static const String requestModel = "requestModel";
   static const String logoutNotification = "LogoutNotification";
@@ -14,10 +18,7 @@ class RestaurantConstants {
   static const List<String> languages = ["English", "العربية"];
 
   static DateFormat dayDateFormat = DateFormat('EEE, y,M,d  ');
-  static DateFormat hoursFormat = DateFormat(
-    "hh:mma",
-    RestaurantConstants.english,
-  );
+  static DateFormat hoursFormat = DateFormat("hh:mm a");
   static DateFormat hours24Format = DateFormat(
     "HH:mm",
     RestaurantConstants.english,
@@ -42,6 +43,10 @@ class RestaurantConstants {
   static DateFormat dateFormat = DateFormat(
     "dd/MM/yyyy",
     RestaurantConstants.english,
+  );
+  static DateFormat dateTimeFormat = DateFormat(
+    " hh:mm a  dd/MM/yyyy ",
+    // RestaurantConstants.english,
   );
   static DateFormat dateFormatwithDash = DateFormat(
     "d-M-yyyy",
@@ -113,5 +118,7 @@ class RestaurantConstants {
   static const String latstLongitude = "latstLongitude";
 
   // permission
-  static List<UserPermissions> permissions = [];
+  static List<PermissionGroupModel> permissions = [];
+
+  static EmployeeBranch? currentBranch;
 }
