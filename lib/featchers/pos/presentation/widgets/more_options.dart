@@ -131,7 +131,7 @@ class MoreOptions extends StatelessWidget {
       listener: (context, state) {
         // 1. في حالة تم جلب بيانات الجلسة الحالية بنجاح
         if (state.currentSessionId != null &&
-            state.status == PosStatus.loaded) {
+            state.status == PosStatus.closeSession) {
           final sessionId = state.currentSessionId ?? 0;
           _showCloseSessionDialog(context, sessionId);
         }

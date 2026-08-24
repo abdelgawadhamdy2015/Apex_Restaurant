@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
@@ -291,7 +292,7 @@ class _SuccessActionButtons extends StatelessWidget {
             final cartBloc = context.read<CartBloc>();
             context.read<PaymentBloc>().add(ClearPaymentEvent());
             cartBloc.add(ClearCartEvent());
-            context.pop();
+            context.pushReplacementNamed(Routes.posScreen);
           },
         ),
         SizedBox(height: spacing.sm),
@@ -320,7 +321,7 @@ class _SuccessActionButtons extends StatelessWidget {
             final cartBloc = context.read<CartBloc>();
             context.read<PaymentBloc>().add(ClearPaymentEvent());
             cartBloc.add(ClearCartEvent());
-            context.pop();
+            context.pushReplacementNamed(Routes.posScreen);
             context.read<PosBloc>().add(
               SelectedNavIndexEvent(selectedNavIndex: 1),
             );

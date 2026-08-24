@@ -42,8 +42,8 @@ class PosBottomNavBar extends StatelessWidget {
         unselectedItemColor: theme.colorScheme.onSecondary,
         items: [
           _buildNavItem(
-            icon: Icons.more_horiz,
-            label: lang.more,
+            icon: Icons.restaurant_outlined,
+            label: lang.navMenu,
             theme: theme,
             spacing: spacing,
           ),
@@ -53,9 +53,10 @@ class PosBottomNavBar extends StatelessWidget {
             theme: theme,
             spacing: spacing,
           ),
+
           _buildNavItem(
-            icon: Icons.restaurant_outlined,
-            label: lang.navMenu,
+            icon: Icons.more_horiz,
+            label: lang.more,
             theme: theme,
             spacing: spacing,
           ),

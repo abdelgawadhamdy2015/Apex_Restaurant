@@ -63,7 +63,7 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
   Widget _getWidget(PosState state) {
     switch (state.selectedNavIndex) {
       case 0:
-        return MoreOptions();
+        return MenuScreen();
 
       case 1:
         return BlocProvider(
@@ -72,7 +72,7 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
         );
 
       case 2:
-        return MenuScreen();
+        return MoreOptions();
       default:
         return MenuScreen();
     }
