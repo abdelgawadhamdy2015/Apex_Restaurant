@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 
 import '../../../../core/di/debandancy_injection.dart';
 import '../../../../core/router/routes.dart';
@@ -62,16 +63,16 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
 
   Widget _getWidget(PosState state) {
     switch (state.selectedNavIndex) {
-      case 0:
+      case PosBottomNavEnm.menu:
         return MenuScreen();
 
-      case 1:
+      case PosBottomNavEnm.orders:
         return BlocProvider(
           child: OrdersScreen(),
           create: (context) => getIt<OrdersBloc>(),
         );
 
-      case 2:
+      case PosBottomNavEnm.more:
         return MoreOptions();
       default:
         return MenuScreen();

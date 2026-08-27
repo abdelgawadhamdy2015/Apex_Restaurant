@@ -9,6 +9,7 @@ import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/screens/customers_tablet_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_menu_tab.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_more_option.dart';
@@ -16,7 +17,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import 'package:apex_restaurant/featchers/tables/presentation/pages/tablet_tables_screen.dart';
 import 'package:flutter/material.dart';
 
-// Ensure your import paths are aligned
 import '../../../cart/data/models/get_client_request.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
@@ -35,16 +35,9 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
 
   Timer? _searchDebounce;
 
-  /// The search key currently applied to the item list. Kept here (rather
-  /// than only inside the TextField) so pagination requests triggered while
-  /// a filter is active keep reusing the same key instead of silently
-  /// dropping back to an unfiltered list.
   String _currentSearchKey = '';
   int _currentPage = 1;
 
-  /// Simple timestamp-based throttle guard so rapid-fire "load more"
-  /// triggers (e.g. multiple scroll events near the bottom of the grid)
-  /// don't fan out into duplicate in-flight requests.
   DateTime? _lastLoadMoreAt;
 
   @override
@@ -153,7 +146,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
                 Expanded(
                   flex: 9,
                   child: IndexedStack(
-                    index: state.selectedNavIndex,
+                    index: state.selectedNavIndex.index,
                     children: [
                       PosTabletMenuTab(),
                       OrdersTabletScreen(),
@@ -190,11 +183,41 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          _buildRailItem(0, Icons.restaurant_menu, 'القائمة', theme, posState),
-          _buildRailItem(1, Icons.receipt_long, 'الطلبات', theme, posState),
-          _buildRailItem(2, Icons.people, 'العملاء', theme, posState),
-          _buildRailItem(3, Icons.table_bar, 'الطاولات', theme, posState),
-          _buildRailItem(4, Icons.more_horiz, 'المزيد', theme, posState),
+          _buildRailItem(
+            PosBottomNavEnm.menu,
+            Icons.restaurant_menu,
+            'القائمة',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.orders,
+            Icons.receipt_long,
+            'الطلبات',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.customers,
+            Icons.people,
+            'العملاء',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.tables,
+            Icons.table_bar,
+            'الطاولات',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.more,
+            Icons.more_horiz,
+            'المزيد',
+            theme,
+            posState,
+          ),
           const SizedBox(height: 20),
         ],
       ),
@@ -202,7 +225,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   }
 
   Widget _buildRailItem(
-    int index,
+    PosBottomNavEnm index,
     IconData icon,
     String label,
     ThemeData theme,

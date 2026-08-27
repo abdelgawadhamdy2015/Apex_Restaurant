@@ -1,6 +1,8 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
@@ -64,7 +66,7 @@ class TabletPaymentDialog extends StatelessWidget {
         builder: (context, state) {
           if (state.status == PaymentStatus.success &&
               state.successModel != null) {
-            // context.pop();
+            context.read<CartBloc>().add(ClearCartEvent());
             return Container(
               width: 540,
               constraints: const BoxConstraints(maxHeight: 680),

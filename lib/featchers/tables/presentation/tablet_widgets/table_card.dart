@@ -3,6 +3,9 @@ import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
 import 'package:apex_restaurant/featchers/orders/domain/mapper/restored_invoice_mapper.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
@@ -139,7 +142,13 @@ class _TableCardState extends State<TableCard> {
       ),
     );
     context.read<TablesBloc>().add(const ClearRestoredInvoiceEvent());
-    context.pushNamed(Routes.posScreen);
+    if (SizeHelper.isMobile) {
+      context.pushNamed(Routes.posScreen);
+    } else {
+      context.read<PosBloc>().add(
+        SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+      );
+    }
   }
 
   @override
@@ -168,7 +177,7 @@ class _TableCardState extends State<TableCard> {
           }
         },
         child: Container(
-          padding: EdgeInsets.all(spacing.sm),
+          padding: EdgeInsets.all(spacing.xxs),
           decoration: BoxDecoration(
             color: theme.colorScheme.onSurface,
             borderRadius: BorderRadius.circular(spacing.radiusSm),

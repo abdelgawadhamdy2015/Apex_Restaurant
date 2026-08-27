@@ -1,7 +1,8 @@
-import '../../../../core/helpers/extensions.dart';
-import '../../../../core/themes/app_colors.dart';
-import '../../../../core/themes/app_spacing_theme.dart';
-import '../../../../generated/l10n.dart';
+import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 class PosBottomNavBar extends StatelessWidget {
@@ -11,8 +12,8 @@ class PosBottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  final int currentIndex;
-  final ValueChanged<int> onTap;
+  final PosBottomNavEnm currentIndex;
+  final ValueChanged<PosBottomNavEnm> onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +36,8 @@ class PosBottomNavBar extends StatelessWidget {
         ],
       ),
       child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
+        currentIndex: currentIndex.index,
+        onTap: (index) => onTap(PosBottomNavEnm.values[index]),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: theme.colorScheme.secondary,
         unselectedItemColor: theme.colorScheme.onSecondary,
@@ -53,7 +54,6 @@ class PosBottomNavBar extends StatelessWidget {
             theme: theme,
             spacing: spacing,
           ),
-
           _buildNavItem(
             icon: Icons.more_horiz,
             label: lang.more,

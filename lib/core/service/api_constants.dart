@@ -4,6 +4,8 @@ class ApiConstants {
   static const String baseUsrl = localUrl;
 
   static const String localUrl = "http://192.168.1.253:1313/";
+  static const String url = "https://taifback.apex-program.com/";
+
   static const String login = "api/Login";
   static const String getUserData = "api/General/UsersManager/getUserById";
 

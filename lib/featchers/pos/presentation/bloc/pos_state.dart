@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
+
 import '../../../../core/shared/contracts/errorable_state.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../../core/shared/model/settings_model.dart';
@@ -26,7 +28,7 @@ class PosState extends Equatable implements ErrorableState {
   final SettingsModel? settings;
   @override
   final BaseResponse? apiResponse;
-  final int selectedNavIndex;
+  final PosBottomNavEnm selectedNavIndex;
   final List<FloorModel> floors;
   final List<TableModel> tables;
   final List<CategoryModel> categories;
@@ -81,7 +83,7 @@ class PosState extends Equatable implements ErrorableState {
     this.additives,
     this.settings,
     this.currentSessionId,
-    this.selectedNavIndex = 0,
+    this.selectedNavIndex = PosBottomNavEnm.menu,
   });
 
   // ── ErrorableState contract ──
@@ -91,7 +93,7 @@ class PosState extends Equatable implements ErrorableState {
   factory PosState.initial() => PosState();
 
   PosState copyWith({
-    int? selectedNavIndex,
+    PosBottomNavEnm? selectedNavIndex,
     SettingsModel? settings,
     BaseResponse? apiResponse,
     PosStatus? status,

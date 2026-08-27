@@ -10,6 +10,7 @@ import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -295,7 +296,9 @@ class _SuccessActionButtons extends StatelessWidget {
                   cartBloc.add(ClearCartEvent());
                   context.pop();
                   context.read<PosBloc>().add(
-                    SelectedNavIndexEvent(selectedNavIndex: 1),
+                    SelectedNavIndexEvent(
+                      selectedNavIndex: PosBottomNavEnm.orders,
+                    ),
                   );
                 },
               ),
@@ -308,11 +311,8 @@ class _SuccessActionButtons extends StatelessWidget {
                 backgroundColor: theme.colorScheme.primary,
                 contentColor: AppColors.white,
                 onTap: () {
-                  final cartBloc = context.read<CartBloc>();
                   context.read<PaymentBloc>().add(ClearPaymentEvent());
-                  cartBloc.add(ClearCartEvent());
                   context.pop();
-                  // context.pushReplacementNamed(Routes.posScreen);
                 },
               ),
             ),

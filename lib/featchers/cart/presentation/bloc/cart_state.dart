@@ -9,6 +9,7 @@ import '../../data/models/invoice_request.dart';
 import '../../data/models/pos_client_model.dart';
 import '../../data/models/waiter_model.dart';
 import '../../../pos/data/models/delivery_company.dart';
+import '../../../pos/data/models/restaurant_item.dart';
 import '../../../pos/domain/entities/menu_item.dart';
 import '../../../tables/domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
@@ -119,11 +120,18 @@ class CartState extends Equatable {
   bool get dynamicDiscountIsActive =>
       activeDiscounts.any((d) => d.posTypeId == selectedOrderType.apiValue);
 
+  int get currentPosTypeId => selectedOrderType.apiValue;
+
+  ItemDiscount? dynamicDiscountForSize(ItemSize? size) {
+    final discount = size?.discountForPosType(currentPosTypeId);
+    if (discount == null || discount.discountValue <= 0) return null;
+    return discount;
+  }
+
   // أولويات الخصومات
   bool get hasSizeDiscount {
-    final posTypeId = selectedOrderType.apiValue;
     return items.any(
-      (item) => item.selectedSize?.discountForPosType(posTypeId) != null,
+      (item) => dynamicDiscountForSize(item.selectedSize) != null,
     );
   }
 
@@ -192,9 +200,8 @@ class CartState extends Equatable {
   ({double value, bool isPercentage, int? discountId})? _sizeDiscountFor(
     OrderItem item,
   ) {
-    final posTypeId = selectedOrderType.apiValue;
-    final discount = item.selectedSize?.discountForPosType(posTypeId);
-    if (discount == null || discount.discountValue <= 0) return null;
+    final discount = dynamicDiscountForSize(item.selectedSize);
+    if (discount == null) return null;
 
     final lineTotal = item.totalPriceBeforeDiscount;
     if (discount.minInvoiceNet > 0 && lineTotal < discount.minInvoiceNet) {

@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -73,9 +75,7 @@ class _SegmentButton extends StatelessWidget {
           label,
           textAlign: TextAlign.center,
           style: theme.textTheme.titleSmall?.copyWith(
-            color: isSelected
-                ? theme.colorScheme.onPrimary
-                : theme.colorScheme.onSecondary,
+            color: isSelected ? AppColors.white : theme.colorScheme.onSecondary,
             fontWeight: FontWeight.bold,
           ),
         ),
