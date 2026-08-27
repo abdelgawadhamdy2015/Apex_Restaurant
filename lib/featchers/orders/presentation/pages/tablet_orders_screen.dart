@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/orders/presentation/widgets/tablet_previous_orders.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -80,7 +81,9 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
     if (restored == null) return;
 
     final cartData = restored.toRestoredCartData(context);
-    context.read<PosBloc>().add(SelectedNavIndexEvent(selectedNavIndex: 0));
+    context.read<PosBloc>().add(
+      SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+    );
     context.read<CartBloc>().add(
       SyncRestoredInvoiceEvent(
         cartData,

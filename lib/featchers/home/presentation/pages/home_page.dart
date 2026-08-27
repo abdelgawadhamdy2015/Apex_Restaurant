@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/router/routes.dart';
@@ -300,7 +302,7 @@ class _SessionStartContent extends StatelessWidget {
                                       ? 'متابعة جلسة العمل'
                                       : 'بدء جلسة العمل',
                                   style: textTheme.titleMedium?.copyWith(
-                                    color: colorScheme.onPrimary,
+                                    color: AppColors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -310,7 +312,7 @@ class _SessionStartContent extends StatelessWidget {
                                       ? Icons.play_arrow_rounded
                                       : Icons.arrow_forward,
                                   size: context.iconSizes.sm,
-                                  color: colorScheme.onPrimary,
+                                  color: AppColors.white,
                                 ),
                               ],
                             ),

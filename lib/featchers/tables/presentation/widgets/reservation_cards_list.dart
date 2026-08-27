@@ -25,7 +25,7 @@ class ReservationCardsList extends StatelessWidget {
 
     return ListView.separated(
       shrinkWrap: true,
-      //   physics: const NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: reservations.length,
       separatorBuilder: (_, _) => SizedBox(height: spacing.md),
       itemBuilder: (context, index) =>

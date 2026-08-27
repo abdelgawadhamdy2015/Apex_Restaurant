@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
+import '../../../../core/helpers/item_discount_handler.dart';
+import '../../../../generated/l10n.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../domain/entities/menu_item.dart';
@@ -11,13 +15,9 @@ import 'discount_type_toggle.dart';
 import 'item_addon_tile.dart';
 import 'item_customization_header.dart';
 import 'item_size_selector.dart';
-import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ItemCustomizationSheet extends StatefulWidget {
   final RestaurantItem item;
-
   final PosBloc posBloc;
 
   final Function(
@@ -48,7 +48,7 @@ class ItemCustomizationSheet extends StatefulWidget {
     BuildContext context,
     RestaurantItem item,
     PosBloc posBloc,
-    final Function(
+    Function(
       RestaurantItem item,
       List<AdditiveModel> additives, {
       required dynamic selectedSize,
@@ -83,113 +83,21 @@ class ItemCustomizationSheet extends StatefulWidget {
   State<ItemCustomizationSheet> createState() => _ItemCustomizationSheetState();
 }
 
-class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
-  int _quantity = 1;
-  int _selectedSizeIndex = 0;
-
-  final Map<int, int> _addonQuantities = {};
-
-  bool _addonsPrefilled = false;
-
-  bool _isPercentageDiscount = true;
-  final TextEditingController _discountController = TextEditingController();
-  final TextEditingController _notesController = TextEditingController();
-
-  bool get _isEditMode => widget.existingItem != null;
-
-  double get _currentBasePrice => widget.item.sizes.isNotEmpty
-      ? widget.item.sizes[_selectedSizeIndex].price ?? 0
-      : 0.0;
-
-  double _totalPrice(List<AdditiveModel> additives) {
-    double addonsTotal = 0.0;
-    _addonQuantities.forEach((index, qty) {
-      if (index < additives.length) {
-        addonsTotal += additives[index].price * qty;
-      }
-    });
-
-    // double itemTotal = (_currentBasePrice + addonsTotal) * _quantity;
-    double itemTotal = (_currentBasePrice * _quantity) + addonsTotal;
-
-    double discountVal = double.tryParse(_discountController.text) ?? 0.0;
-    if (_isPercentageDiscount) {
-      itemTotal = itemTotal * (1 - (discountVal / 100));
-    } else {
-      itemTotal = (itemTotal - discountVal).clamp(0.0, double.infinity);
-    }
-
-    return itemTotal;
-  }
-
-  List<AdditiveModel> _getSelectedAddonsList(List<AdditiveModel> additives) {
-    final List<AdditiveModel> selectedList = [];
-    _addonQuantities.forEach((index, qty) {
-      if (index < additives.length) {
-        for (int i = 0; i < qty; i++) {
-          selectedList.add(additives[index]);
-        }
-      }
-    });
-    return selectedList;
-  }
-
-  List<AdditiveModel> _additivesFor(PosState posState) {
-    final matchCat = posState.categories.where(
-      (cat) => cat.id == widget.item.categoryId,
-    );
-    return matchCat.isNotEmpty ? (matchCat.first.additives ?? []) : [];
-  }
+class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
+    with ItemDiscountHandler<ItemCustomizationSheet> {
+  @override
+  RestaurantItem get item => widget.item;
 
   @override
   void initState() {
     super.initState();
-    _prefillSizeAndFieldsFromExistingItemIfAny();
-  }
+    prefillFromExistingItem(widget.existingItem);
 
-  void _prefillSizeAndFieldsFromExistingItemIfAny() {
-    final existing = widget.existingItem;
-    if (existing == null) return;
-
-    final existingSize = existing.selectedSize;
-    if (existingSize != null) {
-      final idx = widget.item.sizes.indexWhere(
-        (s) => s.sizeNameAr == existingSize.sizeNameAr,
-      );
-      if (idx != -1) _selectedSizeIndex = idx;
-    }
-
-    _quantity = existing.quantity;
-    _notesController.text = existing.notes ?? '';
-
-    _isPercentageDiscount = existing.isPercentageDiscount;
-    if (existing.discount != 0) {
-      _discountController.text = existing.discount.toString();
-    }
-  }
-
-  void _prefillAddonsOnceIfNeeded(List<AdditiveModel> additives) {
-    if (_addonsPrefilled || additives.isEmpty) return;
-    final existing = widget.existingItem;
-    if (existing != null) {
-      _addonQuantities.clear();
-      for (final addon in existing.addons) {
-        final idx = additives.indexWhere(
-          (a) => a.arabicName == addon.arabicName,
-        );
-        if (idx != -1) {
-          _addonQuantities[idx] = (_addonQuantities[idx] ?? 0) + 1;
-        }
-      }
-    }
-    _addonsPrefilled = true;
-  }
-
-  @override
-  void dispose() {
-    _discountController.dispose();
-    _notesController.dispose();
-    super.dispose();
+    // مزامنة الخصم التلقائي بعد رسم الشاشة
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => syncDiscountFieldsWithSize(context));
+    });
   }
 
   @override
@@ -198,10 +106,9 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
     final lang = S.of(context);
-    final dyanmicDiscountisActive = context
-        .read<CartBloc>()
-        .state
-        .dynamicDiscountIsActive;
+
+    // التحقق من تفعيل الخصم اليدوي بناءً على الـ Mixin
+    final isDiscountEnabled = calculateIsDiscountEnabled(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -217,31 +124,26 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
           final isLoadingAddons =
               posState.categories.isEmpty &&
               posState.status == PosStatus.loading;
+          final List<AdditiveModel> additives = additivesFor(posState);
 
-          final List<AdditiveModel> additives = _additivesFor(posState);
+          prefillAddonsOnce(additives, widget.existingItem);
 
-          _prefillAddonsOnceIfNeeded(additives);
-          final discountValue =
-              context
-                  .read<CartBloc>()
-                  .state
-                  .restaurantPosDiscountRequest
-                  ?.value ??
-              0;
-
-          final isRadioEnabled = !dyanmicDiscountisActive && discountValue <= 0;
           return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // رأس النموذج
               ItemCustomizationHeader(
                 itemNameAr: widget.item.itemNameAr,
                 imagePath: widget.item.imagePath,
               ),
               const Divider(height: 1),
+
+              // محتوى خيارات المنتج
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.all(spacing.md),
                   children: [
+                    // اختيار الحجم
                     Text(
                       lang.productSize,
                       style: textTheme.titleMedium?.copyWith(
@@ -251,11 +153,17 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                     SizedBox(height: spacing.sm),
                     ItemSizeSelector(
                       sizes: widget.item.sizes,
-                      selectedIndex: _selectedSizeIndex,
-                      onSelected: (index) =>
-                          setState(() => _selectedSizeIndex = index),
+                      selectedIndex: selectedSizeIndex,
+                      onSelected: (index) {
+                        setState(() {
+                          selectedSizeIndex = index;
+                          syncDiscountFieldsWithSize(context);
+                        });
+                      },
                     ),
                     SizedBox(height: spacing.xl),
+
+                    // قائمة الإضافات
                     Text(
                       lang.addons,
                       style: textTheme.titleMedium?.copyWith(
@@ -281,7 +189,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                     else
                       ...List.generate(additives.length, (index) {
                         final addon = additives[index];
-                        final currentQty = _addonQuantities[index] ?? 0;
+                        final currentQty = addonQuantities[index] ?? 0;
 
                         return ItemAddonTile(
                           addon: addon,
@@ -289,30 +197,31 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                           onDecrement: () {
                             setState(() {
                               if (currentQty > 1) {
-                                _addonQuantities[index] = currentQty - 1;
+                                addonQuantities[index] = currentQty - 1;
                               } else {
-                                _addonQuantities.remove(index);
+                                addonQuantities.remove(index);
                               }
                             });
                           },
                           onIncrement: () {
                             setState(() {
-                              _addonQuantities[index] = currentQty + 1;
+                              addonQuantities[index] = currentQty + 1;
                             });
                           },
                         );
                       }),
                     SizedBox(height: spacing.sm),
+
+                    // الملاحظات الخاصة
                     Text(
                       lang.specialNotes,
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
-                    SizedBox(height: spacing.xl),
+                    SizedBox(height: spacing.sm),
                     TextField(
-                      controller: _notesController,
+                      controller: notesController,
                       maxLines: 3,
                       decoration: InputDecoration(
                         hintText: lang.specialNotesHint,
@@ -320,6 +229,8 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                       ),
                     ),
                     SizedBox(height: spacing.xl),
+
+                    // الخصم الخاص
                     Text(
                       lang.specialDiscount,
                       style: textTheme.titleMedium?.copyWith(
@@ -328,15 +239,15 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                     ),
                     SizedBox(height: spacing.sm),
                     DiscountTypeToggle(
-                      enabled: isRadioEnabled,
-                      isPercentage: _isPercentageDiscount,
+                      enabled: isDiscountEnabled,
+                      isPercentage: isPercentageDiscount,
                       onChanged: (value) =>
-                          setState(() => _isPercentageDiscount = value),
+                          setState(() => isPercentageDiscount = value),
                     ),
                     SizedBox(height: spacing.sm),
                     TextField(
-                      enabled: isRadioEnabled,
-                      controller: _discountController,
+                      enabled: isDiscountEnabled,
+                      controller: discountController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         hintText: lang.enterDiscountValue,
@@ -347,58 +258,66 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet> {
                           ),
                         ),
                       ),
-                      onChanged: (value) => setState(() {}),
+                      onChanged: (_) => setState(() {}),
                     ),
                     SizedBox(height: spacing.xl),
                   ],
                 ),
               ),
+
+              // شريط إضافة إلى السلة والسعر الإجمالي
               AddToCartBar(
-                quantity: _quantity,
-                onIncrement: () => setState(() => _quantity++),
+                quantity: quantity,
+                onIncrement: () => setState(() => quantity++),
                 onDecrement: () {
-                  if (_quantity > 1) setState(() => _quantity--);
+                  if (quantity > 1) setState(() => quantity--);
                 },
-                totalPrice: _totalPrice(additives),
-                onConfirm: () {
-                  if (widget.item.sizes.isEmpty) {
-                    HelperMethods.showSnackBar(
-                      context: context,
-                      message: S.of(context).thisItemHasNoValidSize,
-                      isError: true,
-                    );
-                    return;
-                  }
-
-                  final selectedSize = widget.item.sizes[_selectedSizeIndex];
-
-                  if (widget.item.sizes.length > 1 &&
-                      (selectedSize.sizeId ?? 0) <= 0) {
-                    HelperMethods.showSnackBar(
-                      context: context,
-                      message: S.of(context).pleaseSelectValidSize,
-                      isError: true,
-                    );
-                    return;
-                  }
-
-                  Navigator.pop(context);
-                  widget.onConfirm(
-                    widget.item,
-                    additives,
-                    selectedSize: selectedSize,
-                    selectedAddons: _getSelectedAddonsList(additives),
-                    discount: double.tryParse(_discountController.text) ?? 0.0,
-                    isPercentageDiscount: _isPercentageDiscount,
-                    notes: _notesController.text,
-                    quantity: _quantity,
-                  );
-                },
+                totalPrice: calculateTotalPrice(additives: additives),
+                onConfirm: () => _handleConfirm(context, additives, lang),
               ),
             ],
           );
         },
       ),
+    );
+  }
+
+  // تأكيد الإضافة للسلة والتحقق من صحة المدخلات
+  void _handleConfirm(
+    BuildContext context,
+    List<AdditiveModel> additives,
+    S lang,
+  ) {
+    if (widget.item.sizes.isEmpty) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.thisItemHasNoValidSize,
+        isError: true,
+      );
+      return;
+    }
+
+    final selectedSize = widget.item.sizes[selectedSizeIndex];
+
+    if (widget.item.sizes.length > 1 && (selectedSize.sizeId ?? 0) <= 0) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.pleaseSelectValidSize,
+        isError: true,
+      );
+      return;
+    }
+
+    Navigator.pop(context);
+    widget.onConfirm(
+      widget.item,
+      additives,
+      selectedSize: selectedSize,
+      selectedAddons: getSelectedAddonsList(additives),
+      discount: double.tryParse(discountController.text) ?? 0.0,
+      isPercentageDiscount: isPercentageDiscount,
+      notes: notesController.text,
+      quantity: quantity,
     );
   }
 }
