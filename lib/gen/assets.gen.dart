@@ -17,6 +17,14 @@ class $ImagesGen {
   /// File path: images/apex-logo.png
   AssetGenImage get apexLogo => const AssetGenImage('images/apex-logo.png');
 
+  /// File path: images/app-logo-dark.png
+  AssetGenImage get appLogoDark =>
+      const AssetGenImage('images/app-logo-dark.png');
+
+  /// File path: images/app-logo-light.png
+  AssetGenImage get appLogoLight =>
+      const AssetGenImage('images/app-logo-light.png');
+
   /// File path: images/images.png
   AssetGenImage get images => const AssetGenImage('images/images.png');
 
@@ -27,7 +35,14 @@ class $ImagesGen {
   AssetGenImage get noWifi => const AssetGenImage('images/no-wifi.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [apexLogo, images, logo, noWifi];
+  List<AssetGenImage> get values => [
+    apexLogo,
+    appLogoDark,
+    appLogoLight,
+    images,
+    logo,
+    noWifi,
+  ];
 }
 
 abstract final class Assets {

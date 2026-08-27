@@ -107,7 +107,7 @@ class DynamicDiscountInput {
   });
 
   /// تحويل من موديل الـ API (DiscountModel) لموديل الحساب
-  /// ملاحظة: 1 = نسبة، غير كده = قيمة ثابتة (عدّل حسب اتفاقية الباك إند)
+  /// ملاحظة: 1 = نسبة، غير كده = قيمة ثابت)
   factory DynamicDiscountInput.fromDiscountType({
     required String? id,
     required int? discountType,

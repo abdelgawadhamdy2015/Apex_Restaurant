@@ -503,5 +503,6 @@
     "remaining": "Remaining",
     "discount": "Discount",
     "selectFloor": "Select Floor",
-    "voucherApplied": "Voucher applied ({value} SAR)"
+    "voucherApplied": "Voucher applied ({value} SAR)",
+    "invoiceReturnedSuccessfully": "Invoice returned successfully"
 }

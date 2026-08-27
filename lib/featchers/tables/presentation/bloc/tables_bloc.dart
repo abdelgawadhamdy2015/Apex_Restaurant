@@ -15,7 +15,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
   final GetFloorsUseCase getFloorsUseCase;
   final GetTablesUseCase getTablesUseCase;
   final GetPindingTableInvoiceUseCase getPindingTableInvoiceUseCase;
-  final RestoreHeldOrderUseCase restoreHeldOrderUseCase;
+  final GetPosInvoiceDataByIdUseCase restoreHeldOrderUseCase;
 
   TablesBloc({
     required this.getReservationsUseCase,

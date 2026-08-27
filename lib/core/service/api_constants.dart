@@ -51,6 +51,10 @@ class ApiConstants {
   static const String checkPOSVoucher =
       'api/Restaurants/Vouchers/CheckPOSVoucher';
 
+  static const String addPOSTotalReturnInvoice =
+      'api/Store/POS/AddPOSTotalReturnInvoice';
+  static const String addPOSReturnInvoice = 'api/Store/POS/AddPOSReturnInvoice';
+
   static const String getAllPersons = "api/Store/Persons/GetListOfPersonsPOS";
   static const String getPendingRestaurantPosInvoiceDetails =
       "api/Restaurants/RestaurantPos/GetPendingRestaurantPosInvoiceDetails";
@@ -79,10 +83,6 @@ class ApiConstants {
 
   // return
   static const String getAllPOSInvoices = "api/Store/POS/GetAllPOSInvoices";
-  static const String addPOSResturnInvoice =
-      "api/Store/POS/AddPOSResturnInvoice";
-  static const String addPOSTotalReturnInvoice =
-      "api/Store/POS/AddPOSTotalReturnInvoice";
 
   // General apis
   static const String getEmployeeBranches =

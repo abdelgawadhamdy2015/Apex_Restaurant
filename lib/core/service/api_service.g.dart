@@ -1387,7 +1387,7 @@ class _ApiService implements ApiService {
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Store/POS/AddPOSResturnInvoice',
+            'api/Store/POS/AddPOSReturnInvoice',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -1410,7 +1410,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<PosInvoiceData?>> addPOSTotalReturnInvoice(
+  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice(
     AddPOSTotalReturnInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
@@ -1418,7 +1418,7 @@ class _ApiService implements ApiService {
     queryParameters.addAll(request.toJson());
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse<PosInvoiceData?>>(
+    final _options = _setStreamType<BaseResponse<InvoiceReturnResponse?>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -1429,13 +1429,13 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<PosInvoiceData?> _value;
+    late BaseResponse<InvoiceReturnResponse?> _value;
     try {
-      _value = BaseResponse<PosInvoiceData?>.fromJson(
+      _value = BaseResponse<InvoiceReturnResponse?>.fromJson(
         _result.data!,
         (json) => json == null
             ? null
-            : PosInvoiceData.fromJson(json as Map<String, dynamic>),
+            : InvoiceReturnResponse.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

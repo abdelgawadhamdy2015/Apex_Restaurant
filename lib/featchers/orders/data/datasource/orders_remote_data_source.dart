@@ -14,7 +14,7 @@ abstract class OrdersRemoteDataSource {
     GetPindingInvoicesRequest? request,
   });
 
-  Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
+  Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     int invoiceId,
   );
   Future<BaseResponse<dynamic>> deleteHeldOrder({int? id, String? foodTableId});
@@ -38,7 +38,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
+  Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     int invoiceId,
   ) async {
     return await apiService.getPosInvoiceDataById(invoiceId);

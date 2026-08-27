@@ -240,7 +240,7 @@ Future<void> setupGetIt() async {
     () => GetPreviousOrdersUseCase(getIt<OrdersRepository>()),
   );
   getIt.registerLazySingleton(
-    () => RestoreHeldOrderUseCase(getIt<OrdersRepository>()),
+    () => GetPosInvoiceDataByIdUseCase(getIt<OrdersRepository>()),
   );
   getIt.registerLazySingleton(
     () => DeleteHeldOrderUseCase(getIt<OrdersRepository>()),
@@ -345,7 +345,7 @@ Future<void> setupGetIt() async {
       getPreviousOrdersUseCase: getIt<GetPreviousOrdersUseCase>(),
       getPindingInvoicesUseCase: getIt<GetPindingInvoicesUseCase>(),
 
-      restoreHeldOrderUseCase: getIt<RestoreHeldOrderUseCase>(),
+      getPosInvoiceDataByIdUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       deleteHeldOrderUseCase: getIt<DeleteHeldOrderUseCase>(),
     ),
   );
@@ -353,7 +353,7 @@ Future<void> setupGetIt() async {
   // Tables
   getIt.registerFactory(
     () => TablesBloc(
-      restoreHeldOrderUseCase: getIt<RestoreHeldOrderUseCase>(),
+      restoreHeldOrderUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       getPindingTableInvoiceUseCase: getIt<GetPindingTableInvoiceUseCase>(),
       getReservationsUseCase: getIt<GetReservationsUseCase>(),
       createReservationUseCase: getIt<CreateReservationUseCase>(),
@@ -366,6 +366,7 @@ Future<void> setupGetIt() async {
   // More Actions
   getIt.registerFactory(
     () => MoreActionsBloc(
+      getPosInvoiceDataByIdUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       getAllPOSInvoicesUseCase: getIt<GetAllPOSInvoicesUseCase>(),
       addPOSResturnInvoiceUseCase: getIt<AddPOSResturnInvoiceUseCase>(),
       addPOSTotalReturnInvoiceUseCase: getIt<AddPOSTotalReturnInvoiceUseCase>(),

@@ -412,6 +412,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "invoiceNumberLabel": MessageLookupByLibrary.simpleMessage(
       "Invoice Number",
     ),
+    "invoiceReturnedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Invoice returned successfully",
+    ),
     "invoices": MessageLookupByLibrary.simpleMessage("Invoices"),
     "isDefaultAddress": MessageLookupByLibrary.simpleMessage(
       "Is Default Address",

@@ -9,9 +9,9 @@ class AddPOSTotalReturnInvoiceRequest {
   final bool isArabic;
 
   const AddPOSTotalReturnInvoiceRequest({
-    required this.financialYearId,
+    this.financialYearId = 1,
     required this.id,
-    required this.isArabic,
+    this.isArabic = true,
   });
 
   factory AddPOSTotalReturnInvoiceRequest.fromJson(Map<String, dynamic> json) =>

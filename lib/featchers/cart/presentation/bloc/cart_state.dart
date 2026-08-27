@@ -62,7 +62,7 @@ class CartState extends Equatable {
   final bool isPending;
   final int? orderNumber;
   final String? invoiceCode;
-  final int? voucherId;
+  final String? voucherId;
   final DateTime? restoredInvoiceDate;
   const CartState({
     this.selectedOrderType = CartOrderType.TAKEAWAY,
@@ -397,7 +397,10 @@ class CartState extends Equatable {
 
   // القيم المحسوبة
   double get subtotal => calculationResult?.totalOfItems ?? 0.0;
-  double get totalDiscountAmount => calculationResult?.totalDiscount ?? 0.0;
+  double get totalDiscountAmount =>
+      selectedDiscountType == DiscountTypeEnum.direct
+      ? calculationResult?.totalDiscount ?? 0.0
+      : calculationResult?.voucherDiscount ?? 0;
   double get netSubtotal => calculationResult?.totalWithoutVAT ?? 0.0;
   double get vatAmount => calculationResult?.totalVAT ?? 0.0;
   double get tobaccoTaxAmount => calculationResult?.totalTobaccoTax ?? 0.0;
@@ -443,13 +446,11 @@ class CartState extends Equatable {
     if (appliedDiscount == null &&
         selectedDiscountType == DiscountTypeEnum.coupon &&
         voucherData != null) {
-      if ((voucherData?.minimumCharge ?? 0) < netSubtotal) {
-        voucherCode = voucherData?.voucherCode;
-        appliedDiscount = RestaurantPosDiscountRequest(
-          type: voucherData?.discountNatural ?? 0,
-          value: voucherData?.discountValue ?? 0,
-        );
-      }
+      voucherCode = voucherData?.voucherCode;
+      appliedDiscount = RestaurantPosDiscountRequest(
+        type: voucherData?.discountNatural ?? 0,
+        value: voucherData?.discountValue ?? 0,
+      );
     }
 
     final invoiceItems = <RestaurantPosInvoiceItemRequest>[];
@@ -612,7 +613,7 @@ class CartState extends Equatable {
     bool? isPending,
     int? orderNumber,
     String? invoiceCode,
-    int? voucherId,
+    String? voucherId,
     DateTime? restoredInvoiceDate,
     // Optional flag helpers to force explicit null assignment
     bool clearActiveDiscountModel = false,

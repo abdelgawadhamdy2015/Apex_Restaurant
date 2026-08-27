@@ -3991,6 +3991,16 @@ class S {
       args: [value],
     );
   }
+
+  /// `Invoice returned successfully`
+  String get invoiceReturnedSuccessfully {
+    return Intl.message(
+      'Invoice returned successfully',
+      name: 'invoiceReturnedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

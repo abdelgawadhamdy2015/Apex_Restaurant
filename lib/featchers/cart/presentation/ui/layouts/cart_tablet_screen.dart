@@ -21,8 +21,8 @@ import '../widgets/takeaway_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PosTabletCartPanel extends StatelessWidget {
-  const PosTabletCartPanel({super.key});
+class TabletCartPanel extends StatelessWidget {
+  const TabletCartPanel({super.key});
 
   void _onCartStateChanged(BuildContext context, CartState state) {
     if (state.errorMessage != null) {

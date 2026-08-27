@@ -1,15 +1,22 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/ui/layouts/cart_tablet_screen.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_bloc.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_event.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_state.dart';
+import 'package:apex_restaurant/featchers/orders/domain/mapper/restored_invoice_mapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
 import '../../../../generated/l10n.dart';
@@ -26,7 +33,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
   final TextEditingController _invoiceController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
-  int? _expandedIndex = 2;
+  int? _expandedIndex = -1;
   DateTime? selectedInvoiceDate;
 
   @override
@@ -52,7 +59,33 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final isTablet = SizeHelper.isTablet;
 
-    return BlocBuilder<MoreActionsBloc, MoreActionsState>(
+    return BlocConsumer<MoreActionsBloc, MoreActionsState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (BuildContext context, MoreActionsState state) {
+        if (state.status == MoreActionsStatus.sussess) {
+          if (state.returnedInvoice != null) {
+            final restoresd = state.returnedInvoice?.toRestoredCartData(
+              context,
+            );
+            if (restoresd == null) return;
+            context.read<CartBloc>().add(SyncRestoredInvoiceEvent(restoresd));
+            SizeHelper.isTablet
+                ? showBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return TabletCartPanel();
+                    },
+                  )
+                : context.pushReplacementNamed(Routes.cartScreen);
+          } else if (state.invoiceReturnResponse != null) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: lang.invoiceReturnedSuccessfully,
+              isError: false,
+            );
+          }
+        }
+      },
       builder: (context, state) {
         return isTablet
             ? _buildTabletLayout(context, state)
@@ -156,6 +189,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
         for (var i = 0; i < invoices.length; i++) ...[
           if (i > 0) SizedBox(height: spacing.sm),
           _InvoiceCard(
+            invoiceId: invoices[i].invoiceId,
             invoiceNumber: invoices[i].invoiceType,
             time: RestaurantConstants.hoursFormat.format(
               invoices[i].invoiceDate,
@@ -291,7 +325,7 @@ class _InvoiceCard extends StatelessWidget {
   final String totalAmount;
   final bool isExpanded;
   final VoidCallback onTap;
-
+  final int invoiceId;
   const _InvoiceCard({
     required this.invoiceNumber,
     required this.time,
@@ -299,6 +333,7 @@ class _InvoiceCard extends StatelessWidget {
     required this.totalAmount,
     required this.isExpanded,
     required this.onTap,
+    required this.invoiceId,
   });
 
   @override
@@ -444,7 +479,15 @@ class _InvoiceCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.read<MoreActionsBloc>().add(
+                              AddPOSTotalReturnEvent(
+                                request: AddPOSTotalReturnInvoiceRequest(
+                                  id: invoiceId,
+                                ),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: appExtraTheme.greenBackground
                                 .withOpacity(0.1),
@@ -473,7 +516,11 @@ class _InvoiceCard extends StatelessWidget {
 
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.read<MoreActionsBloc>().add(
+                              FetchInvoiceByIdEvent(invoiceId: invoiceId),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colorScheme.primary.withOpacity(
                               0.1,

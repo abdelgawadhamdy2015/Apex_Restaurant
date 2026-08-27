@@ -286,11 +286,24 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onSelectPerson(SelectPersonEvent event, Emitter<CartState> emit) {
-    emit(state.copyWith(selectedPerson: event.person, clearAddress: true));
+    emit(
+      state.copyWith(
+        selectedPerson: event.person,
+        clearAddress: true,
+        clearVoucherDiscountValue: state.selectedPerson != event.person,
+      ),
+    );
   }
 
   void _onChangeOrderType(ChangeOrderTypeEvent event, Emitter<CartState> emit) {
-    emit(state.copyWith(selectedOrderType: event.orderType));
+    emit(
+      state.copyWith(
+        selectedOrderType: event.orderType,
+        clearVoucherDiscountValue: event.orderType != state.selectedOrderType
+            ? true
+            : false,
+      ),
+    );
   }
 
   void _onUpdateItemQuantity(

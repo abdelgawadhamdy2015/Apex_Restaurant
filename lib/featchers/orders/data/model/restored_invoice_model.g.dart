@@ -95,7 +95,7 @@ RestoredInvoiceInfo _$RestoredInvoiceInfoFromJson(Map<String, dynamic> json) =>
           : RestoredFoodTable.fromJson(
               json['foodTable'] as Map<String, dynamic>,
             ),
-      voucherId: (json['voucherId'] as num?)?.toInt(),
+      voucherId: json['voucherId'] as String?,
       canEdit: json['canEdit'] as bool? ?? true,
     );
 

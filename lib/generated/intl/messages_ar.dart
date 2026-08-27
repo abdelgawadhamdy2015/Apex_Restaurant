@@ -393,6 +393,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "مثال : INV-1024",
     ),
     "invoiceNumberLabel": MessageLookupByLibrary.simpleMessage("رقم الفاتورة"),
+    "invoiceReturnedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تم إرتجاع الفاتورة بنجاح",
+    ),
     "invoices": MessageLookupByLibrary.simpleMessage("الفواتير"),
     "isDefaultAddress": MessageLookupByLibrary.simpleMessage(
       "العنوان الافتراضي",

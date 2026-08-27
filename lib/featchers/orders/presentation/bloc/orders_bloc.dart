@@ -11,12 +11,12 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final GetPindingInvoicesUseCase getPindingInvoicesUseCase;
   final GetPreviousOrdersUseCase getPreviousOrdersUseCase;
 
-  final RestoreHeldOrderUseCase restoreHeldOrderUseCase;
+  final GetPosInvoiceDataByIdUseCase getPosInvoiceDataByIdUseCase;
   final DeleteHeldOrderUseCase deleteHeldOrderUseCase;
 
   OrdersBloc({
     required this.getPindingInvoicesUseCase,
-    required this.restoreHeldOrderUseCase,
+    required this.getPosInvoiceDataByIdUseCase,
     required this.deleteHeldOrderUseCase,
     required this.getPreviousOrdersUseCase,
   }) : super(const OrdersState()) {
@@ -308,7 +308,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(state.copyWith(restoringInvoiceId: event.invoiceId));
 
     try {
-      final response = await restoreHeldOrderUseCase(event.invoiceId);
+      final response = await getPosInvoiceDataByIdUseCase(event.invoiceId);
       response.when(
         success: (data) {
           if (data.result == 1 && data.data != null) {

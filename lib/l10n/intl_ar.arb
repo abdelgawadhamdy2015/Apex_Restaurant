@@ -503,5 +503,6 @@
     "remaining": "المتبقي",
     "discount": "الخصم",
     "selectFloor": "اختر الطابق",
-    "voucherApplied": "تم تطبيق القسيمة ({value} ريال)"
+    "voucherApplied": "تم تطبيق القسيمة ({value} ريال)",
+    "invoiceReturnedSuccessfully": "تم إرتجاع الفاتورة بنجاح"
 }

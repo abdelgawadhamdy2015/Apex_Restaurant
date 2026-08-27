@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
+
 import '../enums/cart_enum.dart';
 import 'invoice_request.dart';
 import 'pos_client_model.dart';
@@ -11,7 +13,8 @@ class RestoredCartData {
   final String? invoiceCode;
   final int? orderNumber;
   final List<OrderItem> items;
-  final int? voucherId;
+  final String? voucherId;
+  final CheckVoucherResponse? voucherData;
   final DateTime? invoiceDate;
   final CartOrderType orderType;
   final PosClientModel? client;
@@ -35,5 +38,6 @@ class RestoredCartData {
     this.orderNumber,
     this.voucherId,
     this.invoiceDate,
+    this.voucherData,
   });
 }
