@@ -252,6 +252,8 @@ ApiErrorModel _handleError(DioException error) {
       return DataSource.NO_INTERNET_CONNECTION.getFailure();
     case DioExceptionType.badCertificate:
       return DataSource.DEFAULT.getFailure();
+    case DioExceptionType.transformTimeout:
+      return DataSource.SEND_TIMEOUT.getFailure();
   }
 }
 

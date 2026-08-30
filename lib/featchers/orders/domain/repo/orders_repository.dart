@@ -12,8 +12,9 @@ abstract class OrdersRepository {
   Future<ApiResult<BaseResponse<List<PindingInvoiceModel>?>>>
   getPindingInvoices({GetPindingInvoicesRequest? request});
 
-  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
-  restorePosRestuarantInvoice(int invoiceId);
+  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>> getPosInvoiceDataById(
+    int invoiceId,
+  );
   Future<ApiResult<BaseResponse<dynamic>>> deleteHeldOrder({
     int? id,
     String? foodTableId,

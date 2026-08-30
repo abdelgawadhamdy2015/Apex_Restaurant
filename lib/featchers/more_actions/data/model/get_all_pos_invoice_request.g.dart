@@ -25,7 +25,7 @@ GetAllPosInvoiceRequest _$GetAllPosInvoiceRequestFromJson(
       : DateTime.parse(json['dateTo'] as String),
   storeId: (json['storeId'] as num?)?.toInt() ?? 0,
   personId: (json['personId'] as num?)?.toInt() ?? 0,
-  isReturn: json['isReturn'] as bool? ?? false,
+  isReturn: json['isReturn'] as bool? ?? true,
   sessionId: (json['sessionId'] as num?)?.toInt() ?? 0,
   financialYearId: (json['financialYearId'] as num?)?.toInt() ?? 0,
 );

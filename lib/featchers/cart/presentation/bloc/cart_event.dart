@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
+
 import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../data/enums/cart_enum.dart';
@@ -181,12 +183,19 @@ class ApplyDiscountEvent extends CartEvent {
   List<Object?> get props => [RestaurantPosDiscountRequest];
 }
 
-class ApplyCouponDiscountEvent extends CartEvent {
-  final String code;
-  const ApplyCouponDiscountEvent({required this.code});
+class ApplyVoucherDiscountEvent extends CartEvent {
+  final CheckVoucherRequest request;
+  const ApplyVoucherDiscountEvent({required this.request});
 
   @override
-  List<Object?> get props => [code];
+  List<Object?> get props => [request];
+}
+
+class ClearVoucherDiscountEvent extends CartEvent {
+  const ClearVoucherDiscountEvent();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class AddOrderItemToCartEvent extends CartEvent {

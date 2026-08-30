@@ -15,6 +15,14 @@ class SwitchTabEvent extends OrdersEvent {
   const SwitchTabEvent(this.tab);
 }
 
+class SelectDateEvent extends OrdersEvent {
+  final DateTime dateTime;
+  final bool isFrom;
+  const SelectDateEvent({required this.dateTime, required this.isFrom});
+  @override
+  List<Object?> get props => [dateTime, isFrom];
+}
+
 class FetchPindingInvoicesEvent extends OrdersEvent {
   final GetPindingInvoicesRequest? request;
   const FetchPindingInvoicesEvent({this.request});

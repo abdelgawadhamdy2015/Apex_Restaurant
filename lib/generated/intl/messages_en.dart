@@ -54,6 +54,8 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m15(vat) => "VAT : % ${vat} ";
 
+  static String m16(value) => "Voucher applied (${value} SAR)";
+
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "Email": MessageLookupByLibrary.simpleMessage("Email"),
@@ -409,6 +411,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "invoiceNumberHint": MessageLookupByLibrary.simpleMessage("Ex: INV-1024"),
     "invoiceNumberLabel": MessageLookupByLibrary.simpleMessage(
       "Invoice Number",
+    ),
+    "invoiceReturnedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Invoice returned successfully",
     ),
     "invoices": MessageLookupByLibrary.simpleMessage("Invoices"),
     "isDefaultAddress": MessageLookupByLibrary.simpleMessage(
@@ -820,6 +825,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "visa": MessageLookupByLibrary.simpleMessage("Visa"),
     "voucher": MessageLookupByLibrary.simpleMessage("Voucher"),
+    "voucherApplied": m16,
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "Please wait until the current location data is loaded",
     ),

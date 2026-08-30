@@ -9,9 +9,9 @@ part of 'add_pos_total_return_invoice_request.dart';
 AddPOSTotalReturnInvoiceRequest _$AddPOSTotalReturnInvoiceRequestFromJson(
   Map<String, dynamic> json,
 ) => AddPOSTotalReturnInvoiceRequest(
-  financialYearId: (json['financialYearId'] as num).toInt(),
+  financialYearId: (json['financialYearId'] as num?)?.toInt() ?? 1,
   id: (json['id'] as num).toInt(),
-  isArabic: json['isArabic'] as bool,
+  isArabic: json['isArabic'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$AddPOSTotalReturnInvoiceRequestToJson(

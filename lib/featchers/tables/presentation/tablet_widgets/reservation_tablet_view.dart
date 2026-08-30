@@ -107,11 +107,11 @@ class _ReservationsTabletViewState extends State<ReservationsTabletView> {
                       ),
                       child: Icon(
                         _searchFilterOpen
-                            ? Icons.filter_alt_off_outlined
-                            : Icons.filter_alt_outlined,
+                            ? Icons.filter_alt_outlined
+                            : Icons.filter_alt_off_outlined,
                         color: _searchFilterOpen
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface,
+                            : theme.colorScheme.onPrimary,
                       ),
                     ),
                   ),

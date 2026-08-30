@@ -68,7 +68,7 @@ class RestoredInvoiceInfo {
   final RestoredDeliveryMan? deliveryMan;
   final RestoredFoodTable? foodTable;
 
-  final int? voucherId;
+  final String? voucherId;
 
   const RestoredInvoiceInfo({
     this.invoiceId,

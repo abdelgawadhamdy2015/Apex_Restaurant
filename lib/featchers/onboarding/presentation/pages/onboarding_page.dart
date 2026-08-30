@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/router/routes.dart';
 import '../../../../core/themes/app_colors.dart';
@@ -40,6 +42,7 @@ class _OnBoardingPageState extends State<OnBoardingPage>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -47,7 +50,15 @@ class _OnBoardingPageState extends State<OnBoardingPage>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Assets.images.apexLogo.image(fit: BoxFit.contain),
+              isDark
+                  ? Assets.images.appLogoDark.image(
+                      width: SizeHelper.width! * .3,
+                      height: SizeHelper.height! * .3,
+                    )
+                  : Assets.images.appLogoLight.image(
+                      width: SizeHelper.width! * .3,
+                      height: SizeHelper.height! * .3,
+                    ),
               SizedBox(height: 16.h, width: double.infinity),
               Text(
                 versionNumberOfApp,

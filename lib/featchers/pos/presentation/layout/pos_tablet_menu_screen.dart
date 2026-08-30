@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/tablet_orders_screen.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/screens/customers_tablet_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_menu_tab.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_more_option.dart';
@@ -13,7 +17,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import 'package:apex_restaurant/featchers/tables/presentation/pages/tablet_tables_screen.dart';
 import 'package:flutter/material.dart';
 
-// Ensure your import paths are aligned
 import '../../../cart/data/models/get_client_request.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
@@ -26,6 +29,17 @@ class PosTabletMenuScreen extends StatefulWidget {
 }
 
 class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
+  static const int _pageSize = 100;
+  static const Duration _searchDebounceDuration = Duration(milliseconds: 400);
+  static const Duration _loadMoreThrottleDuration = Duration(milliseconds: 600);
+
+  Timer? _searchDebounce;
+
+  String _currentSearchKey = '';
+  int _currentPage = 1;
+
+  DateTime? _lastLoadMoreAt;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +53,58 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   }
 
   @override
+  void dispose() {
+    _searchDebounce?.cancel();
+    super.dispose();
+  }
+
+  /// Debounced search handler. Waits for the user to stop typing before
+  /// firing a request, and always resets pagination back to page 1 since a
+  /// new search key means a brand-new result set.
+  void _onSearchChanged(String value) {
+    final trimmed = value.trim();
+
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(_searchDebounceDuration, () {
+      if (!mounted) return;
+      // Skip re-fetching if the debounced value didn't actually change
+      // (e.g. user typed then quickly deleted back to the same text).
+      if (trimmed == _currentSearchKey && _currentPage == 1) return;
+
+      _currentSearchKey = trimmed;
+      _currentPage = 1;
+      _fetchItems(page: 1, searchKey: _currentSearchKey);
+    });
+  }
+
+  /// Loads the next page for whatever search key is currently active.
+  /// Throttled so it can be safely called from a scroll listener without
+  /// worrying about duplicate calls near the end of the list.
+  void loadNextPage() {
+    final now = DateTime.now();
+    if (_lastLoadMoreAt != null &&
+        now.difference(_lastLoadMoreAt!) < _loadMoreThrottleDuration) {
+      return;
+    }
+    _lastLoadMoreAt = now;
+
+    _currentPage += 1;
+    _fetchItems(page: _currentPage, searchKey: _currentSearchKey);
+  }
+
+  void _fetchItems({required int page, required String searchKey}) {
+    context.read<PosBloc>().add(
+      LoadItemsEvent(
+        GetItemsRequest(
+          pageNumber: page,
+          pageSize: _pageSize,
+          searchKey: searchKey.isEmpty ? null : searchKey,
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -49,6 +115,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: TabletPosTopHeader(
+          onSearchChanged: _onSearchChanged,
           branchName: homeState.selectedEmployeeBranch?.arabicName ?? "",
           userRole: homeState.userDataModel?.employees?.arabicName ?? "",
           onSettingsPressed: () {
@@ -79,7 +146,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
                 Expanded(
                   flex: 9,
                   child: IndexedStack(
-                    index: state.selectedNavIndex,
+                    index: state.selectedNavIndex.index,
                     children: [
                       PosTabletMenuTab(),
                       OrdersTabletScreen(),
@@ -116,11 +183,41 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       child: Column(
         children: [
           const SizedBox(height: 20),
-          _buildRailItem(0, Icons.restaurant_menu, 'القائمة', theme, posState),
-          _buildRailItem(1, Icons.receipt_long, 'الطلبات', theme, posState),
-          _buildRailItem(2, Icons.people, 'العملاء', theme, posState),
-          _buildRailItem(3, Icons.table_bar, 'الطاولات', theme, posState),
-          _buildRailItem(4, Icons.more_horiz, 'المزيد', theme, posState),
+          _buildRailItem(
+            PosBottomNavEnm.menu,
+            Icons.restaurant_menu,
+            'القائمة',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.orders,
+            Icons.receipt_long,
+            'الطلبات',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.customers,
+            Icons.people,
+            'العملاء',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.tables,
+            Icons.table_bar,
+            'الطاولات',
+            theme,
+            posState,
+          ),
+          _buildRailItem(
+            PosBottomNavEnm.more,
+            Icons.more_horiz,
+            'المزيد',
+            theme,
+            posState,
+          ),
           const SizedBox(height: 20),
         ],
       ),
@@ -128,7 +225,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   }
 
   Widget _buildRailItem(
-    int index,
+    PosBottomNavEnm index,
     IconData icon,
     String label,
     ThemeData theme,

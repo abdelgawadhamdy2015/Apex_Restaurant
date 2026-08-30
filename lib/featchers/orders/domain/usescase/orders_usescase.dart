@@ -23,11 +23,11 @@ class GetPindingInvoicesUseCase {
   }) => repository.getPindingInvoices(request: request);
 }
 
-class RestoreHeldOrderUseCase {
+class GetPosInvoiceDataByIdUseCase {
   final OrdersRepository repository;
-  RestoreHeldOrderUseCase(this.repository);
+  GetPosInvoiceDataByIdUseCase(this.repository);
   Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>> call(int invoiceId) =>
-      repository.restorePosRestuarantInvoice(invoiceId);
+      repository.getPosInvoiceDataById(invoiceId);
 }
 
 class DeleteHeldOrderUseCase {

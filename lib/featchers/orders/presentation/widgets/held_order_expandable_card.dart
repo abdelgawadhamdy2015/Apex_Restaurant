@@ -8,8 +8,6 @@ import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Collapsible card representing a single held order, with an expandable
-/// item list and restore/delete actions.
 class HeldOrderExpandableCard extends StatefulWidget {
   final PindingInvoiceModel order;
   final S l10n;

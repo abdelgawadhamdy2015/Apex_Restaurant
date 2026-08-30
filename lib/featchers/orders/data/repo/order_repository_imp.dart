@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:flutter/material.dart';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
@@ -25,7 +25,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -39,21 +39,20 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
 
   @override
-  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>>
-  restorePosRestuarantInvoice(int invoiceId) async {
+  Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>> getPosInvoiceDataById(
+    int invoiceId,
+  ) async {
     try {
-      final response = await remoteDataSource.restorePosRestuarantInvoice(
-        invoiceId,
-      );
+      final response = await remoteDataSource.getPosInvoiceDataById(invoiceId);
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -70,7 +69,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e , \n $s");
+      debugPrint("$e , \n $s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }

@@ -2,8 +2,6 @@
 // Customer picker — bottom sheet
 //
 
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
@@ -44,7 +42,6 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
-    log(widget.persons.length.toString());
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final icons = context.iconSizes;

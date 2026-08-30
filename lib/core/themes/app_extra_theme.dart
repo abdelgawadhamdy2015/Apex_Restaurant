@@ -11,6 +11,7 @@ class AppExtraTheme extends ThemeExtension<AppExtraTheme> {
   final Color cancelPorder;
   final Color togelBackground;
   final Color totalAmountColor;
+  final Color shadowColor;
   final Gradient successGradient;
   const AppExtraTheme({
     required this.background,
@@ -22,6 +23,7 @@ class AppExtraTheme extends ThemeExtension<AppExtraTheme> {
     required this.secondaryBackground,
     required this.totalAmountColor,
     required this.successGradient,
+    required this.shadowColor,
   });
 
   @override
@@ -35,6 +37,7 @@ class AppExtraTheme extends ThemeExtension<AppExtraTheme> {
     Color? togelBackground,
     Color? totalAmountColor,
     Gradient? successGradient,
+    Color? shadowColor,
   }) {
     return AppExtraTheme(
       background: background ?? this.background,
@@ -46,6 +49,7 @@ class AppExtraTheme extends ThemeExtension<AppExtraTheme> {
       secondaryBackground: secondaryBackground ?? this.secondaryBackground,
       totalAmountColor: totalAmountColor ?? this.totalAmountColor,
       successGradient: successGradient ?? this.successGradient,
+      shadowColor: shadowColor ?? this.shadowColor,
     );
   }
 
@@ -75,6 +79,7 @@ class AppExtraTheme extends ThemeExtension<AppExtraTheme> {
         other.successGradient,
         t,
       )!,
+      shadowColor: Color.lerp(shadowColor, other.shadowColor, t)!,
     );
   }
 }

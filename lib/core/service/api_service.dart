@@ -1,6 +1,9 @@
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 
 import 'api_constants.dart';
@@ -115,6 +118,14 @@ abstract class ApiService {
     @Body() Map<String, dynamic> body,
   );
 
+  @POST(ApiConstants.checkPOSVoucher)
+  Future<BaseResponse<CheckVoucherResponse?>> checkPOSVoucher(
+    @Body() CheckVoucherRequest body,
+  );
+
+  @POST(ApiConstants.getAllVouchers)
+  Future<BaseResponse<DiscountResultModel?>> getAllVouchers();
+
   @POST(ApiConstants.holdOrder)
   Future<BaseResponse<dynamic>> holdOrder(@Body() Map<String, dynamic> body);
 
@@ -196,13 +207,13 @@ abstract class ApiService {
     @Query("financialYearId") int financialYearId,
   );
 
-  @POST(ApiConstants.addPOSResturnInvoice)
+  @POST(ApiConstants.addPOSReturnInvoice)
   Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice(
     @Body() GetAllPosInvoiceRequest request,
   );
 
   @POST(ApiConstants.addPOSTotalReturnInvoice)
-  Future<BaseResponse<PosInvoiceData?>> addPOSTotalReturnInvoice(
+  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice(
     @Queries() AddPOSTotalReturnInvoiceRequest request,
   );
 }

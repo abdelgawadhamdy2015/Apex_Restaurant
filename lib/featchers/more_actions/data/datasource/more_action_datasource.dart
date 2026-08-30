@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 
 import '../../../../core/service/api_service.dart';
@@ -13,7 +14,7 @@ abstract class MoreActionDatasource {
     required GetAllPosInvoiceRequest request,
   });
 
-  Future<BaseResponse<PosInvoiceData?>> addPOSTotalReturnInvoice({
+  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice({
     required AddPOSTotalReturnInvoiceRequest request,
   });
 }
@@ -30,7 +31,7 @@ class MoreActionsRemoteDataSourceImpl implements MoreActionDatasource {
   }
 
   @override
-  Future<BaseResponse<PosInvoiceData?>> addPOSTotalReturnInvoice({
+  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice({
     required AddPOSTotalReturnInvoiceRequest request,
   }) async {
     return await apiService.addPOSTotalReturnInvoice(request);

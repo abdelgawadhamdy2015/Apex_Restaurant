@@ -16,6 +16,9 @@ class OrdersState {
   final bool isLoading;
   final List<PreviousInvoiceModel> previousOrders;
   final List<PindingInvoiceModel> pindingInvoices;
+  final int? totalPindingCount;
+  final int? totalPreviousCount;
+
   final String? errorMessage;
   final bool canEdite;
   final bool isPending;
@@ -42,7 +45,8 @@ class OrdersState {
   final bool pindingInvoicesHasMore;
   final bool isLoadingMorePinding;
   final GetPindingInvoicesRequest? pindingInvoicesFilter;
-
+  final DateTime? fromDate;
+  final DateTime? toDate;
   const OrdersState({
     this.activeTab = OrderTab.previous,
     this.isLoading = false,
@@ -62,7 +66,13 @@ class OrdersState {
     this.isLoadingMorePinding = false,
     this.pindingInvoicesFilter,
     this.isPending = false,
+    this.fromDate,
+    this.toDate,
+    this.totalPindingCount = 0,
+    this.totalPreviousCount = 0,
   });
+
+  int get totalPreviouspages => (totalPreviousCount! / 10).ceil();
 
   OrdersState copyWith({
     OrdersStatus? status,
@@ -85,6 +95,10 @@ class OrdersState {
     bool? pindingInvoicesHasMore,
     bool? isLoadingMorePinding,
     GetPindingInvoicesRequest? pindingInvoicesFilter,
+    DateTime? fromDate,
+    DateTime? toDate,
+    int? totalPindingCount,
+    int? totalPreviousCount,
   }) {
     return OrdersState(
       status: status ?? this.status,
@@ -113,6 +127,10 @@ class OrdersState {
       pindingInvoicesFilter:
           pindingInvoicesFilter ?? this.pindingInvoicesFilter,
       isPending: isPending ?? this.isPending,
+      fromDate: fromDate ?? this.fromDate,
+      toDate: toDate ?? this.toDate,
+      totalPindingCount: totalPindingCount ?? this.totalPindingCount,
+      totalPreviousCount: totalPreviousCount ?? this.totalPreviousCount,
     );
   }
 }

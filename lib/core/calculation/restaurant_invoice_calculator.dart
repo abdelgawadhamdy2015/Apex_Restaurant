@@ -1,5 +1,5 @@
 /// طريقة تفسير قيمة الخصم
-enum DiscountType { percentage, fixedAmount }
+enum DiscountNatural { percentage, fixedAmount }
 
 typedef ItemTypeId = int;
 
@@ -9,7 +9,7 @@ typedef ItemTypeId = int;
 
 class InvoiceCalculationInput {
   final double discountOnTotal;
-  final DiscountType discountType;
+  final DiscountNatural discountType;
   final double customerDiscountRatio;
   final double deliveryCost;
   final double dineInRatio;
@@ -21,7 +21,7 @@ class InvoiceCalculationInput {
 
   const InvoiceCalculationInput({
     this.discountOnTotal = 0.0,
-    this.discountType = DiscountType.percentage,
+    this.discountType = DiscountNatural.percentage,
     this.customerDiscountRatio = 0.0,
     this.deliveryCost = 0.0,
     this.dineInRatio = 0.0,
@@ -41,7 +41,7 @@ class InvoiceItemInput {
   final double unitPrice;
   final double vatRatio;
   final double discount;
-  final DiscountType discountType;
+  final DiscountNatural discountType;
   final ItemTypeId itemTypeId;
   final bool isTobacco;
   final String transactionId;
@@ -55,7 +55,7 @@ class InvoiceItemInput {
     required this.unitPrice,
     this.vatRatio = 0.0,
     this.discount = 0.0,
-    this.discountType = DiscountType.percentage,
+    this.discountType = DiscountNatural.percentage,
     required this.itemTypeId,
     this.isTobacco = false,
     required this.transactionId,
@@ -67,7 +67,7 @@ class InvoiceItemInput {
 
 class VoucherInput {
   final String code;
-  final DiscountType discountType;
+  final DiscountNatural discountType;
   final double value;
   final double minimumCharge;
   final double maximumDiscount;
@@ -87,7 +87,7 @@ class DynamicDiscountInput {
   final String? id;
 
   /// نوع الخصم: نسبة أو قيمة ثابتة
-  final DiscountType discountType;
+  final DiscountNatural discountType;
 
   /// قيمة الخصم (نسبة أو مبلغ حسب discountType)
   final double discountValue;
@@ -107,7 +107,7 @@ class DynamicDiscountInput {
   });
 
   /// تحويل من موديل الـ API (DiscountModel) لموديل الحساب
-  /// ملاحظة: 1 = نسبة، غير كده = قيمة ثابتة (عدّل حسب اتفاقية الباك إند)
+  /// ملاحظة: 1 = نسبة، غير كده = قيمة ثابت)
   factory DynamicDiscountInput.fromDiscountType({
     required String? id,
     required int? discountType,
@@ -118,8 +118,8 @@ class DynamicDiscountInput {
     return DynamicDiscountInput(
       id: id,
       discountType: discountType == 1
-          ? DiscountType.percentage
-          : DiscountType.fixedAmount,
+          ? DiscountNatural.percentage
+          : DiscountNatural.fixedAmount,
       discountValue: discountValue ?? 0.0,
       minInvoiceNET: minInvoiceNET,
       maxDiscountValue: maxDiscountValue,
@@ -559,7 +559,8 @@ class InvoiceCalculator {
     final withDiscount = items.where((i) => i.discount > 0.0);
 
     final illegalRatio = withDiscount.where(
-      (i) => i.discountType == DiscountType.percentage && i.discount > _hundred,
+      (i) =>
+          i.discountType == DiscountNatural.percentage && i.discount > _hundred,
     );
     if (illegalRatio.isNotEmpty) {
       return const InvoiceCalculationError(
@@ -570,7 +571,7 @@ class InvoiceCalculator {
 
     final illegalValue = withDiscount.where(
       (i) =>
-          i.discountType == DiscountType.fixedAmount &&
+          i.discountType == DiscountNatural.fixedAmount &&
           i.discount > i.grossValue,
     );
     if (illegalValue.isNotEmpty) {
@@ -613,10 +614,10 @@ class InvoiceCalculator {
   double _resolveDiscountValue({
     required double base,
     required double discount,
-    required DiscountType type,
+    required DiscountNatural type,
   }) {
     if (discount <= 0.0) return 0.0;
-    return type == DiscountType.fixedAmount
+    return type == DiscountNatural.fixedAmount
         ? discount
         : base * discount / _hundred;
   }
@@ -628,7 +629,7 @@ class InvoiceCalculator {
     if (voucher == null || voucher.code.trim().isEmpty) return 0.0;
     if (totalAfterItemDiscount < voucher.minimumCharge) return 0.0;
 
-    var discount = voucher.discountType == DiscountType.percentage
+    var discount = voucher.discountType == DiscountNatural.percentage
         ? totalAfterItemDiscount * voucher.value / _hundred
         : voucher.value;
 

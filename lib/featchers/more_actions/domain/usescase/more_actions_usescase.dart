@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
 
@@ -25,7 +26,7 @@ class AddPOSResturnInvoiceUseCase {
 class AddPOSTotalReturnInvoiceUseCase {
   final MoreActionsRepo repository;
   AddPOSTotalReturnInvoiceUseCase(this.repository);
-  Future<ApiResult<BaseResponse<PosInvoiceData?>?>> call({
+  Future<ApiResult<BaseResponse<InvoiceReturnResponse?>?>> call({
     required AddPOSTotalReturnInvoiceRequest request,
   }) => repository.addPOSTotalReturnInvoice(request: request);
 }

@@ -4,6 +4,8 @@ class ApiConstants {
   static const String baseUsrl = localUrl;
 
   static const String localUrl = "http://192.168.1.253:1313/";
+  static const String url = "https://taifback.apex-program.com/";
+
   static const String login = "api/Login";
   static const String getUserData = "api/General/UsersManager/getUserById";
 
@@ -46,6 +48,14 @@ class ApiConstants {
       'api/Store/Employee/GetListOfDeliveryMen';
   static const String applyDiscountCode = 'api/Order/ApplyDiscount';
   static const String holdOrder = 'api/Order/Hold';
+  static const String getAllVouchers =
+      'api/Restaurants/Vouchers/GetAllVouchers';
+  static const String checkPOSVoucher =
+      'api/Restaurants/Vouchers/CheckPOSVoucher';
+
+  static const String addPOSTotalReturnInvoice =
+      'api/Store/POS/AddPOSTotalReturnInvoice';
+  static const String addPOSReturnInvoice = 'api/Store/POS/AddPOSReturnInvoice';
 
   static const String getAllPersons = "api/Store/Persons/GetListOfPersonsPOS";
   static const String getPendingRestaurantPosInvoiceDetails =
@@ -75,10 +85,6 @@ class ApiConstants {
 
   // return
   static const String getAllPOSInvoices = "api/Store/POS/GetAllPOSInvoices";
-  static const String addPOSResturnInvoice =
-      "api/Store/POS/AddPOSResturnInvoice";
-  static const String addPOSTotalReturnInvoice =
-      "api/Store/POS/AddPOSTotalReturnInvoice";
 
   // General apis
   static const String getEmployeeBranches =

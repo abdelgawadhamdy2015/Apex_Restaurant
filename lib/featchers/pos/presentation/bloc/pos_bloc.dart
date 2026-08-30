@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
 import '../../data/models/restaurant_item.dart';
@@ -277,7 +275,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       response.when(
         success: (data) {
           if (data.result == 1) {
-            log("Food Additives Loaded: ${data.data?.length ?? 0}");
             emit(
               state.copyWith(
                 status: PosStatus.loaded,
@@ -295,10 +292,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
           }
         },
         failure: (errorHandler) {
-          log(
-            "errorHandler: ${errorHandler.apiErrorModel.errorMessageAr ?? 0}",
-          );
-
           emit(
             state.copyWith(
               status: PosStatus.error,
@@ -310,7 +303,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         },
       );
     } catch (e) {
-      log("error: ${e.toString()}");
       emit(
         state.copyWith(
           status: PosStatus.error,
@@ -415,9 +407,6 @@ class PosBloc extends Bloc<PosEvent, PosState> {
   }
 
   void _onSelectCategory(SelectCategoryEvent event, Emitter<PosState> emit) {
-    log(
-      "Selected Category: ${event.category.arabicName} (ID: ${event.category.id})",
-    );
     emit(
       state.copyWith(
         selectedCategory: event.category,
@@ -452,15 +441,10 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             result = items.first;
           }
         },
-        failure: (errorHandler) {
-          log(
-            "fetchItemDetails failure: ${errorHandler.apiErrorModel.errorMessageAr}",
-          );
-        },
+        failure: (errorHandler) {},
       );
       return result;
-    } catch (e, s) {
-      log("fetchItemDetails error: $e\n$s");
+    } catch (e) {
       return null;
     }
   }

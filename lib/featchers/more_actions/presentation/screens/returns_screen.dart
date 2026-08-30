@@ -1,10 +1,22 @@
+// ignore_for_file: deprecated_member_use
+
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
+import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/ui/layouts/cart_tablet_screen.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_bloc.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_event.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_state.dart';
+import 'package:apex_restaurant/featchers/orders/domain/mapper/restored_invoice_mapper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
 import '../../../../generated/l10n.dart';
@@ -21,7 +33,8 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
   final TextEditingController _invoiceController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
 
-  int? _expandedIndex = 2;
+  int? _expandedIndex = -1;
+  DateTime? selectedInvoiceDate;
 
   @override
   void dispose() {
@@ -30,47 +43,168 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     super.dispose();
   }
 
+  Future<void> _pickInvoiceDateTime(BuildContext context) async {
+    final dateTime = await DateTextField.pickDateTime(
+      context,
+      type: DateTextFieldType.date,
+    );
+    if (!mounted || dateTime == null) return;
+    selectedInvoiceDate = dateTime;
+    _dateController.text = RestaurantConstants.dateFormat.format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     final lang = S.of(context);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final isTablet = SizeHelper.isTablet;
+
+    return BlocConsumer<MoreActionsBloc, MoreActionsState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (BuildContext context, MoreActionsState state) {
+        if (state.status == MoreActionsStatus.sussess) {
+          if (state.returnedInvoice != null) {
+            final restoresd = state.returnedInvoice?.toRestoredCartData(
+              context,
+            );
+            if (restoresd == null) return;
+            context.read<CartBloc>().add(SyncRestoredInvoiceEvent(restoresd));
+            SizeHelper.isTablet
+                ? showBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return TabletCartPanel();
+                    },
+                  )
+                : context.pushReplacementNamed(Routes.cartScreen);
+          } else if (state.invoiceReturnResponse != null) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: lang.invoiceReturnedSuccessfully,
+              isError: false,
+            );
+          }
+        }
+      },
+      builder: (context, state) {
+        return isTablet
+            ? _buildTabletLayout(context, state)
+            : _buildMobileLayout(context, state, lang, colorScheme);
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------
+  // MOBILE LAYOUT (search card on top, invoices stacked below)
+  // ---------------------------------------------------------------------
+  Widget _buildMobileLayout(
+    BuildContext context,
+    MoreActionsState state,
+    S lang,
+    ColorScheme colorScheme,
+  ) {
     final spacing = context.spacing;
 
     return Scaffold(
-      backgroundColor: colorScheme.outlineVariant,
       appBar: CustomAppBar(
         title: lang.returns,
         showBackButton: true,
         onBackPressed: () => Navigator.of(context).pop(),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(spacing.md),
-        child: BlocBuilder<MoreActionsBloc, MoreActionsState>(
-          builder: (context, state) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // 1. Search Filter Card
-                _buildSearchCard(context),
-                SizedBox(height: spacing.md),
-                ...state.invoices.map((e) {
-                  return _InvoiceCard(
-                    invoiceNumber: e.invoiceType,
-                    time: RestaurantConstants.hoursFormat.format(e.invoiceDate),
-                    itemsCountText: lang.itemsCount(5),
-                    totalAmount: "${e.totalPrice} ${lang.currencySar}",
-                    isExpanded: _expandedIndex == 0,
-                    onTap: () => setState(() {
-                      _expandedIndex = _expandedIndex == 0 ? null : 0;
-                    }),
-                  );
-                }),
-              ],
-            );
-          },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _buildSearchCard(context),
+            SizedBox(height: spacing.md),
+            _buildInvoiceList(context, state),
+          ],
         ),
       ),
+    );
+  }
+
+  // ---------------------------------------------------------------------
+  // TABLET / DESKTOP LAYOUT (two panels, matches reference design)
+  // ---------------------------------------------------------------------
+  Widget _buildTabletLayout(BuildContext context, MoreActionsState state) {
+    final spacing = context.spacing;
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Left narrow panel: search filters.
+          SizedBox(width: 340, child: _buildSearchCard(context)),
+          SizedBox(width: spacing.md),
+
+          //Right  wide panel: invoices list.
+          Expanded(child: _buildInvoicesPanel(context, state)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInvoicesPanel(BuildContext context, MoreActionsState state) {
+    final lang = S.of(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final spacing = context.spacing;
+
+    return Container(
+      padding: EdgeInsets.all(spacing.md),
+      decoration: BoxDecoration(
+        color: colorScheme.onSurface,
+        borderRadius: BorderRadius.circular(spacing.radiusMd),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                lang.invoices,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            SizedBox(height: spacing.sm),
+            _buildInvoiceList(context, state),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInvoiceList(BuildContext context, MoreActionsState state) {
+    final lang = S.of(context);
+    final spacing = context.spacing;
+    final invoices = state.invoices;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < invoices.length; i++) ...[
+          if (i > 0) SizedBox(height: spacing.sm),
+          _InvoiceCard(
+            invoiceId: invoices[i].invoiceId,
+            invoiceNumber: invoices[i].invoiceType,
+            time: RestaurantConstants.hoursFormat.format(
+              invoices[i].invoiceDate,
+            ),
+            itemsCountText: lang.itemsCount(5),
+            totalAmount: "${invoices[i].totalPrice} ${lang.currencySar}",
+            isExpanded: _expandedIndex == i,
+
+            // items: _expandedIndex == i ? _sampleItems : const [],
+            onTap: () => setState(() {
+              _expandedIndex = _expandedIndex == i ? null : i;
+            }),
+          ),
+        ],
+      ],
     );
   }
 
@@ -82,7 +216,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     final iconSizes = context.iconSizes;
     final moreActionState = context.read<MoreActionsBloc>().state;
     final hintStyle = theme.textTheme.bodyMedium?.copyWith(
-      color: colorScheme.onSurfaceVariant,
+      color: colorScheme.onSecondary,
     );
     final fieldBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(spacing.radiusSm),
@@ -92,16 +226,17 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusMd),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             lang.invoiceNumber,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: theme.colorScheme.onSecondary,
             ),
           ),
           SizedBox(height: spacing.xxs),
@@ -126,43 +261,19 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
           Text(
             lang.date,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
+              color: colorScheme.onSecondary,
             ),
           ),
           SizedBox(height: spacing.xxs),
-          TextField(
+          DateTextField(
             controller: _dateController,
-            readOnly: true,
-            style: theme.textTheme.bodyMedium,
-            onTap: () async {
-              await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime(2020),
-                lastDate: DateTime(2030),
-              );
+            onTap: () {
+              _pickInvoiceDateTime(context);
             },
-            decoration: InputDecoration(
-              hintText: lang.dateFormatHint,
-              hintStyle: hintStyle,
-              filled: true,
-              fillColor: colorScheme.outlineVariant.withOpacity(0.3),
-              suffixIcon: Icon(
-                Icons.calendar_today_outlined,
-                size: iconSizes.sm,
-                color: colorScheme.onSurfaceVariant,
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: spacing.sm,
-                vertical: spacing.xs,
-              ),
-              border: fieldBorder,
-              enabledBorder: fieldBorder,
-            ),
           ),
           SizedBox(height: spacing.md),
 
-          ElevatedButton.icon(
+          ElevatedButton(
             onPressed: () {
               context.read<MoreActionsBloc>().add(
                 FetchAllInvoicesEvent(
@@ -171,20 +282,12 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
                     pageSize: 20,
                     invoiceTypeId: 11,
                     financialYearId: 1,
-                    invoiceDate: moreActionState.fromDate,
+                    invoiceDate: selectedInvoiceDate,
                     invoiceType: moreActionState.invoiceType,
                   ),
                 ),
               );
             },
-            icon: Icon(Icons.search, size: iconSizes.sm),
-            label: Text(
-              lang.search,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
@@ -192,6 +295,21 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(spacing.radiusSm),
               ),
+            ),
+
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.search, size: iconSizes.sm, color: AppColors.white),
+                SizedBox(width: spacing.md),
+                Text(
+                  lang.search,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -207,7 +325,7 @@ class _InvoiceCard extends StatelessWidget {
   final String totalAmount;
   final bool isExpanded;
   final VoidCallback onTap;
-
+  final int invoiceId;
   const _InvoiceCard({
     required this.invoiceNumber,
     required this.time,
@@ -215,6 +333,7 @@ class _InvoiceCard extends StatelessWidget {
     required this.totalAmount,
     required this.isExpanded,
     required this.onTap,
+    required this.invoiceId,
   });
 
   @override
@@ -228,8 +347,9 @@ class _InvoiceCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusMd),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
@@ -240,33 +360,8 @@ class _InvoiceCard extends StatelessWidget {
               padding: EdgeInsets.all(spacing.md),
               child: Row(
                 children: [
-                  Icon(
-                    isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
-                    size: iconSizes.sm,
-                    color: colorScheme.onPrimary,
-                  ),
-                  const Spacer(),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        itemsCountText,
-                        style: theme.textTheme.bodySmall?.copyWith(),
-                      ),
-                      SizedBox(height: spacing.xxs),
-                      Text(
-                        totalAmount,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: spacing.lg),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         invoiceNumber,
@@ -286,6 +381,34 @@ class _InvoiceCard extends StatelessWidget {
                         ],
                       ),
                     ],
+                  ),
+                  const Spacer(),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        itemsCountText,
+                        style: theme.textTheme.bodySmall?.copyWith(),
+                      ),
+                      SizedBox(height: spacing.xxs),
+                      Text(
+                        totalAmount,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(width: spacing.lg),
+
+                  Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
+                    size: iconSizes.sm,
+                    color: colorScheme.onPrimary,
                   ),
                 ],
               ),
@@ -308,7 +431,7 @@ class _InvoiceCard extends StatelessWidget {
                   ),
                   SizedBox(height: spacing.sm),
 
-                  // ...items!.map(
+                  // ...items.map(
                   //   (item) => Padding(
                   //     padding: EdgeInsets.only(bottom: spacing.xs),
                   //     child: Column(
@@ -316,12 +439,6 @@ class _InvoiceCard extends StatelessWidget {
                   //         Row(
                   //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   //           children: [
-                  //             Text(
-                  //               item.price,
-                  //               style: theme.textTheme.bodyMedium?.copyWith(
-                  //                 fontWeight: FontWeight.bold,
-                  //               ),
-                  //             ),
                   //             Row(
                   //               children: [
                   //                 Text(
@@ -338,6 +455,12 @@ class _InvoiceCard extends StatelessWidget {
                   //                   ),
                   //                 ),
                   //               ],
+                  //             ),
+                  //             Text(
+                  //               '${item.price} ${lang.currencySarShort}',
+                  //               style: theme.textTheme.bodyMedium?.copyWith(
+                  //                 fontWeight: FontWeight.bold,
+                  //               ),
                   //             ),
                   //           ],
                   //         ),
@@ -356,7 +479,15 @@ class _InvoiceCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.read<MoreActionsBloc>().add(
+                              AddPOSTotalReturnEvent(
+                                request: AddPOSTotalReturnInvoiceRequest(
+                                  id: invoiceId,
+                                ),
+                              ),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: appExtraTheme.greenBackground
                                 .withOpacity(0.1),
@@ -385,7 +516,11 @@ class _InvoiceCard extends StatelessWidget {
 
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            context.read<MoreActionsBloc>().add(
+                              FetchInvoiceByIdEvent(invoiceId: invoiceId),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: colorScheme.primary.withOpacity(
                               0.1,

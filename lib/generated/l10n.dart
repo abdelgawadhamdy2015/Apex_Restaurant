@@ -3981,6 +3981,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Voucher applied ({value} SAR)`
+  String voucherApplied(Object value) {
+    return Intl.message(
+      'Voucher applied ($value SAR)',
+      name: 'voucherApplied',
+      desc: '',
+      args: [value],
+    );
+  }
+
+  /// `Invoice returned successfully`
+  String get invoiceReturnedSuccessfully {
+    return Intl.message(
+      'Invoice returned successfully',
+      name: 'invoiceReturnedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

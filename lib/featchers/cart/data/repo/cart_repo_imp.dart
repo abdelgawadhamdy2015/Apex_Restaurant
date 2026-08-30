@@ -1,7 +1,8 @@
-import 'dart:developer';
-
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
@@ -33,7 +34,7 @@ class CartRepositoryImpl implements CartRepository {
       );
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -47,7 +48,7 @@ class CartRepositoryImpl implements CartRepository {
       final response = await _remoteDataSource.getWaiters(request: request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -62,7 +63,7 @@ class CartRepositoryImpl implements CartRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }
@@ -76,7 +77,7 @@ class CartRepositoryImpl implements CartRepository {
       final response = await _remoteDataSource.applyDiscount(request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -92,7 +93,7 @@ class CartRepositoryImpl implements CartRepository {
       );
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -106,7 +107,7 @@ class CartRepositoryImpl implements CartRepository {
           .saveBookingTableRestaurantPosInvoice(request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -120,7 +121,7 @@ class CartRepositoryImpl implements CartRepository {
       final response = await _remoteDataSource.getPersons(request: request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error\n ${s.toString()}");
+      debugPrint("$error\n ${s.toString()}");
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
@@ -133,7 +134,7 @@ class CartRepositoryImpl implements CartRepository {
       final response = await _remoteDataSource.addPosClient(request: request);
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -149,7 +150,7 @@ class CartRepositoryImpl implements CartRepository {
       );
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }
@@ -162,7 +163,21 @@ class CartRepositoryImpl implements CartRepository {
       final response = await _remoteDataSource.getDynamicInvoiceDiscount();
       return ApiResult.success(response);
     } catch (error, s) {
-      log("$error, \n $s");
+      debugPrint("$error, \n $s");
+
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<CheckVoucherResponse?>>> checkVoucher(
+    CheckVoucherRequest request,
+  ) async {
+    try {
+      final response = await _remoteDataSource.checkVoucher(request);
+      return ApiResult.success(response);
+    } catch (error, s) {
+      debugPrint("$error, \n $s");
 
       return ApiResult.failure(ErrorHandler.handle(error));
     }

@@ -29,7 +29,7 @@ class GetAllPosInvoiceRequest {
     this.dateTo,
     this.storeId = 0,
     this.personId = 0,
-    this.isReturn = false,
+    this.isReturn = true,
     this.sessionId = 0,
     this.financialYearId = 0,
   });

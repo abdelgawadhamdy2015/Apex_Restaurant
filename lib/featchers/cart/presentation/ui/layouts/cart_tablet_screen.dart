@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/helpers/helper_methods.dart';
 import '../../../../../core/helpers/restaurant_constants.dart';
@@ -23,8 +21,8 @@ import '../widgets/takeaway_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class PosTabletCartPanel extends StatelessWidget {
-  const PosTabletCartPanel({super.key});
+class TabletCartPanel extends StatelessWidget {
+  const TabletCartPanel({super.key});
 
   void _onCartStateChanged(BuildContext context, CartState state) {
     if (state.errorMessage != null) {
@@ -112,7 +110,6 @@ class _PosTabletCartContent extends StatelessWidget {
     final selectedPerson =
         state.selectedPerson ??
         (state.persons.isNotEmpty ? state.persons.first : null);
-    log("teblet can edit : ${state.canEdit}");
     return Column(
       children: [
         Expanded(
@@ -148,7 +145,8 @@ class _PosTabletCartContent extends StatelessWidget {
                   dynamicIsActive: state.dynamicDiscountIsActive,
                   dynamicDiscountModel: state.activeDiscountModel,
                 ),
-                SizedBox(height: spacing.md),
+
+                SizedBox(height: spacing.xxs),
                 const OrderSummaryCard(),
               ],
             ),

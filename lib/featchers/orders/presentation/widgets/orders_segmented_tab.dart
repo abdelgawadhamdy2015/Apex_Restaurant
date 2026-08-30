@@ -66,7 +66,7 @@ class OrdersSegmentedTab extends StatelessWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Text(
-                        state.pindingInvoices.length.toString(),
+                        state.totalPindingCount.toString(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: theme.colorScheme.onSecondary,
                           fontWeight: FontWeight.bold,

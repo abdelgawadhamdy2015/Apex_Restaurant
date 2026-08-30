@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
+
 import '../../../tables/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
 
@@ -100,7 +102,7 @@ class SelectTableEvent extends PosEvent {
 }
 
 class SelectedNavIndexEvent extends PosEvent {
-  final int selectedNavIndex;
+  final PosBottomNavEnm selectedNavIndex;
   const SelectedNavIndexEvent({required this.selectedNavIndex});
 
   @override

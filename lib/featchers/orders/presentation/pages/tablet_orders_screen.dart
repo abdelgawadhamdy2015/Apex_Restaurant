@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/featchers/orders/presentation/widgets/tablet_previous_orders.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,7 +39,7 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
 
     // Fetch initial page for previous orders on screen mount
     context.read<OrdersBloc>().add(
-      const FetchPreviousInvoicesEvent(
+      FetchPreviousInvoicesEvent(
         request: GetPreviousInvoiceRequest(
           pageNumber: 1,
           pageSize: kOrdersPageSize,
@@ -57,11 +56,11 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
     final state = context.read<OrdersBloc>().state;
     if (state.activeTab == OrderTab.previous) {
       if (!state.isLoadingMorePrevious && state.previousOrdersHasMore) {
-        context.read<OrdersBloc>().add(const LoadMorePreviousInvoicesEvent());
+        context.read<OrdersBloc>().add(LoadMorePreviousInvoicesEvent());
       }
     } else {
       if (!state.isLoadingMorePinding && state.pindingInvoicesHasMore) {
-        context.read<OrdersBloc>().add(const LoadMorePindingInvoicesEvent());
+        context.read<OrdersBloc>().add(LoadMorePindingInvoicesEvent());
       }
     }
   }
@@ -82,8 +81,9 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
     if (restored == null) return;
 
     final cartData = restored.toRestoredCartData(context);
-    context.read<PosBloc>().add(SelectedNavIndexEvent(selectedNavIndex: 0));
-    log("can edit : ${state.restoredInvoice?.invoice?.canEdit}");
+    context.read<PosBloc>().add(
+      SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+    );
     context.read<CartBloc>().add(
       SyncRestoredInvoiceEvent(
         cartData,
@@ -91,7 +91,7 @@ class _OrdersTabletScreenState extends State<OrdersTabletScreen> {
         isPending: state.isPending,
       ),
     );
-    context.read<OrdersBloc>().add(const ClearRestoredInvoiceEvent());
+    context.read<OrdersBloc>().add(ClearRestoredInvoiceEvent());
   }
 
   @override

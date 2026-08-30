@@ -8,6 +8,8 @@ import '../layout/pos_tablet_menu_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+enum PosBottomNavEnm { menu, orders, customers, tables, more }
+
 class PosPage extends StatefulWidget {
   const PosPage({super.key, required this.changeLanguage});
 

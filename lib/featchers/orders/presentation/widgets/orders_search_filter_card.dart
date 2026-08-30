@@ -10,8 +10,7 @@ import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Search/filter card shown on the "Previous Orders" tab
-/// (invoice number, customer name, and date range filters).
+// ignore: must_be_immutable
 class OrdersSearchFilterCard extends StatelessWidget {
   final TextEditingController invoiceController;
   final TextEditingController customerController;
@@ -19,7 +18,7 @@ class OrdersSearchFilterCard extends StatelessWidget {
   final TextEditingController toDateController;
   final S l10n;
 
-  const OrdersSearchFilterCard({
+  OrdersSearchFilterCard({
     super.key,
     required this.invoiceController,
     required this.customerController,
@@ -46,46 +45,24 @@ class OrdersSearchFilterCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.invoiceNumberLabel,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                      ),
-                    ),
-                    SizedBox(height: spacing.xxs),
-                    TextField(
-                      controller: invoiceController,
-                      decoration: InputDecoration(
-                        hintText: l10n.invoiceNumberHint,
-                        fillColor: theme.colorScheme.surface,
-                      ),
-                    ),
-                  ],
+                child: TextField(
+                  controller: invoiceController,
+                  decoration: InputDecoration(
+                    label: Text(l10n.invoiceNumberLabel),
+                    hintText: l10n.invoiceNumberHint,
+                    fillColor: theme.colorScheme.surface,
+                  ),
                 ),
               ),
               SizedBox(width: spacing.sm),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.customerNameLabel,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                      ),
-                    ),
-                    SizedBox(height: spacing.xxs),
-                    TextField(
-                      controller: customerController,
-                      decoration: InputDecoration(
-                        hintText: l10n.customerNameHint,
-                        fillColor: theme.colorScheme.surface,
-                      ),
-                    ),
-                  ],
+                child: TextField(
+                  controller: customerController,
+                  decoration: InputDecoration(
+                    label: Text(l10n.customerNameLabel),
+                    hintText: l10n.customerNameHint,
+                    fillColor: theme.colorScheme.surface,
+                  ),
                 ),
               ),
             ],
@@ -94,63 +71,48 @@ class OrdersSearchFilterCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.fromDate,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                      ),
-                    ),
-                    SizedBox(height: spacing.xxs),
-                    DateTextField(
-                      controller: fromDateController,
+                child: DateTextField(
+                  label: l10n.fromDate,
+                  controller: fromDateController,
+                  type: DateTextFieldType.date,
+                  onTap: () async {
+                    final dateTime = await DateTextField.pickDateTime(
+                      context,
                       type: DateTextFieldType.date,
-                      onTap: () async {
-                        final dateTime = await DateTextField.pickDateTime(
-                          context,
-                          type: DateTextFieldType.date,
-                        );
-                        if (dateTime != null) {
-                          fromDateController.text = RestaurantConstants
-                              .dateTimeFormat
-                              .format(dateTime);
-                        }
-                      },
-                    ),
-                  ],
+                    );
+                    if (dateTime != null) {
+                      context.read<OrdersBloc>().add(
+                        SelectDateEvent(dateTime: dateTime, isFrom: true),
+                      );
+
+                      fromDateController.text = RestaurantConstants.dateFormat
+                          .format(dateTime);
+                    }
+                  },
                 ),
               ),
               SizedBox(width: spacing.sm),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.toDate,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                      ),
-                    ),
-                    SizedBox(height: spacing.xxs),
-                    DateTextField(
-                      key: key,
-                      controller: toDateController,
+                child: DateTextField(
+                  label: l10n.toDate,
+                  key: key,
+                  controller: toDateController,
+                  type: DateTextFieldType.date,
+                  onTap: () async {
+                    final dateTime = await DateTextField.pickDateTime(
+                      context,
                       type: DateTextFieldType.date,
-                      onTap: () async {
-                        final dateTime = await DateTextField.pickDateTime(
-                          context,
-                          type: DateTextFieldType.date,
-                        );
-                        if (dateTime != null) {
-                          toDateController.text = RestaurantConstants
-                              .dateTimeFormat
-                              .format(dateTime);
-                        }
-                      },
-                    ),
-                  ],
+                    );
+
+                    if (dateTime != null) {
+                      context.read<OrdersBloc>().add(
+                        SelectDateEvent(dateTime: dateTime, isFrom: false),
+                      );
+
+                      toDateController.text = RestaurantConstants.dateFormat
+                          .format(dateTime);
+                    }
+                  },
                 ),
               ),
             ],
@@ -169,16 +131,8 @@ class OrdersSearchFilterCard extends StatelessWidget {
                     personName: customerController.text.trim().isEmpty
                         ? null
                         : customerController.text.trim(),
-                    fromDate: fromDateController.text.trim().isEmpty
-                        ? null
-                        : RestaurantConstants.dateTimeFormat.parse(
-                            fromDateController.text.trim(),
-                          ),
-                    toDate: toDateController.text.trim().isEmpty
-                        ? null
-                        : RestaurantConstants.dateTimeFormat.parse(
-                            toDateController.text.trim(),
-                          ),
+                    fromDate: context.read<OrdersBloc>().state.fromDate,
+                    toDate: context.read<OrdersBloc>().state.toDate,
                   ),
                 ),
               );

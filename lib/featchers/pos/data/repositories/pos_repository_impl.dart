@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:flutter/material.dart';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
@@ -28,7 +28,7 @@ class PosRepositoryImpl implements PosRepository {
       final response = await _remoteDataSource.getMenuCategories();
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }
@@ -44,7 +44,7 @@ class PosRepositoryImpl implements PosRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }
@@ -87,7 +87,7 @@ class PosRepositoryImpl implements PosRepository {
       final response = await _remoteDataSource.getFloors(request: request);
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -100,7 +100,7 @@ class PosRepositoryImpl implements PosRepository {
       final response = await _remoteDataSource.getTables(request: request);
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }
@@ -116,7 +116,7 @@ class PosRepositoryImpl implements PosRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
       return ApiResult.failure(ErrorHandler.handle(e));
     }
   }
@@ -127,7 +127,7 @@ class PosRepositoryImpl implements PosRepository {
       final response = await _remoteDataSource.getSettings();
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }
@@ -143,7 +143,7 @@ class PosRepositoryImpl implements PosRepository {
       );
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }
@@ -155,7 +155,7 @@ class PosRepositoryImpl implements PosRepository {
       final response = await _remoteDataSource.getCurrentSession();
       return ApiResult.success(response);
     } catch (e, s) {
-      log("$e\n$s");
+      debugPrint("$e\n$s");
 
       return ApiResult.failure(ErrorHandler.handle(e));
     }

@@ -128,7 +128,7 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
         ),
 
         // Right Column: Cart Panel Summary
-        Expanded(flex: 3, child: const PosTabletCartPanel()),
+        Expanded(flex: 3, child: const TabletCartPanel()),
       ],
     );
   }

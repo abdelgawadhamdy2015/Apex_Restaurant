@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
-import 'package:apex_restaurant/featchers/more_actions/presentation/screens/tablet_return_screen.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/screens/returns_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +11,7 @@ import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
 import '../screens/close_session_dialog.dart';
-import '../screens/daily_close_screen.dart';
+import '../../../more_actions/presentation/screens/daily_close_screen.dart';
 
 /// Identifies which content is currently shown in place of the grid.
 enum _MoreOptionsView { grid, returns, closeCustody }
@@ -140,12 +140,6 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
     );
   }
 
-  /// Header shown above whichever content (grid or a sub-view) is active.
-  ///
-  /// The grid keeps its plain title. Sub-views use the app's shared
-  /// [CustomAppBar], which renders its own visible back-button widget —
-  /// this matters on iOS, where there's no hardware/gesture back to fall
-  /// back on, so the back control has to be an on-screen widget.
   Widget _buildHeader(
     ThemeData theme,
     ColorScheme colorScheme,
@@ -164,7 +158,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
           title,
           style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
+            color: colorScheme.onPrimary,
           ),
         ),
       ),
@@ -179,7 +173,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
   ) {
     switch (_currentView) {
       case _MoreOptionsView.returns:
-        return const Expanded(child: TabletReturnsScreen());
+        return const Expanded(child: ReturnsScreen());
       case _MoreOptionsView.closeCustody:
         return const Expanded(child: DailyCloseScreen());
       case _MoreOptionsView.grid:

@@ -161,7 +161,7 @@ class _ReservationSearchFilterCardState
     );
 
     return Container(
-      padding: EdgeInsets.all(spacing.md),
+      padding: EdgeInsets.all(spacing.xxs),
       decoration: BoxDecoration(
         color: theme.colorScheme.onSurface,
         borderRadius: BorderRadius.circular(spacing.radiusLg),

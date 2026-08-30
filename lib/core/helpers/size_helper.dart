@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -19,8 +18,6 @@ class SizeHelper {
 
     // Standard Flutter tablet detection based on shortest side (600dp threshold)
     _isTablet = mediaQuery.size.shortestSide >= 600;
-
-    log("Width: $_width, Height: $_height, IsTablet: $_isTablet");
 
     _applyOrientationLock();
   }

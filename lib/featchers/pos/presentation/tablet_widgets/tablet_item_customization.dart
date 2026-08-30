@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
+import '../../../../core/helpers/item_discount_handler.dart';
 import '../../../../generated/l10n.dart';
-import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../domain/entities/menu_item.dart';
@@ -96,109 +96,21 @@ class TabletItemCustomizationDialog extends StatefulWidget {
 }
 
 class _TabletItemCustomizationDialogState
-    extends State<TabletItemCustomizationDialog> {
-  int _quantity = 1;
-  int _selectedSizeIndex = 0;
-  final Map<int, int> _addonQuantities = {};
-  bool _addonsPrefilled = false;
-  bool _isPercentageDiscount = true;
-
-  final TextEditingController _discountController = TextEditingController();
-  final TextEditingController _notesController = TextEditingController();
-
+    extends State<TabletItemCustomizationDialog>
+    with ItemDiscountHandler<TabletItemCustomizationDialog> {
+  @override
+  RestaurantItem get item => widget.item;
   bool get _isEditMode => widget.existingItem != null;
-
-  double get _currentBasePrice => widget.item.sizes.isNotEmpty
-      ? widget.item.sizes[_selectedSizeIndex].price ?? 0
-      : 0.0;
-
-  double _totalPrice(List<AdditiveModel> additives) {
-    double addonsTotal = 0.0;
-    _addonQuantities.forEach((index, qty) {
-      if (index < additives.length) {
-        addonsTotal += additives[index].price * qty;
-      }
-    });
-
-    double itemTotal = (_currentBasePrice * _quantity) + addonsTotal;
-    double discountVal = double.tryParse(_discountController.text) ?? 0.0;
-
-    if (_isPercentageDiscount) {
-      itemTotal = itemTotal * (1 - (discountVal / 100));
-    } else {
-      itemTotal = (itemTotal - discountVal).clamp(0.0, double.infinity);
-    }
-
-    return itemTotal;
-  }
-
-  List<AdditiveModel> _getSelectedAddonsList(List<AdditiveModel> additives) {
-    final List<AdditiveModel> selectedList = [];
-    _addonQuantities.forEach((index, qty) {
-      if (index < additives.length) {
-        for (int i = 0; i < qty; i++) {
-          selectedList.add(additives[index]);
-        }
-      }
-    });
-    return selectedList;
-  }
-
-  List<AdditiveModel> _additivesFor(PosState posState) {
-    final matchCat = posState.categories.where(
-      (cat) => cat.id == widget.item.categoryId,
-    );
-    return matchCat.isNotEmpty ? (matchCat.first.additives ?? []) : [];
-  }
 
   @override
   void initState() {
     super.initState();
-    _prefillFieldsFromExistingItem();
-  }
+    prefillFromExistingItem(widget.existingItem);
 
-  void _prefillFieldsFromExistingItem() {
-    final existing = widget.existingItem;
-    if (existing == null) return;
-
-    final existingSize = existing.selectedSize;
-    if (existingSize != null) {
-      final idx = widget.item.sizes.indexWhere(
-        (s) => s.sizeNameAr == existingSize.sizeNameAr,
-      );
-      if (idx != -1) _selectedSizeIndex = idx;
-    }
-
-    _quantity = existing.quantity;
-    _notesController.text = existing.notes ?? '';
-    _isPercentageDiscount = existing.isPercentageDiscount;
-    if (existing.discount != 0) {
-      _discountController.text = existing.discount.toString();
-    }
-  }
-
-  void _prefillAddonsOnce(List<AdditiveModel> additives) {
-    if (_addonsPrefilled || additives.isEmpty) return;
-    final existing = widget.existingItem;
-    if (existing != null) {
-      _addonQuantities.clear();
-      for (final addon in existing.addons) {
-        final idx = additives.indexWhere(
-          (a) => a.arabicName == addon.arabicName,
-        );
-        if (idx != -1) {
-          _addonQuantities[idx] = (_addonQuantities[idx] ?? 0) + 1;
-        }
-      }
-    }
-    _addonsPrefilled = true;
-  }
-
-  @override
-  void dispose() {
-    _discountController.dispose();
-    _notesController.dispose();
-    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() => syncDiscountFieldsWithSize(context));
+    });
   }
 
   @override
@@ -207,107 +119,67 @@ class _TabletItemCustomizationDialogState
     final textTheme = theme.textTheme;
     final spacing = context.spacing;
     final lang = S.of(context);
-
-    final dynamicDiscountIsActive = context
-        .read<CartBloc>()
-        .state
-        .dynamicDiscountIsActive;
-    final discountValue =
-        context.read<CartBloc>().state.restaurantPosDiscountRequest?.value ?? 0;
-    final isDiscountEnabled = !dynamicDiscountIsActive && discountValue <= 0;
+    final isDiscountEnabled = calculateIsDiscountEnabled(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       body: BlocBuilder<PosBloc, PosState>(
         bloc: widget.posBloc,
         builder: (context, posState) {
-          final additives = _additivesFor(posState);
-          _prefillAddonsOnce(additives);
+          final additives = additivesFor(posState);
+          prefillAddonsOnce(additives, widget.existingItem);
 
           return Column(
             children: [
-              // ---------------- MAIN HEADER ----------------
               _buildHeader(theme, textTheme),
               const Divider(height: 1),
-
-              // ---------------- TWO COLUMN BODY ----------------
               Expanded(
                 child: Row(
                   children: [
-                    //  COLUMN: Sizes & Add-ons
+                    // Column 1: Sizes & Addons
                     Expanded(
                       flex: 5,
                       child: ListView(
                         padding: EdgeInsets.all(spacing.lg),
                         children: [
-                          Text(
-                            lang.productSize,
-                            style: textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          Text(lang.productSize, style: textTheme.titleMedium),
                           SizedBox(height: spacing.sm),
                           ItemSizeSelector(
                             sizes: widget.item.sizes,
-                            selectedIndex: _selectedSizeIndex,
-                            onSelected: (idx) =>
-                                setState(() => _selectedSizeIndex = idx),
+                            selectedIndex: selectedSizeIndex,
+                            onSelected: (idx) {
+                              setState(() {
+                                selectedSizeIndex = idx;
+                                syncDiscountFieldsWithSize(context);
+                              });
+                            },
                           ),
                           SizedBox(height: spacing.lg),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                lang.addons,
-                                style: textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'بحد أقصى 3 إضافات',
-                                style: textTheme.bodySmall?.copyWith(
-                                  color: AppColors.amber,
-                                ),
-                              ),
-                            ],
-                          ),
+                          Text(lang.addons, style: textTheme.titleMedium),
                           SizedBox(height: spacing.sm),
-
                           if (additives.isEmpty)
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                vertical: spacing.lg,
-                              ),
-                              child: Text(
-                                'لا توجد إضافات متاحة',
-                                style: textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onSecondary,
-                                ),
-                              ),
+                            Text(
+                              'لا توجد إضافات متاحة',
+                              style: textTheme.bodyMedium,
                             )
                           else
                             ...List.generate(additives.length, (index) {
                               final addon = additives[index];
-                              final currentQty = _addonQuantities[index] ?? 0;
+                              final currentQty = addonQuantities[index] ?? 0;
 
                               return ItemAddonTile(
                                 addon: addon,
                                 quantity: currentQty,
-                                onDecrement: () {
-                                  setState(() {
-                                    if (currentQty > 1) {
-                                      _addonQuantities[index] = currentQty - 1;
-                                    } else {
-                                      _addonQuantities.remove(index);
-                                    }
-                                  });
-                                },
-                                onIncrement: () {
-                                  setState(() {
-                                    _addonQuantities[index] = currentQty + 1;
-                                  });
-                                },
+                                onDecrement: () => setState(() {
+                                  if (currentQty > 1) {
+                                    addonQuantities[index] = currentQty - 1;
+                                  } else {
+                                    addonQuantities.remove(index);
+                                  }
+                                }),
+                                onIncrement: () => setState(() {
+                                  addonQuantities[index] = currentQty + 1;
+                                }),
                               );
                             }),
                         ],
@@ -315,10 +187,10 @@ class _TabletItemCustomizationDialogState
                     ),
                     VerticalDivider(
                       width: 1,
-                      thickness: 1,
                       color: theme.dividerColor.withOpacity(0.1),
                     ),
-                    //  COLUMN: Notes, Discounts, Quantity, Add to Cart Action
+
+                    // Column 2: Controls & Actions
                     Expanded(
                       flex: 4,
                       child: Padding(
@@ -328,125 +200,75 @@ class _TabletItemCustomizationDialogState
                           children: [
                             Text(
                               lang.specialNotes,
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textTheme.titleMedium,
                             ),
-                            SizedBox(height: spacing.xs),
-                            TextField(
-                              controller: _notesController,
-                              maxLines: 3,
-                              decoration: InputDecoration(
-                                hintText: lang.specialNotesHint,
-                                fillColor:
-                                    theme.colorScheme.surfaceContainerHighest,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
+                            TextField(controller: notesController, maxLines: 3),
                             SizedBox(height: spacing.lg),
-
                             Text(
                               lang.specialDiscount,
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: textTheme.titleMedium,
                             ),
-                            SizedBox(height: spacing.xs),
                             DiscountTypeToggle(
                               enabled: isDiscountEnabled,
-                              isPercentage: _isPercentageDiscount,
+                              isPercentage: isPercentageDiscount,
                               onChanged: (val) =>
-                                  setState(() => _isPercentageDiscount = val),
+                                  setState(() => isPercentageDiscount = val),
                             ),
-                            SizedBox(height: spacing.xs),
                             TextField(
                               enabled: isDiscountEnabled,
-                              controller: _discountController,
+                              controller: discountController,
                               keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                hintText: lang.enterDiscountValue,
-                                fillColor: theme.colorScheme.surface,
-                                filled: true,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
                               onChanged: (_) => setState(() {}),
                             ),
-
                             const Spacer(),
 
-                            // Quantity Stepper Controls
-                            Container(
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.surface,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.remove),
-                                    onPressed: _quantity > 1
-                                        ? () => setState(() => _quantity--)
-                                        : null,
+                            // Stepper
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.remove,
+                                    color: theme.colorScheme.onSecondary,
                                   ),
-                                  Text(
-                                    '$_quantity',
-                                    style: textTheme.titleMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  onPressed: quantity > 1
+                                      ? () => setState(() => quantity--)
+                                      : null,
+                                ),
+                                Text('$quantity', style: textTheme.titleMedium),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.add,
+                                    color: theme.colorScheme.onSecondary,
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.add),
-                                    onPressed: () =>
-                                        setState(() => _quantity++),
-                                  ),
-                                ],
-                              ),
+                                  onPressed: () => setState(() => quantity++),
+                                ),
+                              ],
                             ),
                             SizedBox(height: spacing.md),
 
                             // Submit Button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 52,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.primary,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.colorScheme.primary,
+                                foregroundColor: AppColors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              onPressed: () =>
+                                  _handleConfirm(context, additives, lang),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    _isEditMode ? 'تعديل السلة' : 'أضف للسلة',
                                   ),
-                                ),
-                                onPressed: () =>
-                                    _handleConfirm(context, additives, lang),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      _isEditMode ? 'تعديل السلة' : 'أضف للسلة',
-                                      style: textTheme.titleMedium?.copyWith(
-                                        color: theme.colorScheme.onPrimary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      '${_totalPrice(additives).toStringAsFixed(2)} ر.س',
-                                      style: textTheme.titleMedium?.copyWith(
-                                        color: theme.colorScheme.onPrimary,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  Text(
+                                    '${calculateTotalPrice(additives: additives).toStringAsFixed(2)} ر.س',
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -460,6 +282,43 @@ class _TabletItemCustomizationDialogState
           );
         },
       ),
+    );
+  }
+
+  void _handleConfirm(
+    BuildContext context,
+    List<AdditiveModel> additives,
+    S lang,
+  ) {
+    if (widget.item.sizes.isEmpty) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.thisItemHasNoValidSize,
+        isError: true,
+      );
+      return;
+    }
+
+    final selectedSize = widget.item.sizes[selectedSizeIndex];
+    if (widget.item.sizes.length > 1 && (selectedSize.sizeId ?? 0) <= 0) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.pleaseSelectValidSize,
+        isError: true,
+      );
+      return;
+    }
+
+    Navigator.pop(context);
+    widget.onConfirm(
+      widget.item,
+      additives,
+      selectedSize: selectedSize,
+      selectedAddons: getSelectedAddonsList(additives),
+      discount: double.tryParse(discountController.text) ?? 0.0,
+      isPercentageDiscount: isPercentageDiscount,
+      notes: notesController.text,
+      quantity: quantity,
     );
   }
 
@@ -529,41 +388,41 @@ class _TabletItemCustomizationDialogState
     );
   }
 
-  void _handleConfirm(
-    BuildContext context,
-    List<AdditiveModel> additives,
-    S lang,
-  ) {
-    if (widget.item.sizes.isEmpty) {
-      HelperMethods.showSnackBar(
-        context: context,
-        message: lang.thisItemHasNoValidSize,
-        isError: true,
-      );
-      return;
-    }
+  // void _handleConfirm(
+  //   BuildContext context,
+  //   List<AdditiveModel> additives,
+  //   S lang,
+  // ) {
+  //   if (widget.item.sizes.isEmpty) {
+  //     HelperMethods.showSnackBar(
+  //       context: context,
+  //       message: lang.thisItemHasNoValidSize,
+  //       isError: true,
+  //     );
+  //     return;
+  //   }
 
-    final selectedSize = widget.item.sizes[_selectedSizeIndex];
+  //   final selectedSize = widget.item.sizes[selectedSizeIndex];
 
-    if (widget.item.sizes.length > 1 && (selectedSize.sizeId ?? 0) <= 0) {
-      HelperMethods.showSnackBar(
-        context: context,
-        message: lang.pleaseSelectValidSize,
-        isError: true,
-      );
-      return;
-    }
+  //   if (widget.item.sizes.length > 1 && (selectedSize.sizeId ?? 0) <= 0) {
+  //     HelperMethods.showSnackBar(
+  //       context: context,
+  //       message: lang.pleaseSelectValidSize,
+  //       isError: true,
+  //     );
+  //     return;
+  //   }
 
-    Navigator.pop(context);
-    widget.onConfirm(
-      widget.item,
-      additives,
-      selectedSize: selectedSize,
-      selectedAddons: _getSelectedAddonsList(additives),
-      discount: double.tryParse(_discountController.text) ?? 0.0,
-      isPercentageDiscount: _isPercentageDiscount,
-      notes: _notesController.text,
-      quantity: _quantity,
-    );
-  }
+  //   Navigator.pop(context);
+  //   widget.onConfirm(
+  //     widget.item,
+  //     additives,
+  //     selectedSize: selectedSize,
+  //     selectedAddons: _getSelectedAddonsList(additives),
+  //     discount: double.tryParse(discountController.text) ?? 0.0,
+  //     isPercentageDiscount: isPercentageDiscount,
+  //     notes: notesController.text,
+  //     quantity: _quantity,
+  //   );
+  // }
 }

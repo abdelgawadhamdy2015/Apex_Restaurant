@@ -58,7 +58,7 @@ class AddToCartBar extends StatelessWidget {
                   onPressed: onConfirm,
                   child: Text(
                     lang.addToCartWithPrice(totalPrice.toStringAsFixed(2)),
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.normal,
                     ),
