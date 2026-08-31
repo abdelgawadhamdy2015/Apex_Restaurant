@@ -18,7 +18,7 @@ class OrdersSearchFilterCard extends StatelessWidget {
   final TextEditingController toDateController;
   final S l10n;
 
-  OrdersSearchFilterCard({
+  const OrdersSearchFilterCard({
     super.key,
     required this.invoiceController,
     required this.customerController,

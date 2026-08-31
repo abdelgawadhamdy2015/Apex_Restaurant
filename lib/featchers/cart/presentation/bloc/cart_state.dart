@@ -629,6 +629,7 @@ class CartState extends Equatable {
     bool clearVoucherDiscountValue = false,
     bool clearAddress = false,
     bool clearInvoiceId = false,
+    bool clearCart = false,
   }) {
     return CartState(
       settingsModel: settingsModel ?? this.settingsModel,
@@ -651,8 +652,10 @@ class CartState extends Equatable {
       deliveryAgents: deliveryAgents ?? this.deliveryAgents,
       selectedDeliveryCompany:
           selectedDeliveryCompany ?? this.selectedDeliveryCompany,
-      selectedWaiter: selectedWaiter ?? this.selectedWaiter,
-      selectedDeliveryMan: selectedDeliveryMan ?? this.selectedDeliveryMan,
+      selectedWaiter: clearCart ? null : selectedWaiter ?? this.selectedWaiter,
+      selectedDeliveryMan: clearCart
+          ? null
+          : selectedDeliveryMan ?? this.selectedDeliveryMan,
       discountAmount: discountAmount ?? this.discountAmount,
       voucherData: clearVoucherDiscountValue
           ? null
@@ -667,8 +670,10 @@ class CartState extends Equatable {
       customerDiscount: clearCustomerDiscount
           ? null
           : (customerDiscount ?? this.customerDiscount),
-      selectedTable: selectedTable ?? this.selectedTable,
-      fromBranchDateTime: fromBranchDateTime ?? this.fromBranchDateTime,
+      selectedTable: clearCart ? null : selectedTable ?? this.selectedTable,
+      fromBranchDateTime: clearCart
+          ? null
+          : fromBranchDateTime ?? this.fromBranchDateTime,
       companiesList: companiesList ?? this.companiesList,
       invoiceId: clearInvoiceId ? null : invoiceId ?? this.invoiceId,
       isPending: isPending ?? this.isPending,

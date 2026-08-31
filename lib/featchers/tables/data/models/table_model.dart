@@ -28,6 +28,7 @@ class TableModel extends TableEntity {
     super.xloc,
     super.yloc,
     super.isReserved,
+    super.bookingTableInvoiceId,
   });
 
   factory TableModel.fromJson(Map<String, dynamic> json) =>
@@ -57,6 +58,7 @@ class TableModel extends TableEntity {
       xloc: xloc,
       yloc: yloc,
       isReserved: isReserved,
+      bookingTableInvoiceId: bookingTableInvoiceId,
     );
   }
 }

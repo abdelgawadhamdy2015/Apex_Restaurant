@@ -81,5 +81,6 @@ class TablesState extends Equatable {
     errorMessage,
     pindingInvoices,
     restoringInvoiceId,
+    restoredInvoiceModel,
   ];
 }

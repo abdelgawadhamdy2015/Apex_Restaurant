@@ -7,17 +7,15 @@ plugins {
 
 android {
     namespace = "com.example.apex_restaurant"
+
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-buildToolsVersion = "35.0.0"
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // kotlinOptions {
-    //     jvmTarget = JavaVersion.VERSION_17.toString()
-    // }
     kotlin {
         compilerOptions {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17

@@ -159,7 +159,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         fromBranchDateTime: null,
         canEdit: event.canEdit,
         isPending: event.isPending,
-        selectedTable: isDineIn ? data.table : null,
+        //  selectedTable: isDineIn ? data.table : null,
         selectedWaiter: isDineIn ? data.waiter : null,
         selectedDeliveryMan: isDelivery ? data.deliveryMan : null,
         selectedDeliveryCompany: selectedDeliveryCompany,
@@ -369,6 +369,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearCustomerDiscount: true,
         clearRestaurantPosDiscountRequest: true,
         clearInvoiceId: true,
+        clearCart: true,
       ),
     );
   }

@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-import 'package:apex_restaurant/featchers/orders/data/model/get_pinding_invoice.dart';
 import 'package:apex_restaurant/featchers/orders/domain/mapper/restored_invoice_mapper.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
@@ -52,7 +55,6 @@ class _TableCardState extends State<TableCard> {
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
 
-    // Store the outer parent context that has access to the BLoC tree
     final parentContext = context;
 
     return OverlayEntry(
@@ -97,28 +99,25 @@ class _TableCardState extends State<TableCard> {
                       },
                     ),
 
-                    TextButton(
-                      onPressed: () {
-                        _closeMenu();
-
-                        context.read<TablesBloc>().add(
-                          FetchRestaurantPosBookingTableEvent(
-                            request: GetPindingInvoicesRequest(
-                              foodTableId: int.tryParse(widget.table.id ?? "0"),
-                              pageNumber: 1,
-                              pageSize: 1,
+                    if (widget.table.bookingTableInvoiceId != null)
+                      TextButton(
+                        onPressed: () {
+                          _closeMenu();
+                          context.read<CartBloc>().add(
+                            SelectCartTableEvent(table: widget.table),
+                          );
+                          context.read<TablesBloc>().add(
+                            RestoreOrderEvent(
+                              invoiceId: widget.table.bookingTableInvoiceId!,
+                              canEdite: widget.table.canEdit ?? true,
                             ),
-                          ),
-                        );
-                        context.read<CartBloc>().add(
-                          ChangeOrderTypeEvent(CartOrderType.DINE_IN),
-                        );
-                        context.read<CartBloc>().add(
-                          SelectCartTableEvent(table: widget.table),
-                        );
-                      },
-                      child: Text(S.of(parentContext).openInvoice),
-                    ),
+                          );
+                          context.read<CartBloc>().add(
+                            ChangeOrderTypeEvent(CartOrderType.DINE_IN),
+                          );
+                        },
+                        child: Text(S.of(parentContext).openInvoice),
+                      ),
                   ],
                 ),
               ),
@@ -130,24 +129,28 @@ class _TableCardState extends State<TableCard> {
   }
 
   void _onTableStateChanged(BuildContext context, TablesState state) {
-    final restored = state.restoredInvoiceModel;
-    if (restored == null) return;
+    if (state.status == TablesStatus.success) {
+      final restored = state.restoredInvoiceModel;
+      log("$restored");
+      if (restored == null) return;
 
-    final cartData = restored.toRestoredCartData(context);
+      final cartData = restored.toRestoredCartData(context);
 
-    context.read<CartBloc>().add(
-      SyncRestoredInvoiceEvent(
-        cartData,
-        canEdit: state.restoredInvoiceModel?.invoice?.canEdit ?? true,
-      ),
-    );
-    context.read<TablesBloc>().add(const ClearRestoredInvoiceEvent());
-    if (SizeHelper.isMobile) {
-      context.pushNamed(Routes.posScreen);
-    } else {
-      context.read<PosBloc>().add(
-        SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+      context.read<CartBloc>().add(
+        SyncRestoredInvoiceEvent(
+          cartData,
+          canEdit: state.restoredInvoiceModel?.invoice?.canEdit ?? true,
+          isPending: true,
+        ),
       );
+      context.read<TablesBloc>().add(const ClearRestoredInvoiceEvent());
+      if (SizeHelper.isMobile) {
+        context.pushNamed(Routes.posScreen);
+      } else {
+        context.read<PosBloc>().add(
+          SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+        );
+      }
     }
   }
 
@@ -161,21 +164,23 @@ class _TableCardState extends State<TableCard> {
 
     return BlocListener<TablesBloc, TablesState>(
       listener: (context, state) {
-        if (state.status == TablesStatus.pindingSussess) {
+        if (state.status == TablesStatus.success) {
           _onTableStateChanged(context, state);
         }
       },
       child: GestureDetector(
-        onTap: () {
-          if (widget.inCartScreen) {
-            context.read<CartBloc>().add(
-              SelectCartTableEvent(table: widget.table),
-            );
-            context.pop();
-          } else {
-            _isOpen ? _closeMenu() : _openMenu(context);
-          }
-        },
+        onTap: widget.table.status == TableStatus.available
+            ? () {
+                if (widget.inCartScreen) {
+                  context.read<CartBloc>().add(
+                    SelectCartTableEvent(table: widget.table),
+                  );
+                  context.pop();
+                } else {
+                  _isOpen ? _closeMenu() : _openMenu(context);
+                }
+              }
+            : null,
         child: Container(
           padding: EdgeInsets.all(spacing.xxs),
           decoration: BoxDecoration(
@@ -183,65 +188,84 @@ class _TableCardState extends State<TableCard> {
             borderRadius: BorderRadius.circular(spacing.radiusSm),
             border: Border.all(color: theme.colorScheme.outlineVariant),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Stack(
             children: [
-              Container(
-                height: 60,
-                width: 90,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(spacing.radiusSm),
-                  border: Border.all(
-                    color: isAvailable
-                        ? Colors.blue.shade300
-                        : Colors.purple.shade200,
-                    width: 2,
+              Align(
+                alignment: AlignmentGeometry.topLeft,
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: widget.table.status == TableStatus.available
+                        ? Colors.green
+                        : Colors.red,
                   ),
                 ),
               ),
-              Text(
-                '${lang.table} ${widget.table.arabicName}',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Icon(
-                    Icons.people_outline,
-                    size: iconSizes.xs,
-                    color: theme.colorScheme.onPrimary,
+                  Container(
+                    height: 60,
+                    width: 90,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(spacing.radiusSm),
+                      border: Border.all(
+                        color: isAvailable
+                            ? Colors.blue.shade300
+                            : Colors.purple.shade200,
+                        width: 2,
+                      ),
+                    ),
                   ),
-                  SizedBox(width: spacing.xxs),
                   Text(
-                    '${widget.table.seatNumbers} ${lang.seats}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onPrimary,
+                    '${lang.table} ${widget.table.arabicName}',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.people_outline,
+                        size: iconSizes.xs,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                      SizedBox(width: spacing.xxs),
+                      Text(
+                        '${widget.table.seatNumbers} ${lang.seats}',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: spacing.sm,
+                      vertical: spacing.xxs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isAvailable
+                          ? context.appExtraTheme.greenBackground.withOpacity(
+                              .1,
+                            )
+                          : theme.colorScheme.error.withOpacity(.1),
+                      borderRadius: BorderRadius.circular(spacing.radiusLg),
+                    ),
+                    child: Text(
+                      isAvailable ? lang.available : lang.reserved,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: isAvailable
+                            ? context.appExtraTheme.greenBackground
+                            : theme.colorScheme.error,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: spacing.sm,
-                  vertical: spacing.xxs,
-                ),
-                decoration: BoxDecoration(
-                  color: isAvailable
-                      ? context.appExtraTheme.greenBackground.withOpacity(.1)
-                      : theme.colorScheme.error.withOpacity(.1),
-                  borderRadius: BorderRadius.circular(spacing.radiusLg),
-                ),
-                child: Text(
-                  isAvailable ? lang.available : lang.reserved,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: isAvailable
-                        ? context.appExtraTheme.greenBackground
-                        : theme.colorScheme.error,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
               ),
             ],
           ),

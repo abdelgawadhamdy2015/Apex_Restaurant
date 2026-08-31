@@ -21,7 +21,7 @@ class TableEntity {
   final double? xloc;
   final double? yloc;
   final bool? isReserved;
-
+  final int? bookingTableInvoiceId;
   const TableEntity({
     this.id,
     this.code,
@@ -43,5 +43,6 @@ class TableEntity {
     this.xloc,
     this.yloc,
     this.isReserved,
+    this.bookingTableInvoiceId,
   });
 }
