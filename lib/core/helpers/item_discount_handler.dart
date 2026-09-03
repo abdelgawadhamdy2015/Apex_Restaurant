@@ -113,11 +113,12 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
     final discountValue = cartState.restaurantPosDiscountRequest?.value ?? 0;
     final hasDynamicSizeDiscount = currentSizeDiscount(context) != null;
     final invoiceDynamicDiscount = cartState.dynamicDiscountIsActive;
-    final invoiceDiscount = cartState.isInvoiceManualDiscountEnabled;
+    final invoiceDiscount = cartState.isCustomerDiscountApplied;
     return !hasDynamicSizeDiscount &&
         discountValue <= 0 &&
         !invoiceDynamicDiscount &&
-        !invoiceDiscount;
+        !invoiceDiscount &&
+        !item.isOffer;
   }
 
   // --- PRICE CALCULATION ---

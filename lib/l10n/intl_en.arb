@@ -504,5 +504,16 @@
     "discount": "Discount",
     "selectFloor": "Select Floor",
     "voucherApplied": "Voucher applied ({value} SAR)",
-    "invoiceReturnedSuccessfully": "Invoice returned successfully"
+    "invoiceReturnedSuccessfully": "Invoice returned successfully",
+    "custodyLogTitle": "Custody Log",
+    "withdrawalsFilter": "Withdrawals",
+    "additionsFilter": "Additions",
+    "allFilter": "All",
+    "currentBalance": "Current Balance",
+    "type": "Type",
+    "attachment": "Attachment",
+    "user": "User",
+    "invalidAmount": "Invalid amount",
+    "transactionAddedSuccessfully": "Transaction added successfully",
+    "selectSafe": "Select Safe"
 }

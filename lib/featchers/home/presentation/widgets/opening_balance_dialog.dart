@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/router/routes.dart';
@@ -147,7 +149,37 @@ class _OpeningBalanceDialogState extends State<OpeningBalanceDialog> {
                 ),
               ),
               SizedBox(height: spacing.xl),
-
+              // drobdown for safes
+              BlocBuilder<HomeBloc, HomeState>(
+                builder: (context, state) {
+                  return DropdownButtonFormField<SafeModel>(
+                    initialValue: state.selectedSafe,
+                    decoration: InputDecoration(
+                      labelText: lang.selectSafe,
+                      filled: true,
+                      fillColor: theme.colorScheme.surface,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(spacing.radiusMd),
+                        borderSide: BorderSide(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
+                      ),
+                    ),
+                    items: state.safes?.map((safe) {
+                      return DropdownMenuItem<SafeModel>(
+                        value: safe,
+                        child: Text(safe.arabicName ?? ""),
+                      );
+                    }).toList(),
+                    onChanged: (SafeModel? selectedSafe) {
+                      context.read<HomeBloc>().add(
+                        SelectTreasuryEvent(selectedSafe!),
+                      );
+                    },
+                  );
+                },
+              ),
+              SizedBox(height: spacing.xl),
               // Action Buttons
               Row(
                 children: [

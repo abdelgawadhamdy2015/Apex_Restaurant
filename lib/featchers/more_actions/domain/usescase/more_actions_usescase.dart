@@ -1,7 +1,9 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
 
 import '../../../../core/service/api_result.dart';
@@ -29,4 +31,20 @@ class AddPOSTotalReturnInvoiceUseCase {
   Future<ApiResult<BaseResponse<InvoiceReturnResponse?>?>> call({
     required AddPOSTotalReturnInvoiceRequest request,
   }) => repository.addPOSTotalReturnInvoice(request: request);
+}
+
+class AddCashTransactionForSessionUseCase {
+  final MoreActionsRepo repository;
+  AddCashTransactionForSessionUseCase(this.repository);
+  Future<ApiResult<BaseResponse<dynamic>>> call({
+    required AddCashTransactionRequest request,
+  }) => repository.addCashTransactionForSession(request: request);
+}
+
+class GetCashTransactionForSessionUseCase {
+  final MoreActionsRepo repository;
+  GetCashTransactionForSessionUseCase(this.repository);
+  Future<ApiResult<BaseResponse<TransactionsResponse?>>> call({
+    required int employeesId,
+  }) => repository.getCashTransactionForSession(employeesId: employeesId);
 }

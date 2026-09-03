@@ -100,10 +100,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "العمليات الإضافية",
     ),
     "additions": MessageLookupByLibrary.simpleMessage("إضافات"),
+    "additionsFilter": MessageLookupByLibrary.simpleMessage("الإضافات"),
     "addons": MessageLookupByLibrary.simpleMessage("الإضافات"),
     "addonsWithVal": m1,
     "address": MessageLookupByLibrary.simpleMessage("العنوان"),
     "all": MessageLookupByLibrary.simpleMessage("الكل"),
+    "allFilter": MessageLookupByLibrary.simpleMessage("الكل"),
     "alternatePhoneOptional": MessageLookupByLibrary.simpleMessage(
       "تليفون آخر (اختياري)",
     ),
@@ -127,6 +129,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "attachReceiptOrInvoice": MessageLookupByLibrary.simpleMessage(
       "إرفاق إيصال أو فاتورة",
     ),
+    "attachment": MessageLookupByLibrary.simpleMessage("المرفق"),
     "attendance": MessageLookupByLibrary.simpleMessage("حضور"),
     "attendanceMethod": MessageLookupByLibrary.simpleMessage("طريقة الحضور"),
     "attendanceMovementsToday": MessageLookupByLibrary.simpleMessage(
@@ -231,11 +234,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "currentAvailableBalance": MessageLookupByLibrary.simpleMessage(
       "الرصيد المتوفر حالياً",
     ),
+    "currentBalance": MessageLookupByLibrary.simpleMessage("الرصيد الحالي"),
     "currentOrder": MessageLookupByLibrary.simpleMessage("الطلب الحالي"),
     "currentStatusOffShift": MessageLookupByLibrary.simpleMessage(
       "الحالة الحالية: خارج الوردية",
     ),
     "custodyLog": MessageLookupByLibrary.simpleMessage("سجل العهدة"),
+    "custodyLogTitle": MessageLookupByLibrary.simpleMessage("سجل الحركات"),
     "customer": MessageLookupByLibrary.simpleMessage("العميل"),
     "customerAddresses": MessageLookupByLibrary.simpleMessage("عناوين العميل"),
     "customerName": MessageLookupByLibrary.simpleMessage("اسم العميل"),
@@ -385,6 +390,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "أدخل البريد الإلكتروني",
     ),
     "insertPassword": MessageLookupByLibrary.simpleMessage("أدخل كلمة المرور"),
+    "invalidAmount": MessageLookupByLibrary.simpleMessage("المبلغ غير صالح"),
     "invoiceNumber": MessageLookupByLibrary.simpleMessage("رقم الفاتورة"),
     "invoiceNumberExample": MessageLookupByLibrary.simpleMessage(
       "مثال: INV-1024",
@@ -672,6 +678,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectReservationPeriod": MessageLookupByLibrary.simpleMessage(
       "اختر فترة الحجز",
     ),
+    "selectSafe": MessageLookupByLibrary.simpleMessage("اختر الخزينة"),
     "selectTable": MessageLookupByLibrary.simpleMessage("اختيار الطاولة"),
     "selectTableHint": MessageLookupByLibrary.simpleMessage("اختر الطاولة"),
     "selectWaiter": MessageLookupByLibrary.simpleMessage("اختر الويتر"),
@@ -758,16 +765,21 @@ class MessageLookup extends MessageLookupByLibrary {
     "totalPaid": MessageLookupByLibrary.simpleMessage("إجمالي المبلغ المدفوع"),
     "totalWithdrawals": MessageLookupByLibrary.simpleMessage("إجمالي السحوبات"),
     "transaction": MessageLookupByLibrary.simpleMessage(" الحضور "),
+    "transactionAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "تمت إضافة المعاملة بنجاح",
+    ),
     "transactionDate": MessageLookupByLibrary.simpleMessage("تاريخ العملية"),
     "transactionLog": MessageLookupByLibrary.simpleMessage("سجل الحركات"),
     "transferFromManagement": MessageLookupByLibrary.simpleMessage(
       "تحويل من الإدارة",
     ),
+    "type": MessageLookupByLibrary.simpleMessage("النوع"),
     "typeOfLeave": MessageLookupByLibrary.simpleMessage("نوع الإجازة"),
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "حدث خطأ غير متوقع. حاول مرة أخرى.",
     ),
     "unknown": MessageLookupByLibrary.simpleMessage("غير معروف"),
+    "user": MessageLookupByLibrary.simpleMessage("المستخدم"),
     "userProfile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
     "vacations": MessageLookupByLibrary.simpleMessage("الإجازات"),
     "vaccations": MessageLookupByLibrary.simpleMessage("إجازات"),
@@ -794,6 +806,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "withdrawExpenses": MessageLookupByLibrary.simpleMessage("سحب مصروفات"),
     "withdrawalTag": MessageLookupByLibrary.simpleMessage("سحب"),
     "withdrawals": MessageLookupByLibrary.simpleMessage("سحوبات"),
+    "withdrawalsFilter": MessageLookupByLibrary.simpleMessage("السحوبات"),
     "workHours": MessageLookupByLibrary.simpleMessage("ساعات الدوام"),
     "workTime": MessageLookupByLibrary.simpleMessage("وقت الدوام"),
     "writeOperationDetailsHint": MessageLookupByLibrary.simpleMessage(

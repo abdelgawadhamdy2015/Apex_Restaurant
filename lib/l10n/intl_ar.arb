@@ -504,5 +504,16 @@
     "discount": "الخصم",
     "selectFloor": "اختر الطابق",
     "voucherApplied": "تم تطبيق القسيمة ({value} ريال)",
-    "invoiceReturnedSuccessfully": "تم إرتجاع الفاتورة بنجاح"
+    "invoiceReturnedSuccessfully": "تم إرتجاع الفاتورة بنجاح",
+    "custodyLogTitle": "سجل الحركات",
+    "withdrawalsFilter": "السحوبات",
+    "additionsFilter": "الإضافات",
+    "allFilter": "الكل",
+    "currentBalance": "الرصيد الحالي",
+    "type": "النوع",
+    "attachment": "المرفق",
+    "user": "المستخدم",
+    "invalidAmount": "المبلغ غير صالح",
+    "transactionAddedSuccessfully": "تمت إضافة المعاملة بنجاح",
+    "selectSafe": "اختر الخزينة"
 }

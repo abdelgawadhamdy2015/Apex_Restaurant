@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+
 import '../../data/models/employee_branch.dart';
 import 'package:equatable/equatable.dart';
 
@@ -38,4 +40,16 @@ class OpenRestaurantPosSessionEvent extends HomeEvent {
 
   @override
   List<Object?> get props => [openingBalance];
+}
+
+class LoadTreasuryEvent extends HomeEvent {
+  const LoadTreasuryEvent();
+}
+
+class SelectTreasuryEvent extends HomeEvent {
+  final SafeModel safe;
+  const SelectTreasuryEvent(this.safe);
+
+  @override
+  List<Object?> get props => [safe];
 }

@@ -10,7 +10,7 @@ import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/featchers/auth/data/models/login_data.dart';
 import 'package:apex_restaurant/featchers/auth/presentation/bloc/auth_bloc.dart';
 import 'package:apex_restaurant/featchers/auth/presentation/bloc/auth_state.dart';
-import 'package:apex_restaurant/featchers/auth/presentation/pages/login_mobile_screen.dart';
+import 'package:apex_restaurant/featchers/auth/presentation/pages/login_screen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

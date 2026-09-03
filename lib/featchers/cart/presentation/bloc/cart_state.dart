@@ -32,6 +32,7 @@ class CartState extends Equatable {
   final SettingsModel? settingsModel;
   final CartOrderType selectedOrderType;
   final bool justRestored;
+  final bool isPreviousInvoice;
 
   final CartStatus status;
   final DiscountTypeEnum selectedDiscountType;
@@ -69,7 +70,7 @@ class CartState extends Equatable {
     this.selectedOrderType = CartOrderType.TAKEAWAY,
     this.selectedDiscountType = DiscountTypeEnum.coupon,
     this.justRestored = false,
-
+    this.isPreviousInvoice = false,
     this.status = CartStatus.initial,
     this.items = const [],
     this.fromBranchDateTime,
@@ -210,7 +211,7 @@ class CartState extends Equatable {
 
     final isPercentage = discount.discountNatural == 1;
     final value = discount.discountValue;
-    final discountId = discount.id;
+    final int? discountId = int.tryParse(discount.id.toString());
 
     if (isPercentage && discount.maxDiscountValue > 0) {
       final computedAmount = lineTotal * value / 100;
@@ -622,6 +623,7 @@ class CartState extends Equatable {
     String? invoiceCode,
     String? voucherId,
     DateTime? restoredInvoiceDate,
+    bool? isPreviousInvoice,
     // Optional flag helpers to force explicit null assignment
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
@@ -683,6 +685,7 @@ class CartState extends Equatable {
       restoredInvoiceDate: clearInvoiceId
           ? null
           : restoredInvoiceDate ?? restoredInvoiceDate,
+      isPreviousInvoice: isPreviousInvoice ?? this.isPreviousInvoice,
     );
   }
 
@@ -721,5 +724,6 @@ class CartState extends Equatable {
     orderNumber,
     restoredInvoiceDate,
     voucherData,
+    isPreviousInvoice,
   ];
 }

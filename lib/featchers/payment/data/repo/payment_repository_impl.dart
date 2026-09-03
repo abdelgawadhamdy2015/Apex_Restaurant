@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
+
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -17,6 +19,17 @@ class PaymentRepositoryImpl implements PaymentRepository {
       final response = await _remoteDataSource.saveRestaurantPosInvoice(
         request,
       );
+      return ApiResult.success(response);
+    } catch (e) {
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<List<PaymentMethodResponseModel>?>>>
+  getListOfPaymentMethods() async {
+    try {
+      final response = await _remoteDataSource.getListOfPaymentMethods();
       return ApiResult.success(response);
     } catch (e) {
       return ApiResult.failure(ErrorHandler.handle(e));

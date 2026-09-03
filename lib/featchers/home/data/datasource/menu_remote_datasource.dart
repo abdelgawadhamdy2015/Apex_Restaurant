@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+
 import '../../../../core/service/api_service.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../models/employee_branch.dart';
@@ -9,6 +11,7 @@ abstract class HomeDatasource {
   Future<BaseResponse<UserDataModel?>> getUserData({required int id});
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
   Future<BaseResponse<SessionModel?>> openRestaurantPosSession();
+  Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown();
 }
 
 class HomeDatasourceImpl implements HomeDatasource {
@@ -33,5 +36,10 @@ class HomeDatasourceImpl implements HomeDatasource {
   @override
   Future<BaseResponse<SessionModel?>> openRestaurantPosSession() async {
     return (await _apiService.openRestaurantPosSession());
+  }
+
+  @override
+  Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown() async {
+    return (await _apiService.getAllTreasuryByUserDropDown());
   }
 }

@@ -179,7 +179,7 @@ class CartItemTile extends StatelessWidget {
                             ),
                             SizedBox(width: spacing.xs),
                             Text(
-                              '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySar}',
+                              '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySarShort}',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: theme.colorScheme.primary,

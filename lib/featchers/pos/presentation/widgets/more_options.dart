@@ -65,6 +65,17 @@ class MoreOptions extends StatelessWidget {
 
     final options = <OptionItem>[
       OptionItem(
+        title: lang.cashierCustody,
+        icon: Icons.account_balance_wallet_outlined,
+        onTap: () {
+          context.pushNamed(
+            Routes.cashierCustodyScreen,
+            extra:
+                context.read<HomeBloc>().state.userDataModel?.employeesId ?? 0,
+          );
+        },
+      ),
+      OptionItem(
         title: lang.tables,
         icon: Icons.receipt_long,
         onTap: () => _openTables(context),
@@ -86,6 +97,7 @@ class MoreOptions extends StatelessWidget {
           );
         },
       ),
+
       OptionItem(
         title: lang.suspendSession,
         icon: Icons.pause_circle_outline,

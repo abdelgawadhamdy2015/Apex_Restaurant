@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/usescase/more_actions_usescase.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_event.dart';
@@ -13,18 +15,27 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
   final AddPOSResturnInvoiceUseCase addPOSResturnInvoiceUseCase;
   final GetPosInvoiceDataByIdUseCase getPosInvoiceDataByIdUseCase;
   final AddPOSTotalReturnInvoiceUseCase addPOSTotalReturnInvoiceUseCase;
-
+  final AddCashTransactionForSessionUseCase addCashTransactionForSessionUseCase;
+  final GetCashTransactionForSessionUseCase getCashTransactionForSessionUseCase;
   MoreActionsBloc({
     required this.getAllPOSInvoicesUseCase,
     required this.addPOSResturnInvoiceUseCase,
     required this.addPOSTotalReturnInvoiceUseCase,
     required this.getPosInvoiceDataByIdUseCase,
+    required this.addCashTransactionForSessionUseCase,
+    required this.getCashTransactionForSessionUseCase,
   }) : super(const MoreActionsState()) {
     on<FetchAllInvoicesEvent>(_onFetchInvoices);
     on<FetchInvoiceByIdEvent>(_onFetchInvoiceById);
     on<AddPOSTotalReturnEvent>(_onAddPOSTotalReturn);
     on<SelectInvoiceDateEvent>(
       (event, emit) => emit(state.copyWith(invoiceDate: event.invoiceDate)),
+    );
+    on<AddCashTransactionForSessionEvent>(_onAddCashTransactionForSession);
+
+    on<FetchCashTransactionForSessionEvent>(_onFetchCashTransactionForSession);
+    on<ChangeActiveTabEvent>(
+      (event, emit) => emit(state.copyWith(activeTab: event.activeTab)),
     );
   }
 
@@ -42,7 +53,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             emit(
               state.copyWith(
                 returnedInvoice: invoice,
-                status: MoreActionsStatus.sussess,
+                status: MoreActionsStatus.success,
               ),
             );
           } else {
@@ -95,7 +106,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 invoices: invoices,
                 invoiceReturnResponse: data?.data,
-                status: MoreActionsStatus.sussess,
+                status: MoreActionsStatus.success,
               ),
             );
           } else {
@@ -144,7 +155,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 invoices: items,
                 clearReturned: true,
-                status: MoreActionsStatus.sussess,
+                status: MoreActionsStatus.success,
               ),
             );
           } else {
@@ -170,6 +181,93 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
       emit(
         state.copyWith(
           invoices: const [],
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+          status: MoreActionsStatus.failure,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _onAddCashTransactionForSession(
+    AddCashTransactionForSessionEvent event,
+    Emitter<MoreActionsState> emit,
+  ) async {
+    emit(state.copyWith(status: MoreActionsStatus.loading));
+    try {
+      final response = await addCashTransactionForSessionUseCase(
+        request: event.cashTransaction,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(state.copyWith(status: MoreActionsStatus.success));
+          } else {
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                status: MoreActionsStatus.failure,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              status: MoreActionsStatus.failure,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+          status: MoreActionsStatus.failure,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _onFetchCashTransactionForSession(
+    FetchCashTransactionForSessionEvent event,
+    Emitter<MoreActionsState> emit,
+  ) async {
+    emit(state.copyWith(status: MoreActionsStatus.loading));
+    try {
+      final response = await getCashTransactionForSessionUseCase(
+        employeesId: event.employeeId,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                transactionsResponse: data.data,
+                status: MoreActionsStatus.success,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                status: MoreActionsStatus.failure,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              status: MoreActionsStatus.failure,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
           errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
           status: MoreActionsStatus.failure,
         ),

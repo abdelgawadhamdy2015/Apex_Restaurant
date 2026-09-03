@@ -99,7 +99,7 @@ class ItemAddonTile extends StatelessWidget {
               SizedBox(height: spacing.xxs),
               Text(
                 addon.price > 0
-                    ? '+${addon.price.toStringAsFixed(2)} ${lang.currencySar}'
+                    ? '+${addon.price.toStringAsFixed(2)} ${lang.currencySarShort}'
                     : lang.free,
                 style: textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSecondary,

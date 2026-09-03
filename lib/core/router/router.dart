@@ -1,4 +1,6 @@
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/screens/cashier_custody_screen.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/screens/custody_log_screen.dart';
 
 import '../di/debandancy_injection.dart';
 import 'routes.dart';
@@ -7,8 +9,6 @@ import '../../featchers/cart/data/models/cart_screen_args.dart';
 import '../../featchers/cart/data/models/pos_client_model.dart';
 import '../../featchers/cart/presentation/ui/screens/add_customer_screen.dart';
 import '../../featchers/cart/presentation/ui/screens/cart_screen.dart';
-import '../../featchers/more_actions/presentation/screens/cashier_custody.dart';
-import '../../featchers/more_actions/presentation/screens/custody_log_screen.dart';
 import '../../featchers/more_actions/presentation/screens/returns_screen.dart';
 import '../../featchers/home/presentation/pages/home_page.dart';
 import '../../featchers/auth/presentation/bloc/auth_bloc.dart';
@@ -145,14 +145,17 @@ class AppRouter {
         path: Routes.cashierCustodyScreen,
         name: Routes.cashierCustodyScreen,
         builder: (context, state) {
-          return const CashierCustodyScreen();
+          final employeeId = state.extra as int?;
+          return CashierCustodyScreen(employeeId: employeeId ?? 0);
         },
       ),
       GoRoute(
         path: Routes.custodyLogScreen,
         name: Routes.custodyLogScreen,
         builder: (context, state) {
-          return const CustodyLogScreen();
+          final employeeId = state.extra as int?;
+
+          return CustodyLogScreen(employeeId: employeeId ?? 0);
         },
       ),
       GoRoute(

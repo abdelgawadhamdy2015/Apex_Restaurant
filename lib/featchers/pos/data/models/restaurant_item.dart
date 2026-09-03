@@ -118,7 +118,7 @@ class ItemSizeDiscount {
 
 @JsonSerializable()
 class ItemDiscount {
-  final int id;
+  final String id;
 
   /// New: short numeric code identifying the discount (e.g. `1`).
   final int? code;

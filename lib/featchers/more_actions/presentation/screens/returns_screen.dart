@@ -62,7 +62,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     return BlocConsumer<MoreActionsBloc, MoreActionsState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (BuildContext context, MoreActionsState state) {
-        if (state.status == MoreActionsStatus.sussess) {
+        if (state.status == MoreActionsStatus.success) {
           if (state.returnedInvoice != null) {
             final restoresd = state.returnedInvoice?.toRestoredCartData(
               context,
@@ -195,7 +195,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
               invoices[i].invoiceDate,
             ),
             itemsCountText: lang.itemsCount(5),
-            totalAmount: "${invoices[i].totalPrice} ${lang.currencySar}",
+            totalAmount: "${invoices[i].totalPrice} ${lang.currencySarShort}",
             isExpanded: _expandedIndex == i,
 
             // items: _expandedIndex == i ? _sampleItems : const [],
@@ -457,7 +457,7 @@ class _InvoiceCard extends StatelessWidget {
                   //               ],
                   //             ),
                   //             Text(
-                  //               '${item.price} ${lang.currencySarShort}',
+                  //               '${item.price} ${lang.currencySarShortShort}',
                   //               style: theme.textTheme.bodyMedium?.copyWith(
                   //                 fontWeight: FontWeight.bold,
                   //               ),

@@ -36,6 +36,8 @@ class TabletPaymentDialog extends StatelessWidget {
             totalAmount: invoiceRequestModel.invoice.totalInvoicePrice,
           ),
         );
+        context.read<PaymentBloc>().add(FetchPaymentMethodsEvent());
+
         return TabletPaymentDialog(invoiceRequestModel: invoiceRequestModel);
       },
     );

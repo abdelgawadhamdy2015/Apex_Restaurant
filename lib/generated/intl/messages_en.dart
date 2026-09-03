@@ -107,10 +107,12 @@ class MessageLookup extends MessageLookupByLibrary {
       "Additional Operations",
     ),
     "additions": MessageLookupByLibrary.simpleMessage("Additions"),
+    "additionsFilter": MessageLookupByLibrary.simpleMessage("Additions"),
     "addons": MessageLookupByLibrary.simpleMessage("Add-ons"),
     "addonsWithVal": m1,
     "address": MessageLookupByLibrary.simpleMessage("Address"),
     "all": MessageLookupByLibrary.simpleMessage("All"),
+    "allFilter": MessageLookupByLibrary.simpleMessage("All"),
     "alternatePhoneOptional": MessageLookupByLibrary.simpleMessage(
       "Alternate Phone (optional)",
     ),
@@ -134,6 +136,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "attachReceiptOrInvoice": MessageLookupByLibrary.simpleMessage(
       "Attach Receipt or Invoice",
     ),
+    "attachment": MessageLookupByLibrary.simpleMessage("Attachment"),
     "attendance": MessageLookupByLibrary.simpleMessage("Attendance"),
     "attendanceMethod": MessageLookupByLibrary.simpleMessage(
       "Attendance Method",
@@ -244,11 +247,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "currentAvailableBalance": MessageLookupByLibrary.simpleMessage(
       "Current Available Balance",
     ),
+    "currentBalance": MessageLookupByLibrary.simpleMessage("Current Balance"),
     "currentOrder": MessageLookupByLibrary.simpleMessage("Current Order"),
     "currentStatusOffShift": MessageLookupByLibrary.simpleMessage(
       "Current status: Off shift",
     ),
     "custodyLog": MessageLookupByLibrary.simpleMessage("Custody Log"),
+    "custodyLogTitle": MessageLookupByLibrary.simpleMessage("Custody Log"),
     "customer": MessageLookupByLibrary.simpleMessage("Customer"),
     "customerAddresses": MessageLookupByLibrary.simpleMessage(
       "Customer Addresses",
@@ -404,6 +409,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "insertEmail": MessageLookupByLibrary.simpleMessage("Insert Email"),
     "insertPassword": MessageLookupByLibrary.simpleMessage("Insert Password"),
+    "invalidAmount": MessageLookupByLibrary.simpleMessage("Invalid amount"),
     "invoiceNumber": MessageLookupByLibrary.simpleMessage("Invoice No."),
     "invoiceNumberExample": MessageLookupByLibrary.simpleMessage(
       "e.g., INV-1024",
@@ -705,6 +711,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectReservationPeriod": MessageLookupByLibrary.simpleMessage(
       "Select Reservation Period",
     ),
+    "selectSafe": MessageLookupByLibrary.simpleMessage("Select Safe"),
     "selectTable": MessageLookupByLibrary.simpleMessage("Select Table"),
     "selectTableHint": MessageLookupByLibrary.simpleMessage("Select table"),
     "selectWaiter": MessageLookupByLibrary.simpleMessage("Select Waiter"),
@@ -797,16 +804,21 @@ class MessageLookup extends MessageLookupByLibrary {
       "Total Withdrawals",
     ),
     "transaction": MessageLookupByLibrary.simpleMessage("Attendance "),
+    "transactionAddedSuccessfully": MessageLookupByLibrary.simpleMessage(
+      "Transaction added successfully",
+    ),
     "transactionDate": MessageLookupByLibrary.simpleMessage("Transaction Date"),
     "transactionLog": MessageLookupByLibrary.simpleMessage("Transaction Log"),
     "transferFromManagement": MessageLookupByLibrary.simpleMessage(
       "Transfer from Management",
     ),
+    "type": MessageLookupByLibrary.simpleMessage("Type"),
     "typeOfLeave": MessageLookupByLibrary.simpleMessage("Type of Leave"),
     "unexpectedError": MessageLookupByLibrary.simpleMessage(
       "An unexpected error occurred. Please try again.",
     ),
     "unknown": MessageLookupByLibrary.simpleMessage("Unknown"),
+    "user": MessageLookupByLibrary.simpleMessage("User"),
     "userProfile": MessageLookupByLibrary.simpleMessage("User Profile"),
     "vacations": MessageLookupByLibrary.simpleMessage("Vacations"),
     "vaccations": MessageLookupByLibrary.simpleMessage("Vacations"),
@@ -837,6 +849,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "withdrawalTag": MessageLookupByLibrary.simpleMessage("Withdrawal"),
     "withdrawals": MessageLookupByLibrary.simpleMessage("Withdrawals"),
+    "withdrawalsFilter": MessageLookupByLibrary.simpleMessage("Withdrawals"),
     "workHours": MessageLookupByLibrary.simpleMessage("Work Hours"),
     "workTime": MessageLookupByLibrary.simpleMessage("Work Time"),
     "writeOperationDetailsHint": MessageLookupByLibrary.simpleMessage(

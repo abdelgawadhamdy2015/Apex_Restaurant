@@ -1,7 +1,9 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 
 import '../../../../core/service/api_service.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -16,6 +18,14 @@ abstract class MoreActionDatasource {
 
   Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice({
     required AddPOSTotalReturnInvoiceRequest request,
+  });
+
+  Future<BaseResponse<dynamic>> addCashTransactionForSession({
+    required AddCashTransactionRequest request,
+  });
+
+  Future<BaseResponse<TransactionsResponse?>> getCashTransactionForSession({
+    required int employeesId,
   });
 }
 
@@ -42,5 +52,19 @@ class MoreActionsRemoteDataSourceImpl implements MoreActionDatasource {
     required GetAllPosInvoiceRequest request,
   }) async {
     return await apiService.getAllPOSInvoices(request, request.financialYearId);
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> addCashTransactionForSession({
+    required AddCashTransactionRequest request,
+  }) async {
+    return await apiService.addCashTransactionForSession(request);
+  }
+
+  @override
+  Future<BaseResponse<TransactionsResponse?>> getCashTransactionForSession({
+    required int employeesId,
+  }) async {
+    return await apiService.getCashTransactionForSession(employeesId);
   }
 }

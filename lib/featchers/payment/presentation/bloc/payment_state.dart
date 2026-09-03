@@ -1,9 +1,11 @@
+import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
+
 import '../../data/model/payment_request_model.dart';
 import '../../data/model/payment_success_model.dart';
 import '../../data/model/success_response_model.dart';
 import 'package:equatable/equatable.dart';
 
-enum PaymentStatus { initial, loading, success, error }
+enum PaymentStatus { initial, loading, success, paymentMethodLoaded, error }
 
 class PaymentState extends Equatable {
   final PaymentStatus status;
@@ -15,7 +17,7 @@ class PaymentState extends Equatable {
   final PaymentSuccessModel? successModel;
   final SuccessResponseModel? successResponseModel;
   final String? errorMessage;
-
+  final List<PaymentMethodResponseModel>? paymentMethods;
   const PaymentState({
     this.status = PaymentStatus.initial,
     this.totalAmount = 0.0,
@@ -26,6 +28,7 @@ class PaymentState extends Equatable {
     this.successModel,
     this.errorMessage,
     this.successResponseModel,
+    this.paymentMethods,
   });
 
   double get remainingAmount =>
@@ -41,6 +44,7 @@ class PaymentState extends Equatable {
     PaymentSuccessModel? successModel,
     SuccessResponseModel? successResponseModel,
     String? errorMessage,
+    List<PaymentMethodResponseModel>? paymentMethods,
   }) {
     return PaymentState(
       status: status ?? this.status,
@@ -52,6 +56,7 @@ class PaymentState extends Equatable {
       successModel: successModel ?? this.successModel,
       successResponseModel: successResponseModel ?? this.successResponseModel,
       errorMessage: errorMessage ?? this.errorMessage,
+      paymentMethods: paymentMethods ?? this.paymentMethods,
     );
   }
 
@@ -65,5 +70,7 @@ class PaymentState extends Equatable {
     splitAmounts,
     successModel,
     errorMessage,
+    paymentMethods,
+    successResponseModel,
   ];
 }

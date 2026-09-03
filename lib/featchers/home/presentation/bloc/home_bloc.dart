@@ -13,18 +13,71 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GetUserDataUseCase getUseDataUseCase;
   final OpenRestaurantPosSessionUseCase openRestaurantPosSessionUseCase;
   final OpenRestaurantPosUseCase openRestaurantPosUseCase;
+  final GetAllTreasuryByUserDropDownUseCase getAllTreasuryByUserDropDownUseCase;
 
   HomeBloc({
     required this.getEmployeeBranches,
     required this.getUseDataUseCase,
     required this.openRestaurantPosSessionUseCase,
     required this.openRestaurantPosUseCase,
+    required this.getAllTreasuryByUserDropDownUseCase,
   }) : super(HomeState.initial()) {
     on<LoadUserDataEvent>(_onLoadUserData);
     on<LoadBranchesEvent>(_onLoadEmployeeBranches);
+    on<LoadTreasuryEvent>(_onLoadTreasury);
     on<SelectBranchEvent>(_onSelectBranch);
     on<OpenRestaurantPosEvent>(_onOpenRestaurantPos);
     on<OpenRestaurantPosSessionEvent>(_onOpenRestaurantPosSession);
+    on<SelectTreasuryEvent>((event, emit) {
+      emit(state.copyWith(selectedSafe: event.safe));
+    });
+  }
+
+  Future<void> _onLoadTreasury(
+    LoadTreasuryEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(state.copyWith(status: HomeStatus.treasuryLoading, clearError: true));
+    try {
+      final response = await getAllTreasuryByUserDropDownUseCase();
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: HomeStatus.treasuryLoaded,
+                safes: data.data ?? [],
+              ),
+            );
+            add(SelectTreasuryEvent(state.safes!.first));
+          } else {
+            emit(
+              state.copyWith(
+                status: HomeStatus.error,
+                errorMessage: data.errorMessageAr,
+                apiResponse: data,
+              ),
+            );
+          }
+        },
+        failure: (e) {
+          emit(
+            state.copyWith(
+              status: HomeStatus.error,
+              errorMessage: e.apiErrorModel.errorMessageAr,
+            ),
+          );
+        },
+      );
+    } catch (_) {
+      emit(
+        state.copyWith(
+          status: HomeStatus.error,
+          errorMessage:
+              'فشل في تحميل بيانات الخزينة، يرجى إعادة المحاولة لاحقاً',
+        ),
+      );
+    }
   }
 
   Future<void> _onLoadUserData(

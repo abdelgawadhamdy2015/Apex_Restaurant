@@ -86,10 +86,19 @@ class ApiConstants {
   // return
   static const String getAllPOSInvoices = "api/Store/POS/GetAllPOSInvoices";
 
+  // close custody
+  static const String addCashTransactionForSession =
+      "api/Restaurants/RestaurantPos/AddCashTransactionForSession";
+  static const String getCashTransactionForSession =
+      "api/Restaurants/RestaurantPos/getCashTransactionForSession";
   // General apis
   static const String getEmployeeBranches =
       "api/Store/GeneralAPIs/getEmployeeBranchs";
 
+  static const String getAllTreasuryByUserDropDown =
+      "api/GeneralLedger/Treasury/GetAllTreasuryByUserDropDown";
+  static const String getListOfPaymentMethods =
+      "api/Store/PaymentMethods/GetListOfPaymentMethods";
   static DioExceptionType dioExceptionType = DioExceptionType.unknown;
 
   static int? userId;

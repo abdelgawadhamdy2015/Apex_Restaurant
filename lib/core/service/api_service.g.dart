@@ -1205,6 +1205,49 @@ class _ApiService implements ApiService {
   }
 
   @override
+  Future<BaseResponse<List<PaymentMethodResponseModel>?>>
+  getListOfPaymentMethods({BaseRequest? request}) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options =
+        _setStreamType<BaseResponse<List<PaymentMethodResponseModel>?>>(
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                'api/Store/PaymentMethods/GetListOfPaymentMethods',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<List<PaymentMethodResponseModel>?> _value;
+    try {
+      _value = BaseResponse<List<PaymentMethodResponseModel>?>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<PaymentMethodResponseModel>(
+                    (i) => PaymentMethodResponseModel.fromJson(
+                      i as Map<String, dynamic>,
+                    ),
+                  )
+                  .toList()
+            : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<BaseResponse<List<PreviousInvoiceModel>?>> getListPosInvoiceData(
     GetPreviousInvoiceRequest request,
   ) async {
@@ -1436,6 +1479,109 @@ class _ApiService implements ApiService {
         (json) => json == null
             ? null
             : InvoiceReturnResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> addCashTransactionForSession(
+    AddCashTransactionRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<BaseResponse<dynamic>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Restaurants/RestaurantPos/AddCashTransactionForSession',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<dynamic> _value;
+    try {
+      _value = BaseResponse<dynamic>.fromJson(
+        _result.data!,
+        (json) => json as dynamic,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<TransactionsResponse?>> getCashTransactionForSession(
+    int employeesId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'employeesId': employeesId};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<TransactionsResponse?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Restaurants/RestaurantPos/getCashTransactionForSession',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<TransactionsResponse?> _value;
+    try {
+      _value = BaseResponse<TransactionsResponse?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : TransactionsResponse.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<List<SafeModel>?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/GeneralLedger/Treasury/GetAllTreasuryByUserDropDown',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<List<SafeModel>?> _value;
+    try {
+      _value = BaseResponse<List<SafeModel>?>.fromJson(
+        _result.data!,
+        (json) => json is List<dynamic>
+            ? json
+                  .map<SafeModel>(
+                    (i) => SafeModel.fromJson(i as Map<String, dynamic>),
+                  )
+                  .toList()
+            : List.empty(),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

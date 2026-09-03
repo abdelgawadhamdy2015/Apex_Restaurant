@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:go_router/go_router.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/helpers/helper_methods.dart';
 import '../../../../../core/helpers/restaurant_constants.dart';
@@ -57,27 +61,32 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
-      appBar: CartTopBar(
-        // Disable clear all button in top bar if editing is locked
-        onClearAll: canEdit
-            ? () => context.read<CartBloc>().add(ClearCartEvent())
-            : null,
-      ),
-      backgroundColor: theme.colorScheme.surface,
-      body: BlocConsumer<CartBloc, CartState>(
-        listener: _onCartStateChanged,
-        builder: (context, state) {
-          if (state.status == CartStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return IgnorePointer(
-            ignoring:
-                !canEdit, // Locks tap gestures on interactive inputs if read-only
-            child: _CartContent(state: state, canEdit: canEdit),
-          );
-        },
-      ),
+    return BlocConsumer<CartBloc, CartState>(
+      listener: _onCartStateChanged,
+      builder: (context, state) {
+        log(
+          'CartScreen build: canEdit=${state.canEdit}, isPreviousInvoice=${state.isPreviousInvoice}',
+        );
+        if (state.status == CartStatus.loading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return Scaffold(
+          appBar: CartTopBar(
+            // Disable clear all button in top bar if editing is locked
+            onClearAll: state.canEdit
+                ? () => context.read<CartBloc>().add(ClearCartEvent())
+                : null,
+            onBack: () {
+              if (state.isPreviousInvoice && !state.canEdit) {
+                context.read<CartBloc>().add(ClearCartEvent());
+              }
+              context.pop();
+            },
+          ),
+          backgroundColor: theme.colorScheme.surface,
+          body: _CartContent(state: state, canEdit: state.canEdit),
+        );
+      },
     );
   }
 
@@ -149,45 +158,51 @@ class _CartContent extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.all(spacing.md),
-                child: Center(
-                  child: SizedBox(
-                    width: contentWidth,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const HeaderInfoCard(),
-                        SizedBox(height: spacing.sm),
-                        const OrderTypeSelector(),
-                        SizedBox(height: spacing.sm),
-                        CustomerInfoCard(
-                          persons: state.persons,
-                          selectedPerson: selectedPerson,
-                        ),
-                        if (showAddressCard) ...[
+                child: IgnorePointer(
+                  ignoring: !canEdit,
+                  child: Center(
+                    child: SizedBox(
+                      width: contentWidth,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const HeaderInfoCard(),
                           SizedBox(height: spacing.sm),
-                          AddressCard(
-                            selectedAddress: state.selectedAddress,
-                            addresses:
-                                state.selectedPerson?.personAddress ?? const [],
+                          const OrderTypeSelector(),
+                          SizedBox(height: spacing.sm),
+                          CustomerInfoCard(
+                            persons: state.persons,
+                            selectedPerson: selectedPerson,
                           ),
-                        ],
-                        SizedBox(height: spacing.sm),
-                        _orderTypeSpecificSection(state),
-                        SizedBox(height: spacing.md),
-                        ...state.items.asMap().entries.map(
-                          (entry) =>
-                              CartItemTile(index: entry.key, item: entry.value),
-                        ),
-                        SizedBox(height: spacing.md),
-                        DiscountSection(
-                          selectedPerson: state.selectedPerson,
-                          dynamicIsActive: state.dynamicDiscountIsActive,
-                          dynamicDiscountModel: state.activeDiscountModel,
-                        ),
+                          if (showAddressCard) ...[
+                            SizedBox(height: spacing.sm),
+                            AddressCard(
+                              selectedAddress: state.selectedAddress,
+                              addresses:
+                                  state.selectedPerson?.personAddress ??
+                                  const [],
+                            ),
+                          ],
+                          SizedBox(height: spacing.sm),
+                          _orderTypeSpecificSection(state),
+                          SizedBox(height: spacing.md),
+                          ...state.items.asMap().entries.map(
+                            (entry) => CartItemTile(
+                              index: entry.key,
+                              item: entry.value,
+                            ),
+                          ),
+                          SizedBox(height: spacing.md),
+                          DiscountSection(
+                            selectedPerson: state.selectedPerson,
+                            dynamicIsActive: state.dynamicDiscountIsActive,
+                            dynamicDiscountModel: state.activeDiscountModel,
+                          ),
 
-                        SizedBox(height: spacing.xxs),
-                        const OrderSummaryCard(),
-                      ],
+                          SizedBox(height: spacing.xxs),
+                          const OrderSummaryCard(),
+                        ],
+                      ),
                     ),
                   ),
                 ),

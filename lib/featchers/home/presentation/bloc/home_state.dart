@@ -2,6 +2,7 @@
 import 'package:apex_restaurant/core/shared/contracts/errorable_state.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/home/data/models/employee_branch.dart';
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/session_model.dart';
 import 'package:apex_restaurant/featchers/home/data/models/user_data_model.dart';
 import 'package:equatable/equatable.dart';
@@ -14,6 +15,8 @@ enum HomeStatus {
   userDataLoaded,
   openSessionLoading,
   openSessionLoaded,
+  treasuryLoading,
+  treasuryLoaded,
   error,
 }
 
@@ -26,7 +29,8 @@ class HomeState extends Equatable implements ErrorableState {
   final UserDataModel? userDataModel;
   final List<EmployeeBranch> branches;
   final SessionModel? sessionModel;
-
+  final List<SafeModel>? safes;
+  final SafeModel? selectedSafe;
   const HomeState({
     this.status = HomeStatus.initial,
     this.apiResponse,
@@ -35,6 +39,8 @@ class HomeState extends Equatable implements ErrorableState {
     this.branches = const [],
     this.userDataModel,
     this.sessionModel,
+    this.safes,
+    this.selectedSafe,
   });
 
   factory HomeState.initial() => const HomeState(status: HomeStatus.initial);
@@ -48,6 +54,8 @@ class HomeState extends Equatable implements ErrorableState {
     UserDataModel? userDataModel,
     SessionModel? sessionModel,
     bool clearError = false,
+    List<SafeModel>? safes,
+    SafeModel? selectedSafe,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -58,6 +66,8 @@ class HomeState extends Equatable implements ErrorableState {
       branches: branches ?? this.branches,
       userDataModel: userDataModel ?? this.userDataModel,
       sessionModel: sessionModel ?? this.sessionModel,
+      safes: safes ?? this.safes,
+      selectedSafe: selectedSafe ?? this.selectedSafe,
     );
   }
 
@@ -70,6 +80,8 @@ class HomeState extends Equatable implements ErrorableState {
     branches,
     userDataModel,
     sessionModel,
+    safes,
+    selectedSafe,
   ];
 
   @override

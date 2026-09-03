@@ -145,7 +145,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     final isDineIn = data.orderType == CartOrderType.DINE_IN;
     final isDelivery = data.orderType == CartOrderType.DELIVERY;
     final isDeliveryCompany = data.orderType == CartOrderType.DELIVERY_COMPANY;
-    final selectedDeliveryCompany = isDeliveryCompany
+    final selectedDeliveryCompany =
+        isDeliveryCompany && state.companiesList.isNotEmpty
         ? state.companiesList.firstWhere(
             (c) => c.id == data.deliveryCompany?.id,
           )
@@ -159,6 +160,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         fromBranchDateTime: null,
         canEdit: event.canEdit,
         isPending: event.isPending,
+        isPreviousInvoice: true,
         //  selectedTable: isDineIn ? data.table : null,
         selectedWaiter: isDineIn ? data.waiter : null,
         selectedDeliveryMan: isDelivery ? data.deliveryMan : null,

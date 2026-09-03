@@ -85,7 +85,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${totalAmount.toStringAsFixed(2)} ${lang.currencySar}',
+                    '${totalAmount.toStringAsFixed(2)} ${lang.currencySarShort}',
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: AppColors.white,
                       fontWeight: FontWeight.bold,

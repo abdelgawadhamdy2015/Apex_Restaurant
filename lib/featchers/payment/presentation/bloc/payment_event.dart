@@ -17,6 +17,13 @@ class InitializePaymentEvent extends PaymentEvent {
   List<Object?> get props => [totalAmount];
 }
 
+class FetchPaymentMethodsEvent extends PaymentEvent {
+  const FetchPaymentMethodsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class ChangePaymentMethodEvent extends PaymentEvent {
   final PaymentMethodType method;
   const ChangePaymentMethodEvent(this.method);

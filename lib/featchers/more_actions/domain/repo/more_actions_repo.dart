@@ -1,7 +1,9 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -16,4 +18,11 @@ abstract class MoreActionsRepo {
 
   Future<ApiResult<BaseResponse<InvoiceReturnResponse?>>>
   addPOSTotalReturnInvoice({required AddPOSTotalReturnInvoiceRequest request});
+
+  Future<ApiResult<BaseResponse<dynamic>>> addCashTransactionForSession({
+    required AddCashTransactionRequest request,
+  });
+
+  Future<ApiResult<BaseResponse<TransactionsResponse?>>>
+  getCashTransactionForSession({required int employeesId});
 }

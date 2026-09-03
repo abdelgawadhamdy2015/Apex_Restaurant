@@ -55,7 +55,6 @@ class TabletCartPanel extends StatelessWidget {
       child: Column(
         children: [
           CartTopBar(
-            isTablet: true,
             onClearAll: () => context.read<CartBloc>().add(ClearCartEvent()),
           ),
           Expanded(

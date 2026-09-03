@@ -4001,6 +4001,91 @@ class S {
       args: [],
     );
   }
+
+  /// `Custody Log`
+  String get custodyLogTitle {
+    return Intl.message(
+      'Custody Log',
+      name: 'custodyLogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Withdrawals`
+  String get withdrawalsFilter {
+    return Intl.message(
+      'Withdrawals',
+      name: 'withdrawalsFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additions`
+  String get additionsFilter {
+    return Intl.message(
+      'Additions',
+      name: 'additionsFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get allFilter {
+    return Intl.message('All', name: 'allFilter', desc: '', args: []);
+  }
+
+  /// `Current Balance`
+  String get currentBalance {
+    return Intl.message(
+      'Current Balance',
+      name: 'currentBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type`
+  String get type {
+    return Intl.message('Type', name: 'type', desc: '', args: []);
+  }
+
+  /// `Attachment`
+  String get attachment {
+    return Intl.message('Attachment', name: 'attachment', desc: '', args: []);
+  }
+
+  /// `User`
+  String get user {
+    return Intl.message('User', name: 'user', desc: '', args: []);
+  }
+
+  /// `Invalid amount`
+  String get invalidAmount {
+    return Intl.message(
+      'Invalid amount',
+      name: 'invalidAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Transaction added successfully`
+  String get transactionAddedSuccessfully {
+    return Intl.message(
+      'Transaction added successfully',
+      name: 'transactionAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Safe`
+  String get selectSafe {
+    return Intl.message('Select Safe', name: 'selectSafe', desc: '', args: []);
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -1,5 +1,7 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/screens/responsibility_shared_widgets.dart';
 
 import 'package:equatable/equatable.dart';
 
@@ -47,4 +49,25 @@ class SelectInvoiceDateEvent extends MoreActionsEvent {
   const SelectInvoiceDateEvent({required this.invoiceDate});
   @override
   List<Object?> get props => [invoiceDate];
+}
+
+class AddCashTransactionForSessionEvent extends MoreActionsEvent {
+  final AddCashTransactionRequest cashTransaction;
+  const AddCashTransactionForSessionEvent({required this.cashTransaction});
+  @override
+  List<Object?> get props => [cashTransaction];
+}
+
+class FetchCashTransactionForSessionEvent extends MoreActionsEvent {
+  final int employeeId;
+  const FetchCashTransactionForSessionEvent({required this.employeeId});
+  @override
+  List<Object?> get props => [employeeId];
+}
+
+class ChangeActiveTabEvent extends MoreActionsEvent {
+  final ResponsibilityTab activeTab;
+  const ChangeActiveTabEvent({required this.activeTab});
+  @override
+  List<Object?> get props => [activeTab];
 }
