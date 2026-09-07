@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -189,7 +190,18 @@ class _OpeningBalanceDialogState extends State<OpeningBalanceDialog> {
                         final amount =
                             double.tryParse(_amountController.text) ?? 0.0;
                         context.read<HomeBloc>().add(
-                          OpenRestaurantPosSessionEvent(openingBalance: amount),
+                          OpenRestaurantPosSessionEvent(
+                            request: OpenSessionRequest(
+                              openingBalance: amount,
+                              safeId:
+                                  context
+                                      .read<HomeBloc>()
+                                      .state
+                                      .selectedSafe
+                                      ?.id ??
+                                  0,
+                            ),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(

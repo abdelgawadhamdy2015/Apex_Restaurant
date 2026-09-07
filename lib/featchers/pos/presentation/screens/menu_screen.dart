@@ -4,7 +4,6 @@ import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/helpers/transactionid_generator.dart';
 import '../../../../core/router/routes.dart';
-import '../../../cart/data/models/get_client_request.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../../cart/presentation/bloc/cart_state.dart';
@@ -47,12 +46,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
-      context.read<CartBloc>().add(
-        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
-      );
-    });
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -67,16 +61,12 @@ class _MenuScreenState extends State<MenuScreen> {
     if (posState.hasMoreItems &&
         !posState.isLoadingMoreItems &&
         posState.status != PosStatus.loading) {
-      // NOTE: LoadMoreItemsEvent takes no params — it relies on the bloc
-      // remembering the last search key/page internally from the most
-      // recent LoadItemsEvent dispatched in `_onSearchChanged` below.
       context.read<PosBloc>().add(const LoadMoreItemsEvent());
     }
   }
 
   /// Debounced search handler passed down to [PosTopAppBar]. Waits for the
-  /// user to stop typing before firing a request, and always resets
-  /// pagination/scroll since a new search key means a brand-new result set.
+
   void _onSearchChanged(String value) {
     final trimmed = value.trim();
 

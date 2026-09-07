@@ -87,9 +87,12 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<SessionModel?>> openRestaurantPosSession() async {
+  Future<BaseResponse<SessionModel?>> openRestaurantPosSession(
+    OpenSessionRequest request,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(request.toJson());
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<SessionModel?>>(

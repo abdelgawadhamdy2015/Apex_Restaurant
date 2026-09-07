@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
@@ -56,7 +57,9 @@ abstract class ApiService {
   @GET(ApiConstants.openRestaurantPos)
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
   @GET(ApiConstants.openRestaurantPosSession)
-  Future<BaseResponse<SessionModel?>> openRestaurantPosSession();
+  Future<BaseResponse<SessionModel?>> openRestaurantPosSession(
+    @Queries() OpenSessionRequest request,
+  );
   @GET(ApiConstants.currentPOSsession)
   Future<BaseResponse<SessionModel?>> currentPOSsession();
   @POST("${ApiConstants.closePOSSeassion}/{sessionId}")

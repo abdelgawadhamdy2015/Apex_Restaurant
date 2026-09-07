@@ -4086,6 +4086,16 @@ class S {
   String get selectSafe {
     return Intl.message('Select Safe', name: 'selectSafe', desc: '', args: []);
   }
+
+  /// `Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added.`
+  String get invoiceDiscountNotAllowed {
+    return Intl.message(
+      'Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added.',
+      name: 'invoiceDiscountNotAllowed',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -391,6 +391,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "insertPassword": MessageLookupByLibrary.simpleMessage("أدخل كلمة المرور"),
     "invalidAmount": MessageLookupByLibrary.simpleMessage("المبلغ غير صالح"),
+    "invoiceDiscountNotAllowed": MessageLookupByLibrary.simpleMessage(
+      "لا يمكن إضافة خصم على الفاتورة لوجود خصم مطبّق على أحد أصناف الطلب، ولكن يمكن إضافة خصم قسيمة.",
+    ),
     "invoiceNumber": MessageLookupByLibrary.simpleMessage("رقم الفاتورة"),
     "invoiceNumberExample": MessageLookupByLibrary.simpleMessage(
       "مثال: INV-1024",

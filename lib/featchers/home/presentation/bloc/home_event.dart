@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 
 import '../../data/models/employee_branch.dart';
@@ -35,11 +36,11 @@ class OpenRestaurantPosEvent extends HomeEvent {
 }
 
 class OpenRestaurantPosSessionEvent extends HomeEvent {
-  final double openingBalance;
-  const OpenRestaurantPosSessionEvent({required this.openingBalance});
+  final OpenSessionRequest request;
+  const OpenRestaurantPosSessionEvent({required this.request});
 
   @override
-  List<Object?> get props => [openingBalance];
+  List<Object?> get props => [request];
 }
 
 class LoadTreasuryEvent extends HomeEvent {

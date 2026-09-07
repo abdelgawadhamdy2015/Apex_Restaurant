@@ -515,5 +515,6 @@
     "user": "المستخدم",
     "invalidAmount": "المبلغ غير صالح",
     "transactionAddedSuccessfully": "تمت إضافة المعاملة بنجاح",
-    "selectSafe": "اختر الخزينة"
+    "selectSafe": "اختر الخزينة",
+    "invoiceDiscountNotAllowed": "لا يمكن إضافة خصم على الفاتورة لوجود خصم مطبّق على أحد أصناف الطلب، ولكن يمكن إضافة خصم قسيمة."
 }

@@ -1,3 +1,9 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show ReadContext;
+
 import '../../helpers/restaurant_constants.dart';
 import '../../helpers/shared_prf_helper.dart';
 import '../../router/routes.dart';
@@ -475,7 +481,10 @@ void showLogOutDialogState(
       await SharedPrefHelper.setData(RestaurantConstants.myToken, "");
       DioFactory.clearToken();
       if (!context.mounted) return;
+      context.read<CartBloc>().add(ClearCartEvent());
+      context.read<PosBloc>().add(LogOutEvent());
       context.pushReplacementNamed(Routes.loginScreen);
+
       mySignalRService.stopConnection();
     },
   );

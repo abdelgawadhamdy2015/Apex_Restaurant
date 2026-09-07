@@ -29,7 +29,9 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<LoadSettingsEvent>(_onLoadSettings);
     on<LoadCategoriesEvent>(_onLoadCategories);
     on<SelectCategoryEvent>(_onSelectCategory);
-
+    on<LogOutEvent>((event, emit) {
+      emit(PosState.initial());
+    });
     on<LoadItemsEvent>(_onLoadItems);
     on<LoadMoreItemsEvent>(_onLoadMoreItems);
     on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
@@ -64,6 +66,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
                 status: PosStatus.closeSession, // أو حالة نجاح مخصصة عند الرغبة
                 currentSessionId: data.id,
                 clear: true,
+                errorMessage: null,
               ),
             );
           } else {
@@ -120,6 +123,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
                 toastMessage: 'تم إغلاق الجلسة بنجاح',
                 currentSessionId: null,
                 clear: true,
+                errorMessage: null,
               ),
             );
           } else {
@@ -166,7 +170,13 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       response.when(
         success: (data) {
           if (data.result == 1) {
-            emit(state.copyWith(status: PosStatus.loaded, settings: data.data));
+            emit(
+              state.copyWith(
+                status: PosStatus.loaded,
+                settings: data.data,
+                errorMessage: null,
+              ),
+            );
           } else {
             emit(
               state.copyWith(
@@ -222,6 +232,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
                 status: PosStatus.loaded,
                 categories: categoriesList,
                 selectedCategory: firstCategory,
+                errorMessage: null,
               ),
             );
 
@@ -279,6 +290,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
               state.copyWith(
                 status: PosStatus.loaded,
                 additives: data.data ?? [],
+                errorMessage: null,
               ),
             );
           } else {
@@ -364,6 +376,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
                 hasMoreItems: newItems.length >= _itemsPageSize,
                 isLoadingMoreItems: false,
                 currentItemsRequest: requestWithPaging,
+                errorMessage: null,
               ),
             );
           } else {

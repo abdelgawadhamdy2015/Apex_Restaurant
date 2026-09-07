@@ -17,7 +17,6 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import 'package:apex_restaurant/featchers/tables/presentation/pages/tablet_tables_screen.dart';
 import 'package:flutter/material.dart';
 
-import '../../../cart/data/models/get_client_request.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,10 +43,6 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
-      context.read<CartBloc>().add(
-        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
-      );
       context.read<CartBloc>().add(LoadCartDataEvent());
     });
   }

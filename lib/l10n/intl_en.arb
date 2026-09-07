@@ -515,5 +515,6 @@
     "user": "User",
     "invalidAmount": "Invalid amount",
     "transactionAddedSuccessfully": "Transaction added successfully",
-    "selectSafe": "Select Safe"
+    "selectSafe": "Select Safe",
+    "invoiceDiscountNotAllowed": "Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added."
 }

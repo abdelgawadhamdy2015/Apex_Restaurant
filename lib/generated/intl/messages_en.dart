@@ -410,6 +410,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "insertEmail": MessageLookupByLibrary.simpleMessage("Insert Email"),
     "insertPassword": MessageLookupByLibrary.simpleMessage("Insert Password"),
     "invalidAmount": MessageLookupByLibrary.simpleMessage("Invalid amount"),
+    "invoiceDiscountNotAllowed": MessageLookupByLibrary.simpleMessage(
+      "Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added.",
+    ),
     "invoiceNumber": MessageLookupByLibrary.simpleMessage("Invoice No."),
     "invoiceNumberExample": MessageLookupByLibrary.simpleMessage(
       "e.g., INV-1024",

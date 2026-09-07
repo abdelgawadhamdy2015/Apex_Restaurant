@@ -136,7 +136,7 @@ class _DiscountSectionState extends State<DiscountSection> {
               AppRadioGroup<DiscountTypeEnum>(
                 value: DiscountTypeEnum.coupon,
                 groupValue: discountType,
-                enabled: discountEnabled,
+                enabled: true,
                 label: Text(
                   lang.coupon,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -180,7 +180,7 @@ class _DiscountSectionState extends State<DiscountSection> {
                 child: TextFormField(
                   controller: _discountCodeController,
 
-                  enabled: discountEnabled,
+                  //   enabled: discountEnabled,
                   decoration: InputDecoration(
                     hintText:
                         state.selectedDiscountType == DiscountTypeEnum.direct
@@ -251,6 +251,21 @@ class _DiscountSectionState extends State<DiscountSection> {
                     ),
                   ),
                 ],
+              ),
+            ),
+          SizedBox(height: spacing.md),
+          if (state.isManualItemDiscountApplied)
+            Container(
+              padding: EdgeInsets.all(spacing.sm),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(spacing.radiusMd),
+              ),
+              child: Text(
+                lang.invoiceDiscountNotAllowed,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
               ),
             ),
         ],

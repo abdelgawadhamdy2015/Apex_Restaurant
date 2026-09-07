@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 
 import '../../../../core/service/api_result.dart';
@@ -24,8 +25,9 @@ class GetUserDataUseCase {
 class OpenRestaurantPosSessionUseCase {
   final HomeRepository _repository;
   OpenRestaurantPosSessionUseCase(this._repository);
-  Future<ApiResult<BaseResponse<SessionModel?>>> call() =>
-      _repository.openRestaurantPosSession();
+  Future<ApiResult<BaseResponse<SessionModel?>>> call(
+    OpenSessionRequest request,
+  ) => _repository.openRestaurantPosSession(request);
 }
 
 class OpenRestaurantPosUseCase {

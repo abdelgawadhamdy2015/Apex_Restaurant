@@ -20,6 +20,7 @@ class MoreActionsState extends Equatable {
   final InvoiceReturnResponse? invoiceReturnResponse;
   final ResponsibilityTab? activeTab;
   final TransactionsResponse? transactionsResponse;
+  final bool? isFullReturn;
   const MoreActionsState({
     this.status,
     this.invoices = const [],
@@ -30,6 +31,7 @@ class MoreActionsState extends Equatable {
     this.invoiceReturnResponse,
     this.activeTab = ResponsibilityTab.custody,
     this.transactionsResponse,
+    this.isFullReturn,
   });
 
   MoreActionsState copyWith({
@@ -43,6 +45,7 @@ class MoreActionsState extends Equatable {
     bool? clearReturned,
     ResponsibilityTab? activeTab,
     TransactionsResponse? transactionsResponse,
+    bool? isFullReturn,
   }) {
     return MoreActionsState(
       status: status ?? this.status,
@@ -51,6 +54,7 @@ class MoreActionsState extends Equatable {
       invoiceType: invoiceType ?? this.invoiceType,
       invoiceDate: invoiceDate ?? this.invoiceDate,
       activeTab: activeTab ?? this.activeTab,
+      isFullReturn: isFullReturn ?? this.isFullReturn,
       transactionsResponse: transactionsResponse ?? this.transactionsResponse,
       returnedInvoice: clearReturned == true
           ? null

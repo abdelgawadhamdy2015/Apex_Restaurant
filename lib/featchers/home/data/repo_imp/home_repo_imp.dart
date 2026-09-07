@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 
 import '../../../../core/service/api_error_handler.dart';
@@ -48,10 +49,13 @@ class HomeRepoImpl implements HomeRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<SessionModel?>>>
-  openRestaurantPosSession() async {
+  Future<ApiResult<BaseResponse<SessionModel?>>> openRestaurantPosSession(
+    OpenSessionRequest request,
+  ) async {
     try {
-      final response = await _remoteDataSource.openRestaurantPosSession();
+      final response = await _remoteDataSource.openRestaurantPosSession(
+        request,
+      );
       return ApiResult.success(response);
     } catch (error) {
       return ApiResult.failure(ErrorHandler.handle(error));

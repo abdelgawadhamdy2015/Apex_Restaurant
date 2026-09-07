@@ -54,6 +54,8 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 returnedInvoice: invoice,
                 status: MoreActionsStatus.success,
+                isFullReturn: false,
+                errorMessage: null,
               ),
             );
           } else {
@@ -71,6 +73,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             state.copyWith(
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
               status: MoreActionsStatus.failure,
+              isFullReturn: false,
             ),
           );
         },
@@ -81,6 +84,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
           returnedInvoice: null,
           errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
           status: MoreActionsStatus.failure,
+          isFullReturn: false,
         ),
       );
     }
@@ -107,6 +111,8 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 invoices: invoices,
                 invoiceReturnResponse: data?.data,
                 status: MoreActionsStatus.success,
+                isFullReturn: true,
+                errorMessage: null,
               ),
             );
           } else {
@@ -115,6 +121,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 errorMessage: data?.errorMessageAr,
                 returnedInvoice: null,
                 status: MoreActionsStatus.failure,
+                isFullReturn: false,
               ),
             );
           }
@@ -124,6 +131,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             state.copyWith(
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
               status: MoreActionsStatus.failure,
+              isFullReturn: false,
             ),
           );
         },
@@ -134,6 +142,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
           returnedInvoice: null,
           errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
           status: MoreActionsStatus.failure,
+          isFullReturn: false,
         ),
       );
     }
@@ -156,6 +165,8 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 invoices: items,
                 clearReturned: true,
                 status: MoreActionsStatus.success,
+                isFullReturn: false,
+                errorMessage: null,
               ),
             );
           } else {
@@ -164,6 +175,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 errorMessage: data.errorMessageAr,
                 invoices: [],
                 status: MoreActionsStatus.failure,
+                isFullReturn: false,
               ),
             );
           }
@@ -173,6 +185,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             state.copyWith(
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
               status: MoreActionsStatus.failure,
+              isFullReturn: false,
             ),
           );
         },
@@ -183,6 +196,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
           invoices: const [],
           errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
           status: MoreActionsStatus.failure,
+          isFullReturn: false,
         ),
       );
     }
@@ -200,12 +214,19 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
       response.when(
         success: (data) {
           if (data.result == 1) {
-            emit(state.copyWith(status: MoreActionsStatus.success));
+            emit(
+              state.copyWith(
+                status: MoreActionsStatus.success,
+                isFullReturn: false,
+                errorMessage: null,
+              ),
+            );
           } else {
             emit(
               state.copyWith(
                 errorMessage: data.errorMessageAr,
                 status: MoreActionsStatus.failure,
+                isFullReturn: false,
               ),
             );
           }
@@ -215,6 +236,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             state.copyWith(
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
               status: MoreActionsStatus.failure,
+              isFullReturn: false,
             ),
           );
         },
@@ -224,6 +246,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
         state.copyWith(
           errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
           status: MoreActionsStatus.failure,
+          isFullReturn: false,
         ),
       );
     }
@@ -245,6 +268,8 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 transactionsResponse: data.data,
                 status: MoreActionsStatus.success,
+                errorMessage: null,
+                isFullReturn: false,
               ),
             );
           } else {
@@ -252,6 +277,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 errorMessage: data.errorMessageAr,
                 status: MoreActionsStatus.failure,
+                isFullReturn: false,
               ),
             );
           }
@@ -261,6 +287,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             state.copyWith(
               errorMessage: errorHandler.apiErrorModel.errorMessageAr,
               status: MoreActionsStatus.failure,
+              isFullReturn: false,
             ),
           );
         },
@@ -270,6 +297,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
         state.copyWith(
           errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
           status: MoreActionsStatus.failure,
+          isFullReturn: false,
         ),
       );
     }

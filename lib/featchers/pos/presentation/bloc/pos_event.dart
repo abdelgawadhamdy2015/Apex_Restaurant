@@ -19,6 +19,10 @@ class LoadCategoriesEvent extends PosEvent {
   const LoadCategoriesEvent();
 }
 
+class LogOutEvent extends PosEvent {
+  const LogOutEvent();
+}
+
 class LoadSettingsEvent extends PosEvent {
   const LoadSettingsEvent();
 }

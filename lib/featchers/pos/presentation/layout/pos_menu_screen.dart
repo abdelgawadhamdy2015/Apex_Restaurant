@@ -26,8 +26,6 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
   @override
   void initState() {
     super.initState();
-
-    context.read<PosBloc>().add(const LoadCategoriesEvent());
   }
 
   List<PosBottomNavEnm> _getNavItems(BuildContext context) {

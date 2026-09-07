@@ -221,7 +221,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       state.copyWith(status: HomeStatus.openSessionLoading, clearError: true),
     );
     try {
-      final response = await openRestaurantPosSessionUseCase();
+      final response = await openRestaurantPosSessionUseCase(event.request);
       response.when(
         failure: (e) => emit(
           state.copyWith(
