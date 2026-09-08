@@ -889,7 +889,50 @@ class _ActionButtons extends StatelessWidget {
 
 class _RecentTransactionsCard extends StatelessWidget {
   final VoidCallback onViewFullLog;
+
   const _RecentTransactionsCard({required this.onViewFullLog});
+
+  String _getTimeAgo(DateTime? date, S lang) {
+    if (date == null) {
+      return '-';
+    }
+
+    final difference = DateTime.now().difference(date);
+
+    // Future date protection
+    if (difference.isNegative) {
+      return lang.justNow;
+    }
+
+    if (difference.inDays > 0) {
+      return lang.daysAgo(difference.inDays);
+    }
+
+    if (difference.inHours > 0) {
+      return lang.hoursAgo(difference.inHours);
+    }
+
+    if (difference.inMinutes > 0) {
+      return lang.minutesAgo(difference.inMinutes);
+    }
+
+    return lang.justNow;
+  }
+
+  DateTime? _getLastTransactionTime(MoreActionsState state, int signal) {
+    final transactions = state.transactionsResponse?.items ?? [];
+
+    final dates = transactions
+        .where((t) => t.signal == signal && t.date != null)
+        .map((t) => t.date!)
+        .toList();
+
+    if (dates.isEmpty) {
+      return null;
+    }
+
+    return dates.reduce((a, b) => a.isAfter(b) ? a : b);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -898,6 +941,11 @@ class _RecentTransactionsCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final extra = theme.extension<AppExtraTheme>();
     final spacing = context.spacing;
+
+    final state = context.watch<MoreActionsBloc>().state;
+
+    final lastAddTime = _getLastTransactionTime(state, -1);
+    final lastRemoveTime = _getLastTransactionTime(state, 1);
 
     return Container(
       padding: EdgeInsets.all(spacing.md),
@@ -915,27 +963,33 @@ class _RecentTransactionsCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
+
           SizedBox(height: spacing.md),
+
           _TransactionTile(
             title: lang.addBalance,
-            subtitle: lang.minutesAgo(15),
-            amount: "+500",
+            subtitle: _getTimeAgo(lastAddTime, lang),
+            amount: (state.transactionsResponse?.totalAdds ?? 0).toString(),
             isPositive: true,
             accentColor: extra?.greenBackground ?? AppColors.success,
             accentBg: AppColors.successLightTranslucent,
             icon: Icons.check,
           ),
+
           Divider(height: spacing.lg, color: colorScheme.outlineVariant),
+
           _TransactionTile(
             title: lang.withdrawExpenses,
-            subtitle: lang.hoursAgo(2),
-            amount: "-120",
+            subtitle: _getTimeAgo(lastRemoveTime, lang),
+            amount: (state.transactionsResponse?.totalRemoves ?? 0).toString(),
             isPositive: false,
             accentColor: colorScheme.error,
             accentBg: colorScheme.error.withOpacity(0.08),
             icon: Icons.north_east,
           ),
+
           SizedBox(height: spacing.md),
+
           SizedBox(
             width: double.infinity,
             child: TextButton(

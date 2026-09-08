@@ -382,8 +382,6 @@
     "recentTransactionsSummary": "ملخص آخر العمليات",
     "addBalance": "إضافة رصيد",
     "withdrawExpenses": "سحب مصروفات",
-    "minutesAgo": "منذ {minutes} دقيقة",
-    "hoursAgo": "منذ {hours} ساعتين",
     "viewFullCustodyLog": "عرض سجل العهدة بالكامل",
     "addCustody": "إضافة عهدة",
     "withdrawCustody": "سحب عهدة",
@@ -516,5 +514,9 @@
     "invalidAmount": "المبلغ غير صالح",
     "transactionAddedSuccessfully": "تمت إضافة المعاملة بنجاح",
     "selectSafe": "اختر الخزينة",
-    "invoiceDiscountNotAllowed": "لا يمكن إضافة خصم على الفاتورة لوجود خصم مطبّق على أحد أصناف الطلب، ولكن يمكن إضافة خصم قسيمة."
+    "invoiceDiscountNotAllowed": "لا يمكن إضافة خصم على الفاتورة لوجود خصم مطبّق على أحد أصناف الطلب، ولكن يمكن إضافة خصم قسيمة.",
+    "minutesAgo": "منذ {count} دقيقة",
+    "hoursAgo": "منذ {count} ساعة",
+    "daysAgo": "منذ {count} يوم",
+    "justNow": "الآن"
 }

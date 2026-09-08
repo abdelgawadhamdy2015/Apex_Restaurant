@@ -382,8 +382,6 @@
     "recentTransactionsSummary": "Recent Transactions Summary",
     "addBalance": "Add Balance",
     "withdrawExpenses": "Expense Withdrawal",
-    "minutesAgo": "{minutes} min ago",
-    "hoursAgo": "{hours} hours ago",
     "viewFullCustodyLog": "View Full Custody Log",
     "addCustody": "Add Custody",
     "withdrawCustody": "Withdraw Custody",
@@ -516,5 +514,33 @@
     "invalidAmount": "Invalid amount",
     "transactionAddedSuccessfully": "Transaction added successfully",
     "selectSafe": "Select Safe",
-    "invoiceDiscountNotAllowed": "Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added."
+    "invoiceDiscountNotAllowed": "Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added.",
+    "minutesAgo": "{count} minutes ago",
+    "@minutesAgo": {
+        "description": "Time elapsed in minutes",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "hoursAgo": "{count} hours ago",
+    "@hoursAgo": {
+        "description": "Time elapsed in hours",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "daysAgo": "{count} days ago",
+    "@daysAgo": {
+        "description": "Time elapsed in days",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "justNow": "Just now"
 }

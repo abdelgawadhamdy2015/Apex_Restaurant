@@ -109,13 +109,12 @@ class _DiscountSectionState extends State<DiscountSection> {
 
     final lang = S.of(context);
     final discountEnabled =
+        //state.isInvoiceManualDiscountEnabled && state.canEdit;
         (!widget.dynamicIsActive &&
             !HelperMethods.anyItemHasDiscount(state.items)) &&
         state.canEdit;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
-        if (widget.dynamicIsActive) return;
-
         if (val != null) {
           context.read<CartBloc>().add(ChangeDiscountTypeEvent(val));
         }
@@ -153,7 +152,6 @@ class _DiscountSectionState extends State<DiscountSection> {
                 value: DiscountTypeEnum.direct,
                 groupValue: discountType,
                 enabled: discountEnabled,
-
                 label: Text(
                   lang.directDiscount,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -180,7 +178,9 @@ class _DiscountSectionState extends State<DiscountSection> {
                 child: TextFormField(
                   controller: _discountCodeController,
 
-                  //   enabled: discountEnabled,
+                  enabled:
+                      discountEnabled ||
+                      state.selectedDiscountType != DiscountTypeEnum.direct,
                   decoration: InputDecoration(
                     hintText:
                         state.selectedDiscountType == DiscountTypeEnum.direct

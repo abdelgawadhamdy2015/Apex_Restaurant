@@ -26,35 +26,37 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m2(version) => "إصدار التطبيق${version}";
 
-  static String m3(year, month, day, hour, minute) =>
+  static String m3(count) => "منذ ${count} يوم";
+
+  static String m4(year, month, day, hour, minute) =>
       "${year}/${month}/${day} - ${hour}:${minute}";
 
-  static String m4(hours) => "منذ ${hours} ساعتين";
+  static String m5(count) => "منذ ${count} ساعة";
 
-  static String m5(count) => "${count} صنف";
+  static String m6(count) => "${count} صنف";
 
-  static String m6(count) =>
+  static String m7(count) =>
       "${Intl.plural(count, one: 'صنف واحد', two: 'صنفان', few: '${count} أصناف', many: '${count} صنفاً', other: '${count} صنف')}";
 
-  static String m7(minutes) => "منذ ${minutes} دقيقة";
+  static String m8(count) => "منذ ${count} دقيقة";
 
-  static String m8(notes) => "ملاحظات: ${notes}";
+  static String m9(notes) => "ملاحظات: ${notes}";
 
-  static String m9(count) => "${count} طلبات";
+  static String m10(count) => "${count} طلبات";
 
-  static String m10(price) => "+${price} ر.س";
+  static String m11(price) => "+${price} ر.س";
 
-  static String m11(price) => "${price} ر.س";
+  static String m12(price) => "${price} ر.س";
 
-  static String m12(quantity) => "الكمية: ${quantity}";
+  static String m13(quantity) => "الكمية: ${quantity}";
 
-  static String m13(minutes) => "فترة الحجز (${minutes} دقيقة)";
+  static String m14(minutes) => "فترة الحجز (${minutes} دقيقة)";
 
-  static String m14(size) => "الحجم: ${size}";
+  static String m15(size) => "الحجم: ${size}";
 
-  static String m15(vat) => "ضريبة القيمة المضافة : % ${vat} ";
+  static String m16(vat) => "ضريبة القيمة المضافة : % ${vat} ";
 
-  static String m16(value) => "تم تطبيق القسيمة (${value} ريال)";
+  static String m17(value) => "تم تطبيق القسيمة (${value} ريال)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -266,6 +268,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "day": MessageLookupByLibrary.simpleMessage("اليوم"),
     "dayStatus": MessageLookupByLibrary.simpleMessage("حالة اليوم"),
     "days": MessageLookupByLibrary.simpleMessage("ايام"),
+    "daysAgo": m3,
     "dbName": MessageLookupByLibrary.simpleMessage("اسم قاعدة البيانات"),
     "deficit": MessageLookupByLibrary.simpleMessage("العجز"),
     "deleteOrder": MessageLookupByLibrary.simpleMessage("حذف الطلب"),
@@ -354,7 +357,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "floor": MessageLookupByLibrary.simpleMessage("الدور"),
     "floors": MessageLookupByLibrary.simpleMessage("الطوابق"),
     "forgetPassword": MessageLookupByLibrary.simpleMessage("نسيت كلمة المرور؟"),
-    "formattedDateTime": m3,
+    "formattedDateTime": m4,
     "free": MessageLookupByLibrary.simpleMessage("مجاناً"),
     "from": MessageLookupByLibrary.simpleMessage("من"),
     "fromBranch": MessageLookupByLibrary.simpleMessage("من الفرع"),
@@ -377,7 +380,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "hour": MessageLookupByLibrary.simpleMessage("ساعة"),
     "hours": MessageLookupByLibrary.simpleMessage("ساعة"),
-    "hoursAgo": m4,
+    "hoursAgo": m5,
     "identityConfirmed": MessageLookupByLibrary.simpleMessage(
       "تم تأكيد الهوية",
     ),
@@ -409,8 +412,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "isDefaultAddress": MessageLookupByLibrary.simpleMessage(
       "العنوان الافتراضي",
     ),
-    "itemCountSingle": m5,
-    "itemsCount": m6,
+    "itemCountSingle": m6,
+    "itemsCount": m7,
+    "justNow": MessageLookupByLibrary.simpleMessage("الآن"),
     "language": MessageLookupByLibrary.simpleMessage("اللغة"),
     "lastCheckOut": MessageLookupByLibrary.simpleMessage("آخر تسجيل خروج"),
     "lastCheckOutValue": MessageLookupByLibrary.simpleMessage("أمس، 11:30 م"),
@@ -441,7 +445,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "menu": MessageLookupByLibrary.simpleMessage("القائمة"),
     "microfone": MessageLookupByLibrary.simpleMessage("ميكروفون"),
     "minutes": MessageLookupByLibrary.simpleMessage("دقائق"),
-    "minutesAgo": m7,
+    "minutesAgo": m8,
     "mobile": MessageLookupByLibrary.simpleMessage("الموبايل"),
     "more": MessageLookupByLibrary.simpleMessage("المزيد"),
     "myRequests": MessageLookupByLibrary.simpleMessage("طلباتي"),
@@ -484,7 +488,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "هذه الشركة ليست شركة مطاعم.",
     ),
     "notes": MessageLookupByLibrary.simpleMessage("ملاحظات"),
-    "notesWithVal": m8,
+    "notesWithVal": m9,
     "notice": MessageLookupByLibrary.simpleMessage("تنبيه"),
     "notifications": MessageLookupByLibrary.simpleMessage("الإشعارات"),
     "okDialog": MessageLookupByLibrary.simpleMessage("موافق"),
@@ -504,7 +508,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تمت معالجة الطلب بنجاح وإرساله للمطبخ",
     ),
     "orders": MessageLookupByLibrary.simpleMessage("الطلبات"),
-    "ordersCount": m9,
+    "ordersCount": m10,
     "other": MessageLookupByLibrary.simpleMessage("أخرى"),
     "outdoorArea": MessageLookupByLibrary.simpleMessage("المنطقة الخارجية"),
     "overallReport": MessageLookupByLibrary.simpleMessage("الإجمالي"),
@@ -574,13 +578,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "pleaseSelectValidTakeawayDateTime": MessageLookupByLibrary.simpleMessage(
       "يرجى اختيار تاريخ ووقت صالحين للاستلام.",
     ),
-    "plusPriceWithCurrency": m10,
+    "plusPriceWithCurrency": m11,
     "pm": MessageLookupByLibrary.simpleMessage("مساءً"),
     "popular": MessageLookupByLibrary.simpleMessage("شائع"),
     "pos": MessageLookupByLibrary.simpleMessage("نقطة البيع"),
     "preview": MessageLookupByLibrary.simpleMessage("معاينة"),
     "previousOrders": MessageLookupByLibrary.simpleMessage("طلبات سابقة"),
-    "priceWithCurrency": m11,
+    "priceWithCurrency": m12,
     "print": MessageLookupByLibrary.simpleMessage("طباعة"),
     "printReceipt": MessageLookupByLibrary.simpleMessage("طباعة إيصال"),
     "printWithApproval": MessageLookupByLibrary.simpleMessage(
@@ -589,7 +593,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "printed": MessageLookupByLibrary.simpleMessage("تمت الطباعة"),
     "productSize": MessageLookupByLibrary.simpleMessage("حجم المنتج"),
     "project": MessageLookupByLibrary.simpleMessage("المشروع"),
-    "quantityWithCount": m12,
+    "quantityWithCount": m13,
     "quickAccessList": MessageLookupByLibrary.simpleMessage(
       "قائمة الوصول السريع",
     ),
@@ -627,7 +631,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "requestType": MessageLookupByLibrary.simpleMessage("نوع الطلب"),
     "requests": MessageLookupByLibrary.simpleMessage("الطلبات"),
     "reservationPeriod": MessageLookupByLibrary.simpleMessage("فترة الحجز"),
-    "reservationPeriodInMinutes": m13,
+    "reservationPeriodInMinutes": m14,
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(
       "تم إضافة الحجز بنجاح",
     ),
@@ -710,7 +714,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "signOut": MessageLookupByLibrary.simpleMessage("تسجيل الانصراف"),
     "signOutTitle": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
     "singleItemCount": MessageLookupByLibrary.simpleMessage("1 صنف"),
-    "sizeWithVal": m14,
+    "sizeWithVal": m15,
     "skip": MessageLookupByLibrary.simpleMessage("تخطي"),
     "somethingWentWrong": MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
     "specialDiscount": MessageLookupByLibrary.simpleMessage("خصم خاص"),
@@ -790,7 +794,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تقارير الإجازات",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("ضريبة القيمة المضافة"),
-    "vatPrecentage": m15,
+    "vatPrecentage": m16,
     "verificationFailed": MessageLookupByLibrary.simpleMessage("فشل التحقق"),
     "verified": MessageLookupByLibrary.simpleMessage("تم التحقق"),
     "viewCart": MessageLookupByLibrary.simpleMessage("عرض السلة"),
@@ -799,7 +803,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "visa": MessageLookupByLibrary.simpleMessage("فيزا"),
     "voucher": MessageLookupByLibrary.simpleMessage("قسيمة شراء"),
-    "voucherApplied": m16,
+    "voucherApplied": m17,
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "يرجى الانتظار حتي يتم تحميل بيانات الموقع الحالى",
     ),

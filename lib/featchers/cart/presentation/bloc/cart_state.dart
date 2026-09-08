@@ -143,7 +143,8 @@ class CartState extends Equatable {
       customerDiscount != null &&
       (customerDiscount!.value) > 0;
 
-  bool get isManualItemDiscountApplied => items.any((i) => i.discount > 0);
+  bool get isManualItemDiscountApplied =>
+      hasSizeDiscount ? false : items.any((i) => i.discount > 0);
 
   bool get isManualInvoiceDiscountApplied =>
       selectedDiscountType == DiscountTypeEnum.direct &&
@@ -152,7 +153,7 @@ class CartState extends Equatable {
   bool get isInvoiceManualDiscountEnabled =>
       !dynamicDiscountIsActive &&
       !isCustomerDiscountApplied &&
-      !hasSizeDiscount &&
+      // !hasSizeDiscount &&
       !isManualItemDiscountApplied;
 
   bool get isItemManualDiscountEnabled =>

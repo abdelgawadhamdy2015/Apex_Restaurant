@@ -251,18 +251,22 @@ class _MenuScreenState extends State<MenuScreen> {
       return;
     }
 
-    final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
+    // final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
 
-    if (!needsCustomization) {
-      final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId.toString(),
-        menuItem: item,
-        selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
-        quantity: 1,
-      );
-      parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
-      return;
-    }
+    // if (!needsCustomization) {
+    //   final orderItem = OrderItem(
+    //     transactionId: TransactionIdGenerator.nextId.toString(),
+    //     menuItem: item,
+    //     selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
+    //     quantity: 1,
+    //     discount:
+    //         item.sizes.first.discounts?.first?.discount?.discountValue ?? 0,
+    //     isPercentageDiscount:
+    //         item.sizes.first.discounts?.first?.discount?.discountNatural == 1,
+    //   );
+    //   parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+    //   return;
+    // }
 
     final posBloc = parentContext.read<PosBloc>();
 

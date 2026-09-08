@@ -2987,26 +2987,6 @@ class S {
     );
   }
 
-  /// `{minutes} min ago`
-  String minutesAgo(Object minutes) {
-    return Intl.message(
-      '$minutes min ago',
-      name: 'minutesAgo',
-      desc: '',
-      args: [minutes],
-    );
-  }
-
-  /// `{hours} hours ago`
-  String hoursAgo(Object hours) {
-    return Intl.message(
-      '$hours hours ago',
-      name: 'hoursAgo',
-      desc: '',
-      args: [hours],
-    );
-  }
-
   /// `View Full Custody Log`
   String get viewFullCustodyLog {
     return Intl.message(
@@ -4095,6 +4075,41 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `{count} minutes ago`
+  String minutesAgo(int count) {
+    return Intl.message(
+      '$count minutes ago',
+      name: 'minutesAgo',
+      desc: 'Time elapsed in minutes',
+      args: [count],
+    );
+  }
+
+  /// `{count} hours ago`
+  String hoursAgo(int count) {
+    return Intl.message(
+      '$count hours ago',
+      name: 'hoursAgo',
+      desc: 'Time elapsed in hours',
+      args: [count],
+    );
+  }
+
+  /// `{count} days ago`
+  String daysAgo(int count) {
+    return Intl.message(
+      '$count days ago',
+      name: 'daysAgo',
+      desc: 'Time elapsed in days',
+      args: [count],
+    );
+  }
+
+  /// `Just now`
+  String get justNow {
+    return Intl.message('Just now', name: 'justNow', desc: '', args: []);
   }
 }
 
