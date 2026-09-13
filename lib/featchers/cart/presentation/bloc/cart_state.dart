@@ -24,6 +24,8 @@ enum CartStatus {
   pindingSuccess,
   failure,
   pindingFailure,
+  itemsUpdateing,
+  itemsUpdated,
 }
 
 enum DiscountSource { none, dynamic, customer, size, manualInvoice, manualItem }

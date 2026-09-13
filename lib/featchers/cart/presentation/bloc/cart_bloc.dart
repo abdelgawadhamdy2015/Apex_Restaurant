@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
+import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
+import 'package:apex_restaurant/featchers/pos/domain/usecases/pos_usecases.dart';
 
 import '../../../../core/service/api_result.dart';
 import '../../data/enums/cart_enum.dart';
@@ -25,7 +28,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final SaveBookingTableRestaurantPosInvoiceUseCase
   saveBookingTableRestaurantPosInvoiceUseCase;
   final GetAllDeliveryCompanyUseCase getAllDeliveryCompanyUseCase;
-
+  final GetPosMenuItemsUseCase _getMenuItemsByCompanyIdUseCase;
   final GetAllPosClientsUseCase getAllPersonsUseCase;
   final AddPosClientUseCase addPosClientUseCase;
   final UpdatePosClientUseCase updatePosClientUseCase;
@@ -43,12 +46,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.getDynamicInvoiceDiscountUseCase,
     required this.getAllDeliveryCompanyUseCase,
     required this.checkVoucherUseCase,
+    required this._getMenuItemsByCompanyIdUseCase,
   }) : super(const CartState()) {
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SelectPersonEvent>(_onSelectPerson);
+    on<UpdateItemsPriceWithCompanyEvent>(_updateItemsPriceForCompanies);
     on<ClearVoucherDiscountEvent>(
       (event, emit) => emit(
         state.copyWith(voucherData: null, clearVoucherDiscountValue: true),
@@ -73,11 +78,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       (event, emit) =>
           emit(state.copyWith(selectedDeliveryMan: event.deliveryMan)),
     );
-    on<SelectDeliveryCompanyEvent>(
-      (event, emit) => emit(
-        state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel),
-      ),
-    );
+    on<SelectDeliveryCompanyEvent>((event, emit) {
+      emit(state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel));
+      add(UpdateItemsPriceWithCompanyEvent());
+    });
     on<AcknowledgeCartRestoredEvent>((event, emit) {
       emit(state.copyWith(justRestored: false));
     });
@@ -129,6 +133,56 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
 
     emit(state.copyWith(items: items));
+  }
+
+  Future<void> _updateItemsPriceForCompanies(
+    UpdateItemsPriceWithCompanyEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(state.copyWith(status: CartStatus.itemsUpdateing));
+    final itmemIds = state.items.map((i) => i.menuItem.itemId).toList();
+
+    final response = await _getMenuItemsByCompanyIdUseCase(
+      GetItemsRequest(
+        itemIds: itmemIds,
+        companyId: state.selectedOrderType == CartOrderType.DELIVERY_COMPANY
+            ? state.selectedDeliveryCompany?.id
+            : null,
+      ),
+    );
+
+    response.when(
+      success: (data) {
+        final items = data.data ?? [];
+        if (items.isNotEmpty) {
+          final orderItems = _updatePrices(items);
+          emit(
+            state.copyWith(items: orderItems, status: CartStatus.itemsUpdated),
+          );
+        }
+      },
+      failure: (errorHandler) {},
+    );
+  }
+
+  List<OrderItem> _updatePrices(List<RestaurantItem> items) {
+    final oldItems = state.items;
+    final List<OrderItem> newItems = [];
+
+    for (final oldItem in oldItems) {
+      final newItem = items.firstWhere(
+        (e) => e.itemId == oldItem.menuItem.itemId,
+      );
+
+      final orderItem = oldItem.copyWith(
+        menuItem: newItem,
+        selectedSize: newItem.sizes.first,
+      );
+
+      newItems.add(orderItem);
+    }
+
+    return newItems;
   }
 
   void _onSyncRestoredInvoice(
@@ -298,6 +352,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onChangeOrderType(ChangeOrderTypeEvent event, Emitter<CartState> emit) {
+    final oldType = state.selectedOrderType;
+
     emit(
       state.copyWith(
         selectedOrderType: event.orderType,
@@ -306,6 +362,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             : false,
       ),
     );
+    if (oldType == CartOrderType.DELIVERY_COMPANY ||
+        event.orderType == CartOrderType.DELIVERY_COMPANY) {
+      add(UpdateItemsPriceWithCompanyEvent());
+    }
   }
 
   void _onUpdateItemQuantity(

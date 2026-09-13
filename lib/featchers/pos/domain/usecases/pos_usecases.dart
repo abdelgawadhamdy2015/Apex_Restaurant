@@ -29,9 +29,9 @@ class GetMenuCategoriesUseCase {
       _repository.getMenuCategories();
 }
 
-class GetMenuItemsByCategoryUseCase {
+class GetPosMenuItemsUseCase {
   final PosRepository _repository;
-  GetMenuItemsByCategoryUseCase(this._repository);
+  GetPosMenuItemsUseCase(this._repository);
   Future<ApiResult<BaseResponse<List<RestaurantItem>?>>> call(
     GetItemsRequest? request,
   ) => _repository.getMenuItemsByCategory(request);

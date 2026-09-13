@@ -136,7 +136,7 @@ class _CartContent extends StatelessWidget {
           ),
         );
       case CartOrderType.DELIVERY_COMPANY:
-        return DeliveryCompanySelector(deliveryCompanies: state.companiesList);
+        return DeliveryCompanySelector();
     }
   }
 
@@ -186,12 +186,29 @@ class _CartContent extends StatelessWidget {
                           SizedBox(height: spacing.sm),
                           _orderTypeSpecificSection(state),
                           SizedBox(height: spacing.md),
-                          ...state.items.asMap().entries.map(
-                            (entry) => CartItemTile(
-                              index: entry.key,
-                              item: entry.value,
-                            ),
+                          BlocBuilder<CartBloc, CartState>(
+                            builder: (context, state) {
+                              if (state.status == CartStatus.itemsUpdateing) {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return Column(
+                                children: [
+                                  for (
+                                    int index = 0;
+                                    index < state.items.length;
+                                    index++
+                                  )
+                                    CartItemTile(
+                                      index: index,
+                                      item: state.items[index],
+                                    ),
+                                ],
+                              );
+                            },
                           ),
+
                           SizedBox(height: spacing.md),
                           DiscountSection(
                             selectedPerson: state.selectedPerson,

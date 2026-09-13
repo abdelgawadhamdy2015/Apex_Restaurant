@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PosBloc extends Bloc<PosEvent, PosState> {
   final GetSettingsUseCase _getSettingsUseCase;
   final GetMenuCategoriesUseCase _getMenuCategories;
-  final GetMenuItemsByCategoryUseCase _itemsByCategoryUseCase;
+  final GetPosMenuItemsUseCase _itemsByCategoryUseCase;
   final GetFoodAdditivesUseCase _getfoodAdditivesUseCase;
   final CloseRestaurantPosSessionUseCase _closeRestaurantPosSessionUseCase;
   final CurrentRestaurantPosSessionUseCase _currentRestaurantPosSessionUseCase;
@@ -237,7 +237,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
             );
 
             if (firstCategory != null) {
-              add(SelectCategoryEvent(firstCategory));
+              add(SelectCategoryEvent(category: firstCategory));
               add(
                 LoadItemsEvent(GetItemsRequest(categoryId: firstCategory.id)),
               );
@@ -432,18 +432,22 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       LoadItemsEvent(
         GetItemsRequest(
           categoryId: event.category.id == 0 ? null : event.category.id,
+          companyId: event.deliveryCompanyId,
         ),
       ),
     );
   }
 
   Future<RestaurantItem?> fetchItemDetails({
-    required int categoryId,
-    required int itemId,
+    required GetItemsRequest request,
   }) async {
     try {
       final response = await _itemsByCategoryUseCase(
-        GetItemsRequest(categoryId: categoryId, itemId: itemId),
+        GetItemsRequest(
+          categoryId: request.categoryId,
+          itemIds: request.itemIds,
+          companyId: request.companyId,
+        ),
       );
 
       RestaurantItem? result;

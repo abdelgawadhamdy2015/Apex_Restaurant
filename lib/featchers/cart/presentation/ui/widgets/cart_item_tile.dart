@@ -1,4 +1,6 @@
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_item_customization.dart';
 
 import '../../../../../core/helpers/extensions.dart';
@@ -35,8 +37,14 @@ class CartItemTile extends StatelessWidget {
 
     // Fetch fresh item details using categoryId + itemId as searchKey.
     final fetchedItem = await posBloc.fetchItemDetails(
-      categoryId: item.menuItem.categoryId,
-      itemId: item.menuItem.itemId,
+      request: GetItemsRequest(
+        categoryId: item.menuItem.categoryId,
+        itemIds: [item.menuItem.itemId],
+        companyId:
+            cartBloc.state.selectedOrderType == CartOrderType.DELIVERY_COMPANY
+            ? cartBloc.state.selectedDeliveryCompany?.id
+            : null,
+      ),
     );
 
     final restaurantItem =

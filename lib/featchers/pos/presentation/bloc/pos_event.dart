@@ -58,7 +58,8 @@ class LoadFoodAdditivesEvent extends PosEvent {
 
 class SelectCategoryEvent extends PosEvent {
   final CategoryModel category;
-  const SelectCategoryEvent(this.category);
+  final int? deliveryCompanyId;
+  const SelectCategoryEvent({required this.category, this.deliveryCompanyId});
 
   @override
   List<Object?> get props => [category];

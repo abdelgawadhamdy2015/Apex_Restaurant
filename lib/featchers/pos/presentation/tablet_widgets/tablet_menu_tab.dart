@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,7 +96,16 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
                       if (_scrollController.hasClients) {
                         _scrollController.jumpTo(0);
                       }
-                      context.read<PosBloc>().add(SelectCategoryEvent(cat));
+                      context.read<PosBloc>().add(
+                        SelectCategoryEvent(
+                          category: cat,
+                          deliveryCompanyId:
+                              cartState.selectedOrderType ==
+                                  CartOrderType.DELIVERY_COMPANY
+                              ? cartState.selectedDeliveryCompany?.id
+                              : null,
+                        ),
+                      );
                     },
                   ),
                   const SizedBox(height: 12),

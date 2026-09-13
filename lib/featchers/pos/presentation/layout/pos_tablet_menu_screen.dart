@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/tablet_orders_screen.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -75,7 +76,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
   /// Loads the next page for whatever search key is currently active.
   /// Throttled so it can be safely called from a scroll listener without
   /// worrying about duplicate calls near the end of the list.
-  void loadNextPage() {
+  void loadNextPage(CartState cartSate) {
     final now = DateTime.now();
     if (_lastLoadMoreAt != null &&
         now.difference(_lastLoadMoreAt!) < _loadMoreThrottleDuration) {
@@ -84,16 +85,25 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     _lastLoadMoreAt = now;
 
     _currentPage += 1;
-    _fetchItems(page: _currentPage, searchKey: _currentSearchKey);
+    _fetchItems(
+      page: _currentPage,
+      searchKey: _currentSearchKey,
+      cartState: cartSate,
+    );
   }
 
-  void _fetchItems({required int page, required String searchKey}) {
+  void _fetchItems({
+    required int page,
+    required String searchKey,
+    CartState? cartState,
+  }) {
     context.read<PosBloc>().add(
       LoadItemsEvent(
         GetItemsRequest(
           pageNumber: page,
           pageSize: _pageSize,
           searchKey: searchKey.isEmpty ? null : searchKey,
+          companyId: cartState?.selectedDeliveryCompany?.id,
         ),
       ),
     );
@@ -104,7 +114,6 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final homeState = context.read<HomeBloc>().state;
-
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(

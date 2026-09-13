@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/helpers/transactionid_generator.dart';
@@ -87,6 +89,11 @@ class _MenuScreenState extends State<MenuScreen> {
             pageNumber: 1,
             pageSize: _pageSize,
             searchKey: trimmed.isEmpty ? null : trimmed,
+            companyId: context
+                .read<CartBloc>()
+                .state
+                .selectedDeliveryCompany
+                ?.id,
           ),
         ),
       );
@@ -147,7 +154,16 @@ class _MenuScreenState extends State<MenuScreen> {
                   if (_scrollController.hasClients) {
                     _scrollController.jumpTo(0);
                   }
-                  context.read<PosBloc>().add(SelectCategoryEvent(cat));
+                  context.read<PosBloc>().add(
+                    SelectCategoryEvent(
+                      category: cat,
+                      deliveryCompanyId:
+                          cartState.selectedOrderType ==
+                              CartOrderType.DELIVERY_COMPANY
+                          ? cartState.selectedDeliveryCompany?.id
+                          : null,
+                    ),
+                  );
                 },
               ),
               SizedBox(height: spacing.sm),
