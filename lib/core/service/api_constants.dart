@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 
 class ApiConstants {
-  static const String baseUsrl = localUrl;
+  static const String baseUsrl = resturantUrl;
 
   static const String localUrl = "http://192.168.1.253:1313/";
   static const String url = "https://taifback.apex-program.com/";
 
+  static const String resturantUrl = "https://restaurantback.erp-apex.com/";
   static const String login = "api/Login";
   static const String getUserData = "api/General/UsersManager/getUserById";
 
@@ -52,7 +53,10 @@ class ApiConstants {
       'api/Restaurants/Vouchers/GetAllVouchers';
   static const String checkPOSVoucher =
       'api/Restaurants/Vouchers/CheckPOSVoucher';
-
+  static const String getRestaurantInvoiceAccreditingData =
+      "api/Restaurants/RestaurantPos/getRestaurantInvoiceAccreditingData";
+  static const String accreditePOSInvoices =
+      "api/Restaurants/RestaurantPos/AccreditePOSInvoices";
   static const String addPOSTotalReturnInvoice =
       'api/Store/POS/AddPOSTotalReturnInvoice';
   static const String addPOSReturnInvoice = 'api/Store/POS/AddPOSReturnInvoice';

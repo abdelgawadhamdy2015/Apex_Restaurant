@@ -46,9 +46,8 @@ class _CartScreenState extends State<CartScreen> {
 
       if (widget.args?.isRestored == true) {
         cartBloc.add(const AcknowledgeCartRestoredEvent());
-      } else {
-        cartBloc.add(LoadCartDataEvent());
       }
+      cartBloc.add(LoadCartDataEvent());
 
       cartBloc.add(LoadDynamicDiscountsEvent());
       cartBloc.add(

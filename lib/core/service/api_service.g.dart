@@ -12,7 +12,7 @@ part of 'api_service.dart';
 
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://192.168.1.253:1313/';
+    baseUrl ??= 'https://restaurantback.erp-apex.com/';
   }
 
   final Dio _dio;
@@ -425,6 +425,81 @@ class _ApiService implements ApiService {
                   )
                   .toList()
             : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<RestaurantInvoiceAccreditingData?>>
+  getRestaurantInvoiceAccreditingData(
+    GetInvoiceAccreditingDataRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(request.toJson());
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options =
+        _setStreamType<BaseResponse<RestaurantInvoiceAccreditingData?>>(
+          Options(method: 'GET', headers: _headers, extra: _extra)
+              .compose(
+                _dio.options,
+                'api/Restaurants/RestaurantPos/getRestaurantInvoiceAccreditingData',
+                queryParameters: queryParameters,
+                data: _data,
+              )
+              .copyWith(
+                baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl),
+              ),
+        );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<RestaurantInvoiceAccreditingData?> _value;
+    try {
+      _value = BaseResponse<RestaurantInvoiceAccreditingData?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : RestaurantInvoiceAccreditingData.fromJson(
+                json as Map<String, dynamic>,
+              ),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<int?>> accreditePOSInvoices(
+    AccreditePOSInvoicesRequest? request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(request?.toJson() ?? <String, dynamic>{});
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<int?>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Restaurants/RestaurantPos/AccreditePOSInvoices',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<int?> _value;
+    try {
+      _value = BaseResponse<int?>.fromJson(
+        _result.data!,
+        (json) => json as int?,
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

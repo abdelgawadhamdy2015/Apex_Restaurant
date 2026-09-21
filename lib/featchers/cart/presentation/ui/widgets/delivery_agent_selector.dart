@@ -18,6 +18,9 @@ class DeliveryAgentSelector extends StatelessWidget {
     final spacing = context.spacing;
     final lang = S.of(context);
     final canEdit = context.select((CartBloc b) => b.state.canEdit);
+    final selectedDeliveryMan = context.select(
+      (CartBloc b) => b.state.selectedDeliveryMan,
+    );
 
     return Container(
       padding: EdgeInsets.all(spacing.sm),
@@ -35,6 +38,7 @@ class DeliveryAgentSelector extends StatelessWidget {
             size: context.iconSizes.md,
           ),
         ),
+        initialValue: selectedDeliveryMan,
         items: deliveryMens
             .map(
               (waiter) => DropdownMenuItem<WaiterModel?>(

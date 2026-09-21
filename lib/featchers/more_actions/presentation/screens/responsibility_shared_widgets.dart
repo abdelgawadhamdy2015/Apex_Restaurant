@@ -131,33 +131,35 @@ class ResponsibilityFilterChips extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = S.of(context);
-    return Card(
-      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            child: _chip(
-              context,
-              label: lang.allFilter,
-              value: CustodyFilter.all,
+    return Expanded(
+      child: Card(
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              child: _chip(
+                context,
+                label: lang.allFilter,
+                value: CustodyFilter.all,
+              ),
             ),
-          ),
-          Expanded(
-            child: _chip(
-              context,
-              label: lang.withdrawalsFilter,
-              value: CustodyFilter.withdrawals,
+            Expanded(
+              child: _chip(
+                context,
+                label: lang.withdrawalsFilter,
+                value: CustodyFilter.withdrawals,
+              ),
             ),
-          ),
-          Expanded(
-            child: _chip(
-              context,
-              label: lang.additionsFilter,
-              value: CustodyFilter.additions,
+            Expanded(
+              child: _chip(
+                context,
+                label: lang.additionsFilter,
+                value: CustodyFilter.additions,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

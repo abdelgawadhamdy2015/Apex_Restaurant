@@ -1,6 +1,8 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/responsibility_shared_widgets.dart';
 
 import 'package:equatable/equatable.dart';
@@ -15,6 +17,20 @@ abstract class MoreActionsEvent extends Equatable {
 class FetchAllInvoicesEvent extends MoreActionsEvent {
   final GetAllPosInvoiceRequest request;
   const FetchAllInvoicesEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
+}
+
+class FetchAllInvoicesAcreditDataEvent extends MoreActionsEvent {
+  final GetInvoiceAccreditingDataRequest request;
+  const FetchAllInvoicesAcreditDataEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
+}
+
+class AccreditePOSInvoicesEvent extends MoreActionsEvent {
+  final AccreditePOSInvoicesRequest request;
+  const AccreditePOSInvoicesEvent({required this.request});
   @override
   List<Object?> get props => [request];
 }

@@ -518,5 +518,7 @@
     "minutesAgo": "منذ {count} دقيقة",
     "hoursAgo": "منذ {count} ساعة",
     "daysAgo": "منذ {count} يوم",
-    "justNow": "الآن"
+    "justNow": "الآن",
+    "deliveryManCustody": "عهدة الطيار",
+    "deliveryCompanyReceivables": "ذمم شركات التوصيل"
 }

@@ -167,9 +167,23 @@ class MoreOptions extends StatelessWidget {
               padding: EdgeInsets.all(spacing.md),
               child: Column(
                 children: [
-                  const Header(
-                    customerName: 'Abdelgawad',
-                    employeeType: 'Admin',
+                  Header(
+                    customerName:
+                        context
+                            .read<HomeBloc>()
+                            .state
+                            .userDataModel
+                            ?.employees
+                            ?.arabicName ??
+                        "",
+                    employeeType:
+                        context
+                            .read<HomeBloc>()
+                            .state
+                            .userDataModel
+                            ?.email
+                            .toString() ??
+                        "",
                   ),
                   SizedBox(height: spacing.lg),
                   for (final option in options) ...[

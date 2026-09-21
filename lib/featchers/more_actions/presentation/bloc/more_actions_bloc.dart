@@ -17,6 +17,8 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
   final AddPOSTotalReturnInvoiceUseCase addPOSTotalReturnInvoiceUseCase;
   final AddCashTransactionForSessionUseCase addCashTransactionForSessionUseCase;
   final GetCashTransactionForSessionUseCase getCashTransactionForSessionUseCase;
+  final GetInvoiceAccreditingDataUseCase getInvoiceAccreditingDataUseCase;
+  final AccreditePOSInvoicesUseCase accreditePOSInvoicesUseCase;
   MoreActionsBloc({
     required this.getAllPOSInvoicesUseCase,
     required this.addPOSResturnInvoiceUseCase,
@@ -24,10 +26,14 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
     required this.getPosInvoiceDataByIdUseCase,
     required this.addCashTransactionForSessionUseCase,
     required this.getCashTransactionForSessionUseCase,
+    required this.getInvoiceAccreditingDataUseCase,
+    required this.accreditePOSInvoicesUseCase,
   }) : super(const MoreActionsState()) {
     on<FetchAllInvoicesEvent>(_onFetchInvoices);
+    on<FetchAllInvoicesAcreditDataEvent>(_onFetchInvoicesAcredit);
     on<FetchInvoiceByIdEvent>(_onFetchInvoiceById);
     on<AddPOSTotalReturnEvent>(_onAddPOSTotalReturn);
+    on<AccreditePOSInvoicesEvent>(_acreditPosInvoice);
     on<SelectInvoiceDateEvent>(
       (event, emit) => emit(state.copyWith(invoiceDate: event.invoiceDate)),
     );
@@ -202,6 +208,61 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
     }
   }
 
+  Future<void> _onFetchInvoicesAcredit(
+    FetchAllInvoicesAcreditDataEvent event,
+    Emitter<MoreActionsState> emit,
+  ) async {
+    emit(state.copyWith(status: MoreActionsStatus.loading));
+
+    try {
+      final response = await getInvoiceAccreditingDataUseCase(
+        request: event.request,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                acreditData: data.data,
+                clearReturned: true,
+                status: MoreActionsStatus.success,
+                isFullReturn: false,
+                errorMessage: null,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                invoices: [],
+                status: MoreActionsStatus.failure,
+                isFullReturn: false,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              status: MoreActionsStatus.failure,
+              isFullReturn: false,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          invoices: const [],
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+          status: MoreActionsStatus.failure,
+          isFullReturn: false,
+        ),
+      );
+    }
+  }
+
   FutureOr<void> _onAddCashTransactionForSession(
     AddCashTransactionForSessionEvent event,
     Emitter<MoreActionsState> emit,
@@ -268,6 +329,56 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 transactionsResponse: data.data,
                 status: MoreActionsStatus.success,
+                errorMessage: null,
+                isFullReturn: false,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                errorMessage: data.errorMessageAr,
+                status: MoreActionsStatus.failure,
+                isFullReturn: false,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              status: MoreActionsStatus.failure,
+              isFullReturn: false,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+          status: MoreActionsStatus.failure,
+          isFullReturn: false,
+        ),
+      );
+    }
+  }
+
+  FutureOr<void> _acreditPosInvoice(
+    AccreditePOSInvoicesEvent event,
+    Emitter<MoreActionsState> emit,
+  ) async {
+    emit(state.copyWith(status: MoreActionsStatus.loading));
+    try {
+      final response = await accreditePOSInvoicesUseCase(
+        request: event.request,
+      );
+      response.when(
+        success: (data) {
+          if (data.result == 1) {
+            emit(
+              state.copyWith(
+                status: MoreActionsStatus.successAcredit,
                 errorMessage: null,
                 isFullReturn: false,
               ),

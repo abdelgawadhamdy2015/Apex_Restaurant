@@ -291,6 +291,13 @@ Future<void> setupGetIt() async {
     () => GetCashTransactionForSessionUseCase(getIt<MoreActionsRepo>()),
   );
 
+  getIt.registerLazySingleton(
+    () => GetInvoiceAccreditingDataUseCase(getIt<MoreActionsRepo>()),
+  );
+  getIt.registerLazySingleton(
+    () => AccreditePOSInvoicesUseCase(getIt<MoreActionsRepo>()),
+  );
+
   /// ─────────────────────────────────────────────────────────
   /// BLoCs
   /// ─────────────────────────────────────────────────────────
@@ -383,6 +390,7 @@ Future<void> setupGetIt() async {
   // More Actions
   getIt.registerFactory(
     () => MoreActionsBloc(
+      accreditePOSInvoicesUseCase: getIt<AccreditePOSInvoicesUseCase>(),
       addCashTransactionForSessionUseCase:
           getIt<AddCashTransactionForSessionUseCase>(),
       getCashTransactionForSessionUseCase:
@@ -391,6 +399,8 @@ Future<void> setupGetIt() async {
       getAllPOSInvoicesUseCase: getIt<GetAllPOSInvoicesUseCase>(),
       addPOSResturnInvoiceUseCase: getIt<AddPOSResturnInvoiceUseCase>(),
       addPOSTotalReturnInvoiceUseCase: getIt<AddPOSTotalReturnInvoiceUseCase>(),
+      getInvoiceAccreditingDataUseCase:
+          getIt<GetInvoiceAccreditingDataUseCase>(),
     ),
   );
 }

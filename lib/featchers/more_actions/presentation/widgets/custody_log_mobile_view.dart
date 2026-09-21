@@ -74,7 +74,7 @@ class _CustodyLogMobileViewState extends State<CustodyLogMobileView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  state.errorMessage ?? 'حدث خطأ أثناء جلب البيانات',
+                  state.message ?? 'حدث خطأ أثناء جلب البيانات',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: colorScheme.error,
                   ),

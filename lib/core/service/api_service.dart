@@ -3,11 +3,14 @@ import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
 
@@ -90,6 +93,17 @@ abstract class ApiService {
   @GET(ApiConstants.getRestaurantItemsPOS)
   Future<BaseResponse<List<RestaurantItem>?>> getItemsByCategory(
     @Queries() GetItemsRequest request,
+  );
+
+  @GET(ApiConstants.getRestaurantInvoiceAccreditingData)
+  Future<BaseResponse<RestaurantInvoiceAccreditingData?>>
+  getRestaurantInvoiceAccreditingData(
+    @Queries() GetInvoiceAccreditingDataRequest request,
+  );
+
+  @GET(ApiConstants.accreditePOSInvoices)
+  Future<BaseResponse<int?>> accreditePOSInvoices(
+    @Queries() AccreditePOSInvoicesRequest? request,
   );
 
   @GET(ApiConstants.getAllFoodAdditives)

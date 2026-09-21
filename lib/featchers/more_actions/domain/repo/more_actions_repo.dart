@@ -1,8 +1,11 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 
 import '../../../../core/service/api_result.dart';
@@ -12,6 +15,16 @@ abstract class MoreActionsRepo {
   Future<ApiResult<BaseResponse<List<PosInvoiceData>?>>> getAllPosInvoice({
     required GetAllPosInvoiceRequest request,
   });
+
+  Future<ApiResult<BaseResponse<RestaurantInvoiceAccreditingData?>>>
+  getInvoiceAccreditingDataRequest({
+    required GetInvoiceAccreditingDataRequest request,
+  });
+
+  Future<ApiResult<BaseResponse<int?>>> accreditePOSInvoices({
+    required AccreditePOSInvoicesRequest request,
+  });
+
   Future<ApiResult<BaseResponse<PosInvoiceData?>>> addPOSResturnInvoice({
     required GetAllPosInvoiceRequest request,
   });

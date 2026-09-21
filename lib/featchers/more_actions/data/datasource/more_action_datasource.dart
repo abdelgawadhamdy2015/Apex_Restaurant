@@ -1,8 +1,11 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 
 import '../../../../core/service/api_service.dart';
@@ -12,6 +15,14 @@ abstract class MoreActionDatasource {
   Future<BaseResponse<List<PosInvoiceData>?>> getAllPosInvoice({
     required GetAllPosInvoiceRequest request,
   });
+  Future<BaseResponse<int?>> accreditePOSInvoices({
+    required AccreditePOSInvoicesRequest request,
+  });
+  Future<BaseResponse<RestaurantInvoiceAccreditingData?>>
+  getInvoiceAccreditingDataRequest({
+    required GetInvoiceAccreditingDataRequest request,
+  });
+
   Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice({
     required GetAllPosInvoiceRequest request,
   });
@@ -66,5 +77,20 @@ class MoreActionsRemoteDataSourceImpl implements MoreActionDatasource {
     required int employeesId,
   }) async {
     return await apiService.getCashTransactionForSession(employeesId);
+  }
+
+  @override
+  Future<BaseResponse<RestaurantInvoiceAccreditingData?>>
+  getInvoiceAccreditingDataRequest({
+    required GetInvoiceAccreditingDataRequest request,
+  }) async {
+    return await apiService.getRestaurantInvoiceAccreditingData(request);
+  }
+
+  @override
+  Future<BaseResponse<int?>> accreditePOSInvoices({
+    required AccreditePOSInvoicesRequest request,
+  }) async {
+    return await apiService.accreditePOSInvoices(request);
   }
 }

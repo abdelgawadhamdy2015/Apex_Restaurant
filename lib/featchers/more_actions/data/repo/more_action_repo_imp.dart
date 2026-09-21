@@ -2,11 +2,14 @@ import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/datasource/more_action_datasource.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +85,37 @@ class MoreActionRepoImp extends MoreActionsRepo {
     try {
       final response = await remoteDataSource.getCashTransactionForSession(
         employeesId: employeesId,
+      );
+      return ApiResult.success(response);
+    } catch (e, s) {
+      debugPrint("$e , \n $s");
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<RestaurantInvoiceAccreditingData?>>>
+  getInvoiceAccreditingDataRequest({
+    required GetInvoiceAccreditingDataRequest request,
+  }) async {
+    try {
+      final response = await remoteDataSource.getInvoiceAccreditingDataRequest(
+        request: request,
+      );
+      return ApiResult.success(response);
+    } catch (e, s) {
+      debugPrint("$e , \n $s");
+      return ApiResult.failure(ErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<BaseResponse<int?>>> accreditePOSInvoices({
+    required AccreditePOSInvoicesRequest request,
+  }) async {
+    try {
+      final response = await remoteDataSource.accreditePOSInvoices(
+        request: request,
       );
       return ApiResult.success(response);
     } catch (e, s) {

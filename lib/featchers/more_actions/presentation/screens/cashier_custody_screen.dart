@@ -123,7 +123,7 @@ class _CashierCustodyScreenState extends State<CashierCustodyScreen> {
               if (state.status == MoreActionsStatus.failure) {
                 HelperMethods.showSnackBar(
                   context: context,
-                  message: state.errorMessage ?? 'Unknown error',
+                  message: state.message ?? 'Unknown error',
                   isError: true,
                 );
               }
@@ -215,7 +215,10 @@ class _CashierCustodyScreenState extends State<CashierCustodyScreen> {
               SizedBox(height: spacing.lg),
               _ActionButtons(
                 onConfirm: _onConfirm,
-                onCancel: () => Navigator.of(context).pop(),
+                onCancel: () => setState(() {
+                  _amountController.clear();
+                  _notesController.clear();
+                }),
               ),
             ],
           ),

@@ -80,65 +80,67 @@ class _CustodyLogTabletViewState extends State<CustodyLogTabletView> {
           },
         ),
         SizedBox(height: spacing.lg),
-        Row(
-          children: [
-            ElevatedButton.icon(
-              onPressed: _exportCsv,
-              icon: Icon(
-                Icons.download,
-                size: context.iconSizes.sm,
-                color: AppColors.white,
-              ),
-              label: Text(
-                lang.exportCsv,
-                style: theme.textTheme.bodyMedium?.copyWith(
+        Expanded(
+          child: Row(
+            children: [
+              ElevatedButton.icon(
+                onPressed: _exportCsv,
+                icon: Icon(
+                  Icons.download,
+                  size: context.iconSizes.sm,
                   color: AppColors.white,
-                  fontWeight: FontWeight.bold,
+                ),
+                label: Text(
+                  lang.exportCsv,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor:
+                      extraTheme?.greenBackground ?? AppColors.success,
+                  padding: EdgeInsets.symmetric(
+                    vertical: spacing.sm,
+                    horizontal: spacing.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(spacing.radiusSm),
+                  ),
                 ),
               ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    extraTheme?.greenBackground ?? AppColors.success,
-                padding: EdgeInsets.symmetric(
-                  vertical: spacing.sm,
-                  horizontal: spacing.md,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(spacing.radiusSm),
-                ),
-              ),
-            ),
-            SizedBox(width: spacing.sm),
-            OutlinedButton.icon(
-              onPressed: _print,
-              icon: Icon(
-                Icons.print_outlined,
-                size: context.iconSizes.sm,
-                color: colorScheme.primary,
-              ),
-              label: Text(
-                lang.print,
-                style: theme.textTheme.bodyMedium?.copyWith(
+              SizedBox(width: spacing.sm),
+              OutlinedButton.icon(
+                onPressed: _print,
+                icon: Icon(
+                  Icons.print_outlined,
+                  size: context.iconSizes.sm,
                   color: colorScheme.primary,
                 ),
-              ),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: colorScheme.primary),
-                padding: EdgeInsets.symmetric(
-                  vertical: spacing.sm,
-                  horizontal: spacing.md,
+                label: Text(
+                  lang.print,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.primary,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(spacing.radiusSm),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(color: colorScheme.primary),
+                  padding: EdgeInsets.symmetric(
+                    vertical: spacing.sm,
+                    horizontal: spacing.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(spacing.radiusSm),
+                  ),
                 ),
               ),
-            ),
-            const Spacer(),
-            ResponsibilityFilterChips(
-              selected: _filter,
-              onChanged: (f) => setState(() => _filter = f),
-            ),
-          ],
+              const Spacer(),
+              ResponsibilityFilterChips(
+                selected: _filter,
+                onChanged: (f) => setState(() => _filter = f),
+              ),
+            ],
+          ),
         ),
         SizedBox(height: spacing.lg),
         Expanded(
@@ -154,7 +156,7 @@ class _CustodyLogTabletViewState extends State<CustodyLogTabletView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        state.errorMessage ?? 'حدث خطأ أثناء جلب البيانات',
+                        state.message ?? 'حدث خطأ أثناء جلب البيانات',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.error,
                         ),

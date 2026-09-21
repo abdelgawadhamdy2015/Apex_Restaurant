@@ -95,7 +95,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
         } else if (state.status == MoreActionsStatus.failure) {
           HelperMethods.showSnackBar(
             context: context,
-            message: state.errorMessage ?? lang.somethingWentWrong,
+            message: state.message ?? lang.somethingWentWrong,
             isError: true,
           );
         }

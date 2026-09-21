@@ -1,8 +1,11 @@
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
 
@@ -47,4 +50,20 @@ class GetCashTransactionForSessionUseCase {
   Future<ApiResult<BaseResponse<TransactionsResponse?>>> call({
     required int employeesId,
   }) => repository.getCashTransactionForSession(employeesId: employeesId);
+}
+
+class GetInvoiceAccreditingDataUseCase {
+  final MoreActionsRepo repository;
+  GetInvoiceAccreditingDataUseCase(this.repository);
+  Future<ApiResult<BaseResponse<RestaurantInvoiceAccreditingData?>>> call({
+    required GetInvoiceAccreditingDataRequest request,
+  }) => repository.getInvoiceAccreditingDataRequest(request: request);
+}
+
+class AccreditePOSInvoicesUseCase {
+  final MoreActionsRepo repository;
+  AccreditePOSInvoicesUseCase(this.repository);
+  Future<ApiResult<BaseResponse<int?>>> call({
+    required AccreditePOSInvoicesRequest request,
+  }) => repository.accreditePOSInvoices(request: request);
 }

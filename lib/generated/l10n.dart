@@ -4111,6 +4111,26 @@ class S {
   String get justNow {
     return Intl.message('Just now', name: 'justNow', desc: '', args: []);
   }
+
+  /// `Delivery Men`
+  String get deliveryManCustody {
+    return Intl.message(
+      'Delivery Men',
+      name: 'deliveryManCustody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Company`
+  String get deliveryCompanyReceivables {
+    return Intl.message(
+      'Delivery Company',
+      name: 'deliveryCompanyReceivables',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

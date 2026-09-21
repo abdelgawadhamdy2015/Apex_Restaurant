@@ -542,5 +542,7 @@
             }
         }
     },
-    "justNow": "Just now"
+    "justNow": "Just now",
+    "deliveryManCustody": "Delivery Men",
+    "deliveryCompanyReceivables": "Delivery Company"
 }

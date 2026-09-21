@@ -278,7 +278,11 @@ class MessageLookup extends MessageLookupByLibrary {
     "deliveryCompanyDetails": MessageLookupByLibrary.simpleMessage(
       "بيانات شركة التوصيل",
     ),
+    "deliveryCompanyReceivables": MessageLookupByLibrary.simpleMessage(
+      "ذمم شركات التوصيل",
+    ),
     "deliveryFee": MessageLookupByLibrary.simpleMessage("رسوم التوصيل"),
+    "deliveryManCustody": MessageLookupByLibrary.simpleMessage("عهدة الطيار"),
     "deliveryOrder": MessageLookupByLibrary.simpleMessage("طلب استلام"),
     "department": MessageLookupByLibrary.simpleMessage("الإدارة"),
     "departures": MessageLookupByLibrary.simpleMessage("المغادرات"),

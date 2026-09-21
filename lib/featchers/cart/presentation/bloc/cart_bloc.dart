@@ -216,13 +216,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         isPending: event.isPending,
         isPreviousInvoice: true,
         //  selectedTable: isDineIn ? data.table : null,
-        selectedWaiter: isDineIn ? data.waiter : null,
-        selectedDeliveryMan: isDelivery ? data.deliveryMan : null,
+        selectedWaiter: isDineIn
+            ? state.waiters.firstWhere((w) => w.id == data.waiter?.id)
+            : null,
+        selectedDeliveryMan: isDelivery
+            ? state.deliveryAgents.firstWhere(
+                (d) => d.id == data.deliveryMan?.id,
+              )
+            : null,
+        selectedPerson: state.persons.firstWhere(
+          (p) => p.id == data.client?.id,
+        ),
         selectedDeliveryCompany: selectedDeliveryCompany,
-        selectedPerson: data.client,
         voucherId: data.voucherId,
         invoiceCode: data.invoiceCode,
         orderNumber: data.orderNumber,
+        selectedTable: isDineIn ? data.table : null,
         // Discount Configuration
         restaurantPosDiscountRequest: data.restaurantPosDiscountRequest,
         selectedDiscountType: hasInvoiceDiscount
