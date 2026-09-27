@@ -377,49 +377,6 @@ class _CustodyLogTableTablet extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // Mocked Table Rows matching the image
-              const _TableDataRow(
-                date: '14:30 2026-06-23',
-                typeLabel: 'إضافة',
-                isAdd: true,
-                amount: '1000.00',
-                reason: 'عهدة افتتاحية',
-                notes: 'بداية الوردية الصباحية',
-                attachment: '--',
-                user: 'أحمد علي',
-              ),
-              const _TableDataRow(
-                date: '21:44 2026-06-22',
-                typeLabel: 'سحب',
-                isAdd: false,
-                amount: '120.00',
-                reason: 'مصروفات نثرية',
-                notes: 'شراء أكياس تغليف',
-                attachment: 'receipt-120.jpg',
-                user: 'أحمد علي',
-              ),
-              const _TableDataRow(
-                date: '10:56 2026-06-21',
-                typeLabel: 'إضافة',
-                isAdd: true,
-                amount: '500.00',
-                reason: 'تحويل من الإدارة',
-                notes: 'دعم سيولة',
-                attachment: '--',
-                user: 'سارة محمد',
-              ),
-              const _TableDataRow(
-                date: '09:11 2026-06-21',
-                typeLabel: 'سحب',
-                isAdd: false,
-                amount: '75.00',
-                reason: 'دفع مورد',
-                notes: 'ثلج',
-                attachment: 'ice-invoice.jpg',
-                user: 'أحمد علي',
-                isLast: true,
-              ),
             ],
           ),
         ),
@@ -456,7 +413,6 @@ class _TableDataRow extends StatelessWidget {
   final String notes;
   final String attachment;
   final String user;
-  final bool isLast;
 
   const _TableDataRow({
     required this.date,
@@ -467,7 +423,6 @@ class _TableDataRow extends StatelessWidget {
     required this.notes,
     required this.attachment,
     required this.user,
-    this.isLast = false,
   });
 
   @override
@@ -490,9 +445,7 @@ class _TableDataRow extends StatelessWidget {
         vertical: spacing.sm,
       ),
       decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: Row(
         children: [

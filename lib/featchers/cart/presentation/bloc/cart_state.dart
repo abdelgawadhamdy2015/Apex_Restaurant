@@ -571,7 +571,8 @@ class CartState extends Equatable {
           : null,
       discount:
           appliedDiscount?.value == 0 ||
-              selectedDiscountType != DiscountTypeEnum.direct
+              selectedDiscountType != DiscountTypeEnum.direct ||
+              settingsModel?.posRestaurant?.activeDiscount == false
           ? null
           : appliedDiscount,
       paidAmount: grandTotal,

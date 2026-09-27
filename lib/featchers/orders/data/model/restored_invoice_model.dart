@@ -322,7 +322,7 @@ class RestoredInvoiceItem {
 
   final double? quantity;
   final double? price;
-  final String? notes;
+  final String? itemNote;
 
   final RestoredItemDiscount? itemDiscount;
   final List<RestoredInvoiceAdditive>? additives;
@@ -345,7 +345,7 @@ class RestoredInvoiceItem {
     this.sizeLatinName,
     this.quantity,
     this.price,
-    this.notes,
+    this.itemNote,
     this.itemDiscount,
     this.additives,
     this.item,

@@ -8,7 +8,7 @@ import '../shared/widgets/settings_screen.dart';
 import '../../featchers/cart/data/models/cart_screen_args.dart';
 import '../../featchers/cart/data/models/pos_client_model.dart';
 import '../../featchers/cart/presentation/ui/screens/add_customer_screen.dart';
-import '../../featchers/cart/presentation/ui/screens/cart_screen.dart';
+import '../../featchers/cart/presentation/ui/layouts/cart_screen.dart';
 import '../../featchers/more_actions/presentation/screens/returns_screen.dart';
 import '../../featchers/home/presentation/pages/home_page.dart';
 import '../../featchers/auth/presentation/bloc/auth_bloc.dart';

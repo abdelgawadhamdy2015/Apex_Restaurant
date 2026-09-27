@@ -317,7 +317,7 @@ RestoredInvoiceItem _$RestoredInvoiceItemFromJson(Map<String, dynamic> json) =>
       sizeLatinName: json['sizeLatinName'] as String?,
       quantity: (json['quantity'] as num?)?.toDouble(),
       price: (json['price'] as num?)?.toDouble(),
-      notes: json['notes'] as String?,
+      itemNote: json['itemNote'] as String?,
       itemDiscount: json['itemDiscount'] == null
           ? null
           : RestoredItemDiscount.fromJson(
@@ -352,7 +352,7 @@ Map<String, dynamic> _$RestoredInvoiceItemToJson(
   'sizeLatinName': instance.sizeLatinName,
   'quantity': instance.quantity,
   'price': instance.price,
-  'notes': instance.notes,
+  'itemNote': instance.itemNote,
   'itemDiscount': instance.itemDiscount,
   'additives': instance.additives,
   'item': instance.item,

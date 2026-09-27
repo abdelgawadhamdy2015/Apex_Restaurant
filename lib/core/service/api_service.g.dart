@@ -12,7 +12,7 @@ part of 'api_service.dart';
 
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'https://restaurantback.erp-apex.com/';
+    baseUrl ??= 'http://192.168.1.253:1313/';
   }
 
   final Dio _dio;
@@ -25,11 +25,20 @@ class _ApiService implements ApiService {
   Future<BaseResponse<LoginData?>> login(LoginRequest loginRequestBody) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{
+      r'Content-Type': 'application/json-patch+json',
+      r'accept': '*/*',
+    };
+    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(loginRequestBody.toJson());
     final _options = _setStreamType<BaseResponse<LoginData?>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'application/json-patch+json',
+          )
           .compose(
             _dio.options,
             'api/Login',

@@ -177,7 +177,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
           menuItem: restaurantItem,
           selectedSize: selectedSize,
           quantity: (mainItem.quantity ?? 1).toInt(),
-          notes: mainItem.notes,
+          notes: mainItem.itemNote,
           addons: allAddons,
           discount: discountVal,
           isPercentageDiscount: isPercentage,

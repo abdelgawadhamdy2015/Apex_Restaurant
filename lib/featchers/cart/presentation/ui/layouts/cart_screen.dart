@@ -69,21 +69,34 @@ class _CartScreenState extends State<CartScreen> {
         if (state.status == CartStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
-        return Scaffold(
-          appBar: CartTopBar(
-            // Disable clear all button in top bar if editing is locked
-            onClearAll: state.canEdit
-                ? () => context.read<CartBloc>().add(ClearCartEvent())
-                : null,
-            onBack: () {
+        return SafeArea(
+          top: false,
+          child: PopScope(
+            canPop: true,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) return;
+
               if (state.isPreviousInvoice && !state.canEdit) {
                 context.read<CartBloc>().add(ClearCartEvent());
               }
-              context.pop();
             },
+            child: Scaffold(
+              appBar: CartTopBar(
+                // Disable clear all button in top bar if editing is locked
+                onClearAll: state.canEdit
+                    ? () => context.read<CartBloc>().add(ClearCartEvent())
+                    : null,
+                onBack: () {
+                  if (state.isPreviousInvoice && !state.canEdit) {
+                    context.read<CartBloc>().add(ClearCartEvent());
+                  }
+                  context.pop();
+                },
+              ),
+              backgroundColor: theme.colorScheme.surface,
+              body: _CartContent(state: state, canEdit: state.canEdit),
+            ),
           ),
-          backgroundColor: theme.colorScheme.surface,
-          body: _CartContent(state: state, canEdit: state.canEdit),
         );
       },
     );

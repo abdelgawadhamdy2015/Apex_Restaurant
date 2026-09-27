@@ -224,7 +224,9 @@ class CartItemTile extends StatelessWidget {
                           Text(
                             item.notes!,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
+                              color: theme.colorScheme.onPrimary.withOpacity(
+                                .5,
+                              ),
                             ),
                           ),
                         ],

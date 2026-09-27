@@ -1,3 +1,5 @@
+import 'package:flutter/rendering.dart';
+
 import '../../../../core/service/api_service.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../models/login_data.dart';
@@ -12,6 +14,11 @@ class AuthDatasourceImp extends AuthDatasource {
   final ApiService service;
   @override
   Future<BaseResponse<LoginData?>> login(LoginRequest request) async {
-    return await service.login(request);
+    try {
+      return await service.login(request);
+    } catch (e, s) {
+      debugPrint("$e ,\n $s");
+      rethrow;
+    }
   }
 }

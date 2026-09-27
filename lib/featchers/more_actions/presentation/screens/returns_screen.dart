@@ -125,14 +125,16 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
         showBackButton: true,
         onBackPressed: () => Navigator.of(context).pop(),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildSearchCard(context),
-            SizedBox(height: spacing.md),
-            _buildInvoiceList(context, state),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildSearchCard(context),
+              SizedBox(height: spacing.md),
+              _buildInvoiceList(context, state),
+            ],
+          ),
         ),
       ),
     );
