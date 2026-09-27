@@ -22,4 +22,13 @@ class WaiterModel {
       _$WaiterModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$WaiterModelToJson(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is WaiterModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

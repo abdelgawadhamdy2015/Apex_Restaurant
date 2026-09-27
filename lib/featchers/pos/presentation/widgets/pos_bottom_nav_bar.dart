@@ -10,10 +10,12 @@ class PosBottomNavBar extends StatelessWidget {
     super.key,
     required this.currentIndex,
     required this.onTap,
+    required this.items,
   });
 
   final PosBottomNavEnm currentIndex;
   final ValueChanged<PosBottomNavEnm> onTap;
+  final List<PosBottomNavEnm> items;
 
   @override
   Widget build(BuildContext context) {
@@ -36,79 +38,118 @@ class PosBottomNavBar extends StatelessWidget {
         ],
       ),
       child: BottomNavigationBar(
-        currentIndex: currentIndex.index,
-        onTap: (index) => onTap(PosBottomNavEnm.values[index]),
+        currentIndex: items.indexOf(currentIndex),
+        onTap: (index) => onTap(items[index]),
         type: BottomNavigationBarType.fixed,
         selectedItemColor: theme.colorScheme.secondary,
         unselectedItemColor: theme.colorScheme.onSecondary,
-        items: [
-          _buildNavItem(
-            icon: Icons.restaurant_outlined,
-            label: lang.navMenu,
+        items: items.map((item) {
+          return _buildNavItem(
+            item: item,
+            label: _getLabel(item, lang),
+            icon: _getIcon(item),
             theme: theme,
             spacing: spacing,
-          ),
-          _buildNavItem(
-            icon: Icons.receipt_long_outlined,
-            label: lang.navOrders,
-            theme: theme,
-            spacing: spacing,
-          ),
-          _buildNavItem(
-            icon: Icons.more_horiz,
-            label: lang.more,
-            theme: theme,
-            spacing: spacing,
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
 
+  IconData _getIcon(PosBottomNavEnm item) {
+    switch (item) {
+      case PosBottomNavEnm.menu:
+        return Icons.restaurant_outlined;
+
+      case PosBottomNavEnm.orders:
+        return Icons.receipt_long_outlined;
+
+      case PosBottomNavEnm.customers:
+        return Icons.people_outline;
+
+      case PosBottomNavEnm.tables:
+        return Icons.table_restaurant_outlined;
+
+      case PosBottomNavEnm.more:
+        return Icons.more_horiz;
+    }
+  }
+
+  String _getLabel(PosBottomNavEnm item, S lang) {
+    switch (item) {
+      case PosBottomNavEnm.menu:
+        return lang.navMenu;
+
+      case PosBottomNavEnm.orders:
+        return lang.navOrders;
+
+      case PosBottomNavEnm.customers:
+        return lang.customers;
+
+      case PosBottomNavEnm.tables:
+        return lang.tables;
+
+      case PosBottomNavEnm.more:
+        return lang.more;
+    }
+  }
+
   BottomNavigationBarItem _buildNavItem({
+    required PosBottomNavEnm item,
     required IconData icon,
     required String label,
     required ThemeData theme,
     required AppSpacing spacing,
   }) {
     return BottomNavigationBarItem(
-      icon: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 04),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(spacing.sm),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: theme.colorScheme.onPrimary),
-            Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onPrimary,
-              ),
-            ),
-          ],
-        ),
+      icon: _buildItem(
+        icon: icon,
+        label: label,
+        theme: theme,
+        spacing: spacing,
+        isSelected: false,
       ),
-      activeIcon: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 04),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.secondary,
-          borderRadius: BorderRadius.circular(spacing.sm),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: AppColors.white),
-            Text(
-              label,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.white,
-              ),
-            ),
-          ],
-        ),
+      activeIcon: _buildItem(
+        icon: icon,
+        label: label,
+        theme: theme,
+        spacing: spacing,
+        isSelected: true,
       ),
-      label: "",
+      label: '',
+    );
+  }
+
+  Widget _buildItem({
+    required IconData icon,
+    required String label,
+    required ThemeData theme,
+    required AppSpacing spacing,
+    required bool isSelected,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? theme.colorScheme.secondary
+            : theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(spacing.sm),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? AppColors.white : theme.colorScheme.onPrimary,
+          ),
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isSelected ? AppColors.white : theme.colorScheme.onPrimary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

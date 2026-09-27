@@ -157,7 +157,7 @@ class RestaurantPosInvoiceItemRequest {
   @JsonKey(name: 'Price')
   final double price;
 
-  @JsonKey(name: 'Notes')
+  @JsonKey(name: 'ItemNote')
   final String? notes;
 
   @JsonKey(name: 'Discount')

@@ -19,7 +19,7 @@ import '../../featchers/cart/data/models/pos_client_model.dart';
 import '../../featchers/cart/presentation/bloc/cart_bloc.dart';
 import '../../featchers/cart/presentation/bloc/cart_event.dart';
 import '../../featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
-import '../../featchers/auth/presentation/pages/login_mobile_screen.dart';
+import '../../featchers/auth/presentation/pages/login_screen.dart';
 import '../../featchers/pos/data/models/category_model.dart';
 import '../../featchers/pos/domain/entities/menu_item.dart';
 import 'package:flutter/material.dart';

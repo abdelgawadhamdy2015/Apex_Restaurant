@@ -65,6 +65,17 @@ class MoreOptions extends StatelessWidget {
 
     final options = <OptionItem>[
       OptionItem(
+        title: lang.cashierCustody,
+        icon: Icons.account_balance_wallet_outlined,
+        onTap: () {
+          context.pushNamed(
+            Routes.cashierCustodyScreen,
+            extra:
+                context.read<HomeBloc>().state.userDataModel?.employeesId ?? 0,
+          );
+        },
+      ),
+      OptionItem(
         title: lang.tables,
         icon: Icons.receipt_long,
         onTap: () => _openTables(context),
@@ -86,6 +97,7 @@ class MoreOptions extends StatelessWidget {
           );
         },
       ),
+
       OptionItem(
         title: lang.suspendSession,
         icon: Icons.pause_circle_outline,
@@ -155,9 +167,23 @@ class MoreOptions extends StatelessWidget {
               padding: EdgeInsets.all(spacing.md),
               child: Column(
                 children: [
-                  const Header(
-                    customerName: 'Abdelgawad',
-                    employeeType: 'Admin',
+                  Header(
+                    customerName:
+                        context
+                            .read<HomeBloc>()
+                            .state
+                            .userDataModel
+                            ?.employees
+                            ?.arabicName ??
+                        "",
+                    employeeType:
+                        context
+                            .read<HomeBloc>()
+                            .state
+                            .userDataModel
+                            ?.email
+                            .toString() ??
+                        "",
                   ),
                   SizedBox(height: spacing.lg),
                   for (final option in options) ...[

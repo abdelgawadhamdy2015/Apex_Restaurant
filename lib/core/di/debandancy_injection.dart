@@ -172,12 +172,16 @@ Future<void> setupGetIt() async {
     () => OpenRestaurantPosSessionUseCase(getIt<HomeRepository>()),
   );
 
+  getIt.registerLazySingleton(
+    () => GetAllTreasuryByUserDropDownUseCase(getIt<HomeRepository>()),
+  );
+
   //POS
   getIt.registerLazySingleton(
     () => GetMenuCategoriesUseCase(getIt<PosRepository>()),
   );
   getIt.registerLazySingleton(
-    () => GetMenuItemsByCategoryUseCase(getIt<PosRepository>()),
+    () => GetPosMenuItemsUseCase(getIt<PosRepository>()),
   );
 
   getIt.registerLazySingleton(
@@ -231,6 +235,9 @@ Future<void> setupGetIt() async {
     () => SavePaymentRestaurantPosInvoiceUseCase(getIt<PaymentRepository>()),
   );
 
+  getIt.registerLazySingleton(
+    () => PaymentMethodsUseCase(getIt<PaymentRepository>()),
+  );
   // Orders
   getIt.registerLazySingleton(
     () => GetPindingInvoicesUseCase(getIt<OrdersRepository>()),
@@ -266,7 +273,7 @@ Future<void> setupGetIt() async {
     () => GetPindingTableInvoiceUseCase(getIt<TablesRepository>()),
   );
 
-  // Tables
+  // More Actions
   getIt.registerLazySingleton(
     () => GetAllPOSInvoicesUseCase(getIt<MoreActionsRepo>()),
   );
@@ -276,6 +283,19 @@ Future<void> setupGetIt() async {
 
   getIt.registerLazySingleton(
     () => AddPOSTotalReturnInvoiceUseCase(getIt<MoreActionsRepo>()),
+  );
+  getIt.registerLazySingleton(
+    () => AddCashTransactionForSessionUseCase(getIt<MoreActionsRepo>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetCashTransactionForSessionUseCase(getIt<MoreActionsRepo>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => GetInvoiceAccreditingDataUseCase(getIt<MoreActionsRepo>()),
+  );
+  getIt.registerLazySingleton(
+    () => AccreditePOSInvoicesUseCase(getIt<MoreActionsRepo>()),
   );
 
   /// ─────────────────────────────────────────────────────────
@@ -290,6 +310,8 @@ Future<void> setupGetIt() async {
   //HOME
   getIt.registerFactory(
     () => HomeBloc(
+      getAllTreasuryByUserDropDownUseCase:
+          getIt<GetAllTreasuryByUserDropDownUseCase>(),
       getUseDataUseCase: getIt<GetUserDataUseCase>(),
       getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>(),
       openRestaurantPosSessionUseCase: getIt<OpenRestaurantPosSessionUseCase>(),
@@ -303,7 +325,7 @@ Future<void> setupGetIt() async {
       getSettingsUseCase: getIt<GetSettingsUseCase>(),
       getMenuCategories: getIt<GetMenuCategoriesUseCase>(),
       getfoodAdditivesUseCase: getIt<GetFoodAdditivesUseCase>(),
-      itemsByCategoryUseCase: getIt<GetMenuItemsByCategoryUseCase>(),
+      itemsByCategoryUseCase: getIt<GetPosMenuItemsUseCase>(),
       closeRestaurantPosSessionUseCase:
           getIt<CloseRestaurantPosSessionUseCase>(),
       currentRestaurantPosSessionUseCase:
@@ -314,6 +336,7 @@ Future<void> setupGetIt() async {
   // Cart
   getIt.registerFactory<CartBloc>(
     () => CartBloc(
+      getMenuItemsByCompanyIdUseCase: getIt<GetPosMenuItemsUseCase>(),
       getAllDeliveryCompanyUseCase: getIt<GetAllDeliveryCompanyUseCase>(),
       getDeliveryAgentsUseCase: getIt<GetDeliveryAgentsUseCase>(),
       getWaitersUseCase: getIt<GetWaitersUseCase>(),
@@ -335,6 +358,7 @@ Future<void> setupGetIt() async {
   // Payment
   getIt.registerFactory<PaymentBloc>(
     () => PaymentBloc(
+      paymentMethodsUseCase: getIt<PaymentMethodsUseCase>(),
       processPaymentUseCase: getIt<SavePaymentRestaurantPosInvoiceUseCase>(),
     ),
   );
@@ -366,10 +390,17 @@ Future<void> setupGetIt() async {
   // More Actions
   getIt.registerFactory(
     () => MoreActionsBloc(
+      accreditePOSInvoicesUseCase: getIt<AccreditePOSInvoicesUseCase>(),
+      addCashTransactionForSessionUseCase:
+          getIt<AddCashTransactionForSessionUseCase>(),
+      getCashTransactionForSessionUseCase:
+          getIt<GetCashTransactionForSessionUseCase>(),
       getPosInvoiceDataByIdUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       getAllPOSInvoicesUseCase: getIt<GetAllPOSInvoicesUseCase>(),
       addPOSResturnInvoiceUseCase: getIt<AddPOSResturnInvoiceUseCase>(),
       addPOSTotalReturnInvoiceUseCase: getIt<AddPOSTotalReturnInvoiceUseCase>(),
+      getInvoiceAccreditingDataUseCase:
+          getIt<GetInvoiceAccreditingDataUseCase>(),
     ),
   );
 }

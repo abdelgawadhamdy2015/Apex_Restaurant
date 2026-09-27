@@ -36,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           username: emailController.text,
           password: passwordController.text,
           companyName: dbController.text,
-          isLoginFromMobile: true,
+          isLoginFromMobile: false,
           //fcmToken: FCMService.fcmToken,
         ),
       );

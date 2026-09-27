@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/helpers/transactionid_generator.dart';
 import '../../../../core/router/routes.dart';
-import '../../../cart/data/models/get_client_request.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../../cart/presentation/bloc/cart_state.dart';
@@ -47,12 +48,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CartBloc>().add(LoadDynamicDiscountsEvent());
-      context.read<CartBloc>().add(
-        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
-      );
-    });
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -67,16 +63,12 @@ class _MenuScreenState extends State<MenuScreen> {
     if (posState.hasMoreItems &&
         !posState.isLoadingMoreItems &&
         posState.status != PosStatus.loading) {
-      // NOTE: LoadMoreItemsEvent takes no params — it relies on the bloc
-      // remembering the last search key/page internally from the most
-      // recent LoadItemsEvent dispatched in `_onSearchChanged` below.
       context.read<PosBloc>().add(const LoadMoreItemsEvent());
     }
   }
 
   /// Debounced search handler passed down to [PosTopAppBar]. Waits for the
-  /// user to stop typing before firing a request, and always resets
-  /// pagination/scroll since a new search key means a brand-new result set.
+
   void _onSearchChanged(String value) {
     final trimmed = value.trim();
 
@@ -97,6 +89,11 @@ class _MenuScreenState extends State<MenuScreen> {
             pageNumber: 1,
             pageSize: _pageSize,
             searchKey: trimmed.isEmpty ? null : trimmed,
+            companyId: context
+                .read<CartBloc>()
+                .state
+                .selectedDeliveryCompany
+                ?.id,
           ),
         ),
       );
@@ -157,7 +154,16 @@ class _MenuScreenState extends State<MenuScreen> {
                   if (_scrollController.hasClients) {
                     _scrollController.jumpTo(0);
                   }
-                  context.read<PosBloc>().add(SelectCategoryEvent(cat));
+                  context.read<PosBloc>().add(
+                    SelectCategoryEvent(
+                      category: cat,
+                      deliveryCompanyId:
+                          cartState.selectedOrderType ==
+                              CartOrderType.DELIVERY_COMPANY
+                          ? cartState.selectedDeliveryCompany?.id
+                          : null,
+                    ),
+                  );
                 },
               ),
               SizedBox(height: spacing.sm),
@@ -261,18 +267,22 @@ class _MenuScreenState extends State<MenuScreen> {
       return;
     }
 
-    final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
+    // final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
 
-    if (!needsCustomization) {
-      final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId.toString(),
-        menuItem: item,
-        selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
-        quantity: 1,
-      );
-      parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
-      return;
-    }
+    // if (!needsCustomization) {
+    //   final orderItem = OrderItem(
+    //     transactionId: TransactionIdGenerator.nextId.toString(),
+    //     menuItem: item,
+    //     selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
+    //     quantity: 1,
+    //     discount:
+    //         item.sizes.first.discounts?.first?.discount?.discountValue ?? 0,
+    //     isPercentageDiscount:
+    //         item.sizes.first.discounts?.first?.discount?.discountNatural == 1,
+    //   );
+    //   parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+    //   return;
+    // }
 
     final posBloc = parentContext.read<PosBloc>();
 

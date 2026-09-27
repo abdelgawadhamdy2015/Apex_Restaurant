@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
@@ -18,7 +20,8 @@ class AuthRepoImp extends AuthRepo {
     try {
       final response = await datasource.login(loginRequest);
       return ApiResult.success(response);
-    } catch (error) {
+    } catch (error, s) {
+      debugPrint(" $error , $s");
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }

@@ -199,7 +199,15 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLoginTitle(context),
-        const SizedBox(height: 24),
+        SizedBox(height: spacing.md),
+
+        _buildTextField(
+          context,
+          lang.dbName,
+          context.read<AuthBloc>().dbController,
+          lang.insertDBName,
+        ),
+        SizedBox(height: spacing.md),
         _buildTextField(
           context,
           lang.email,
@@ -213,13 +221,8 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
           lang.insertPassword,
           obsecure: true,
         ),
-        _buildTextField(
-          context,
-          lang.dbName,
-          context.read<AuthBloc>().dbController,
-          lang.insertDBName,
-        ),
-        const SizedBox(height: 16),
+
+        SizedBox(height: spacing.lg),
         _buildLoginButton(context),
         SizedBox(height: spacing.lg),
         _buildForgetPasswordLink(context),
@@ -260,7 +263,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: context.spacing.sm),
           TextFormField(
             obscureText: obsecure ?? false,
             decoration: InputDecoration(

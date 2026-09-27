@@ -46,7 +46,7 @@ class TotalAmountCard extends StatelessWidget {
                   ),
                   SizedBox(width: spacing.xs),
                   Text(
-                    lang.currencySar,
+                    lang.currencySarShort,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSecondary,
                       fontWeight: FontWeightHelper.bold,

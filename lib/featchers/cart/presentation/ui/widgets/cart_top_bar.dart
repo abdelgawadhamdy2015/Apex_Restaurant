@@ -1,21 +1,19 @@
 // lib/featchers/cart/presentation/ui/widgets/cart_top_bar.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
-  const CartTopBar({
-    super.key,
-    this.onBack,
-    this.onClearAll,
-    this.isTablet = false,
-  });
+  const CartTopBar({super.key, this.onBack, this.onClearAll});
 
   final VoidCallback? onBack;
   final VoidCallback? onClearAll;
-  final bool isTablet;
 
   @override
   Size get preferredSize => const Size.fromHeight(56);
@@ -41,9 +39,16 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            if (!isTablet)
+            if (SizeHelper.isMobile)
               IconButton(
-                onPressed: onBack ?? () => context.pop(),
+                onPressed:
+                    onBack ??
+                    () {
+                      if (!context.read<CartBloc>().state.canEdit) {
+                        context.read<CartBloc>().add(ClearCartEvent());
+                      }
+                      context.pop();
+                    },
                 icon: Icon(
                   Icons.arrow_back,
                   color: theme.colorScheme.onSecondary,

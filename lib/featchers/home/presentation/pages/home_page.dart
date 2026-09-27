@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   void _loadInitialData() {
     final homeBloc = context.read<HomeBloc>();
     homeBloc.add(const LoadBranchesEvent());
+    homeBloc.add(const LoadTreasuryEvent());
 
     // 1. طلب فحص الجلسة الحالية من الـ PosBloc
     context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());

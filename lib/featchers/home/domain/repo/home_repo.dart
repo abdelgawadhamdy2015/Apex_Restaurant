@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../data/models/employee_branch.dart';
@@ -10,5 +13,9 @@ abstract class HomeRepository {
     required int id,
   });
   Future<ApiResult<BaseResponse<SessionModel?>>> openRestaurantPos();
-  Future<ApiResult<BaseResponse<SessionModel?>>> openRestaurantPosSession();
+  Future<ApiResult<BaseResponse<SessionModel?>>> openRestaurantPosSession(
+    OpenSessionRequest request,
+  );
+  Future<ApiResult<BaseResponse<List<SafeModel>?>>>
+  getAllTreasuryByUserDropDown();
 }

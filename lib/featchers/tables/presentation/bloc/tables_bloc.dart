@@ -1,5 +1,7 @@
 // presentation/bloc/tables_bloc.dart
 
+import 'dart:developer';
+
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
@@ -160,10 +162,11 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
               state.copyWith(
                 status: TablesStatus.success,
                 restoredInvoiceModel: data.data,
-                clearRestoringId: true,
+                clearRestoringId: false,
                 canEdit: event.canEdite,
               ),
             );
+            log("${state.restoredInvoiceModel?.invoice?.toJson().toString()}");
           } else {
             emit(
               state.copyWith(

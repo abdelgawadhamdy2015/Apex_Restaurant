@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../data/models/employee_branch.dart';
@@ -22,8 +25,9 @@ class GetUserDataUseCase {
 class OpenRestaurantPosSessionUseCase {
   final HomeRepository _repository;
   OpenRestaurantPosSessionUseCase(this._repository);
-  Future<ApiResult<BaseResponse<SessionModel?>>> call() =>
-      _repository.openRestaurantPosSession();
+  Future<ApiResult<BaseResponse<SessionModel?>>> call(
+    OpenSessionRequest request,
+  ) => _repository.openRestaurantPosSession(request);
 }
 
 class OpenRestaurantPosUseCase {
@@ -31,4 +35,11 @@ class OpenRestaurantPosUseCase {
   OpenRestaurantPosUseCase(this._repository);
   Future<ApiResult<BaseResponse<SessionModel?>>> call() =>
       _repository.openRestaurantPos();
+}
+
+class GetAllTreasuryByUserDropDownUseCase {
+  final HomeRepository _repository;
+  GetAllTreasuryByUserDropDownUseCase(this._repository);
+  Future<ApiResult<BaseResponse<List<SafeModel>?>>> call() =>
+      _repository.getAllTreasuryByUserDropDown();
 }

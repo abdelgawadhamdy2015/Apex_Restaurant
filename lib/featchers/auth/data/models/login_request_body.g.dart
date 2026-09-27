@@ -17,8 +17,8 @@ LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) => LoginRequest(
 Map<String, dynamic> _$LoginRequestToJson(LoginRequest instance) =>
     <String, dynamic>{
       'username': instance.username,
-      'password': instance.password,
+      'password': ?instance.password,
       'companyName': instance.companyName,
-      'isLoginFromMobile': instance.isLoginFromMobile,
-      'FCMToken': instance.fcmToken,
+      'isLoginFromMobile': ?instance.isLoginFromMobile,
+      'FCMToken': ?instance.fcmToken,
     };

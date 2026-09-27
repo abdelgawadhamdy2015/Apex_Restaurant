@@ -1,10 +1,18 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
+import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
+import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
+import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
 
 import 'api_constants.dart';
 import '../shared/entity/base_request.dart';
@@ -48,11 +56,14 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
   @POST(ApiConstants.login)
+  @Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
   Future<BaseResponse<LoginData?>> login(@Body() LoginRequest loginRequestBody);
   @GET(ApiConstants.openRestaurantPos)
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
   @GET(ApiConstants.openRestaurantPosSession)
-  Future<BaseResponse<SessionModel?>> openRestaurantPosSession();
+  Future<BaseResponse<SessionModel?>> openRestaurantPosSession(
+    @Queries() OpenSessionRequest request,
+  );
   @GET(ApiConstants.currentPOSsession)
   Future<BaseResponse<SessionModel?>> currentPOSsession();
   @POST("${ApiConstants.closePOSSeassion}/{sessionId}")
@@ -83,6 +94,17 @@ abstract class ApiService {
   @GET(ApiConstants.getRestaurantItemsPOS)
   Future<BaseResponse<List<RestaurantItem>?>> getItemsByCategory(
     @Queries() GetItemsRequest request,
+  );
+
+  @GET(ApiConstants.getRestaurantInvoiceAccreditingData)
+  Future<BaseResponse<RestaurantInvoiceAccreditingData?>>
+  getRestaurantInvoiceAccreditingData(
+    @Queries() GetInvoiceAccreditingDataRequest request,
+  );
+
+  @GET(ApiConstants.accreditePOSInvoices)
+  Future<BaseResponse<int?>> accreditePOSInvoices(
+    @Queries() AccreditePOSInvoicesRequest? request,
   );
 
   @GET(ApiConstants.getAllFoodAdditives)
@@ -182,6 +204,9 @@ abstract class ApiService {
   Future<BaseResponse<List<PindingInvoiceModel>?>> getRestaurantPosBookingTable(
     @Queries() GetPindingInvoicesRequest? request,
   );
+  @GET(ApiConstants.getListOfPaymentMethods)
+  Future<BaseResponse<List<PaymentMethodResponseModel>?>>
+  getListOfPaymentMethods({BaseRequest? request});
 
   @POST(ApiConstants.getListPosInvoiceData)
   @Headers({
@@ -216,4 +241,16 @@ abstract class ApiService {
   Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice(
     @Queries() AddPOSTotalReturnInvoiceRequest request,
   );
+
+  @POST(ApiConstants.addCashTransactionForSession)
+  Future<BaseResponse<dynamic>> addCashTransactionForSession(
+    @Body() AddCashTransactionRequest request,
+  );
+  @GET(ApiConstants.getCashTransactionForSession)
+  Future<BaseResponse<TransactionsResponse?>> getCashTransactionForSession(
+    @Query('employeesId') int employeesId,
+  );
+
+  @GET(ApiConstants.getAllTreasuryByUserDropDown)
+  Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown();
 }

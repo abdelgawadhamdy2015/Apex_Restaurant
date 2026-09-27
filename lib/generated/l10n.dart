@@ -2987,26 +2987,6 @@ class S {
     );
   }
 
-  /// `{minutes} min ago`
-  String minutesAgo(Object minutes) {
-    return Intl.message(
-      '$minutes min ago',
-      name: 'minutesAgo',
-      desc: '',
-      args: [minutes],
-    );
-  }
-
-  /// `{hours} hours ago`
-  String hoursAgo(Object hours) {
-    return Intl.message(
-      '$hours hours ago',
-      name: 'hoursAgo',
-      desc: '',
-      args: [hours],
-    );
-  }
-
   /// `View Full Custody Log`
   String get viewFullCustodyLog {
     return Intl.message(
@@ -3997,6 +3977,156 @@ class S {
     return Intl.message(
       'Invoice returned successfully',
       name: 'invoiceReturnedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Custody Log`
+  String get custodyLogTitle {
+    return Intl.message(
+      'Custody Log',
+      name: 'custodyLogTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Withdrawals`
+  String get withdrawalsFilter {
+    return Intl.message(
+      'Withdrawals',
+      name: 'withdrawalsFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additions`
+  String get additionsFilter {
+    return Intl.message(
+      'Additions',
+      name: 'additionsFilter',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `All`
+  String get allFilter {
+    return Intl.message('All', name: 'allFilter', desc: '', args: []);
+  }
+
+  /// `Current Balance`
+  String get currentBalance {
+    return Intl.message(
+      'Current Balance',
+      name: 'currentBalance',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Type`
+  String get type {
+    return Intl.message('Type', name: 'type', desc: '', args: []);
+  }
+
+  /// `Attachment`
+  String get attachment {
+    return Intl.message('Attachment', name: 'attachment', desc: '', args: []);
+  }
+
+  /// `User`
+  String get user {
+    return Intl.message('User', name: 'user', desc: '', args: []);
+  }
+
+  /// `Invalid amount`
+  String get invalidAmount {
+    return Intl.message(
+      'Invalid amount',
+      name: 'invalidAmount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Transaction added successfully`
+  String get transactionAddedSuccessfully {
+    return Intl.message(
+      'Transaction added successfully',
+      name: 'transactionAddedSuccessfully',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Select Safe`
+  String get selectSafe {
+    return Intl.message('Select Safe', name: 'selectSafe', desc: '', args: []);
+  }
+
+  /// `Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added.`
+  String get invoiceDiscountNotAllowed {
+    return Intl.message(
+      'Invoice discount cannot be added because a discount is already applied to one of the order items. However, a voucher discount can still be added.',
+      name: 'invoiceDiscountNotAllowed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `{count} minutes ago`
+  String minutesAgo(int count) {
+    return Intl.message(
+      '$count minutes ago',
+      name: 'minutesAgo',
+      desc: 'Time elapsed in minutes',
+      args: [count],
+    );
+  }
+
+  /// `{count} hours ago`
+  String hoursAgo(int count) {
+    return Intl.message(
+      '$count hours ago',
+      name: 'hoursAgo',
+      desc: 'Time elapsed in hours',
+      args: [count],
+    );
+  }
+
+  /// `{count} days ago`
+  String daysAgo(int count) {
+    return Intl.message(
+      '$count days ago',
+      name: 'daysAgo',
+      desc: 'Time elapsed in days',
+      args: [count],
+    );
+  }
+
+  /// `Just now`
+  String get justNow {
+    return Intl.message('Just now', name: 'justNow', desc: '', args: []);
+  }
+
+  /// `Delivery Men`
+  String get deliveryManCustody {
+    return Intl.message(
+      'Delivery Men',
+      name: 'deliveryManCustody',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery Company`
+  String get deliveryCompanyReceivables {
+    return Intl.message(
+      'Delivery Company',
+      name: 'deliveryCompanyReceivables',
       desc: '',
       args: [],
     );

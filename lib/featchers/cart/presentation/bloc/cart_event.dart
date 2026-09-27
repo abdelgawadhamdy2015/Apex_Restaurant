@@ -47,6 +47,12 @@ class SyncRestoredInvoiceEvent extends CartEvent {
   List<Object?> get props => [data];
 }
 
+class UpdateItemsPriceWithCompanyEvent extends CartEvent {
+  const UpdateItemsPriceWithCompanyEvent();
+  @override
+  List<Object?> get props => [];
+}
+
 class UpdateSettingsEvent extends CartEvent {
   final SettingsModel? settings;
   const UpdateSettingsEvent(this.settings);

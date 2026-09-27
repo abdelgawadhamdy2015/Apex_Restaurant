@@ -133,9 +133,11 @@ class _SectionCard extends StatelessWidget {
         children: [
           Text(
             title,
-            // AppTextStyles.captionBold is already built per-theme with
-            // colorScheme.onSurface, so this adapts automatically.
-            style: context.appTextStyles.captionBold.copyWith(fontSize: 14),
+
+            style: context.appTextStyles.captionBold.copyWith(
+              fontSize: 14,
+              color: theme.colorScheme.onPrimary,
+            ),
           ),
           SizedBox(height: spacing.xs),
           child,

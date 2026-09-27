@@ -42,12 +42,12 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     WaiterModel? waiter;
-    final waiterId = inv?.waiterId ?? inv?.waiter?.id;
+    final waiterId = inv?.waiter?.id;
     if (waiterId != null && waiterId != 0) {
       waiter = WaiterModel(
         id: waiterId,
-        arabicName: inv?.waiterArabicName ?? inv?.waiter?.arabicName ?? '',
-        latinName: inv?.waiterLatinName ?? inv?.waiter?.latinName ?? '',
+        arabicName: inv?.waiter?.arabicName ?? '',
+        latinName: inv?.waiter?.latinName ?? '',
       );
     }
 
@@ -177,7 +177,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
           menuItem: restaurantItem,
           selectedSize: selectedSize,
           quantity: (mainItem.quantity ?? 1).toInt(),
-          notes: mainItem.notes,
+          notes: mainItem.itemNote,
           addons: allAddons,
           discount: discountVal,
           isPercentageDiscount: isPercentage,

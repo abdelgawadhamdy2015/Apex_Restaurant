@@ -1,4 +1,6 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:apex_restaurant/featchers/more_actions/presentation/screens/cashier_custody_screen.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/returns_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +16,7 @@ import '../screens/close_session_dialog.dart';
 import '../../../more_actions/presentation/screens/daily_close_screen.dart';
 
 /// Identifies which content is currently shown in place of the grid.
-enum _MoreOptionsView { grid, returns, closeCustody }
+enum _MoreOptionsView { grid, returns, closeCustody, cashierCustody }
 
 class TabletMoreOptions extends StatefulWidget {
   const TabletMoreOptions({super.key});
@@ -176,6 +178,14 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
         return const Expanded(child: ReturnsScreen());
       case _MoreOptionsView.closeCustody:
         return const Expanded(child: DailyCloseScreen());
+      case _MoreOptionsView.cashierCustody:
+        return Expanded(
+          child: CashierCustodyScreen(
+            employeeId:
+                context.read<HomeBloc>().state.userDataModel?.employeesId ??
+                0, // Pass the appropriate employeeId here
+          ),
+        );
       case _MoreOptionsView.grid:
         final items = _buildItems(lang, colorScheme);
         return Expanded(
@@ -206,7 +216,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
         iconBgColor: colorScheme.primary.withOpacity(.2),
         iconColor: colorScheme.primary,
         onTap: () {
-          // Navigate to Cash Custody Screen
+          _showView(_MoreOptionsView.cashierCustody);
         },
       ),
       _MoreCardData(
@@ -261,6 +271,8 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
         return lang.returns;
       case _MoreOptionsView.closeCustody:
         return lang.closeCustody;
+      case _MoreOptionsView.cashierCustody:
+        return lang.cashierCustody;
       case _MoreOptionsView.grid:
         return lang.additionalOperations;
     }

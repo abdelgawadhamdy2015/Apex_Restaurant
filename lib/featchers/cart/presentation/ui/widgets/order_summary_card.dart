@@ -35,13 +35,13 @@ class OrderSummaryCard extends StatelessWidget {
           _SummaryRow(
             title: lang.subtotal,
             value:
-                '${state.netSubtotal.toStringAsFixed(2)} ${lang.currencySar}',
+                '${state.netSubtotal.toStringAsFixed(2)} ${lang.currencySarShort}',
           ),
           SizedBox(height: spacing.xs),
           _SummaryRow(
             title: lang.discountCoupon,
             value:
-                '-${state.totalDiscountAmount.toStringAsFixed(2)} ${lang.currencySar}',
+                '-${state.totalDiscountAmount.toStringAsFixed(2)} ${lang.currencySarShort}',
             isSuccess: true,
           ),
           if (showDeliveryFee) ...[
@@ -49,27 +49,28 @@ class OrderSummaryCard extends StatelessWidget {
             _SummaryRow(
               title: lang.deliveryFee,
               value:
-                  '${state.settingsModel?.posRestaurant?.deliveryCost?.toStringAsFixed(2) ?? 0} ${lang.currencySar}',
+                  '${state.settingsModel?.posRestaurant?.deliveryCost?.toStringAsFixed(2) ?? 0} ${lang.currencySarShort}',
             ),
           ],
           if (dineInFee)
             _SummaryRow(
               title: lang.dineInCost,
               value:
-                  '${state.dineInCost.toStringAsFixed(2)} ${lang.currencySar}',
+                  '${state.dineInCost.toStringAsFixed(2)} ${lang.currencySarShort}',
             ),
           if (tobacoActive)
             _SummaryRow(
               title: lang.tobaccoVat,
               value:
-                  '${state.tobaccoTaxAmount.toStringAsFixed(2)} ${lang.currencySar}',
+                  '${state.tobaccoTaxAmount.toStringAsFixed(2)} ${lang.currencySarShort}',
             ),
           SizedBox(height: spacing.xs),
           _SummaryRow(
             title: lang.vatPrecentage(
               state.settingsModel?.vat?.vatDefaultValue ?? 0,
             ),
-            value: '${state.vatAmount.toStringAsFixed(2)} ${lang.currencySar}',
+            value:
+                '${state.vatAmount.toStringAsFixed(2)} ${lang.currencySarShort}',
           ),
           Divider(height: spacing.xl, color: theme.colorScheme.outlineVariant),
           Row(
@@ -82,7 +83,7 @@ class OrderSummaryCard extends StatelessWidget {
                 ),
               ),
               Text(
-                '${state.grandTotal.toStringAsFixed(2)} ${lang.currencySar}',
+                '${state.grandTotal.toStringAsFixed(2)} ${lang.currencySarShort}',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,

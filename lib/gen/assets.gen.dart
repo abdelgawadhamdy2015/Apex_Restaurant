@@ -57,6 +57,7 @@ abstract final class Assets {
   static const String logout = 'assets/logout.svg';
   static const String success = 'assets/success.svg';
   static const $ImagesGen images = $ImagesGen();
+  static const String shorebird = 'shorebird.yaml';
 
   /// List of all assets
   static List<String> get values => [
@@ -70,6 +71,7 @@ abstract final class Assets {
     login,
     logout,
     success,
+    shorebird,
   ];
 }
 

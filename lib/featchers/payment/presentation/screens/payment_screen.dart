@@ -38,6 +38,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           totalAmount: widget.invoiceRequestModel.invoice.totalInvoicePrice,
         ),
       );
+      context.read<PaymentBloc>().add(FetchPaymentMethodsEvent());
     });
   }
 
@@ -87,7 +88,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         SizedBox(height: spacing.md),
                         if (state.selectedMethod ==
                             PaymentMethodType.split) ...[
-                          const SplitMethodsList(),
+                          SplitMethodsList(
+                            paymentMethods: state.paymentMethods ?? [],
+                          ),
                         ] else ...[
                           const PaidAmountInputField(),
                           SizedBox(height: spacing.md),

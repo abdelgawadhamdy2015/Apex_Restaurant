@@ -24,6 +24,8 @@ enum CartStatus {
   pindingSuccess,
   failure,
   pindingFailure,
+  itemsUpdateing,
+  itemsUpdated,
 }
 
 enum DiscountSource { none, dynamic, customer, size, manualInvoice, manualItem }
@@ -32,6 +34,7 @@ class CartState extends Equatable {
   final SettingsModel? settingsModel;
   final CartOrderType selectedOrderType;
   final bool justRestored;
+  final bool isPreviousInvoice;
 
   final CartStatus status;
   final DiscountTypeEnum selectedDiscountType;
@@ -69,7 +72,7 @@ class CartState extends Equatable {
     this.selectedOrderType = CartOrderType.TAKEAWAY,
     this.selectedDiscountType = DiscountTypeEnum.coupon,
     this.justRestored = false,
-
+    this.isPreviousInvoice = false,
     this.status = CartStatus.initial,
     this.items = const [],
     this.fromBranchDateTime,
@@ -142,7 +145,8 @@ class CartState extends Equatable {
       customerDiscount != null &&
       (customerDiscount!.value) > 0;
 
-  bool get isManualItemDiscountApplied => items.any((i) => i.discount > 0);
+  bool get isManualItemDiscountApplied =>
+      hasSizeDiscount ? false : items.any((i) => i.discount > 0);
 
   bool get isManualInvoiceDiscountApplied =>
       selectedDiscountType == DiscountTypeEnum.direct &&
@@ -151,7 +155,7 @@ class CartState extends Equatable {
   bool get isInvoiceManualDiscountEnabled =>
       !dynamicDiscountIsActive &&
       !isCustomerDiscountApplied &&
-      !hasSizeDiscount &&
+      // !hasSizeDiscount &&
       !isManualItemDiscountApplied;
 
   bool get isItemManualDiscountEnabled =>
@@ -210,7 +214,7 @@ class CartState extends Equatable {
 
     final isPercentage = discount.discountNatural == 1;
     final value = discount.discountValue;
-    final discountId = discount.id;
+    final int? discountId = int.tryParse(discount.id.toString());
 
     if (isPercentage && discount.maxDiscountValue > 0) {
       final computedAmount = lineTotal * value / 100;
@@ -567,7 +571,8 @@ class CartState extends Equatable {
           : null,
       discount:
           appliedDiscount?.value == 0 ||
-              selectedDiscountType != DiscountTypeEnum.direct
+              selectedDiscountType != DiscountTypeEnum.direct ||
+              settingsModel?.posRestaurant?.activeDiscount == false
           ? null
           : appliedDiscount,
       paidAmount: grandTotal,
@@ -622,6 +627,7 @@ class CartState extends Equatable {
     String? invoiceCode,
     String? voucherId,
     DateTime? restoredInvoiceDate,
+    bool? isPreviousInvoice,
     // Optional flag helpers to force explicit null assignment
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
@@ -629,6 +635,7 @@ class CartState extends Equatable {
     bool clearVoucherDiscountValue = false,
     bool clearAddress = false,
     bool clearInvoiceId = false,
+    bool clearCart = false,
   }) {
     return CartState(
       settingsModel: settingsModel ?? this.settingsModel,
@@ -651,8 +658,10 @@ class CartState extends Equatable {
       deliveryAgents: deliveryAgents ?? this.deliveryAgents,
       selectedDeliveryCompany:
           selectedDeliveryCompany ?? this.selectedDeliveryCompany,
-      selectedWaiter: selectedWaiter ?? this.selectedWaiter,
-      selectedDeliveryMan: selectedDeliveryMan ?? this.selectedDeliveryMan,
+      selectedWaiter: clearCart ? null : selectedWaiter ?? this.selectedWaiter,
+      selectedDeliveryMan: clearCart
+          ? null
+          : selectedDeliveryMan ?? this.selectedDeliveryMan,
       discountAmount: discountAmount ?? this.discountAmount,
       voucherData: clearVoucherDiscountValue
           ? null
@@ -667,8 +676,10 @@ class CartState extends Equatable {
       customerDiscount: clearCustomerDiscount
           ? null
           : (customerDiscount ?? this.customerDiscount),
-      selectedTable: selectedTable ?? this.selectedTable,
-      fromBranchDateTime: fromBranchDateTime ?? this.fromBranchDateTime,
+      selectedTable: clearCart ? null : selectedTable ?? this.selectedTable,
+      fromBranchDateTime: clearCart
+          ? null
+          : fromBranchDateTime ?? this.fromBranchDateTime,
       companiesList: companiesList ?? this.companiesList,
       invoiceId: clearInvoiceId ? null : invoiceId ?? this.invoiceId,
       isPending: isPending ?? this.isPending,
@@ -678,6 +689,7 @@ class CartState extends Equatable {
       restoredInvoiceDate: clearInvoiceId
           ? null
           : restoredInvoiceDate ?? restoredInvoiceDate,
+      isPreviousInvoice: isPreviousInvoice ?? this.isPreviousInvoice,
     );
   }
 
@@ -716,5 +728,6 @@ class CartState extends Equatable {
     orderNumber,
     restoredInvoiceDate,
     voucherData,
+    isPreviousInvoice,
   ];
 }

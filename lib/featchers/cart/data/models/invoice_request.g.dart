@@ -118,7 +118,7 @@ RestaurantPosInvoiceItemRequest _$RestaurantPosInvoiceItemRequestFromJson(
   sizeId: (json['SizeId'] as num?)?.toInt(),
   quantity: (json['Quantity'] as num).toDouble(),
   price: (json['Price'] as num).toDouble(),
-  notes: json['Notes'] as String?,
+  notes: json['ItemNote'] as String?,
   discount: json['Discount'] == null
       ? null
       : RestaurantPosDiscountRequest.fromJson(
@@ -144,7 +144,7 @@ Map<String, dynamic> _$RestaurantPosInvoiceItemRequestToJson(
   'SizeId': ?instance.sizeId,
   'Quantity': instance.quantity,
   'Price': instance.price,
-  'Notes': ?instance.notes,
+  'ItemNote': ?instance.notes,
   'Discount': ?instance.discount,
   'ItemDiscountId': ?instance.itemDiscountId,
   'Additives': instance.additives,

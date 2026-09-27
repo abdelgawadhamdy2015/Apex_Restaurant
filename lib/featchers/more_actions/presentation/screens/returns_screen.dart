@@ -62,21 +62,29 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     return BlocConsumer<MoreActionsBloc, MoreActionsState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (BuildContext context, MoreActionsState state) {
-        if (state.status == MoreActionsStatus.sussess) {
+        if (state.status == MoreActionsStatus.success) {
           if (state.returnedInvoice != null) {
             final restoresd = state.returnedInvoice?.toRestoredCartData(
               context,
             );
             if (restoresd == null) return;
-            context.read<CartBloc>().add(SyncRestoredInvoiceEvent(restoresd));
-            SizeHelper.isTablet
-                ? showBottomSheet(
-                    context: context,
-                    builder: (context) {
-                      return TabletCartPanel();
-                    },
-                  )
-                : context.pushReplacementNamed(Routes.cartScreen);
+            if (state.isFullReturn == false) {
+              context.read<CartBloc>().add(SyncRestoredInvoiceEvent(restoresd));
+              SizeHelper.isTablet
+                  ? showBottomSheet(
+                      context: context,
+                      builder: (context) {
+                        return TabletCartPanel();
+                      },
+                    )
+                  : context.pushReplacementNamed(Routes.cartScreen);
+            } else {
+              HelperMethods.showSnackBar(
+                context: context,
+                message: lang.invoiceReturnedSuccessfully,
+                isError: false,
+              );
+            }
           } else if (state.invoiceReturnResponse != null) {
             HelperMethods.showSnackBar(
               context: context,
@@ -84,6 +92,12 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
               isError: false,
             );
           }
+        } else if (state.status == MoreActionsStatus.failure) {
+          HelperMethods.showSnackBar(
+            context: context,
+            message: state.message ?? lang.somethingWentWrong,
+            isError: true,
+          );
         }
       },
       builder: (context, state) {
@@ -111,14 +125,16 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
         showBackButton: true,
         onBackPressed: () => Navigator.of(context).pop(),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildSearchCard(context),
-            SizedBox(height: spacing.md),
-            _buildInvoiceList(context, state),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildSearchCard(context),
+              SizedBox(height: spacing.md),
+              _buildInvoiceList(context, state),
+            ],
+          ),
         ),
       ),
     );
@@ -195,7 +211,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
               invoices[i].invoiceDate,
             ),
             itemsCountText: lang.itemsCount(5),
-            totalAmount: "${invoices[i].totalPrice} ${lang.currencySar}",
+            totalAmount: "${invoices[i].totalPrice} ${lang.currencySarShort}",
             isExpanded: _expandedIndex == i,
 
             // items: _expandedIndex == i ? _sampleItems : const [],
@@ -457,7 +473,7 @@ class _InvoiceCard extends StatelessWidget {
                   //               ],
                   //             ),
                   //             Text(
-                  //               '${item.price} ${lang.currencySarShort}',
+                  //               '${item.price} ${lang.currencySarShortShort}',
                   //               style: theme.textTheme.bodyMedium?.copyWith(
                   //                 fontWeight: FontWeight.bold,
                   //               ),

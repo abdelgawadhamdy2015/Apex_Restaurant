@@ -27,6 +27,7 @@ TableModel _$TableModelFromJson(Map<String, dynamic> json) => TableModel(
   xloc: (json['xloc'] as num?)?.toDouble(),
   yloc: (json['yloc'] as num?)?.toDouble(),
   isReserved: json['isReserved'] as bool?,
+  bookingTableInvoiceId: (json['bookingTableInvoiceId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$TableModelToJson(TableModel instance) =>
@@ -51,6 +52,7 @@ Map<String, dynamic> _$TableModelToJson(TableModel instance) =>
       'xloc': instance.xloc,
       'yloc': instance.yloc,
       'isReserved': instance.isReserved,
+      'bookingTableInvoiceId': instance.bookingTableInvoiceId,
     };
 
 const _$TableStatusEnumMap = {

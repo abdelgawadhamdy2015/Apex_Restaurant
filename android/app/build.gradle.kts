@@ -7,17 +7,15 @@ plugins {
 
 android {
     namespace = "com.example.apex_restaurant"
+
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
-buildToolsVersion = "35.0.0"
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    // kotlinOptions {
-    //     jvmTarget = JavaVersion.VERSION_17.toString()
-    // }
     kotlin {
         compilerOptions {
             jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
@@ -25,7 +23,7 @@ buildToolsVersion = "35.0.0"
     }
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.apex_restaurant"
+        applicationId = "com.taifalalmas.apexRestaurant"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

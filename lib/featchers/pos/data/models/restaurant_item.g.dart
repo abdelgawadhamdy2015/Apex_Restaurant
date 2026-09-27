@@ -87,7 +87,7 @@ Map<String, dynamic> _$ItemSizeDiscountToJson(ItemSizeDiscount instance) =>
     };
 
 ItemDiscount _$ItemDiscountFromJson(Map<String, dynamic> json) => ItemDiscount(
-  id: (json['id'] as num).toInt(),
+  id: json['id'] as String,
   code: (json['code'] as num?)?.toInt(),
   arabicName: json['arabicName'] as String?,
   latinName: json['latinName'] as String?,

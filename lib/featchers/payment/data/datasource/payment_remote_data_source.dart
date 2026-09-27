@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
+
 import '../../../../core/service/api_service.dart';
 import '../../../../core/shared/model/base_response.dart';
 import '../../../cart/data/models/invoice_request.dart';
@@ -10,6 +12,8 @@ abstract class PaymentRemoteDataSource {
   Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   );
+  Future<BaseResponse<List<PaymentMethodResponseModel>?>>
+  getListOfPaymentMethods();
 }
 
 class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
@@ -22,5 +26,11 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
     SaveRestaurantPosInvoiceRequest request,
   ) {
     return _apiService.saveRestaurantPosInvoice(request);
+  }
+
+  @override
+  Future<BaseResponse<List<PaymentMethodResponseModel>?>>
+  getListOfPaymentMethods() {
+    return _apiService.getListOfPaymentMethods();
   }
 }

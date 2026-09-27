@@ -51,12 +51,18 @@ class PosCategoriesBar extends StatelessWidget {
                           : theme.colorScheme.surface,
                     ),
                   ),
-                  child: Icon(
-                    Icons.restaurant_menu,
-                    color: isSelected
-                        ? theme.colorScheme.onPrimary
-                        : theme.colorScheme.onPrimary,
-                  ),
+                  child: cat.imagePath != null && cat.imagePath!.isNotEmpty
+                      ? Image.network(
+                          cat.imagePath!,
+                          // width: double.infinity,
+                          // fit: BoxFit.cover,
+                        )
+                      : Icon(
+                          Icons.restaurant_menu,
+                          color: isSelected
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.onPrimary,
+                        ),
                 ),
                 SizedBox(height: spacing.xxs),
                 Text(
