@@ -49,9 +49,9 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
     BuildContext context,
     BaseResponse<LoginData?> response,
   ) async {
-    context.read<AuthBloc>().loadingLogin = false;
-
     if (response.result != 1) {
+      context.read<AuthBloc>().loadingLogin = false;
+
       showAppDialog(
         context,
         type: AppDialogType.error,
@@ -124,6 +124,7 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
     // ── Navigate ──────────────────────────────────────────────────────────
     if (!context.mounted) return;
     context.goNamed(Routes.homeScreen);
+    context.read<AuthBloc>().loadingLogin = false;
   }
 
   // ─────────────────────────────────────────────────────────────────────────
