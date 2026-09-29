@@ -12,7 +12,7 @@ part of 'api_service.dart';
 
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://192.168.1.253:1313/';
+    baseUrl ??= 'https://restaurantback.erp-apex.com/';
   }
 
   final Dio _dio;

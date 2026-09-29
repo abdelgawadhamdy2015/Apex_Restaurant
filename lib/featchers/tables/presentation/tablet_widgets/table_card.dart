@@ -162,7 +162,7 @@ class _TableCardState extends State<TableCard> {
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
     final isAvailable = widget.table.status == TableStatus.available;
-
+    final isBusy = widget.table.bookingTableInvoiceId != null;
     return BlocListener<TablesBloc, TablesState>(
       listener: (context, state) {
         if (state.status == TablesStatus.success) {
@@ -170,13 +170,15 @@ class _TableCardState extends State<TableCard> {
         }
       },
       child: GestureDetector(
-        onTap: widget.table.status == TableStatus.available
+        onTap: isAvailable
             ? () {
                 if (widget.inCartScreen) {
-                  context.read<CartBloc>().add(
-                    SelectCartTableEvent(table: widget.table),
-                  );
-                  context.pop();
+                  if (!isBusy) {
+                    context.read<CartBloc>().add(
+                      SelectCartTableEvent(table: widget.table),
+                    );
+                    context.pop();
+                  }
                 } else {
                   _isOpen ? _closeMenu() : _openMenu(context);
                 }
@@ -198,9 +200,7 @@ class _TableCardState extends State<TableCard> {
                   height: 10,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: widget.table.status == TableStatus.available
-                        ? Colors.green
-                        : Colors.red,
+                    color: isAvailable && !isBusy ? Colors.green : Colors.red,
                   ),
                 ),
               ),
@@ -219,9 +219,9 @@ class _TableCardState extends State<TableCard> {
                     //     width: 2,
                     //   ),
                     // ),
-                    child: isAvailable
-                        ? Assets.emptyTable.image()
-                        : Assets.filledTable.image(),
+                    child: isBusy
+                        ? Assets.filledTable.image()
+                        : Assets.emptyTable.image(),
                   ),
                   Text(
                     '${lang.table} ${widget.table.arabicName}',
@@ -260,7 +260,7 @@ class _TableCardState extends State<TableCard> {
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
                     ),
                     child: Text(
-                      isAvailable ? lang.available : lang.reserved,
+                      isBusy ? lang.reserved : lang.available,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: isAvailable
                             ? context.appExtraTheme.greenBackground
