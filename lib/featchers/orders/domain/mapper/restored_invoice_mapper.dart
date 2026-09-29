@@ -169,7 +169,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       allAddons.addAll(_mapFlatAddons(flatAdditivesMap[transId]));
 
       double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
-      bool isPercentage = mainItem.itemDiscount?.discountType == 1;
+      bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
 
       orderItems.add(
         OrderItem(

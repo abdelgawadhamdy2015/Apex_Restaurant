@@ -224,9 +224,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                 (d) => d.id == data.deliveryMan?.id,
               )
             : null,
-        selectedPerson: state.persons.firstWhere(
-          (p) => p.id == data.client?.id,
-        ),
+        selectedPerson:
+            // state.persons.isNotEmpty
+            //     ? state.persons.firstWhere((p) => p.id == data.client?.id)
+            data.client,
         selectedDeliveryCompany: selectedDeliveryCompany,
         voucherId: data.voucherId,
         invoiceCode: data.invoiceCode,

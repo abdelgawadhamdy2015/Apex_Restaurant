@@ -51,8 +51,14 @@ abstract final class Assets {
   static const String apexlogo = 'assets/apexlogo.svg';
   static const String checked = 'assets/checked.svg';
   static const String closing = 'assets/closing.svg';
+  static const AssetGenImage emptyTable = AssetGenImage(
+    'assets/emptyTable.png',
+  );
   static const String error = 'assets/error.svg';
   static const String eye = 'assets/eye.svg';
+  static const AssetGenImage filledTable = AssetGenImage(
+    'assets/filledTable.jpg',
+  );
   static const String login = 'assets/login.svg';
   static const String logout = 'assets/logout.svg';
   static const String success = 'assets/success.svg';
@@ -60,14 +66,16 @@ abstract final class Assets {
   static const String shorebird = 'shorebird.yaml';
 
   /// List of all assets
-  static List<String> get values => [
+  static List<dynamic> get values => [
     time,
     alert,
     apexlogo,
     checked,
     closing,
+    emptyTable,
     error,
     eye,
+    filledTable,
     login,
     logout,
     success,

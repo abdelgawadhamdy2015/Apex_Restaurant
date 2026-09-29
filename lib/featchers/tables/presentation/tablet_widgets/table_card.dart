@@ -13,6 +13,7 @@ import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.d
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_add_customer_sheet.dart';
+import 'package:apex_restaurant/gen/assets.gen.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -206,18 +207,21 @@ class _TableCardState extends State<TableCard> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    height: 60,
-                    width: 90,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(spacing.radiusSm),
-                      border: Border.all(
-                        color: isAvailable
-                            ? Colors.blue.shade300
-                            : Colors.purple.shade200,
-                        width: 2,
-                      ),
-                    ),
+                  SizedBox(
+                    height: SizeHelper.height! / 12,
+                    // width: double.infinity,
+                    // decoration: BoxDecoration(
+                    //   borderRadius: BorderRadius.circular(spacing.radiusSm),
+                    //   border: Border.all(
+                    //     color: isAvailable
+                    //         ? Colors.blue.shade300
+                    //         : Colors.purple.shade200,
+                    //     width: 2,
+                    //   ),
+                    // ),
+                    child: isAvailable
+                        ? Assets.emptyTable.image()
+                        : Assets.filledTable.image(),
                   ),
                   Text(
                     '${lang.table} ${widget.table.arabicName}',
