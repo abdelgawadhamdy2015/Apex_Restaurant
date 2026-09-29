@@ -46,6 +46,8 @@ class $ImagesGen {
 }
 
 abstract final class Assets {
+  static const AssetGenImage iconPng = AssetGenImage('assets/Icon.png');
+  static const String iconSvg = 'assets/Icon.svg';
   static const String time = 'assets/Time.svg';
   static const String alert = 'assets/alert.svg';
   static const String apexlogo = 'assets/apexlogo.svg';
@@ -67,6 +69,8 @@ abstract final class Assets {
 
   /// List of all assets
   static List<dynamic> get values => [
+    iconPng,
+    iconSvg,
     time,
     alert,
     apexlogo,
