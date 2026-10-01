@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import '../../../../core/service/api_result.dart';
 import '../../data/model/payment_success_model.dart';
@@ -51,6 +52,9 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     Emitter<PaymentState> emit,
   ) {
     emit(state.copyWith(paidAmount: event.amount));
+    log(
+      'Updated paid amount: ${state.paidAmount} , Remaining amount: ${state.remainingAmount}',
+    );
   }
 
   void _onUpdateReferenceNumber(
@@ -67,6 +71,12 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     final updatedMap = Map<int, double>.from(state.splitAmounts);
     updatedMap[event.paymentMethodId] = event.amount;
     emit(state.copyWith(splitAmounts: updatedMap));
+    add(
+      UpdatePaidAmountEvent(
+        updatedMap.values.fold(0.0, (sum, amount) => sum + amount),
+      ),
+    );
+    log('Updated split amounts: ${state.splitAmounts} , ');
   }
 
   Future<void> _onSubmitPayment(

@@ -254,7 +254,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         // State Flags & Status
         justRestored: true,
         status: CartStatus
-            .pindingSuccess, // Triggers state listeners without breaking UI flow
+            .success, // Triggers state listeners without breaking UI flow
         isLoading: false,
         errorMessage: null,
       ),

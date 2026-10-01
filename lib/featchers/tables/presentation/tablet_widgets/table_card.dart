@@ -42,7 +42,7 @@ class _TableCardState extends State<TableCard> {
   void _openMenu(BuildContext context) {
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(_overlayEntry!);
-    setState(() => _isOpen = true);
+    if (mounted) setState(() => _isOpen = true);
   }
 
   void _closeMenu() {
@@ -116,6 +116,16 @@ class _TableCardState extends State<TableCard> {
                           context.read<CartBloc>().add(
                             ChangeOrderTypeEvent(CartOrderType.DINE_IN),
                           );
+
+                          if (SizeHelper.isMobile) {
+                            context.pushReplacementNamed(Routes.cartScreen);
+                          } else {
+                            context.read<PosBloc>().add(
+                              SelectedNavIndexEvent(
+                                selectedNavIndex: PosBottomNavEnm.menu,
+                              ),
+                            );
+                          }
                         },
                         child: Text(S.of(parentContext).openInvoice),
                       ),
