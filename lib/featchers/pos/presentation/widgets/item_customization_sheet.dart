@@ -232,7 +232,6 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
                         ),
                       ),
                       SizedBox(height: spacing.xl),
-
                       // الخصم الخاص
                       Text(
                         lang.specialDiscount,
