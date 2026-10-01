@@ -448,6 +448,9 @@ class RestoredItem {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
 
   const RestoredItem({
     this.id,
@@ -455,6 +458,9 @@ class RestoredItem {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
   });
 
   factory RestoredItem.fromJson(Map<String, dynamic> json) =>

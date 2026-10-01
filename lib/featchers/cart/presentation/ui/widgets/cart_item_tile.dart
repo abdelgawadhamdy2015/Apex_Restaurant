@@ -16,7 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// A single order item row: image, name, price, size/addons/notes and
 /// quantity controls. Tapping the tile opens the customization sheet.
 class CartItemTile extends StatelessWidget {
-  CartItemTile({super.key, required this.index, required this.item});
+  const CartItemTile({super.key, required this.index, required this.item});
 
   final int index;
   final OrderItem item;

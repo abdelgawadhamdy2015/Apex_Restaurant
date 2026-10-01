@@ -151,7 +151,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         itemCode: '',
         itemNameAr: itemNameAr,
         itemNameEn: itemNameEn,
-        imagePath: mainItem.itemImagePath,
+        imagePath: mainItem.item?.imagePath,
         categoryId: mainItem.item?.categoryId ?? 0,
         defaultPrice: mainItem.price ?? mainItem.item?.price ?? 0.0,
         isOffer: false,

@@ -439,6 +439,9 @@ RestoredItem _$RestoredItemFromJson(Map<String, dynamic> json) => RestoredItem(
   latinName: json['latinName'] as String?,
   price: (json['price'] as num?)?.toDouble(),
   categoryId: (json['categoryId'] as num?)?.toInt(),
+  transactionId: (json['transactionId'] as num?)?.toInt(),
+  parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+  imagePath: json['imagePath'] as String?,
 );
 
 Map<String, dynamic> _$RestoredItemToJson(RestoredItem instance) =>
@@ -448,6 +451,9 @@ Map<String, dynamic> _$RestoredItemToJson(RestoredItem instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
     };
 
 RestoredSize _$RestoredSizeFromJson(Map<String, dynamic> json) => RestoredSize(
