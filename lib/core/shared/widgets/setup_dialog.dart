@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
@@ -484,7 +486,7 @@ void showLogOutDialogState(
       context.read<CartBloc>().add(ClearCartEvent());
       context.read<PosBloc>().add(LogOutEvent());
       context.pushReplacementNamed(Routes.loginScreen);
-
+      log(" not catch ");
       mySignalRService.stopConnection();
     },
   );

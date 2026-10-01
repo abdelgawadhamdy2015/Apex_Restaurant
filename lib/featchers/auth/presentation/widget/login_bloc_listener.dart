@@ -123,8 +123,8 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
 
     // ── Navigate ──────────────────────────────────────────────────────────
     if (!context.mounted) return;
-    context.goNamed(Routes.homeScreen);
-    context.read<AuthBloc>().loadingLogin = false;
+    context.pushReplacementNamed(Routes.homeScreen);
+    // context.read<AuthBloc>().loadingLogin = false;
   }
 
   // ─────────────────────────────────────────────────────────────────────────

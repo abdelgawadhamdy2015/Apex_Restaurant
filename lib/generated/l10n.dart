@@ -3972,6 +3972,16 @@ class S {
     );
   }
 
+  /// `Discount applied ({value} SAR)`
+  String discountApplied(Object value) {
+    return Intl.message(
+      'Discount applied ($value SAR)',
+      name: 'discountApplied',
+      desc: '',
+      args: [value],
+    );
+  }
+
   /// `Invoice returned successfully`
   String get invoiceReturnedSuccessfully {
     return Intl.message(

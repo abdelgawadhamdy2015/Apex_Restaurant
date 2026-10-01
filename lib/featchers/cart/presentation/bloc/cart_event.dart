@@ -204,6 +204,13 @@ class ClearVoucherDiscountEvent extends CartEvent {
   List<Object?> get props => [];
 }
 
+class ClearDiscountEvent extends CartEvent {
+  const ClearDiscountEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class AddOrderItemToCartEvent extends CartEvent {
   final OrderItem item;
   const AddOrderItemToCartEvent(this.item);

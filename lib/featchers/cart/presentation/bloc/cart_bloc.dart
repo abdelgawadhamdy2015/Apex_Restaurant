@@ -59,6 +59,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         state.copyWith(voucherData: null, clearVoucherDiscountValue: true),
       ),
     );
+    on<ClearDiscountEvent>(
+      (event, emit) => emit(
+        state.copyWith(
+          restaurantPosDiscountRequest: null,
+          clearRestaurantPosDiscountRequest: true,
+          discountAmount: 0,
+        ),
+      ),
+    );
     on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
       emit(state.copyWith(settingsModel: event.settings));

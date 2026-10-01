@@ -502,6 +502,7 @@
     "discount": "الخصم",
     "selectFloor": "اختر الطابق",
     "voucherApplied": "تم تطبيق القسيمة ({value} ريال)",
+    "discountApplied": "تم تطبيق الخصم ({value} ريال)",
     "invoiceReturnedSuccessfully": "تم إرتجاع الفاتورة بنجاح",
     "custodyLogTitle": "سجل الحركات",
     "withdrawalsFilter": "السحوبات",

@@ -45,7 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         success: (loginResponse) async {
           emit(AuthState.success(loginResponse));
 
-          loadingLogin = false;
+          //loadingLogin = false;
         },
         failure: (error) async {
           emit(

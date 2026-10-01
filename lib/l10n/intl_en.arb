@@ -502,6 +502,7 @@
     "discount": "Discount",
     "selectFloor": "Select Floor",
     "voucherApplied": "Voucher applied ({value} SAR)",
+    "discountApplied": "Discount applied ({value} SAR)",
     "invoiceReturnedSuccessfully": "Invoice returned successfully",
     "custodyLogTitle": "Custody Log",
     "withdrawalsFilter": "Withdrawals",
