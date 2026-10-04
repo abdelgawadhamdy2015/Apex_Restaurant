@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/cashier_custody_screen.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/returns_screen.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
-import '../../../../core/shared/widgets/setup_dialog.dart';
 import '../../../../generated/l10n.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
@@ -238,7 +238,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
         icon: Icons.pause_circle_outline,
         iconBgColor: colorScheme.primary.withOpacity(.2),
         iconColor: colorScheme.secondaryContainer,
-        onTap: () => _showPauseSessionDialog(context),
+        onTap: () => showPauseSessionDialogState(context), // ← changed
       ),
       _MoreCardData(
         title: lang.closeSession,
