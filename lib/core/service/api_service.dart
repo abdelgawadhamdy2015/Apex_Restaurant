@@ -167,7 +167,7 @@ abstract class ApiService {
 
   @POST(ApiConstants.editReserveFoodTable)
   Future<BaseResponse<dynamic>> editReserveFoodTable(
-    @Body() EditReserveFoodTableRequest request,
+    @Body() ReserveFoodTableRequest request,
   );
 
   @POST(ApiConstants.saveRestaurantPosInvoice)

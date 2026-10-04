@@ -5,8 +5,9 @@ part 'get_reservations_request.g.dart';
 
 @JsonSerializable()
 class GetReservationRequest extends BaseRequest {
-  final String? foodTableName;
-  final String? customerName;
+  final String? foodTableId;
+  @JsonKey(name: 'CustomerId')
+  final String? customerId;
 
   @JsonKey(name: 'datefrom')
   final String? dateFrom;
@@ -17,8 +18,8 @@ class GetReservationRequest extends BaseRequest {
   const GetReservationRequest({
     super.pageNumber,
     super.pageSize,
-    this.foodTableName,
-    this.customerName,
+    this.foodTableId,
+    this.customerId,
     this.dateFrom,
     this.dateTo,
     this.status,
@@ -33,8 +34,8 @@ class GetReservationRequest extends BaseRequest {
   List<Object?> get props => [
     pageNumber,
     pageSize,
-    foodTableName,
-    customerName,
+    foodTableId,
+    customerId,
     dateFrom,
     dateTo,
     status,

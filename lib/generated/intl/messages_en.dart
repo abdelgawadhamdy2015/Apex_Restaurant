@@ -330,6 +330,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "duration": MessageLookupByLibrary.simpleMessage("Duration"),
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editCustomer": MessageLookupByLibrary.simpleMessage("Edit Customer"),
+    "editReservation": MessageLookupByLibrary.simpleMessage("Edit Reservation"),
     "email": MessageLookupByLibrary.simpleMessage(" Email"),
     "emailNotFound": MessageLookupByLibrary.simpleMessage(
       "Email address not found. Please try again.",
@@ -681,6 +682,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(
       "Reservation added successfully",
     ),
+    "reservationUpdateSuccess": MessageLookupByLibrary.simpleMessage(
+      "Reservation updated successfully",
+    ),
     "reservations": MessageLookupByLibrary.simpleMessage("Reservations"),
     "reserved": MessageLookupByLibrary.simpleMessage("Reserved"),
     "restMinutes": MessageLookupByLibrary.simpleMessage("Rest 60 minutes"),
@@ -702,6 +706,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveAndOpenShift": MessageLookupByLibrary.simpleMessage(
       "Save and Open Shift",
     ),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("Save Changes"),
     "saveFailed": MessageLookupByLibrary.simpleMessage(
       "Failed to save. Please try again.",
     ),

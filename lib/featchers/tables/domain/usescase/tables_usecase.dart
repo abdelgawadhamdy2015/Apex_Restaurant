@@ -36,6 +36,18 @@ class CreateReservationUseCase {
   }
 }
 
+class EditReservationUseCase {
+  final TablesRepository repository;
+
+  EditReservationUseCase(this.repository);
+
+  Future<ApiResult<BaseResponse<dynamic>>> call(
+    ReserveFoodTableRequest reservation,
+  ) async {
+    return await repository.editReservation(reservation);
+  }
+}
+
 class CancelReservationUseCase {
   final TablesRepository repository;
 

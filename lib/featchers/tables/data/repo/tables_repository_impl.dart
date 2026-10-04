@@ -13,7 +13,6 @@ import '../models/get_table_request.dart';
 import '../models/reservation_requests.dart';
 import '../../domain/entities/floor_entity.dart';
 import '../../domain/entities/reservation_data_entity.dart';
-import '../../domain/entities/reservation_entity.dart';
 import '../../domain/entities/table_entity.dart';
 import '../../domain/repo/tables_repository.dart';
 
@@ -66,19 +65,9 @@ class TablesRepositoryImpl implements TablesRepository {
 
   @override
   Future<ApiResult<BaseResponse<void>>> editReservation(
-    ReservationEntity reservation,
+    ReserveFoodTableRequest request,
   ) async {
     try {
-      final request = EditReserveFoodTableRequest(
-        reservationId: reservation.id,
-        foodTablesId: reservation.tableNumber,
-        customerId: int.tryParse(reservation.customerName) ?? 0,
-        reservationDate: reservation.dateTime.toIso8601String(),
-        reservationPeriod: reservation.durationMinutes * 60,
-        seatsCount: reservation.seatsCount,
-        notes: reservation.notes,
-      );
-
       final response = await remoteDataSource.editReservation(request);
       return ApiResult.success(response);
     } catch (error, s) {

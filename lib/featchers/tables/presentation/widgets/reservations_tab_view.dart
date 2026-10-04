@@ -17,6 +17,7 @@ import 'reservation_status_filters.dart';
 class ReservationsTabView extends StatefulWidget {
   const ReservationsTabView({super.key, required this.personList});
 
+  /// Still used by the search/filter card.
   final List<PosClientModel> personList;
 
   @override
@@ -48,7 +49,6 @@ class _ReservationsTabViewState extends State<ReservationsTabView> {
     // Narrow selectors so this widget only rebuilds when one of these
     // specific fields changes, instead of on every TablesBloc emission.
     final floors = context.select((TablesBloc b) => b.state.floors);
-    final tables = context.select((TablesBloc b) => b.state.tables);
     final reservations = context.select((TablesBloc b) => b.state.reservations);
     final isLoading = context.select(
       (TablesBloc b) => b.state.status == TablesStatus.loading,
@@ -61,13 +61,9 @@ class _ReservationsTabViewState extends State<ReservationsTabView> {
           children: [
             Expanded(
               child: AddReservationButton(
-                onPressed: () {
-                  AddReservationBottomSheet.show(
-                    context,
-                    tables,
-                    widget.personList,
-                  );
-                },
+                // Add mode: no reservation passed. The sheet loads
+                // tables and clients itself from the blocs.
+                onPressed: () => AddReservationBottomSheet.show(context),
               ),
             ),
             SizedBox(width: spacing.sm),
@@ -128,6 +124,8 @@ class _ReservationsTabViewState extends State<ReservationsTabView> {
             child: Center(child: CircularProgressIndicator()),
           )
         else
+          // ReservationCardsList no longer needs personList or tables
+          // (ReservationItemCard doesn't take them anymore).
           ReservationCardsList(reservations: _filterReservations(reservations)),
       ],
     );

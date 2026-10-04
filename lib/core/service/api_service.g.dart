@@ -1012,7 +1012,7 @@ class _ApiService implements ApiService {
 
   @override
   Future<BaseResponse<dynamic>> editReserveFoodTable(
-    EditReserveFoodTableRequest request,
+    ReserveFoodTableRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

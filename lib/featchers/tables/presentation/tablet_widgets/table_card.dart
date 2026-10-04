@@ -84,11 +84,7 @@ class _TableCardState extends State<TableCard> {
                           onPressed: () {
                             _closeMenu();
                             SizeHelper.isMobile
-                                ? AddReservationBottomSheet.show(
-                                    parentContext,
-                                    state.tables,
-                                    context.read<CartBloc>().state.persons,
-                                  )
+                                ? AddReservationBottomSheet.show(parentContext)
                                 : TabletAddReservationBottomSheet.show(
                                     parentContext,
                                     state.tables,

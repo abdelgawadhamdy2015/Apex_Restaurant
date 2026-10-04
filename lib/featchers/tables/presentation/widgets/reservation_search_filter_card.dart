@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/shared/widgets/date_text_field.dart';
@@ -92,11 +96,11 @@ class _ReservationSearchFilterCardState
     _pickDate(_toDateController, firstDate: fromDate);
   }
 
-  // Selecting a floor resets the table choice and re-fetches the tables
-  // that belong to that floor -- the table dropdown below is populated from
-  // TablesBloc.state.tables, so this is what drives the cascade.
   void _onFloorSelected(FloorEntity? floor) {
     if (floor == null) return;
+    context.read<TablesBloc>().add(
+      SelectTableEvent(tableEntity: null, clearSelection: true),
+    );
     context.read<TablesBloc>().add(SelectFloorEvent(floorEntity: floor));
     context.read<TablesBloc>().add(
       FetchTablesEvent(
@@ -129,15 +133,17 @@ class _ReservationSearchFilterCardState
     }
 
     final selectedTable = context.read<TablesBloc>().state.selectedTable;
-
+    log(
+      'ReservationSearchFilterCard: onSearchPressed: selectedTable=$selectedTable',
+    );
     widget.onSearch(
       GetReservationRequest(
         pageNumber: 1,
         pageSize: 20,
         dateFrom: _fromDateController.text,
         dateTo: _toDateController.text,
-        customerName: _selectedClient?.arabicName,
-        foodTableName: selectedTable?.arabicName,
+        customerId: _selectedClient?.id.toString(),
+        foodTableId: selectedTable?.id,
       ),
     );
   }
@@ -156,9 +162,6 @@ class _ReservationSearchFilterCardState
       (TablesBloc b) => b.state.selectedFloor,
     );
     final tables = context.select((TablesBloc b) => b.state.tables);
-    final selectedTable = context.select(
-      (TablesBloc b) => b.state.selectedTable,
-    );
 
     return Container(
       padding: EdgeInsets.all(spacing.xxs),
@@ -196,30 +199,74 @@ class _ReservationSearchFilterCardState
               ),
               SizedBox(width: spacing.xxs),
 
-              Expanded(
-                child: DropdownButtonFormField<TableEntity?>(
-                  initialValue: selectedTable,
-                  decoration: InputDecoration(
-                    labelText: l10n.table,
-                    fillColor: theme.colorScheme.surface,
-                  ),
-                  items: [
-                    DropdownMenuItem<TableEntity?>(
-                      value: null,
-                      child: Text(l10n.selectTable),
+              BlocBuilder<TablesBloc, TablesState>(
+                builder: (context, state) {
+                  return Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final uniqueTables = <String, TableEntity>{};
+
+                        for (final table in tables) {
+                          final id = table.id;
+
+                          if (id != null && id.isNotEmpty) {
+                            uniqueTables[id] = table;
+                          }
+                        }
+
+                        final dropdownTables = uniqueTables.values.toList();
+
+                        final selectedTableId = state.selectedTable?.id;
+
+                        final validSelectedTableId =
+                            selectedTableId != null &&
+                                uniqueTables.containsKey(selectedTableId)
+                            ? selectedTableId
+                            : null;
+
+                        return DropdownButtonFormField<String?>(
+                          key: ValueKey(
+                            'table_${state.selectedFloor?.id}_${dropdownTables.map((e) => e.id).join("_")}',
+                          ),
+                          initialValue: validSelectedTableId,
+                          decoration: InputDecoration(
+                            labelText: l10n.table,
+                            fillColor: theme.colorScheme.surface,
+                          ),
+                          items: [
+                            DropdownMenuItem<String?>(
+                              value: null,
+                              child: Text(l10n.selectTable),
+                            ),
+                            ...dropdownTables.map(
+                              (table) => DropdownMenuItem<String?>(
+                                value: table.id,
+                                child: Text(
+                                  table.arabicName ?? '',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
+                          onChanged: state.status == TablesStatus.loading
+                              ? null
+                              : (tableId) {
+                                  final selectedTable = tableId == null
+                                      ? null
+                                      : uniqueTables[tableId];
+
+                                  context.read<TablesBloc>().add(
+                                    SelectTableEvent(
+                                      tableEntity: selectedTable,
+                                      clearSelection: selectedTable == null,
+                                    ),
+                                  );
+                                },
+                        );
+                      },
                     ),
-                    ...tables.map(
-                      (t) => DropdownMenuItem<TableEntity?>(
-                        value: t,
-                        child: Text(
-                          t.arabicName ?? "",
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ],
-                  onChanged: _onTableSelected,
-                ),
+                  );
+                },
               ),
             ],
           ),

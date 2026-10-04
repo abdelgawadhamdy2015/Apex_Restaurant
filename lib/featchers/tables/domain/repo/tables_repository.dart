@@ -10,7 +10,6 @@ import '../../data/models/get_table_request.dart';
 import '../../data/models/reservation_requests.dart';
 import '../entities/floor_entity.dart';
 import '../entities/reservation_data_entity.dart';
-import '../entities/reservation_entity.dart';
 import '../entities/table_entity.dart';
 
 abstract class TablesRepository {
@@ -21,7 +20,7 @@ abstract class TablesRepository {
     ReserveFoodTableRequest reservation,
   );
   Future<ApiResult<BaseResponse<dynamic>>> editReservation(
-    ReservationEntity reservation,
+    ReserveFoodTableRequest reservation,
   );
   Future<ApiResult<BaseResponse<dynamic>>> cancelReservation(String id);
   Future<ApiResult<BaseResponse<List<FloorEntity>?>>> getFloors({

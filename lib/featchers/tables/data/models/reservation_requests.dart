@@ -16,7 +16,8 @@ class ReserveFoodTableRequest {
   final int? seatsCount;
   @JsonKey(name: 'Notes')
   final String? notes;
-
+  @JsonKey(name: 'ReservationID')
+  final String? reservationId;
   const ReserveFoodTableRequest({
     this.foodTablesId,
     this.customerId,
@@ -24,6 +25,7 @@ class ReserveFoodTableRequest {
     this.reservationPeriod,
     this.seatsCount,
     this.notes,
+    this.reservationId,
   });
 
   factory ReserveFoodTableRequest.fromJson(Map<String, dynamic> json) =>
@@ -43,37 +45,4 @@ class CancelReserveFoodTableRequest {
       _$CancelReserveFoodTableRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$CancelReserveFoodTableRequestToJson(this);
-}
-
-@JsonSerializable()
-class EditReserveFoodTableRequest {
-  @JsonKey(name: 'foodTablesID')
-  final String? foodTablesId;
-  @JsonKey(name: 'CustomerID')
-  final int? customerId;
-  @JsonKey(name: 'ReservationDate')
-  final String? reservationDate;
-  @JsonKey(name: 'ReservationPeriod')
-  final int? reservationPeriod;
-  @JsonKey(name: 'SeatsCount')
-  final int? seatsCount;
-  @JsonKey(name: 'Notes')
-  final String? notes;
-  @JsonKey(name: 'ReservationID')
-  final String? reservationId;
-
-  const EditReserveFoodTableRequest({
-    this.foodTablesId,
-    this.customerId,
-    this.reservationDate,
-    this.reservationPeriod,
-    this.seatsCount,
-    this.notes,
-    this.reservationId,
-  });
-
-  factory EditReserveFoodTableRequest.fromJson(Map<String, dynamic> json) =>
-      _$EditReserveFoodTableRequestFromJson(json);
-
-  Map<String, dynamic> toJson() => _$EditReserveFoodTableRequestToJson(this);
 }

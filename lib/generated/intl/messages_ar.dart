@@ -310,6 +310,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "duration": MessageLookupByLibrary.simpleMessage("المدة"),
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "editCustomer": MessageLookupByLibrary.simpleMessage("تعديل عميل"),
+    "editReservation": MessageLookupByLibrary.simpleMessage("تعديل الحجز"),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
     "emailNotFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على عنوان البريد الإلكتروني. يرجى المحاولة مرة أخرى.",
@@ -651,6 +652,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(
       "تم إضافة الحجز بنجاح",
     ),
+    "reservationUpdateSuccess": MessageLookupByLibrary.simpleMessage(
+      "تم تحديث الحجز بنجاح",
+    ),
     "reservations": MessageLookupByLibrary.simpleMessage("الحجوزات"),
     "reserved": MessageLookupByLibrary.simpleMessage("محجوز"),
     "restMinutes": MessageLookupByLibrary.simpleMessage("راحة 60 دقيقة"),
@@ -670,6 +674,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "saveAndOpenShift": MessageLookupByLibrary.simpleMessage(
       "حفظ وفتح الوردية",
     ),
+    "saveChanges": MessageLookupByLibrary.simpleMessage("حفظ التغييرات"),
     "saveFailed": MessageLookupByLibrary.simpleMessage(
       "فشل الحفظ. يرجى المحاولة مرة أخرى.",
     ),

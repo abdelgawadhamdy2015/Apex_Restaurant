@@ -525,5 +525,8 @@
     "changeTable": "تغيير الطاولة",
     "changeTableConfirmation": "أنت على وشك تغيير الطاولة للفاتورة المستعادة، هل أنت متأكد؟",
     "tableForOrderChanged": "تم تغيير الطاولة للفاتورة {orderId} بنجاح",
-    "changeTableError": "حدث خطأ أثناء تغيير الطاولة، يرجى المحاولة"
+    "changeTableError": "حدث خطأ أثناء تغيير الطاولة، يرجى المحاولة",
+    "reservationUpdateSuccess": "تم تحديث الحجز بنجاح",
+    "saveChanges": "حفظ التغييرات",
+    "editReservation": "تعديل الحجز"
 }

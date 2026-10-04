@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/tables/presentation/widgets/add_reservation_bottom_sheet.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../domain/entities/reservation_entity.dart';
 import '../bloc/tables_bloc.dart';
@@ -77,7 +79,11 @@ class ReservationItemCard extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  // Edit: the sheet loads tables/clients itself from the blocs
+                  onPressed: () => AddReservationBottomSheet.show(
+                    context,
+                    reservation: reservation,
+                  ),
                   icon: Icon(
                     Icons.edit_outlined,
                     color: theme.colorScheme.primary,
@@ -97,7 +103,6 @@ class ReservationItemCard extends StatelessWidget {
                 ),
               ),
               SizedBox(width: spacing.sm),
-
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: isCancelled
@@ -198,7 +203,6 @@ class _TableInfo extends StatelessWidget {
           ),
         ),
         SizedBox(width: spacing.xs),
-
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -1,9 +1,16 @@
+import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
 import '../../../../core/shared/widgets/date_text_field.dart';
 import '../../../cart/data/models/pos_client_model.dart';
 import '../../data/models/reservation_requests.dart';
+import '../../domain/entities/reservation_entity.dart';
 import '../../domain/entities/table_entity.dart';
 import '../bloc/tables_bloc.dart';
 import '../bloc/tables_event.dart';
@@ -13,20 +20,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddReservationBottomSheet extends StatefulWidget {
-  const AddReservationBottomSheet({
-    super.key,
-    required this.tables,
-    required this.personList,
-  });
+  const AddReservationBottomSheet({super.key, this.reservation});
 
-  final List<TableEntity> tables;
-  final List<PosClientModel> personList;
+  /// null     -> add mode
+  /// non-null -> edit mode (form is prefilled and saved as an update)
+  final ReservationEntity? reservation;
+
+  bool get isEdit => reservation != null;
 
   static Future<void> show(
-    BuildContext context,
-    List<TableEntity> tables,
-    List<PosClientModel> personList,
-  ) {
+    BuildContext context, {
+    ReservationEntity? reservation,
+  }) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
@@ -39,12 +44,12 @@ class AddReservationBottomSheet extends StatefulWidget {
           top: Radius.circular(spacing.radiusLg),
         ),
       ),
-      builder: (sheetContext) => BlocProvider.value(
-        value: context.read<TablesBloc>(),
-        child: AddReservationBottomSheet(
-          tables: tables,
-          personList: personList,
-        ),
+      builder: (_) => MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: context.read<TablesBloc>()),
+          BlocProvider.value(value: context.read<CartBloc>()),
+        ],
+        child: AddReservationBottomSheet(reservation: reservation),
       ),
     );
   }
@@ -67,13 +72,52 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   TimeOfDay? _selectedTime;
   PosClientModel? _selectedPerson;
 
+  /// Autocomplete only reads its initial value once, so we change this key
+  /// to force a rebuild when the customer is prefilled after loading.
+  Key _customerKey = const ValueKey('customer');
+
   @override
   void initState() {
     super.initState();
+    final tablesBloc = context.read<TablesBloc>();
+    final cartBloc = context.read<CartBloc>();
+
+    // Load data only if it isn't already available.
+    if (tablesBloc.state.tables.isEmpty) {
+      tablesBloc.add(
+        FetchTablesEvent(GetTablesRequest(pageNumber: 1, pageSize: 1000)),
+      );
+    }
+    if (cartBloc.state.persons.isEmpty) {
+      cartBloc.add(
+        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
+      );
+    }
+
+    // Edit mode: prefill the plain fields right away.
+    final r = widget.reservation;
+    if (r != null) {
+      final dt = r.dateTime;
+      _selectedDate = dt;
+      _selectedTime = TimeOfDay.fromDateTime(dt);
+      _dateController.text = _formatDate(dt);
+      _seatsController.text = r.seatsCount.toString();
+      _periodController.text = r.durationMinutes.toString();
+      _notesController.text = r.notes ?? '';
+
+      // time text needs a context -> set after first frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() => _timeController.text = _selectedTime!.format(context));
+        }
+      });
+    }
+
+    // In case the data is already loaded.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.tables.isNotEmpty) {
-        setState(() => _selectedTable = widget.tables.first);
-      }
+      if (!mounted) return;
+      _syncTable(tablesBloc.state.tables);
+      _syncPerson(cartBloc.state.persons);
     });
   }
 
@@ -88,6 +132,51 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     super.dispose();
   }
 
+  // ---------------------------------------------------------------------------
+  // Sync selections once data is loaded
+  // ---------------------------------------------------------------------------
+
+  void _syncTable(List<TableEntity> tables) {
+    if (tables.isEmpty || _selectedTable != null) return;
+
+    TableEntity? match;
+    final r = widget.reservation;
+    if (r != null) {
+      for (final t in tables) {
+        if (t.id == r.tableId) {
+          // ASSUMED: the reservation's table id field is `tableId`
+          match = t;
+          break;
+        }
+      }
+    }
+    setState(() => _selectedTable = match ?? tables.first);
+  }
+
+  void _syncPerson(List<PosClientModel> persons) {
+    final r = widget.reservation;
+    if (r == null || _selectedPerson != null || persons.isEmpty) return;
+
+    for (final p in persons) {
+      if (p.id.toString() == r.customerId.toString()) {
+        setState(() {
+          _selectedPerson = p;
+          _customerNameController.text = p.arabicName ?? '';
+          _customerKey = ValueKey('customer-${p.id}');
+        });
+        return;
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Pickers
+  // ---------------------------------------------------------------------------
+
+  String _formatDate(DateTime d) =>
+      '${d.year}-${d.month.toString().padLeft(2, '0')}-'
+      '${d.day.toString().padLeft(2, '0')}';
+
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -99,9 +188,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
 
     setState(() {
       _selectedDate = picked;
-      _dateController.text =
-          '${picked.year}-${picked.month.toString().padLeft(2, '0')}-'
-          '${picked.day.toString().padLeft(2, '0')}';
+      _dateController.text = _formatDate(picked);
     });
   }
 
@@ -118,12 +205,16 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     });
   }
 
+  // ---------------------------------------------------------------------------
+  // Submit
+  // ---------------------------------------------------------------------------
+
   void _submit(S lang) {
     if (_selectedDate == null || _selectedTime == null) {
       HelperMethods.showSnackBar(
         context: context,
         message: lang.selectDateAndTimeError,
-        isError: false,
+        isError: true,
       );
       return;
     }
@@ -136,7 +227,8 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
       _selectedTime!.minute,
     );
 
-    final newReservation = ReserveFoodTableRequest(
+    final request = ReserveFoodTableRequest(
+      reservationId: widget.reservation?.id,
       foodTablesId: _selectedTable?.id,
       customerId: _selectedPerson?.id,
       reservationDate: reservationDateTime.toIso8601String(),
@@ -144,8 +236,17 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
       reservationPeriod: int.tryParse(_periodController.text) ?? 60,
     );
 
-    context.read<TablesBloc>().add(AddReservationEvent(newReservation));
+    final bloc = context.read<TablesBloc>();
+    if (widget.isEdit) {
+      bloc.add(EditReservationEvent(request));
+    } else {
+      bloc.add(AddReservationEvent(request));
+    }
   }
+
+  // ---------------------------------------------------------------------------
+  // UI helpers
+  // ---------------------------------------------------------------------------
 
   InputDecoration _decoration(ThemeData theme, String hint) {
     return InputDecoration(
@@ -170,15 +271,22 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     );
   }
 
-  Widget _buildCustomerField(ThemeData theme, dynamic spacing, S lang) {
+  Widget _buildCustomerField(
+    ThemeData theme,
+    dynamic spacing,
+    S lang,
+    List<PosClientModel> persons,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Autocomplete<PosClientModel>(
+          key: _customerKey,
+          initialValue: TextEditingValue(text: _customerNameController.text),
           displayStringForOption: (person) => person.arabicName ?? "",
           optionsBuilder: (textEditingValue) {
             final query = textEditingValue.text.toLowerCase();
-            if (query.isEmpty) return widget.personList;
-            return widget.personList.where(
+            if (query.isEmpty) return persons;
+            return persons.where(
               (person) =>
                   (person.arabicName ?? "").toLowerCase().contains(query),
             );
@@ -188,12 +296,17 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
             _customerNameController.text = selection.arabicName ?? "";
           },
           fieldViewBuilder: (context, textController, focusNode, _) {
-            textController.addListener(() {
-              _customerNameController.text = textController.text;
-            });
             return TextField(
               controller: textController,
               focusNode: focusNode,
+              onChanged: (text) {
+                _customerNameController.text = text;
+                // typed text no longer matches the picked person -> unlink
+                if (_selectedPerson != null &&
+                    _selectedPerson!.arabicName != text) {
+                  _selectedPerson = null;
+                }
+              },
               decoration: _decoration(
                 theme,
                 lang.enterCustomerNameHint,
@@ -242,11 +355,17 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     );
   }
 
-  Widget _buildTableDropdown(ThemeData theme, S lang) {
+  Widget _buildTableDropdown(
+    ThemeData theme,
+    S lang,
+    List<TableEntity> tables,
+  ) {
     return DropdownButtonFormField<TableEntity>(
+      // initialValue is read once -> rebuild when data/selection changes
+      key: ValueKey('table-${tables.length}-${_selectedTable?.id}'),
       initialValue: _selectedTable,
       decoration: _decoration(theme, lang.selectTableHint),
-      items: widget.tables
+      items: tables
           .map(
             (t) => DropdownMenuItem(
               value: t,
@@ -257,7 +376,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
             ),
           )
           .toList(),
-      onChanged: (val) => setState(() => _selectedTable = val),
+      onChanged: null, // (val) => setState(() => _selectedTable = val),
     );
   }
 
@@ -290,7 +409,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                         size: iconSizes.sm,
                       ),
                 label: Text(
-                  lang.confirmReservation,
+                  widget.isEdit ? lang.saveChanges : lang.confirmReservation,
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -308,7 +427,6 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
           ),
         ),
         SizedBox(width: spacing.sm),
-
         Expanded(
           child: ElevatedButton(
             onPressed: () => Navigator.pop(context),
@@ -326,6 +444,10 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -333,26 +455,47 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
 
-    return BlocListener<TablesBloc, TablesState>(
-      listenWhen: (previous, current) =>
-          previous.status != current.status ||
-          previous.errorMessage != current.errorMessage,
-      listener: (context, state) {
-        if (state.status == TablesStatus.success) {
-          Navigator.pop(context);
-          HelperMethods.showSnackBar(
-            context: context,
-            message: lang.reservationSuccess,
-            isError: false,
-          );
-        } else if (state.status == TablesStatus.failure) {
-          HelperMethods.showSnackBar(
-            context: context,
-            message: state.errorMessage ?? lang.unexpectedError,
-            isError: true,
-          );
-        }
-      },
+    // Rebuild whenever the loaded lists change.
+    final tables = context.select((TablesBloc b) => b.state.tables);
+    final persons = context.select((CartBloc b) => b.state.persons);
+
+    return MultiBlocListener(
+      listeners: [
+        // Tables loaded -> pick the right table
+        BlocListener<TablesBloc, TablesState>(
+          listenWhen: (p, c) => p.tables != c.tables,
+          listener: (_, state) => _syncTable(state.tables),
+        ),
+        // Clients loaded -> prefill the customer (edit mode)
+        BlocListener<CartBloc, CartState>(
+          listenWhen: (p, c) => p.persons != c.persons,
+          listener: (_, state) => _syncPerson(state.persons),
+        ),
+        // Reservation result
+        BlocListener<TablesBloc, TablesState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status ||
+              previous.errorMessage != current.errorMessage,
+          listener: (context, state) {
+            if (state.status == TablesStatus.reservationSuccess) {
+              Navigator.pop(context);
+              HelperMethods.showSnackBar(
+                context: context,
+                message: widget.isEdit
+                    ? lang.reservationUpdateSuccess
+                    : lang.reservationSuccess,
+                isError: false,
+              );
+            } else if (state.status == TablesStatus.failure) {
+              HelperMethods.showSnackBar(
+                context: context,
+                message: state.errorMessage ?? lang.unexpectedError,
+                isError: true,
+              );
+            }
+          },
+        ),
+      ],
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(
@@ -365,20 +508,24 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomAppBar(title: lang.addNewReservation),
+              CustomAppBar(
+                title: widget.isEdit
+                    ? lang.editReservation
+                    : lang.addNewReservation,
+              ),
               SizedBox(height: spacing.md),
               _labeledField(
                 theme: theme,
                 spacing: spacing,
                 label: lang.customerName,
-                field: _buildCustomerField(theme, spacing, lang),
+                field: _buildCustomerField(theme, spacing, lang, persons),
               ),
               SizedBox(height: spacing.sm),
               _labeledField(
                 theme: theme,
                 spacing: spacing,
                 label: lang.table,
-                field: _buildTableDropdown(theme, lang),
+                field: _buildTableDropdown(theme, lang, tables),
               ),
               SizedBox(height: spacing.sm),
               DateTextField(

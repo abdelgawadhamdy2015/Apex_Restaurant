@@ -272,6 +272,9 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetPindingTableInvoiceUseCase(getIt<TablesRepository>()),
   );
+  getIt.registerLazySingleton(
+    () => EditReservationUseCase(getIt<TablesRepository>()),
+  );
 
   // More Actions
   getIt.registerLazySingleton(
@@ -384,6 +387,7 @@ Future<void> setupGetIt() async {
       cancelReservationUseCase: getIt<CancelReservationUseCase>(),
       getFloorsUseCase: getIt<GetFloorsUseCase>(),
       getTablesUseCase: getIt<GetTablesUseCase>(),
+      editReservationUseCase: getIt<EditReservationUseCase>(),
     ),
   );
 

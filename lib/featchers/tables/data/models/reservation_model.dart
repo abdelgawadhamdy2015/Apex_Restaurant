@@ -70,7 +70,7 @@ class ReservationModel {
       case 2:
         mappedStatus = ReservationStatus.confirmed;
         break;
-      case 3:
+      case -1:
         mappedStatus = ReservationStatus.cancelled;
         break;
       case 1:
@@ -82,12 +82,14 @@ class ReservationModel {
     return ReservationEntity(
       id: id ?? '',
       tableNumber: (isAr ? tableNameAr : tableNameEn) ?? '',
+      tableId: tableId ?? '',
       customerName: (isAr ? customerNameAr : customerNameEn) ?? '',
       dateTime: parsedDate,
       seatsCount: seatsCount ?? 1,
       durationMinutes: duration ?? 30,
       status: mappedStatus,
       notes: notes ?? '',
+      customerId: customerId ?? '',
     );
   }
 }

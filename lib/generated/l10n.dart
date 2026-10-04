@@ -4181,6 +4181,36 @@ class S {
       args: [],
     );
   }
+
+  /// `Reservation updated successfully`
+  String get reservationUpdateSuccess {
+    return Intl.message(
+      'Reservation updated successfully',
+      name: 'reservationUpdateSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save Changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Reservation`
+  String get editReservation {
+    return Intl.message(
+      'Edit Reservation',
+      name: 'editReservation',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
