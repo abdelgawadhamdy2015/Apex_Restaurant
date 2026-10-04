@@ -4141,6 +4141,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Change Table`
+  String get changeTable {
+    return Intl.message(
+      'Change Table',
+      name: 'changeTable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You are about to change the table for the restored invoice, are you sure?`
+  String get changeTableConfirmation {
+    return Intl.message(
+      'You are about to change the table for the restored invoice, are you sure?',
+      name: 'changeTableConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Table for the order {orderId} has been changed successfully`
+  String tableForOrderChanged(Object orderId) {
+    return Intl.message(
+      'Table for the order $orderId has been changed successfully',
+      name: 'tableForOrderChanged',
+      desc: '',
+      args: [orderId],
+    );
+  }
+
+  /// `An error occurred while changing the table, please try again`
+  String get changeTableError {
+    return Intl.message(
+      'An error occurred while changing the table, please try again',
+      name: 'changeTableError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

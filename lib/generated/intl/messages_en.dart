@@ -56,9 +56,12 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(size) => "Size: ${size}";
 
-  static String m17(vat) => "VAT : % ${vat} ";
+  static String m17(orderId) =>
+      "Table for the order ${orderId} has been changed successfully";
 
-  static String m18(value) => "Voucher applied (${value} SAR)";
+  static String m18(vat) => "VAT : % ${vat} ";
+
+  static String m19(value) => "Voucher applied (${value} SAR)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -214,6 +217,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "cashCustomer": MessageLookupByLibrary.simpleMessage("Walk-in Customer"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("Cashier Custody"),
     "changeAddress": MessageLookupByLibrary.simpleMessage("Change address"),
+    "changeTable": MessageLookupByLibrary.simpleMessage("Change Table"),
+    "changeTableConfirmation": MessageLookupByLibrary.simpleMessage(
+      "You are about to change the table for the restored invoice, are you sure?",
+    ),
+    "changeTableError": MessageLookupByLibrary.simpleMessage(
+      "An error occurred while changing the table, please try again",
+    ),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "Please check your email for password reset instructions.",
     ),
@@ -780,6 +790,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "tableArrangement": MessageLookupByLibrary.simpleMessage(
       "Table Arrangement",
     ),
+    "tableForOrderChanged": m17,
     "tables": MessageLookupByLibrary.simpleMessage("Tables"),
     "takeaway": MessageLookupByLibrary.simpleMessage("Takeaway"),
     "takeawayOrder": MessageLookupByLibrary.simpleMessage("Takeaway "),
@@ -840,7 +851,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Vacations Reports",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("VAT"),
-    "vatPrecentage": m17,
+    "vatPrecentage": m18,
     "verificationFailed": MessageLookupByLibrary.simpleMessage(
       "Verification Failed",
     ),
@@ -851,7 +862,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "visa": MessageLookupByLibrary.simpleMessage("Visa"),
     "voucher": MessageLookupByLibrary.simpleMessage("Voucher"),
-    "voucherApplied": m18,
+    "voucherApplied": m19,
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "Please wait until the current location data is loaded",
     ),

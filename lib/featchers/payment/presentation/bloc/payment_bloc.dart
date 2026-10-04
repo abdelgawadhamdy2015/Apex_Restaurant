@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../data/model/payment_success_model.dart';
 import '../../domain/usecase/process_payment_usecase.dart';
@@ -36,6 +38,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         status: PaymentStatus.initial,
         totalAmount: event.totalAmount,
         paidAmount: event.totalAmount,
+        splitAmounts: {},
       ),
     );
   }
@@ -44,7 +47,17 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     ChangePaymentMethodEvent event,
     Emitter<PaymentState> emit,
   ) {
-    emit(state.copyWith(selectedMethod: event.method));
+    emit(
+      state.copyWith(
+        selectedMethod: event.method,
+        paidAmount: event.method == PaymentMethodType.split
+            ? state.splitAmounts.values.fold(
+                0.0,
+                (sum, amount) => sum! + amount,
+              )
+            : state.totalAmount,
+      ),
+    );
   }
 
   void _onUpdatePaidAmount(

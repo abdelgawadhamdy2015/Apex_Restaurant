@@ -545,5 +545,9 @@
     },
     "justNow": "Just now",
     "deliveryManCustody": "Delivery Men",
-    "deliveryCompanyReceivables": "Delivery Company"
+    "deliveryCompanyReceivables": "Delivery Company",
+    "changeTable": "Change Table",
+    "changeTableConfirmation": "You are about to change the table for the restored invoice, are you sure?",
+    "tableForOrderChanged": "Table for the order {orderId} has been changed successfully",
+    "changeTableError": "An error occurred while changing the table, please try again"
 }

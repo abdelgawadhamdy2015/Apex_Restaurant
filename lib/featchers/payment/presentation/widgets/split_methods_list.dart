@@ -182,7 +182,7 @@ class SplitMethodRow extends StatelessWidget {
     final spacing = context.spacing;
 
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
-
+    final state = context.select((PaymentBloc bloc) => bloc.state);
     final title = isArabic
         ? paymentMethod.arabicName ?? ''
         : paymentMethod.latinName ?? '';
@@ -215,39 +215,59 @@ class SplitMethodRow extends StatelessWidget {
             ),
           ),
 
-          SizedBox(
-            width: 100,
-            child: TextField(
-              decoration: InputDecoration(
-                fillColor: theme.colorScheme.surface,
-                hintText: '0.00',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(spacing.radiusSm),
+          InkWell(
+            onDoubleTap: () {
+              context.read<PaymentBloc>().add(
+                UpdateSplitAmountEvent(
+                  paymentMethodId: paymentMethod.paymentMethodId!,
+                  amount:
+                      state.remainingAmount +
+                      (state.splitAmounts[paymentMethod.paymentMethodId] ??
+                          0.0),
                 ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: spacing.sm,
-                  vertical: spacing.xs,
+              );
+            },
+            child: SizedBox(
+              width: 100,
+              child: TextField(
+                controller: TextEditingController(
+                  text:
+                      state.splitAmounts[paymentMethod.paymentMethodId] != null
+                      ? state.splitAmounts[paymentMethod.paymentMethodId]!
+                            .toStringAsFixed(2)
+                      : '',
                 ),
-              ),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              onChanged: (value) {
-                final amount = double.tryParse(value) ?? 0.0;
-
-                final paymentMethodId = paymentMethod.paymentMethodId;
-
-                if (paymentMethodId == null) {
-                  return;
-                }
-
-                context.read<PaymentBloc>().add(
-                  UpdateSplitAmountEvent(
-                    paymentMethodId: paymentMethodId,
-                    amount: amount,
+                decoration: InputDecoration(
+                  fillColor: theme.colorScheme.surface,
+                  // hintText: '0.00',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(spacing.radiusSm),
                   ),
-                );
-              },
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: spacing.sm,
+                    vertical: spacing.xs,
+                  ),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                onChanged: (value) {
+                  final amount = double.tryParse(value) ?? 0.0;
+
+                  final paymentMethodId = paymentMethod.paymentMethodId;
+
+                  if (paymentMethodId == null) {
+                    return;
+                  }
+
+                  context.read<PaymentBloc>().add(
+                    UpdateSplitAmountEvent(
+                      paymentMethodId: paymentMethodId,
+                      amount: amount,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ],

@@ -56,9 +56,11 @@ class MessageLookup extends MessageLookupByLibrary {
 
   static String m16(size) => "الحجم: ${size}";
 
-  static String m17(vat) => "ضريبة القيمة المضافة : % ${vat} ";
+  static String m17(orderId) => "تم تغيير الطاولة للفاتورة ${orderId} بنجاح";
 
-  static String m18(value) => "تم تطبيق القسيمة (${value} ريال)";
+  static String m18(vat) => "ضريبة القيمة المضافة : % ${vat} ";
+
+  static String m19(value) => "تم تطبيق القسيمة (${value} ريال)";
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
@@ -207,6 +209,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "cashCustomer": MessageLookupByLibrary.simpleMessage("عميل نقدي"),
     "cashierCustody": MessageLookupByLibrary.simpleMessage("عهدة الكاشير"),
     "changeAddress": MessageLookupByLibrary.simpleMessage("تغيير العنوان"),
+    "changeTable": MessageLookupByLibrary.simpleMessage("تغيير الطاولة"),
+    "changeTableConfirmation": MessageLookupByLibrary.simpleMessage(
+      "أنت على وشك تغيير الطاولة للفاتورة المستعادة، هل أنت متأكد؟",
+    ),
+    "changeTableError": MessageLookupByLibrary.simpleMessage(
+      "حدث خطأ أثناء تغيير الطاولة، يرجى المحاولة",
+    ),
     "checkYourEmail": MessageLookupByLibrary.simpleMessage(
       "يرجى التحقق من بريدك الإلكتروني لتعليمات إعادة تعيين كلمة المرور.",
     ),
@@ -743,6 +752,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "systemTime": MessageLookupByLibrary.simpleMessage("توقيت النظام"),
     "table": MessageLookupByLibrary.simpleMessage("طاولة"),
     "tableArrangement": MessageLookupByLibrary.simpleMessage("ترتيب الطاولات"),
+    "tableForOrderChanged": m17,
     "tables": MessageLookupByLibrary.simpleMessage("الطاولات"),
     "takeaway": MessageLookupByLibrary.simpleMessage("سفري"),
     "takeawayOrder": MessageLookupByLibrary.simpleMessage("طلب سفري"),
@@ -801,7 +811,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "تقارير الإجازات",
     ),
     "vat": MessageLookupByLibrary.simpleMessage("ضريبة القيمة المضافة"),
-    "vatPrecentage": m17,
+    "vatPrecentage": m18,
     "verificationFailed": MessageLookupByLibrary.simpleMessage("فشل التحقق"),
     "verified": MessageLookupByLibrary.simpleMessage("تم التحقق"),
     "viewCart": MessageLookupByLibrary.simpleMessage("عرض السلة"),
@@ -810,7 +820,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "visa": MessageLookupByLibrary.simpleMessage("فيزا"),
     "voucher": MessageLookupByLibrary.simpleMessage("قسيمة شراء"),
-    "voucherApplied": m18,
+    "voucherApplied": m19,
     "waitLocation": MessageLookupByLibrary.simpleMessage(
       "يرجى الانتظار حتي يتم تحميل بيانات الموقع الحالى",
     ),

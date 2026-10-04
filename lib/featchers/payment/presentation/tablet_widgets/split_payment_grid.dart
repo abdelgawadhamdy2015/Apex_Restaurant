@@ -82,9 +82,12 @@ class _SplitMethodCell extends StatelessWidget {
                   : () {
                       context.read<PaymentBloc>().add(
                         UpdateSplitAmountEvent(
-                          paymentMethodId: paymentMethodId,
-                          amount: state
-                              .totalAmount, // Set to total amount on double tap
+                          paymentMethodId: paymentMethod.paymentMethodId!,
+                          amount:
+                              state.remainingAmount +
+                              (state.splitAmounts[paymentMethod
+                                      .paymentMethodId] ??
+                                  0.0),
                         ),
                       );
                     },

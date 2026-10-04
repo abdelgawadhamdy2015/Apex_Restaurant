@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
@@ -155,9 +156,7 @@ class _TableCardState extends State<TableCard> {
         ),
       );
       context.read<TablesBloc>().add(const ClearRestoredInvoiceEvent());
-      if (SizeHelper.isMobile) {
-        context.pushNamed(Routes.posScreen);
-      } else {
+      if (SizeHelper.isTablet) {
         context.read<PosBloc>().add(
           SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
         );
@@ -170,6 +169,7 @@ class _TableCardState extends State<TableCard> {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final cartState = context.select((CartBloc b) => b.state);
     final lang = S.of(context);
     final isAvailable = widget.table.status == TableStatus.available;
     final isBusy = widget.table.bookingTableInvoiceId != null;
@@ -188,6 +188,13 @@ class _TableCardState extends State<TableCard> {
                       SelectCartTableEvent(table: widget.table),
                     );
                     context.pop();
+                    HelperMethods.showSnackBar(
+                      context: context,
+                      message: lang.tableForOrderChanged(
+                        cartState.orderNumber ?? 0,
+                      ),
+                      isError: false,
+                    );
                   }
                 } else {
                   _isOpen ? _closeMenu() : _openMenu(context);
@@ -219,16 +226,7 @@ class _TableCardState extends State<TableCard> {
                 children: [
                   SizedBox(
                     height: SizeHelper.height! / 12,
-                    // width: double.infinity,
-                    // decoration: BoxDecoration(
-                    //   borderRadius: BorderRadius.circular(spacing.radiusSm),
-                    //   border: Border.all(
-                    //     color: isAvailable
-                    //         ? Colors.blue.shade300
-                    //         : Colors.purple.shade200,
-                    //     width: 2,
-                    //   ),
-                    // ),
+
                     child: isBusy
                         ? Assets.filledTable.image()
                         : Assets.emptyTable.image(),
