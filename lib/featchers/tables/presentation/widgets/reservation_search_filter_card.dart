@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -133,9 +131,7 @@ class _ReservationSearchFilterCardState
     }
 
     final selectedTable = context.read<TablesBloc>().state.selectedTable;
-    log(
-      'ReservationSearchFilterCard: onSearchPressed: selectedTable=$selectedTable',
-    );
+
     widget.onSearch(
       GetReservationRequest(
         pageNumber: 1,
