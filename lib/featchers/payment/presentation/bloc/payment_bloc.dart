@@ -122,12 +122,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
               orderNumber: response.result?.toString() ?? '',
               invoiceNumber: "",
               totalPaid: event.invoiceRequest.invoice.paidAmount,
-              paymentMethodName: event
-                  .invoiceRequest
-                  .payments
-                  .first
-                  .paymentMethodId
-                  .toString(),
+              paymentMethodName: event.invoiceRequest.payments.isNotEmpty
+                  ? event.invoiceRequest.payments.first.paymentMethodId
+                        .toString()
+                  : "",
               transactionTime: DateTime.now(),
               items: event.invoiceRequest.items
                   .map(
