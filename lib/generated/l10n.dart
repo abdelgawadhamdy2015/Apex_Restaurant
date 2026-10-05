@@ -3972,6 +3972,16 @@ class S {
     );
   }
 
+  /// `Discount applied ({value} SAR)`
+  String discountApplied(Object value) {
+    return Intl.message(
+      'Discount applied ($value SAR)',
+      name: 'discountApplied',
+      desc: '',
+      args: [value],
+    );
+  }
+
   /// `Invoice returned successfully`
   String get invoiceReturnedSuccessfully {
     return Intl.message(
@@ -4127,6 +4137,76 @@ class S {
     return Intl.message(
       'Delivery Company',
       name: 'deliveryCompanyReceivables',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Change Table`
+  String get changeTable {
+    return Intl.message(
+      'Change Table',
+      name: 'changeTable',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `You are about to change the table for the restored invoice, are you sure?`
+  String get changeTableConfirmation {
+    return Intl.message(
+      'You are about to change the table for the restored invoice, are you sure?',
+      name: 'changeTableConfirmation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Table for the order {orderId} has been changed successfully`
+  String tableForOrderChanged(Object orderId) {
+    return Intl.message(
+      'Table for the order $orderId has been changed successfully',
+      name: 'tableForOrderChanged',
+      desc: '',
+      args: [orderId],
+    );
+  }
+
+  /// `An error occurred while changing the table, please try again`
+  String get changeTableError {
+    return Intl.message(
+      'An error occurred while changing the table, please try again',
+      name: 'changeTableError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reservation updated successfully`
+  String get reservationUpdateSuccess {
+    return Intl.message(
+      'Reservation updated successfully',
+      name: 'reservationUpdateSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Save Changes`
+  String get saveChanges {
+    return Intl.message(
+      'Save Changes',
+      name: 'saveChanges',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Edit Reservation`
+  String get editReservation {
+    return Intl.message(
+      'Edit Reservation',
+      name: 'editReservation',
       desc: '',
       args: [],
     );

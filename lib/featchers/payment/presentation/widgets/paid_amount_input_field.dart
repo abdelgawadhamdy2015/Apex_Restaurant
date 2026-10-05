@@ -34,31 +34,40 @@ class PaidAmountInputField extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: TextFormField(
-                  initialValue: state.paidAmount.toStringAsFixed(2),
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.start,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    isDense: true,
-                    suffix: Text(
-                      lang.currencySarShort,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  onChanged: (val) {
-                    final parsed = double.tryParse(val) ?? 0.0;
+                child: InkWell(
+                  onDoubleTap: () {
                     context.read<PaymentBloc>().add(
-                      UpdatePaidAmountEvent(parsed),
+                      UpdatePaidAmountEvent(state.totalAmount),
                     );
                   },
+                  child: TextFormField(
+                    controller: TextEditingController(
+                      text: state.paidAmount.toStringAsFixed(2),
+                    ),
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.start,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isDense: true,
+                      suffix: Text(
+                        lang.currencySarShort,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      final parsed = double.tryParse(val) ?? 0.0;
+                      context.read<PaymentBloc>().add(
+                        UpdatePaidAmountEvent(parsed),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],

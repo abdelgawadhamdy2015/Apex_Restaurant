@@ -48,7 +48,7 @@ class _OpeningBalanceDialogState extends State<OpeningBalanceDialog> {
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
         if (state.status == HomeStatus.openSessionLoaded) {
-          context.goNamed(Routes.posScreen);
+          context.pushReplacementNamed(Routes.posScreen);
         } else if (state.status == HomeStatus.error) {
           if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
             HelperMethods.showSnackBar(

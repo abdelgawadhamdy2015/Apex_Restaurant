@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 class ApiConstants {
-  static const String baseUsrl = localUrl;
+  static const String baseUsrl = resturantUrl;
 
   static const String localUrl = "http://192.168.1.253:1313/";
   static const String url = "https://taifback.apex-program.com/";

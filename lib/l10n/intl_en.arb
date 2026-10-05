@@ -502,6 +502,7 @@
     "discount": "Discount",
     "selectFloor": "Select Floor",
     "voucherApplied": "Voucher applied ({value} SAR)",
+    "discountApplied": "Discount applied ({value} SAR)",
     "invoiceReturnedSuccessfully": "Invoice returned successfully",
     "custodyLogTitle": "Custody Log",
     "withdrawalsFilter": "Withdrawals",
@@ -544,5 +545,12 @@
     },
     "justNow": "Just now",
     "deliveryManCustody": "Delivery Men",
-    "deliveryCompanyReceivables": "Delivery Company"
+    "deliveryCompanyReceivables": "Delivery Company",
+    "changeTable": "Change Table",
+    "changeTableConfirmation": "You are about to change the table for the restored invoice, are you sure?",
+    "tableForOrderChanged": "Table for the order {orderId} has been changed successfully",
+    "changeTableError": "An error occurred while changing the table, please try again",
+    "reservationUpdateSuccess": "Reservation updated successfully",
+    "saveChanges": "Save Changes",
+    "editReservation": "Edit Reservation"
 }

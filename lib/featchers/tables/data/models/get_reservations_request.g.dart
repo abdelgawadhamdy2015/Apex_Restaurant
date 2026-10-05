@@ -11,8 +11,8 @@ GetReservationRequest _$GetReservationRequestFromJson(
 ) => GetReservationRequest(
   pageNumber: (json['pageNumber'] as num?)?.toInt(),
   pageSize: (json['pageSize'] as num?)?.toInt(),
-  foodTableName: json['foodTableName'] as String?,
-  customerName: json['customerName'] as String?,
+  foodTableId: json['foodTableId'] as String?,
+  customerId: json['CustomerId'] as String?,
   dateFrom: json['datefrom'] as String?,
   dateTo: json['dateTo'] as String?,
   status: (json['status'] as num?)?.toInt(),
@@ -23,8 +23,8 @@ Map<String, dynamic> _$GetReservationRequestToJson(
 ) => <String, dynamic>{
   'pageNumber': instance.pageNumber,
   'pageSize': instance.pageSize,
-  'foodTableName': instance.foodTableName,
-  'customerName': instance.customerName,
+  'foodTableId': instance.foodTableId,
+  'CustomerId': instance.customerId,
   'datefrom': instance.dateFrom,
   'dateTo': instance.dateTo,
   'status': instance.status,

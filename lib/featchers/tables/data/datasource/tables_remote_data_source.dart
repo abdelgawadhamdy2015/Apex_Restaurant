@@ -20,7 +20,7 @@ abstract class TablesRemoteDataSource {
     ReserveFoodTableRequest reservation,
   );
   Future<BaseResponse<dynamic>> editReservation(
-    EditReserveFoodTableRequest reservation,
+    ReserveFoodTableRequest reservation,
   );
   Future<BaseResponse<dynamic>> cancelReservation(
     CancelReserveFoodTableRequest request,
@@ -76,7 +76,7 @@ class TablesRemoteDataSourceImpl implements TablesRemoteDataSource {
 
   @override
   Future<BaseResponse<dynamic>> editReservation(
-    EditReserveFoodTableRequest reservation,
+    ReserveFoodTableRequest reservation,
   ) async {
     return await _apiService.editReserveFoodTable(reservation);
   }

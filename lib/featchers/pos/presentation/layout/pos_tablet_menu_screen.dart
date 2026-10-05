@@ -189,7 +189,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
           const SizedBox(height: 20),
           _buildRailItem(
             PosBottomNavEnm.menu,
-            Icons.restaurant_menu,
+            Icons.restaurant,
             'القائمة',
             theme,
             posState,

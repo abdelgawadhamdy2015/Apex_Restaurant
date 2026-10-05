@@ -20,7 +20,10 @@ class GetPreviousInvoiceRequest {
       'PageNumber': pageNumber,
       'PageSize': pageSize,
       if (fromDate != null) 'FromDate': fromDate?.toIso8601String(),
-      if (toDate != null) 'ToDate': toDate?.toIso8601String(),
+      if (toDate != null)
+        'ToDate': (toDate?.add(
+          Duration(hours: 23, minutes: 59),
+        ))?.toIso8601String(),
       if (invoiceCode != null) 'InvoiceCode': invoiceCode,
       if (personName != null) 'PersonName': personName,
     };

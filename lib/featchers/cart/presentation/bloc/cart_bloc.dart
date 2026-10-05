@@ -59,6 +59,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         state.copyWith(voucherData: null, clearVoucherDiscountValue: true),
       ),
     );
+    on<ClearDiscountEvent>(
+      (event, emit) => emit(
+        state.copyWith(
+          restaurantPosDiscountRequest: null,
+          clearRestaurantPosDiscountRequest: true,
+          discountAmount: 0,
+        ),
+      ),
+    );
     on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
       emit(state.copyWith(settingsModel: event.settings));
@@ -216,17 +225,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         isPending: event.isPending,
         isPreviousInvoice: true,
         //  selectedTable: isDineIn ? data.table : null,
-        selectedWaiter: isDineIn
-            ? state.waiters.firstWhere((w) => w.id == data.waiter?.id)
-            : null,
+        selectedWaiter: isDineIn ? data.waiter : null,
         selectedDeliveryMan: isDelivery
             ? state.deliveryAgents.firstWhere(
                 (d) => d.id == data.deliveryMan?.id,
               )
             : null,
-        selectedPerson: state.persons.firstWhere(
-          (p) => p.id == data.client?.id,
-        ),
+        selectedPerson:
+            // state.persons.isNotEmpty
+            //     ? state.persons.firstWhere((p) => p.id == data.client?.id)
+            data.client,
         selectedDeliveryCompany: selectedDeliveryCompany,
         voucherId: data.voucherId,
         invoiceCode: data.invoiceCode,
@@ -243,8 +251,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
         // State Flags & Status
         justRestored: true,
-        status: CartStatus
-            .pindingSuccess, // Triggers state listeners without breaking UI flow
+        // status: CartStatus
+        //     .success, // Triggers state listeners without breaking UI flow
         isLoading: false,
         errorMessage: null,
       ),
@@ -267,6 +275,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     waitersRes.when(
       success: (data) => waitersList = data.data ?? [],
+
       failure: (_) {},
     );
 
@@ -283,8 +292,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         isLoading: false,
         waiters: waitersList,
+        selectedWaiter: waitersList.isNotEmpty ? waitersList.first : null,
         deliveryAgents: agentsList,
+        selectedDeliveryMan: agentsList.isNotEmpty ? agentsList.first : null,
         companiesList: companiesList,
+        selectedDeliveryCompany: companiesList.isNotEmpty
+            ? companiesList.first
+            : null,
       ),
     );
   }
@@ -301,7 +315,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       success: (data) => personsList = data.data ?? [],
       failure: (_) {},
     );
-    emit(state.copyWith(persons: personsList));
+    emit(
+      state.copyWith(
+        persons: personsList,
+        selectedPerson: personsList.isNotEmpty ? personsList.first : null,
+      ),
+    );
   }
 
   void _onSyncCartItems(SyncCartItemsEvent event, Emitter<CartState> emit) {
@@ -434,6 +453,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         invoiceId: null,
         voucherId: null,
         restoredInvoiceDate: null,
+        justRestored: false,
         orderNumber: 0,
         isPending: false,
         clearVoucherDiscountValue: true,

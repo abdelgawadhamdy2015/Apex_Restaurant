@@ -151,7 +151,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         itemCode: '',
         itemNameAr: itemNameAr,
         itemNameEn: itemNameEn,
-        imagePath: mainItem.itemImagePath,
+        imagePath: mainItem.item?.imagePath,
         categoryId: mainItem.item?.categoryId ?? 0,
         defaultPrice: mainItem.price ?? mainItem.item?.price ?? 0.0,
         isOffer: false,
@@ -169,7 +169,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       allAddons.addAll(_mapFlatAddons(flatAdditivesMap[transId]));
 
       double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
-      bool isPercentage = mainItem.itemDiscount?.discountType == 1;
+      bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
 
       orderItems.add(
         OrderItem(

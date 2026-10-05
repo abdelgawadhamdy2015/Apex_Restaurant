@@ -38,6 +38,14 @@ class AddReservationEvent extends TablesEvent {
   List<Object?> get props => [reservation];
 }
 
+class EditReservationEvent extends TablesEvent {
+  final ReserveFoodTableRequest reservation;
+  const EditReservationEvent(this.reservation);
+
+  @override
+  List<Object?> get props => [reservation];
+}
+
 class CancelReservationEvent extends TablesEvent {
   final String id;
   const CancelReservationEvent(this.id);
@@ -74,8 +82,9 @@ class ClearRestoredInvoiceEvent extends TablesEvent {
 }
 
 class SelectTableEvent extends TablesEvent {
-  final TableEntity tableEntity;
-  const SelectTableEvent({required this.tableEntity});
+  final TableEntity? tableEntity;
+  final bool clearSelection;
+  const SelectTableEvent({this.tableEntity, this.clearSelection = false});
   @override
   List<Object?> get props => [tableEntity];
 }

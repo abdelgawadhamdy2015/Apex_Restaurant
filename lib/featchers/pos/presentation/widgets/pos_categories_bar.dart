@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/gen/assets.gen.dart';
+import 'package:svg_flutter/svg_flutter.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/category_model.dart';
 import 'package:flutter/material.dart';
@@ -52,16 +55,37 @@ class PosCategoriesBar extends StatelessWidget {
                     ),
                   ),
                   child: cat.imagePath != null && cat.imagePath!.isNotEmpty
-                      ? Image.network(
-                          cat.imagePath!,
-                          // width: double.infinity,
-                          // fit: BoxFit.cover,
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(spacing.radiusLg),
+                          child: Image.network(
+                            cat.imagePath!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: SvgPicture.asset(Assets.iconSvg),
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              }
+
+                              return const Center(
+                                child: SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         )
-                      : Icon(
-                          Icons.restaurant_menu,
-                          color: isSelected
-                              ? theme.colorScheme.onPrimary
-                              : theme.colorScheme.onPrimary,
+                      : FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: SvgPicture.asset(Assets.iconSvg),
                         ),
                 ),
                 SizedBox(height: spacing.xxs),

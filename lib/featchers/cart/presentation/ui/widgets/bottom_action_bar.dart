@@ -123,7 +123,7 @@ class BottomActionBar extends StatelessWidget {
           context.read<CartBloc>().add(ClearCartEvent());
 
           // التوجيه إلى شاشة الـ POS وإغلاق باقي الشاشات
-          context.goNamed(Routes.posScreen);
+          context.pushReplacementNamed(Routes.posScreen);
         } else if (state.status == CartStatus.pindingFailure) {
           HelperMethods.showSnackBar(
             context: context,

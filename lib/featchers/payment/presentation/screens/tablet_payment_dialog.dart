@@ -134,7 +134,9 @@ class TabletPaymentDialog extends StatelessWidget {
                           SizedBox(height: spacing.md),
                           if (state.selectedMethod ==
                               PaymentMethodType.split) ...[
-                            const SplitPaymentGrid(),
+                            SplitPaymentGrid(
+                              paymentMethods: state.paymentMethods ?? [],
+                            ),
                           ] else ...[
                             const AmountSummaryRow(),
                             if (state.selectedMethod ==

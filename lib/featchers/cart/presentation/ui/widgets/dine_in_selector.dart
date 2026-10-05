@@ -70,19 +70,40 @@ class DineInSelector extends StatelessWidget {
                 : null,
           ),
           SizedBox(height: spacing.xs + spacing.xxs / 2),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text(
-                '${lang.selectedTable} : ',
-                style: theme.textTheme.bodyLarge?.copyWith(),
-              ),
-              Text(
-                selectedTable?.arabicName ?? '',
-                style: theme.textTheme.bodyLarge?.copyWith(),
-              ),
-            ],
-          ),
+
+          // BlocBuilder<HomeBloc, HomeState>(
+          //   builder: (context, state) => OutlinedButton.icon(
+          //     style: OutlinedButton.styleFrom(
+          //       minimumSize: Size.fromHeight(icons.xl + spacing.md),
+          //       side: BorderSide(color: theme.colorScheme.tertiary),
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(spacing.radiusMd),
+          //       ),
+          //     ),
+          //     onPressed: canEdit
+          //         ? () => context.pushNamed(
+          //             Routes.tableScreen,
+          //             extra: TablesScreenArgs(
+          //               branchId: state.selectedEmployeeBranch?.branchId ?? 0,
+          //               personList: persons,
+          //               inCartScreen: true,
+          //             ),
+          //           )
+          //         : null,
+          //     icon: Icon(
+          //       Icons.table_restaurant,
+          //       color: theme.colorScheme.tertiary,
+          //       size: icons.md,
+          //     ),
+          //     label: Text(
+          //       selectedTable?.arabicName ?? lang.selectTable,
+          //       style: theme.textTheme.bodyMedium?.copyWith(
+          //         color: theme.colorScheme.tertiary,
+          //         fontWeight: FontWeight.bold,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) => OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
@@ -93,14 +114,52 @@ class DineInSelector extends StatelessWidget {
                 ),
               ),
               onPressed: canEdit
-                  ? () => context.pushNamed(
-                      Routes.tableScreen,
-                      extra: TablesScreenArgs(
-                        branchId: state.selectedEmployeeBranch?.branchId ?? 0,
-                        personList: persons,
-                        inCartScreen: true,
-                      ),
-                    )
+                  ? () async {
+                      // If this is a restored invoice, ask for confirmation
+                      if (context.read<CartBloc>().state.justRestored == true) {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: Text(lang.changeTable),
+                              content: Text(lang.changeTableConfirmation),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(false);
+                                  },
+                                  child: Text(lang.cancel),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(dialogContext).pop(true);
+                                  },
+                                  child: Text(lang.confirm),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+
+                        // User cancelled
+                        if (confirmed != true) {
+                          return;
+                        }
+                      }
+
+                      // Open table screen
+                      if (!context.mounted) return;
+
+                      context.pushNamed(
+                        Routes.tableScreen,
+                        extra: TablesScreenArgs(
+                          branchId: state.selectedEmployeeBranch?.branchId ?? 0,
+                          personList: persons,
+                          inCartScreen: true,
+                        ),
+                      );
+                    }
                   : null,
               icon: Icon(
                 Icons.table_restaurant,
@@ -108,7 +167,7 @@ class DineInSelector extends StatelessWidget {
                 size: icons.md,
               ),
               label: Text(
-                lang.selectTable,
+                selectedTable?.arabicName ?? lang.selectTable,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.tertiary,
                   fontWeight: FontWeight.bold,

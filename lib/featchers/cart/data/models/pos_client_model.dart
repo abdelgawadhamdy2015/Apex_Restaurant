@@ -98,6 +98,12 @@ class PosClientModel {
       _$PosClientModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PosClientModelToJson(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || (other is PosClientModel && other.id == id);
+
+  @override
+  int get hashCode => id.hashCode;
 }
 
 @JsonSerializable()

@@ -6,7 +6,14 @@ import '../../domain/entities/reservation_entity.dart';
 import '../../domain/entities/table_entity.dart';
 import 'package:equatable/equatable.dart';
 
-enum TablesStatus { initial, loading, success, pindingSussess, failure }
+enum TablesStatus {
+  initial,
+  loading,
+  success,
+  pindingSussess,
+  reservationSuccess,
+  failure,
+}
 
 class TablesState extends Equatable {
   final TablesStatus status;
@@ -50,12 +57,15 @@ class TablesState extends Equatable {
     RestoredInvoiceModel? restoredInvoiceModel,
     bool? canEdit,
     bool? clearRestoringId,
+    bool? clearSelection,
   }) {
     return TablesState(
       status: status ?? this.status,
       activeTab: activeTab ?? this.activeTab,
       tables: tables ?? this.tables,
-      selectedTable: selectedTable ?? this.selectedTable,
+      selectedTable: clearSelection == true
+          ? null
+          : selectedTable ?? this.selectedTable,
       selectedFloor: selectedFloor ?? this.selectedFloor,
       floors: floors ?? this.floors,
       pindingInvoices: pindingInvoices ?? this.pindingInvoices,
@@ -76,7 +86,9 @@ class TablesState extends Equatable {
     status,
     activeTab,
     tables,
+    selectedTable,
     floors,
+    selectedFloor,
     reservations,
     errorMessage,
     pindingInvoices,

@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class TablesBloc extends Bloc<TablesEvent, TablesState> {
   final GetReservationsUseCase getReservationsUseCase;
   final CreateReservationUseCase createReservationUseCase;
+  final EditReservationUseCase editReservationUseCase;
   final CancelReservationUseCase cancelReservationUseCase;
   final GetFloorsUseCase getFloorsUseCase;
   final GetTablesUseCase getTablesUseCase;
@@ -22,6 +23,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
   TablesBloc({
     required this.getReservationsUseCase,
     required this.createReservationUseCase,
+    required this.editReservationUseCase,
     required this.cancelReservationUseCase,
     required this.getFloorsUseCase,
     required this.getTablesUseCase,
@@ -31,6 +33,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<FetchReservationsEvent>(_onFetchReservations);
     on<SwitchMainTabEvent>(_onSwitchMainTab);
     on<AddReservationEvent>(_onAddReservation);
+    on<EditReservationEvent>(_onEditReservation);
     on<CancelReservationEvent>(_onCancelReservation);
     on<FetchFloorsEvent>(_onFetchFloors);
     on<FetchTablesEvent>(_onFetchTables);
@@ -38,7 +41,12 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       (event, emit) => emit(state.copyWith(selectedFloor: event.floorEntity)),
     );
     on<SelectTableEvent>(
-      (event, emit) => emit(state.copyWith(selectedTable: event.tableEntity)),
+      (event, emit) => emit(
+        state.copyWith(
+          selectedTable: event.tableEntity,
+          clearSelection: event.clearSelection,
+        ),
+      ),
     );
 
     on<FetchRestaurantPosBookingTableEvent>(_onRestaurantPosBookingTable);
@@ -234,7 +242,23 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       call: () => createReservationUseCase(event.reservation),
       isSuccessful: (data) => data.result == 1,
       errorMessage: (data) => data.errorMessageAr,
-      onSuccess: (_) => emit(state.copyWith(status: TablesStatus.success)),
+      onSuccess: (_) =>
+          emit(state.copyWith(status: TablesStatus.reservationSuccess)),
+    );
+  }
+
+  Future<void> _onEditReservation(
+    EditReservationEvent event,
+    Emitter<TablesState> emit,
+  ) {
+    return _handleApiCall(
+      emit: emit,
+      emitLoading: true,
+      call: () => editReservationUseCase(event.reservation),
+      isSuccessful: (data) => data.result == 1,
+      errorMessage: (data) => data.errorMessageAr,
+      onSuccess: (_) =>
+          emit(state.copyWith(status: TablesStatus.reservationSuccess)),
     );
   }
 
@@ -247,7 +271,8 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       call: () => cancelReservationUseCase(event.id),
       isSuccessful: (data) => data.result == 1,
       errorMessage: (data) => data.errorMessageAr,
-      onSuccess: (_) => emit(state.copyWith(status: TablesStatus.success)),
+      onSuccess: (_) =>
+          emit(state.copyWith(status: TablesStatus.reservationSuccess)),
     );
   }
 
@@ -263,13 +288,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       errorMessage: (data) => data.errorMessageAr,
       onSuccess: (data) {
         final floorsList = data.data ?? [];
-        emit(
-          state.copyWith(
-            status: TablesStatus.success,
-            floors: floorsList,
-            selectedFloor: floorsList.isNotEmpty ? floorsList.first : null,
-          ),
-        );
+        emit(state.copyWith(status: TablesStatus.success, floors: floorsList));
         if (floorsList.isNotEmpty) {
           add(
             FetchTablesEvent(
@@ -302,7 +321,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
           state.copyWith(
             status: TablesStatus.success,
             tables: tablesList,
-            selectedTable: tablesList.isNotEmpty ? tablesList.first : null,
+            clearSelection: true,
           ),
         );
       },

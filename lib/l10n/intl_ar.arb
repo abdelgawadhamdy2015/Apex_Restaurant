@@ -502,6 +502,7 @@
     "discount": "الخصم",
     "selectFloor": "اختر الطابق",
     "voucherApplied": "تم تطبيق القسيمة ({value} ريال)",
+    "discountApplied": "تم تطبيق الخصم ({value} ريال)",
     "invoiceReturnedSuccessfully": "تم إرتجاع الفاتورة بنجاح",
     "custodyLogTitle": "سجل الحركات",
     "withdrawalsFilter": "السحوبات",
@@ -520,5 +521,12 @@
     "daysAgo": "منذ {count} يوم",
     "justNow": "الآن",
     "deliveryManCustody": "عهدة الطيار",
-    "deliveryCompanyReceivables": "ذمم شركات التوصيل"
+    "deliveryCompanyReceivables": "ذمم شركات التوصيل",
+    "changeTable": "تغيير الطاولة",
+    "changeTableConfirmation": "أنت على وشك تغيير الطاولة للفاتورة المستعادة، هل أنت متأكد؟",
+    "tableForOrderChanged": "تم تغيير الطاولة للفاتورة {orderId} بنجاح",
+    "changeTableError": "حدث خطأ أثناء تغيير الطاولة، يرجى المحاولة",
+    "reservationUpdateSuccess": "تم تحديث الحجز بنجاح",
+    "saveChanges": "حفظ التغييرات",
+    "editReservation": "تعديل الحجز"
 }

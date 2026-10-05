@@ -142,7 +142,7 @@ class _SideNavState extends State<SideNav> {
                     isSelected: widget.currentRoute == Routes.posScreen,
                     onTap: () {
                       Navigator.pop(context);
-                      context.goNamed(Routes.posScreen);
+                      context.pushReplacementNamed(Routes.posScreen);
                     },
                   ),
                   _NavItem(

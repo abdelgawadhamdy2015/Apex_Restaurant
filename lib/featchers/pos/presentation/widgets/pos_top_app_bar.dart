@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
@@ -84,7 +87,13 @@ class _PosTopAppBarState extends State<PosTopAppBar> {
               ),
               SizedBox(width: spacing.xs),
               Text(
-                lang.restaurantManager,
+                context
+                        .read<HomeBloc>()
+                        .state
+                        .userDataModel
+                        ?.employees
+                        ?.arabicName ??
+                    "",
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.onPrimary,

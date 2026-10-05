@@ -155,13 +155,14 @@ class CartState extends Equatable {
   bool get isInvoiceManualDiscountEnabled =>
       !dynamicDiscountIsActive &&
       !isCustomerDiscountApplied &&
-      // !hasSizeDiscount &&
+      (settingsModel?.posRestaurant?.activeDiscount ?? false) &&
       !isManualItemDiscountApplied;
 
   bool get isItemManualDiscountEnabled =>
       !dynamicDiscountIsActive &&
       !isCustomerDiscountApplied &&
       !hasSizeDiscount &&
+      (settingsModel?.posRestaurant?.activeDiscount ?? false) &&
       !isManualInvoiceDiscountApplied;
 
   // تحديد مصدر الخصم المطبق حسب الأولوية

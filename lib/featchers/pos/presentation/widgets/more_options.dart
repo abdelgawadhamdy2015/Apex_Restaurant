@@ -102,7 +102,7 @@ class MoreOptions extends StatelessWidget {
         title: lang.suspendSession,
         icon: Icons.pause_circle_outline,
         iconColor: colorScheme.secondary,
-        onTap: () {},
+        onTap: () => showPauseSessionDialogState(context), // ← changed
       ),
       OptionItem(
         title: lang.navSettings,

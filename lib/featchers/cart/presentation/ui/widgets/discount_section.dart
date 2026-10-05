@@ -103,6 +103,7 @@ class _DiscountSectionState extends State<DiscountSection> {
     final discountType = context.select(
       (CartBloc b) => b.state.selectedDiscountType,
     );
+
     final spacing = context.spacing;
     final icons = context.iconSizes;
     final buttonTheme = context.appExtraTheme;
@@ -111,6 +112,7 @@ class _DiscountSectionState extends State<DiscountSection> {
     final discountEnabled =
         //state.isInvoiceManualDiscountEnabled && state.canEdit;
         (!widget.dynamicIsActive &&
+            state.isInvoiceManualDiscountEnabled &&
             !HelperMethods.anyItemHasDiscount(state.items)) &&
         state.canEdit;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
@@ -220,8 +222,10 @@ class _DiscountSectionState extends State<DiscountSection> {
           ),
           SizedBox(height: spacing.xs),
 
-          if (state.voucherData != null &&
-              state.selectedDiscountType == DiscountTypeEnum.coupon)
+          if ((state.voucherData != null &&
+                  state.selectedDiscountType == DiscountTypeEnum.coupon) ||
+              (state.restaurantPosDiscountRequest != null &&
+                  state.selectedDiscountType == DiscountTypeEnum.direct))
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: spacing.md,
@@ -237,12 +241,22 @@ class _DiscountSectionState extends State<DiscountSection> {
               child: Row(
                 children: [
                   Text(
-                    lang.voucherApplied(state.voucherData?.discountValue ?? 0),
+                    state.selectedDiscountType == DiscountTypeEnum.coupon
+                        ? lang.voucherApplied(
+                            state.voucherData?.discountValue ?? 0,
+                          )
+                        : lang.discountApplied(
+                            state.totalDiscountAmount.toStringAsFixed(2),
+                          ),
                   ),
                   Spacer(),
                   InkWell(
                     onTap: () {
-                      context.read<CartBloc>().add(ClearVoucherDiscountEvent());
+                      state.selectedDiscountType == DiscountTypeEnum.coupon
+                          ? context.read<CartBloc>().add(
+                              ClearVoucherDiscountEvent(),
+                            )
+                          : context.read<CartBloc>().add(ClearDiscountEvent());
                       _discountCodeController.clear();
                     },
                     child: Icon(
@@ -253,6 +267,7 @@ class _DiscountSectionState extends State<DiscountSection> {
                 ],
               ),
             ),
+
           SizedBox(height: spacing.md),
           if (state.isManualItemDiscountApplied)
             Container(

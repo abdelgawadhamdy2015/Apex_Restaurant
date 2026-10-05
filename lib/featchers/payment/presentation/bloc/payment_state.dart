@@ -32,7 +32,7 @@ class PaymentState extends Equatable {
   });
 
   double get remainingAmount =>
-      (paidAmount - totalAmount) > 0 ? (paidAmount - totalAmount) : 0.0;
+      (totalAmount - paidAmount) > 0 ? (totalAmount - paidAmount) : 0.0;
 
   PaymentState copyWith({
     PaymentStatus? status,

@@ -2,6 +2,7 @@
 
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
@@ -13,6 +14,7 @@ import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.d
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_add_customer_sheet.dart';
+import 'package:apex_restaurant/gen/assets.gen.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -41,7 +43,7 @@ class _TableCardState extends State<TableCard> {
   void _openMenu(BuildContext context) {
     _overlayEntry = _createOverlayEntry();
     Overlay.of(context).insert(_overlayEntry!);
-    setState(() => _isOpen = true);
+    if (mounted) setState(() => _isOpen = true);
   }
 
   void _closeMenu() {
@@ -82,11 +84,7 @@ class _TableCardState extends State<TableCard> {
                           onPressed: () {
                             _closeMenu();
                             SizeHelper.isMobile
-                                ? AddReservationBottomSheet.show(
-                                    parentContext,
-                                    state.tables,
-                                    context.read<CartBloc>().state.persons,
-                                  )
+                                ? AddReservationBottomSheet.show(parentContext)
                                 : TabletAddReservationBottomSheet.show(
                                     parentContext,
                                     state.tables,
@@ -115,6 +113,16 @@ class _TableCardState extends State<TableCard> {
                           context.read<CartBloc>().add(
                             ChangeOrderTypeEvent(CartOrderType.DINE_IN),
                           );
+
+                          if (SizeHelper.isMobile) {
+                            context.pushReplacementNamed(Routes.cartScreen);
+                          } else {
+                            context.read<PosBloc>().add(
+                              SelectedNavIndexEvent(
+                                selectedNavIndex: PosBottomNavEnm.menu,
+                              ),
+                            );
+                          }
                         },
                         child: Text(S.of(parentContext).openInvoice),
                       ),
@@ -144,9 +152,7 @@ class _TableCardState extends State<TableCard> {
         ),
       );
       context.read<TablesBloc>().add(const ClearRestoredInvoiceEvent());
-      if (SizeHelper.isMobile) {
-        context.pushNamed(Routes.posScreen);
-      } else {
+      if (SizeHelper.isTablet) {
         context.read<PosBloc>().add(
           SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
         );
@@ -159,9 +165,10 @@ class _TableCardState extends State<TableCard> {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
+    final cartState = context.select((CartBloc b) => b.state);
     final lang = S.of(context);
     final isAvailable = widget.table.status == TableStatus.available;
-
+    final isBusy = widget.table.bookingTableInvoiceId != null;
     return BlocListener<TablesBloc, TablesState>(
       listener: (context, state) {
         if (state.status == TablesStatus.success) {
@@ -169,13 +176,22 @@ class _TableCardState extends State<TableCard> {
         }
       },
       child: GestureDetector(
-        onTap: widget.table.status == TableStatus.available
+        onTap: isAvailable
             ? () {
                 if (widget.inCartScreen) {
-                  context.read<CartBloc>().add(
-                    SelectCartTableEvent(table: widget.table),
-                  );
-                  context.pop();
+                  if (!isBusy) {
+                    context.read<CartBloc>().add(
+                      SelectCartTableEvent(table: widget.table),
+                    );
+                    context.pop();
+                    HelperMethods.showSnackBar(
+                      context: context,
+                      message: lang.tableForOrderChanged(
+                        cartState.orderNumber ?? 0,
+                      ),
+                      isError: false,
+                    );
+                  }
                 } else {
                   _isOpen ? _closeMenu() : _openMenu(context);
                 }
@@ -197,27 +213,19 @@ class _TableCardState extends State<TableCard> {
                   height: 10,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: widget.table.status == TableStatus.available
-                        ? Colors.green
-                        : Colors.red,
+                    color: isAvailable && !isBusy ? Colors.green : Colors.red,
                   ),
                 ),
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    height: 60,
-                    width: 90,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(spacing.radiusSm),
-                      border: Border.all(
-                        color: isAvailable
-                            ? Colors.blue.shade300
-                            : Colors.purple.shade200,
-                        width: 2,
-                      ),
-                    ),
+                  SizedBox(
+                    height: SizeHelper.height! / 12,
+
+                    child: isBusy
+                        ? Assets.filledTable.image()
+                        : Assets.emptyTable.image(),
                   ),
                   Text(
                     '${lang.table} ${widget.table.arabicName}',
@@ -256,7 +264,7 @@ class _TableCardState extends State<TableCard> {
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
                     ),
                     child: Text(
-                      isAvailable ? lang.available : lang.reserved,
+                      isBusy ? lang.reserved : lang.available,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: isAvailable
                             ? context.appExtraTheme.greenBackground

@@ -21,21 +21,40 @@ class CartItemTile extends StatelessWidget {
   final int index;
   final OrderItem item;
 
+  static final Map<int, DateTime> _lastTapTimes = {};
+
+  bool _canOpen(int index) {
+    final now = DateTime.now();
+    final lastTap = _lastTapTimes[index];
+
+    if (lastTap != null &&
+        now.difference(lastTap) < const Duration(milliseconds: 500)) {
+      return false;
+    }
+
+    _lastTapTimes[index] = now;
+    return true;
+  }
+
   List<String> _formattedAddons() {
     final addonCounts = <String, int>{};
+
     for (final addon in item.addons) {
       addonCounts[addon.arabicName] = (addonCounts[addon.arabicName] ?? 0) + 1;
     }
+
     return addonCounts.entries
         .map((entry) => '+ ${entry.key} ${entry.value}x')
         .toList();
   }
 
-  void _openEditSheet(BuildContext context) async {
+  Future<void> _openEditSheet(BuildContext context) async {
+    // Prevent double tap
+    if (!_canOpen(index)) return;
+
     final posBloc = context.read<PosBloc>();
     final cartBloc = context.read<CartBloc>();
 
-    // Fetch fresh item details using categoryId + itemId as searchKey.
     final fetchedItem = await posBloc.fetchItemDetails(
       request: GetItemsRequest(
         categoryId: item.menuItem.categoryId,
@@ -56,8 +75,6 @@ class CartItemTile extends StatelessWidget {
 
     if (!context.mounted) return;
 
-    // Note: additives still resolve from PosState.categories by categoryId,
-    // handled inside ItemCustomizationSheet itself — no change needed there.
     if (SizeHelper.isMobile) {
       ItemCustomizationSheet.show(
         context,
