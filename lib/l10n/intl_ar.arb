@@ -528,5 +528,9 @@
     "changeTableError": "حدث خطأ أثناء تغيير الطاولة، يرجى المحاولة",
     "reservationUpdateSuccess": "تم تحديث الحجز بنجاح",
     "saveChanges": "حفظ التغييرات",
-    "editReservation": "تعديل الحجز"
+    "editReservation": "تعديل الحجز",
+    "no": "لا",
+    "yes": "نعم",
+    "confirmCancelReservation": "هل أنت متأكد من إلغاء حجز {customerName} على {tableNumber}؟",
+    "confirmCancelReservationTitle": "تأكيد إلغاء الحجز"
 }

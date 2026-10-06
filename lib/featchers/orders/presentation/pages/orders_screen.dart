@@ -138,7 +138,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     SizedBox(height: spacing.md),
                     // Previous Orders List
                     ...state.previousOrders.map(
-                      (order) => PreviousOrderCard(order: order, l10n: lang),
+                      (order) => PreviousOrderCard(order: order, lang: lang),
                     ),
                     if (state.isLoadingMorePrevious)
                       Padding(

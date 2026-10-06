@@ -134,7 +134,6 @@ class AppRouter {
           return BlocProvider(
             create: (_) => getIt<TablesBloc>(),
             child: TablesScreen(
-              branchId: args.branchId,
               personList: args.personList,
               inCartScreen: args.inCartScreen,
             ),

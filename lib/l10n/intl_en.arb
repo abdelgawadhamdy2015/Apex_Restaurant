@@ -552,5 +552,9 @@
     "changeTableError": "An error occurred while changing the table, please try again",
     "reservationUpdateSuccess": "Reservation updated successfully",
     "saveChanges": "Save Changes",
-    "editReservation": "Edit Reservation"
+    "editReservation": "Edit Reservation",
+    "no": "No",
+    "yes": "Yes",
+    "confirmCancelReservation": "Are you sure you want to cancel {customerName}'s reservation on {tableNumber}?",
+    "confirmCancelReservationTitle": "Confirm Reservation Cancellation"
 }

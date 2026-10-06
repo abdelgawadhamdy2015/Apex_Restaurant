@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
+
 import '../../data/model/get_pinding_invoice.dart';
 import '../../data/model/get_previous_invoice_request.dart';
 import '../../data/model/order_model.dart';
@@ -26,6 +29,16 @@ class SelectDateEvent extends OrdersEvent {
 class FetchPindingInvoicesEvent extends OrdersEvent {
   final GetPindingInvoicesRequest? request;
   const FetchPindingInvoicesEvent({this.request});
+}
+
+class GetInvoiceReportEvent extends OrdersEvent {
+  final InvoiceReportRequest request;
+  const GetInvoiceReportEvent({required this.request});
+}
+
+class PrintKitchenReportEvent extends OrdersEvent {
+  final PrintKitchenRequest request;
+  const PrintKitchenReportEvent({required this.request});
 }
 
 /// Fetches the next page of held/pending orders and appends it.

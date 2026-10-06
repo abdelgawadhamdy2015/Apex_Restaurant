@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/router/routes.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
@@ -17,8 +19,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class MoreOptions extends StatelessWidget {
+class MoreOptions extends StatefulWidget {
   const MoreOptions({super.key});
+
+  @override
+  State<MoreOptions> createState() => _MoreOptionsState();
+}
+
+class _MoreOptionsState extends State<MoreOptions> {
+  /// True only after the user taps "Close session" on THIS screen.
+  /// Stops any other PosBloc state (or another MoreOptions instance)
+  /// from opening the close-session dialog by accident.
+  bool _waitingForCloseSession = false;
 
   Future<void> _openTables(BuildContext context) async {
     final cartBloc = context.read<CartBloc>();
@@ -102,7 +114,7 @@ class MoreOptions extends StatelessWidget {
         title: lang.suspendSession,
         icon: Icons.pause_circle_outline,
         iconColor: colorScheme.secondary,
-        onTap: () => showPauseSessionDialogState(context), // ← changed
+        onTap: () => context.pushReplacementNamed(Routes.homeScreen),
       ),
       OptionItem(
         title: lang.navSettings,
@@ -116,8 +128,11 @@ class MoreOptions extends StatelessWidget {
         icon: Icons.power_settings_new,
         iconColor: colorScheme.errorContainer,
         onTap: () {
-          // طلب بيانات الجلسة الحالية من الـ Bloc
-          context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());
+          // Mark THIS screen as the one waiting for the session.
+          _waitingForCloseSession = true;
+          context.read<PosBloc>().add(
+            const CurrentRestaurantPosSessionEvent(openCloseDialog: true),
+          );
         },
       ),
       OptionItem(
@@ -136,25 +151,34 @@ class MoreOptions extends StatelessWidget {
 
     return BlocListener<PosBloc, PosState>(
       listenWhen: (previous, current) {
-        // الاستماع عند النجاح أو تغير بيانات الجلسة أو وجود خطأ
-        return previous.currentSessionId != current.currentSessionId ||
-            previous.status != current.status;
+        if (!_waitingForCloseSession) return false;
+
+        final reachedCloseSession =
+            current.status == PosStatus.closeSession &&
+            current.currentSessionId != null;
+        final failed =
+            current.status == PosStatus.error && current.errorMessage != null;
+
+        return previous.status != current.status &&
+            (reachedCloseSession || failed);
       },
       listener: (context, state) {
-        // 1. في حالة تم جلب بيانات الجلسة الحالية بنجاح
-        if (state.currentSessionId != null &&
-            state.status == PosStatus.closeSession) {
-          final sessionId = state.currentSessionId ?? 0;
-          _showCloseSessionDialog(context, sessionId);
+        // Consume the request so nothing else can re-trigger the dialog.
+        _waitingForCloseSession = false;
+
+        // 1. تم جلب بيانات الجلسة الحالية بنجاح
+        if (state.status == PosStatus.closeSession &&
+            state.currentSessionId != null) {
+          _showCloseSessionDialog(context, state.currentSessionId ?? 0);
+          return;
         }
 
-        // 2. في حالة حدوث خطأ أثناء جلب الجلسة
+        // 2. حدث خطأ أثناء جلب الجلسة
         if (state.status == PosStatus.error && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: colorScheme.error,
-            ),
+          HelperMethods.showSnackBar(
+            context: context,
+            message: state.errorMessage!,
+            isError: true,
           );
         }
       },

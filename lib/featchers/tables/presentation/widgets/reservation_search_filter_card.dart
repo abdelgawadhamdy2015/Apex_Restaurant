@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -151,9 +152,6 @@ class _ReservationSearchFilterCardState
     final iconSizes = context.iconSizes;
     final l10n = S.of(context);
 
-    // Narrow, independent selectors: this widget only rebuilds when one of
-    // these specific fields changes, instead of on every TablesBloc
-    // emission.
     final selectedFloor = context.select(
       (TablesBloc b) => b.state.selectedFloor,
     );
@@ -170,7 +168,6 @@ class _ReservationSearchFilterCardState
         children: [
           Row(
             children: [
-              // Floor Selector Dropdown
               Expanded(
                 child: DropdownButtonFormField<FloorEntity?>(
                   initialValue: selectedFloor,
@@ -186,7 +183,12 @@ class _ReservationSearchFilterCardState
                     ...widget.floors.map(
                       (f) => DropdownMenuItem<FloorEntity?>(
                         value: f,
-                        child: Text(f.arabicName),
+                        child: Text(
+                          f.arabicName.substring(
+                            0,
+                            f.arabicName.length > 15 ? 15 : f.arabicName.length,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -238,7 +240,13 @@ class _ReservationSearchFilterCardState
                               (table) => DropdownMenuItem<String?>(
                                 value: table.id,
                                 child: Text(
-                                  table.arabicName ?? '',
+                                  table.arabicName?.substring(
+                                        0,
+                                        (table.arabicName?.length ?? 0) > 15
+                                            ? 15
+                                            : table.arabicName?.length,
+                                      ) ??
+                                      '',
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -324,13 +332,13 @@ class _ReservationSearchFilterCardState
             onPressed: _onSearchPressed,
             icon: Icon(
               Icons.search,
-              color: theme.colorScheme.onPrimary,
+              color: AppColors.white,
               size: iconSizes.sm,
             ),
             label: Text(
               l10n.search,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onPrimary,
+                color: AppColors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),

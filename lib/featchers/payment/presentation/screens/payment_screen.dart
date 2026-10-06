@@ -48,71 +48,74 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final spacing = context.spacing;
     final lang = S.of(context);
 
-    return BlocConsumer<PaymentBloc, PaymentState>(
-      listener: (context, state) {
-        if (state.status == PaymentStatus.error) {
-          HelperMethods.showSnackBar(
-            context: context,
-            message: state.errorMessage ?? lang.somethingWentWrong,
-            isError: true,
-          );
-        }
-      },
-      builder: (context, state) {
-        if (state.status == PaymentStatus.success &&
-            state.successModel != null) {
-          return PaymentSuccess(model: state.successModel!);
-        }
+    return PopScope(
+      canPop: false,
+      child: BlocConsumer<PaymentBloc, PaymentState>(
+        listener: (context, state) {
+          if (state.status == PaymentStatus.error) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.errorMessage ?? lang.somethingWentWrong,
+              isError: true,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state.status == PaymentStatus.success &&
+              state.successModel != null) {
+            return PaymentSuccess(model: state.successModel!);
+          }
 
-        return Scaffold(
-          backgroundColor: theme.colorScheme.surface,
-          appBar: CustomAppBar(
-            title: lang.payment,
-            centerTitle: true,
-            showBackButton: false,
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(spacing.md),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const TotalAmountCard(),
-                        SizedBox(height: spacing.md),
-                        const PaymentMethodTabs(),
-                        SizedBox(height: spacing.md),
-                        const DueAmountCard(),
-                        SizedBox(height: spacing.md),
-                        if (state.selectedMethod ==
-                            PaymentMethodType.split) ...[
-                          SplitMethodsList(
-                            paymentMethods: state.paymentMethods ?? [],
-                          ),
-                        ] else ...[
-                          const PaidAmountInputField(),
+          return Scaffold(
+            backgroundColor: theme.colorScheme.surface,
+            appBar: CustomAppBar(
+              title: lang.payment,
+              centerTitle: true,
+              showBackButton: false,
+            ),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(spacing.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const TotalAmountCard(),
                           SizedBox(height: spacing.md),
-                          if (state.selectedMethod == PaymentMethodType.cash)
-                            const RemainingAmountCard()
-                          else if (state.selectedMethod ==
-                              PaymentMethodType.card)
-                            const ReferenceNumberInputField(),
+                          const PaymentMethodTabs(),
+                          SizedBox(height: spacing.md),
+                          const DueAmountCard(),
+                          SizedBox(height: spacing.md),
+                          if (state.selectedMethod ==
+                              PaymentMethodType.split) ...[
+                            SplitMethodsList(
+                              paymentMethods: state.paymentMethods ?? [],
+                            ),
+                          ] else ...[
+                            const PaidAmountInputField(),
+                            SizedBox(height: spacing.md),
+                            if (state.selectedMethod == PaymentMethodType.cash)
+                              const RemainingAmountCard()
+                            else if (state.selectedMethod ==
+                                PaymentMethodType.card)
+                              const ReferenceNumberInputField(),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                BottomActionButtons(
-                  state: state,
-                  invoiceRequestModel: widget.invoiceRequestModel,
-                ),
-              ],
+                  BottomActionButtons(
+                    state: state,
+                    invoiceRequestModel: widget.invoiceRequestModel,
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

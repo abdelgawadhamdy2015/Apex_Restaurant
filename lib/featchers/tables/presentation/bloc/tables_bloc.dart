@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:apex_restaurant/core/service/api_result.dart';
 import 'package:apex_restaurant/featchers/orders/domain/usescase/orders_usescase.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
+import 'package:apex_restaurant/featchers/tables/domain/entities/reservation_entity.dart';
 import 'package:apex_restaurant/featchers/tables/domain/usescase/tables_usecase.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
@@ -68,6 +69,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     required bool Function(T data) isSuccessful,
     required void Function(T data) onSuccess,
     required String? Function(T data) errorMessage,
+    bool? isCancel = false,
     bool emitLoading = false,
   }) async {
     if (emitLoading) {
@@ -83,7 +85,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
             emit(
               state.copyWith(
                 status: TablesStatus.failure,
-                reservations: [],
+                reservations: isCancel == false ? [] : state.reservations,
                 errorMessage: errorMessage(data),
               ),
             );
@@ -267,12 +269,26 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     Emitter<TablesState> emit,
   ) {
     return _handleApiCall(
+      isCancel: true,
+      emitLoading: true,
       emit: emit,
       call: () => cancelReservationUseCase(event.id),
       isSuccessful: (data) => data.result == 1,
       errorMessage: (data) => data.errorMessageAr,
-      onSuccess: (_) =>
-          emit(state.copyWith(status: TablesStatus.reservationSuccess)),
+      onSuccess: (_) {
+        final updatedReservations = state.reservations.map((reservation) {
+          if (reservation.id == event.id) {
+            return reservation.copyWith(status: ReservationStatus.cancelled);
+          }
+          return reservation;
+        }).toList();
+        emit(
+          state.copyWith(
+            status: TablesStatus.reservationSuccess,
+            reservations: updatedReservations,
+          ),
+        );
+      },
     );
   }
 

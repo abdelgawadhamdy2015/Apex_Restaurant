@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
+
 import '../../../../core/service/api_result.dart';
 import '../../data/model/get_pinding_invoice.dart';
 import '../../data/model/get_previous_invoice_request.dart';
@@ -13,12 +15,15 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
   final GetPosInvoiceDataByIdUseCase getPosInvoiceDataByIdUseCase;
   final DeleteHeldOrderUseCase deleteHeldOrderUseCase;
-
+  final GetInvoiceReportUseCase getInvoiceReportUseCase;
+  final PrintKitchenUseCase printKitchenUseCase;
   OrdersBloc({
     required this.getPindingInvoicesUseCase,
     required this.getPosInvoiceDataByIdUseCase,
     required this.deleteHeldOrderUseCase,
     required this.getPreviousOrdersUseCase,
+    required this.getInvoiceReportUseCase,
+    required this.printKitchenUseCase,
   }) : super(const OrdersState()) {
     on<SwitchTabEvent>((event, emit) {
       emit(state.copyWith(activeTab: event.tab));
@@ -26,6 +31,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
       }
     });
+    on<PrintKitchenReportEvent>(_onPrintKitchenReport);
     on<SelectDateEvent>((event, emit) {
       emit(
         state.copyWith(
@@ -38,6 +44,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     on<FetchPreviousInvoicesEvent>(_onPreviousInvoices);
     on<LoadMorePreviousInvoicesEvent>(_onLoadMorePrevious);
 
+    on<GetInvoiceReportEvent>(_onInvoiceReport);
     on<FetchPindingInvoicesEvent>(_onPindingInvoices);
     on<LoadMorePindingInvoicesEvent>(_onLoadMorePinding);
 
@@ -96,7 +103,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
                 previousOrders: items,
                 isLoading: false,
                 totalPreviousCount: data.totalCount,
-                status: OrdersStatus.sussess,
+                status: OrdersStatus.success,
                 previousOrdersHasMore: items.length >= kOrdersPageSize,
               ),
             );
@@ -218,7 +225,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
                 pindingInvoices: items,
                 totalPindingCount: data.totalCount,
                 isLoading: false,
-                status: OrdersStatus.sussess,
+                status: OrdersStatus.success,
                 pindingInvoicesHasMore: items.length >= kOrdersPageSize,
               ),
             );
@@ -314,7 +321,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
           if (data.result == 1 && data.data != null) {
             emit(
               state.copyWith(
-                status: OrdersStatus.sussess,
+                status: OrdersStatus.success,
                 restoredInvoice: data.data,
                 clearRestoringId: true,
                 canEdite: event.canEdite,
@@ -353,5 +360,110 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     }
 
     add(FetchPindingInvoicesEvent(request: state.pindingInvoicesFilter));
+  }
+
+  Future<void> _onInvoiceReport(
+    GetInvoiceReportEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        status: OrdersStatus.invoiceReportLoading,
+        isLoading: true,
+      ),
+    );
+    try {
+      final response = await getInvoiceReportUseCase(request: event.request);
+      response.when(
+        success: (data) {
+          if (data?.result != null && data!.result != 0) {
+            emit(
+              state.copyWith(
+                status: OrdersStatus.invoiceReportSuccess,
+                invoiceReport: data,
+                isLoading: false,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: OrdersStatus.invoiceReportFailure,
+                errorMessage: data?.errorMessageAr ?? 'فشل استرجاع التقرير',
+                isLoading: false,
+              ),
+            );
+          }
+        },
+        failure: (err) {
+          emit(
+            state.copyWith(
+              status: OrdersStatus.invoiceReportFailure,
+              errorMessage:
+                  err.apiErrorModel.errorMessageAr ?? 'خطأ في الاتصال بالخادم',
+              isLoading: false,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: OrdersStatus.invoiceReportFailure,
+          errorMessage: 'حدث خطأ غير متوقع أثناء استرجاع التقرير',
+          isLoading: false,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onPrintKitchenReport(
+    PrintKitchenReportEvent event,
+    Emitter<OrdersState> emit,
+  ) async {
+    emit(
+      state.copyWith(status: OrdersStatus.printKitchenLoading, isLoading: true),
+    );
+    try {
+      final response = await printKitchenUseCase(request: event.request);
+      response.when(
+        success: (data) {
+          if (data.result != null && data.result == 1) {
+            emit(
+              state.copyWith(
+                status: OrdersStatus.printKitchenSuccess,
+                printKitchenResponse: data.data,
+                isLoading: false,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: OrdersStatus.printKitchenFailure,
+                errorMessage: data.errorMessageAr ?? 'فشل استرجاع تقرير المطبخ',
+                isLoading: false,
+              ),
+            );
+          }
+        },
+        failure: (err) {
+          emit(
+            state.copyWith(
+              status: OrdersStatus.printKitchenFailure,
+              errorMessage:
+                  err.apiErrorModel.errorMessageAr ?? 'خطأ في الاتصال بالخادم',
+              isLoading: false,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: OrdersStatus.printKitchenFailure,
+          errorMessage: 'حدث خطأ غير متوقع أثناء استرجاع تقرير المطبخ',
+          isLoading: false,
+        ),
+      );
+    }
   }
 }

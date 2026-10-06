@@ -1,10 +1,12 @@
 import 'package:apex_restaurant/core/helpers/helper_methods.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/cashier_custody_screen.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/returns_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
@@ -28,12 +30,24 @@ class TabletMoreOptions extends StatefulWidget {
 class _TabletMoreOptionsState extends State<TabletMoreOptions> {
   _MoreOptionsView _currentView = _MoreOptionsView.grid;
 
+  /// True only after the user asks to close the session from THIS screen.
+  /// Stops any other PosBloc state from opening the close-session dialog.
+  bool _waitingForCloseSession = false;
+
   void _showView(_MoreOptionsView view) {
     setState(() => _currentView = view);
   }
 
   void _backToGrid() {
     setState(() => _currentView = _MoreOptionsView.grid);
+  }
+
+  /// Single entry point for requesting the close-session dialog.
+  void _requestCloseSession(BuildContext context) {
+    _waitingForCloseSession = true;
+    context.read<PosBloc>().add(
+      const CurrentRestaurantPosSessionEvent(openCloseDialog: true),
+    );
   }
 
   void _showCloseSessionDialog(BuildContext context, int sessionId) {
@@ -119,9 +133,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
                   child: OutlinedButton.icon(
                     onPressed: () {
                       Navigator.pop(dialogContext);
-                      context.read<PosBloc>().add(
-                        CurrentRestaurantPosSessionEvent(),
-                      );
+                      _requestCloseSession(context);
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colorScheme.error,
@@ -238,16 +250,14 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
         icon: Icons.pause_circle_outline,
         iconBgColor: colorScheme.primary.withOpacity(.2),
         iconColor: colorScheme.secondaryContainer,
-        onTap: () => showPauseSessionDialogState(context), // ← changed
+        onTap: () => context.pushNamed(Routes.homeScreen), // ← changed
       ),
       _MoreCardData(
         title: lang.closeSession,
         icon: Icons.power_settings_new,
         iconBgColor: colorScheme.primary.withOpacity(.2),
         iconColor: colorScheme.primary,
-        onTap: () {
-          context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());
-        },
+        onTap: () => _requestCloseSession(context),
       ),
       _MoreCardData(
         title: lang.logout,
@@ -293,13 +303,26 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
         if (!didPop) _backToGrid();
       },
       child: BlocListener<PosBloc, PosState>(
-        listenWhen: (previous, current) =>
-            previous.currentSessionId != current.currentSessionId ||
-            previous.status != current.status,
+        listenWhen: (previous, current) {
+          if (!_waitingForCloseSession) return false;
+
+          final reachedCloseSession =
+              current.status == PosStatus.closeSession &&
+              current.currentSessionId != null;
+          final failed =
+              current.status == PosStatus.error && current.errorMessage != null;
+
+          return previous.status != current.status &&
+              (reachedCloseSession || failed);
+        },
         listener: (context, state) {
-          if (state.currentSessionId != null &&
-              state.status == PosStatus.closeSession) {
+          // Consume the request so nothing else can re-trigger the dialog.
+          _waitingForCloseSession = false;
+
+          if (state.status == PosStatus.closeSession &&
+              state.currentSessionId != null) {
             _showCloseSessionDialog(context, state.currentSessionId ?? 0);
+            return;
           }
 
           if (state.status == PosStatus.error && state.errorMessage != null) {

@@ -467,7 +467,7 @@ class _Footer extends StatelessWidget {
               lang.cancel,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onPrimary,
+                color: AppColors.white,
               ),
             ),
           ),

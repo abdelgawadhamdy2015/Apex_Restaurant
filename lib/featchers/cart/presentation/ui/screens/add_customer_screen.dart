@@ -684,11 +684,13 @@ class _BottomBar extends StatelessWidget {
                             ? Icons.save_outlined
                             : Icons.check_circle_outline,
                         size: icons.sm,
+                        color: AppColors.white,
                       ),
                 label: Text(
                   isEditMode ? lang.save : lang.save,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: AppColors.white,
                   ),
                 ),
               ),

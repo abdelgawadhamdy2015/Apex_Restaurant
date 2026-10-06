@@ -17,11 +17,9 @@ import '../../../../generated/l10n.dart';
 class TablesScreen extends StatefulWidget {
   const TablesScreen({
     super.key,
-    required this.branchId,
     required this.personList,
     required this.inCartScreen,
   });
-  final int branchId;
   final List<PosClientModel> personList;
   final bool inCartScreen;
 
@@ -36,13 +34,7 @@ class _TablesScreenState extends State<TablesScreen> {
     final bloc = context.read<TablesBloc>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.add(
-        FetchFloorsEvent(
-          GetFloorsRequest(
-            branchId: widget.branchId,
-            pageNumber: 1,
-            pageSize: 100,
-          ),
-        ),
+        FetchFloorsEvent(GetFloorsRequest(pageNumber: 1, pageSize: 100)),
       );
     });
   }

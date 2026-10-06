@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
@@ -405,13 +406,13 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                       )
                     : Icon(
                         Icons.check_circle_outline,
-                        color: theme.colorScheme.onPrimary,
+                        color: AppColors.white,
                         size: iconSizes.sm,
                       ),
                 label: Text(
                   widget.isEdit ? lang.saveChanges : lang.confirmReservation,
                   style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.onPrimary,
+                    color: AppColors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -437,7 +438,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                 borderRadius: BorderRadius.circular(spacing.radiusLg),
               ),
             ),
-            child: Text(lang.cancel),
+            child: Text(lang.cancel, style: theme.textTheme.titleMedium),
           ),
         ),
       ],

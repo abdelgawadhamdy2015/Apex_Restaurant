@@ -150,7 +150,7 @@ class _CashierCustodyScreenState extends State<CashierCustodyScreen> {
 
               return _ActionButtons(
                 onConfirm: _onConfirm,
-                onCancel: () => Navigator.of(context).pop(),
+                onCancel: () => context.pop(),
               );
             },
           ),

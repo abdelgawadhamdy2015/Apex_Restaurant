@@ -18,6 +18,7 @@ enum PosStatus {
   loading,
   loaded,
   closeSession,
+  sessionLoaded,
   error,
   submitting,
   submitted,

@@ -11,7 +11,8 @@ class ApiConstants {
   static const String getUserData = "api/General/UsersManager/getUserById";
 
   // Restaurants apis
-
+  static const String updatedSelectedBranch =
+      "api/Store/GeneralAPIs/updatedSelectedBranch";
   static const String getSettings = "api/Store/InvGeneralSettings/GetSettings";
   static const String openRestaurantPos =
       "api/Restaurants/RestaurantPos/OpenRestaurantPos";
@@ -99,6 +100,10 @@ class ApiConstants {
   static const String getEmployeeBranches =
       "api/Store/GeneralAPIs/getEmployeeBranchs";
 
+  // invoice report
+  static const String getInvoiceReport = "api/InvioceReport/InvoiceReport";
+  static const String printKitchen = "api/Store/POS/PrintKitchen";
+
   static const String getAllTreasuryByUserDropDown =
       "api/GeneralLedger/Treasury/GetAllTreasuryByUserDropDown";
   static const String getListOfPaymentMethods =
@@ -108,6 +113,7 @@ class ApiConstants {
   static int? userId;
 
   static int? empId;
+  static bool? isDeliveryCompanyActive;
 }
 
 class ApiErrors {

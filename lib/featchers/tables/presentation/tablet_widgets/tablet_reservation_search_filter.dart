@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/floor_entity.dart';
 import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.dart';
@@ -355,8 +356,13 @@ class _TabletReservationSearchFilterCardState
                 ),
                 elevation: 0,
               ),
-              icon: const Icon(Icons.search, size: 18),
-              label: Text(l10n.search),
+              icon: const Icon(Icons.search, size: 18, color: AppColors.white),
+              label: Text(
+                l10n.search,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.white,
+                ),
+              ),
             ),
           ),
         ],

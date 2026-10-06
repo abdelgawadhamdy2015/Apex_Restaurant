@@ -20,12 +20,10 @@ import '../tablet_widgets/tables_grid.dart';
 class TablesTabletScreen extends StatefulWidget {
   const TablesTabletScreen({
     super.key,
-    required this.branchId,
     required this.personList,
     required this.inCartScreen,
   });
 
-  final int branchId;
   final List<PosClientModel> personList;
   final bool inCartScreen;
 
@@ -43,13 +41,7 @@ class _TablesTabletScreenState extends State<TablesTabletScreen> {
     final bloc = context.read<TablesBloc>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.add(
-        FetchFloorsEvent(
-          GetFloorsRequest(
-            branchId: widget.branchId,
-            pageNumber: 1,
-            pageSize: 100,
-          ),
-        ),
+        FetchFloorsEvent(GetFloorsRequest(pageNumber: 1, pageSize: 100)),
       );
     });
   }

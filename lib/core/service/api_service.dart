@@ -1,6 +1,8 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
+import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
 import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
@@ -12,6 +14,8 @@ import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
 
 import 'api_constants.dart';
@@ -56,7 +60,7 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
   @POST(ApiConstants.login)
-  @Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
+  //  @Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
   Future<BaseResponse<LoginData?>> login(@Body() LoginRequest loginRequestBody);
   @GET(ApiConstants.openRestaurantPos)
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
@@ -77,6 +81,10 @@ abstract class ApiService {
   Future<BaseResponse<UserDataModel?>> getUserData(@Path("id") int id);
   @GET(ApiConstants.getEmployeeBranches)
   Future<BaseResponse<List<EmployeeBranch>?>> getEmployeeBranches();
+  @POST("${ApiConstants.updatedSelectedBranch}/{branchId}")
+  Future<BaseResponse<dynamic>> updatedSelectedBranch({
+    @Path("branchId") required int branchId,
+  });
 
   @GET(ApiConstants.getAllCategoriesDropDown)
   Future<BaseResponse<List<CategoryModel>?>> getAllCategories();
@@ -253,4 +261,14 @@ abstract class ApiService {
 
   @GET(ApiConstants.getAllTreasuryByUserDropDown)
   Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown();
+
+  @GET(ApiConstants.getInvoiceReport)
+  Future<InvoiceReportResponse?> getInvoiceReport(
+    @Queries() InvoiceReportRequest request,
+  );
+
+  @POST(ApiConstants.printKitchen)
+  Future<BaseResponse<PrintKitchenResponse?>> printKitchen(
+    @Body() PrintKitchenRequest request,
+  );
 }

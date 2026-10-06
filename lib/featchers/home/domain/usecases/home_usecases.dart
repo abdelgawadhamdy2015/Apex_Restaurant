@@ -43,3 +43,10 @@ class GetAllTreasuryByUserDropDownUseCase {
   Future<ApiResult<BaseResponse<List<SafeModel>?>>> call() =>
       _repository.getAllTreasuryByUserDropDown();
 }
+
+class UpdatedSelectedBranchUseCase {
+  final HomeRepository _repository;
+  UpdatedSelectedBranchUseCase(this._repository);
+  Future<ApiResult<BaseResponse<dynamic>>> call({required int branchId}) =>
+      _repository.updatedSelectedBranch(branchId: branchId);
+}

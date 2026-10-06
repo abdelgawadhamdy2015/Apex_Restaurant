@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/service/api_constants.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../data/enums/cart_enum.dart';
 import '../../bloc/cart_bloc.dart';
@@ -45,11 +47,12 @@ class OrderTypeSelector extends StatelessWidget {
             icon: Icons.store,
           ),
           SizedBox(width: spacing.xs),
-          _OrderTypeChip(
-            type: CartOrderType.DELIVERY_COMPANY,
-            label: lang.deliveryCompanies,
-            icon: Icons.storefront,
-          ),
+          if (ApiConstants.isDeliveryCompanyActive ?? false)
+            _OrderTypeChip(
+              type: CartOrderType.DELIVERY_COMPANY,
+              label: lang.deliveryCompanies,
+              icon: Icons.storefront,
+            ),
         ],
       ),
     );

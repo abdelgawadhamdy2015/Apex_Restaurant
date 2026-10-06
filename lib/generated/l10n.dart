@@ -4211,6 +4211,36 @@ class S {
       args: [],
     );
   }
+
+  /// `No`
+  String get no {
+    return Intl.message('No', name: 'no', desc: '', args: []);
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to cancel {customerName}'s reservation on {tableNumber}?`
+  String confirmCancelReservation(Object customerName, Object tableNumber) {
+    return Intl.message(
+      'Are you sure you want to cancel $customerName\'s reservation on $tableNumber?',
+      name: 'confirmCancelReservation',
+      desc: '',
+      args: [customerName, tableNumber],
+    );
+  }
+
+  /// `Confirm Reservation Cancellation`
+  String get confirmCancelReservationTitle {
+    return Intl.message(
+      'Confirm Reservation Cancellation',
+      name: 'confirmCancelReservationTitle',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -2,10 +2,12 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'login_data.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class LoginData {
   final bool? isPeriodEnded;
   final bool? isGedieaActive;
+  final bool? isTobaccoActive;
+  final bool? isDeliveryCompanyActive;
   final DateTime? startPeriod;
   final DateTime? endPeriod;
 
@@ -15,6 +17,7 @@ class LoginData {
 
   final bool? isHaveUpdate;
 
+  /// The server key is misspelled: "premissions".
   @JsonKey(name: 'premissions')
   final List<PermissionGroupModel>? permissions;
 
@@ -25,9 +28,11 @@ class LoginData {
 
   final int? maxPosCode;
   final int? maxReturnPosCode;
-  @JsonValue("forcedMessages_ar")
+
+  @JsonKey(name: 'forcedMessages_ar')
   final List<dynamic>? forcedMessagesAr;
-  @JsonValue("forcedMessages_en")
+
+  @JsonKey(name: 'forcedMessages_en')
   final List<dynamic>? forcedMessagesEn;
 
   final bool? isRestaurant;
@@ -35,6 +40,8 @@ class LoginData {
   const LoginData({
     this.isPeriodEnded,
     this.isGedieaActive,
+    this.isTobaccoActive,
+    this.isDeliveryCompanyActive,
     this.startPeriod,
     this.endPeriod,
     this.apps,
@@ -78,7 +85,8 @@ class AuthTokenModel {
 
   final List<dynamic>? allowedModule;
   final List<dynamic>? allowedForms;
-  @JsonValue("expires_in")
+
+  @JsonKey(name: 'expires_in')
   final DateTime? expiresInn;
 
   const AuthTokenModel({
@@ -148,7 +156,7 @@ class PermissionGroupModel {
   Map<String, dynamic> toJson() => _$PermissionGroupModelToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class SubPermissionModel {
   final int? mainFormCode;
   final int? subFormCode;
@@ -162,6 +170,10 @@ class SubPermissionModel {
   final bool? isShow;
   final bool? isPrint;
 
+  /// Nested items, used by the "Reports" entries (subFormCode == 0).
+  /// It is null for normal permissions.
+  final List<SubPermissionModel>? subPermissions;
+
   const SubPermissionModel({
     this.mainFormCode,
     this.subFormCode,
@@ -172,6 +184,7 @@ class SubPermissionModel {
     this.isDelete,
     this.isShow,
     this.isPrint,
+    this.subPermissions,
   });
 
   factory SubPermissionModel.fromJson(Map<String, dynamic> json) =>

@@ -456,7 +456,9 @@ void showPauseSessionDialogState(BuildContext context) {
     onConfirm: closeDialog,
     onCancel: () {
       closeDialog();
-      context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());
+      context.read<PosBloc>().add(
+        CurrentRestaurantPosSessionEvent(openCloseDialog: true),
+      );
     },
   );
 }

@@ -434,6 +434,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(
       state.copyWith(
         items: [],
+        isPreviousInvoice: false,
         successMessage: null,
         selectedAddress: null,
         selectedDeliveryCompany: null,

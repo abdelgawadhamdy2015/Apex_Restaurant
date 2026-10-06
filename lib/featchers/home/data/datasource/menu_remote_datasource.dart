@@ -15,6 +15,7 @@ abstract class HomeDatasource {
     OpenSessionRequest request,
   );
   Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown();
+  Future<BaseResponse<dynamic>> updatedSelectedBranch({required int branchId});
 }
 
 class HomeDatasourceImpl implements HomeDatasource {
@@ -46,5 +47,10 @@ class HomeDatasourceImpl implements HomeDatasource {
   @override
   Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown() async {
     return (await _apiService.getAllTreasuryByUserDropDown());
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> updatedSelectedBranch({required int branchId}) {
+    return _apiService.updatedSelectedBranch(branchId: branchId);
   }
 }

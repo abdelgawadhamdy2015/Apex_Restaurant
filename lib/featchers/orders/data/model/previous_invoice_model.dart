@@ -10,6 +10,7 @@ class PreviousInvoiceModel {
   final String? personNameAr;
   final String? personNameEn;
   final double? totalAmount;
+  final int? posType;
 
   const PreviousInvoiceModel({
     this.invoiceId,
@@ -18,6 +19,7 @@ class PreviousInvoiceModel {
     this.personNameAr,
     this.personNameEn,
     this.totalAmount,
+    this.posType,
   });
 
   factory PreviousInvoiceModel.fromJson(Map<String, dynamic> json) =>

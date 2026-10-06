@@ -158,11 +158,6 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
                       TablesTabletScreen(
                         inCartScreen: false,
                         personList: context.read<CartBloc>().state.persons,
-                        branchId: context
-                            .read<HomeBloc>()
-                            .state
-                            .selectedEmployeeBranch!
-                            .branchId,
                       ),
                       TabletMoreOptions(),
                     ],

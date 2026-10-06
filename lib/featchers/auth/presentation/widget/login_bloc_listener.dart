@@ -119,6 +119,7 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
     RestaurantConstants.image = data.authToken?.userInfo?.imageUrl;
     ApiConstants.userId = int.parse(userInfo?.userId ?? '0');
     ApiConstants.empId = userInfo?.employeesId;
+    ApiConstants.isDeliveryCompanyActive = data.isDeliveryCompanyActive;
     DioFactory.setToken(token);
 
     // ── Navigate ──────────────────────────────────────────────────────────

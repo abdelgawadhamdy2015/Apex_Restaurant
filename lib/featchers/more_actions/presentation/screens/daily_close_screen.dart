@@ -395,11 +395,11 @@ class _DailyCloseScreenState extends State<DailyCloseScreen> {
           borderRadius: BorderRadius.circular(spacing.radiusMd),
         ),
       ),
-      icon: const Icon(Icons.check_circle_outline),
+      icon: const Icon(Icons.check_circle_outline, color: AppColors.white),
       label: Text(
         lang.approve,
         style: theme.textTheme.titleMedium?.copyWith(
-          color: theme.colorScheme.onPrimary,
+          color: AppColors.white,
           fontWeight: FontWeight.bold,
         ),
       ),
