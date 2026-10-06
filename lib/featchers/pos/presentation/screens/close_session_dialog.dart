@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/router/routes.dart';
 import '../bloc/pos_bloc.dart';
@@ -22,12 +24,13 @@ class CloseSessionDialog extends StatelessWidget {
     return BlocConsumer<PosBloc, PosState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
-        // عند النجاح: إغلاق الـ Dialog والتوجيه للـ Home Screen
         if (state.status == PosStatus.loaded &&
             state.toastMessage == 'تم إغلاق الجلسة بنجاح') {
-          Navigator.of(context).pop(); // إغلاق الـ Dialog
-
-          context.go(Routes.homeScreen); // أو context.go(Routes.homeScreen);
+          context.pop();
+          context.read<PosBloc>().add(
+            SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+          );
+          context.goNamed(Routes.homeScreen);
         }
 
         // عند وجود خطأ
