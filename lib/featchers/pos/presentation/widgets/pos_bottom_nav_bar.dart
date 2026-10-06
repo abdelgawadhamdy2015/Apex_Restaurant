@@ -60,16 +60,14 @@ class PosBottomNavBar extends StatelessWidget {
     switch (item) {
       case PosBottomNavEnm.menu:
         return Icons.restaurant_outlined;
-
       case PosBottomNavEnm.orders:
         return Icons.receipt_long_outlined;
-
       case PosBottomNavEnm.customers:
         return Icons.people_outline;
-
       case PosBottomNavEnm.tables:
         return Icons.table_restaurant_outlined;
-
+      case PosBottomNavEnm.newOrder:
+        return Icons.add;
       case PosBottomNavEnm.more:
         return Icons.more_horiz;
     }
@@ -88,6 +86,9 @@ class PosBottomNavBar extends StatelessWidget {
 
       case PosBottomNavEnm.tables:
         return lang.tables;
+
+      case PosBottomNavEnm.newOrder:
+        return lang.btnNewOrder;
 
       case PosBottomNavEnm.more:
         return lang.more;

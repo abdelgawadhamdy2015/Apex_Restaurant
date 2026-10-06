@@ -16,6 +16,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_more_option.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_top_header.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/pages/tablet_tables_screen.dart';
+import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:flutter/material.dart';
 
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -176,6 +177,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     bool isDark,
     PosState posState,
   ) {
+    final lang = S.of(context);
     return Container(
       color: theme.colorScheme.surface,
       padding: EdgeInsets.symmetric(horizontal: 10),
@@ -185,35 +187,35 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
           _buildRailItem(
             PosBottomNavEnm.menu,
             Icons.restaurant,
-            'القائمة',
+            lang.menu,
             theme,
             posState,
           ),
           _buildRailItem(
             PosBottomNavEnm.orders,
             Icons.receipt_long,
-            'الطلبات',
+            lang.orders,
             theme,
             posState,
           ),
           _buildRailItem(
             PosBottomNavEnm.customers,
             Icons.people,
-            'العملاء',
+            lang.customers,
             theme,
             posState,
           ),
           _buildRailItem(
             PosBottomNavEnm.tables,
             Icons.table_bar,
-            'الطاولات',
+            lang.tables,
             theme,
             posState,
           ),
           _buildRailItem(
             PosBottomNavEnm.more,
             Icons.more_horiz,
-            'المزيد',
+            lang.more,
             theme,
             posState,
           ),

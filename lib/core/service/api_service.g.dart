@@ -25,11 +25,20 @@ class _ApiService implements ApiService {
   Future<BaseResponse<LoginData?>> login(LoginRequest loginRequestBody) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{
+      r'Content-Type': 'application/json-patch+json',
+      r'accept': '*/*',
+    };
+    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(loginRequestBody.toJson());
     final _options = _setStreamType<BaseResponse<LoginData?>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'application/json-patch+json',
+          )
           .compose(
             _dio.options,
             'api/Login',

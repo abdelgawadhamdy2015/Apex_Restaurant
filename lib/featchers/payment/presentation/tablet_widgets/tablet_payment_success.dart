@@ -338,9 +338,7 @@ class _SuccessActionButtons extends StatelessWidget {
                 label: lang.btnPrintReceipt,
                 icon: Icons.print_outlined,
                 onTap: () {
-                  final fileUrl =
-                      state.successResponseModel?.printingCheque?.fileURL;
-                  HelperMethods.printDirectPdf(context, fileUrl, 'Receipt');
+                  //context.read<PaymentBloc>().add(PrintKitchenPaymentEvent(request: PrintKitchenRequest(invoiceId: state.successResponseModel.)));
                 },
               ),
             ),

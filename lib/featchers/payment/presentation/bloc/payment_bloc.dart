@@ -13,12 +13,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final SavePaymentRestaurantPosInvoiceUseCase processPaymentUseCase;
   final PaymentMethodsUseCase paymentMethodsUseCase;
+  // final PrintKitchenUseCase printKitchenUseCase;
   PaymentBloc({
     required this.processPaymentUseCase,
     required this.paymentMethodsUseCase,
+    // required this.printKitchenUseCase,
   }) : super(const PaymentState()) {
     on<InitializePaymentEvent>(_onInitializePayment);
     on<ChangePaymentMethodEvent>(_onChangePaymentMethod);
+    //on<PrintKitchenPaymentEvent>(_printKitchen);
     on<UpdatePaidAmountEvent>(_onUpdatePaidAmount);
     on<UpdateReferenceNumberEvent>(_onUpdateReferenceNumber);
     on<UpdateSplitAmountEvent>(_onUpdateSplitAmount);
@@ -201,4 +204,42 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       );
     }
   }
+
+  // Future<void> _printKitchen(
+  //   PrintKitchenPaymentEvent event,
+  //   Emitter<PaymentState> emit,
+  // ) async {
+  //   emit(state.copyWith(status: PaymentStatus.loading));
+  //   try {
+  //     final response = await printKitchenUseCase(request: event.request);
+  //     response.when(
+  //       success: (data) {
+  //         if (data.result == 1) {
+  //           emit(
+  //             state.copyWith(
+  //               status: PaymentStatus.success,
+  //               printKitchenResponse: data.data,
+  //               errorMessage: data.errorMessageAr,
+  //             ),
+  //           );
+  //         }
+  //       },
+  //       failure: (error) {
+  //         emit(
+  //           state.copyWith(
+  //             status: PaymentStatus.error,
+  //             errorMessage: error.apiErrorModel.errorMessageAr,
+  //           ),
+  //         );
+  //       },
+  //     );
+  //   } catch (e) {
+  //     emit(
+  //       state.copyWith(
+  //         status: PaymentStatus.error,
+  //         errorMessage: 'فشلت عملية جلب طرق الدفع. يرجى المحاولة مرة أخرى.',
+  //       ),
+  //     );
+  //   }
+  // }
 }
