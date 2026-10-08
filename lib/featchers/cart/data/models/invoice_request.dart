@@ -168,7 +168,7 @@ class RestaurantPosInvoiceItemRequest {
 
   @JsonKey(name: 'Additives')
   final List<RestaurantPosItemAdditiveRequest> additives;
-
+  final int? invoiceDetailsId;
   const RestaurantPosInvoiceItemRequest({
     required this.itemId,
     this.transactionID,
@@ -179,6 +179,7 @@ class RestaurantPosInvoiceItemRequest {
     this.discount,
     this.itemDiscountId,
     this.additives = const [],
+    this.invoiceDetailsId,
   });
 
   factory RestaurantPosInvoiceItemRequest.fromJson(Map<String, dynamic> json) =>
@@ -199,11 +200,13 @@ class RestaurantPosItemAdditiveRequest {
   final String? transactionID;
   @JsonKey(name: 'ParentTransactionId')
   final String? parentTransactionId;
+  final int? invoiceDetailsId;
   const RestaurantPosItemAdditiveRequest({
     required this.additiveId,
     required this.quantity,
     this.transactionID,
     this.parentTransactionId,
+    this.invoiceDetailsId,
   });
 
   factory RestaurantPosItemAdditiveRequest.fromJson(

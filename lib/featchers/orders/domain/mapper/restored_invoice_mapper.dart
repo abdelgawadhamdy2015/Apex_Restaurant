@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../../../cart/data/enums/cart_enum.dart';
@@ -13,13 +15,11 @@ import '../../../tables/domain/entities/table_entity.dart';
 import '../../data/model/restored_invoice_model.dart';
 
 extension RestoredInvoiceMapper on RestoredInvoiceModel {
-  RestoredCartData toRestoredCartData(BuildContext context) {
+  RestoredCartData toRestoredCartData(BuildContext context, {bool? isReturn}) {
     final rawItems = items ?? [];
     final inv = invoice;
 
-    // -------------------------------------------------------------------
-    // 1. EXTRACT ORDER TYPE
-    // -------------------------------------------------------------------
+    // 1. ORDER TYPE
     CartOrderType orderType = CartOrderType.TAKEAWAY;
     if (inv?.posType != null) {
       orderType = CartOrderType.values.firstWhere(
@@ -28,9 +28,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       );
     }
 
-    // -------------------------------------------------------------------
-    // 2. EXTRACT ENTITIES (Client, Waiter, Delivery Man, Company, Table)
-    // -------------------------------------------------------------------
+    // 2. ENTITIES
     PosClientModel? client;
     final clientId = inv?.clientId ?? inv?.client?.id;
     if (clientId != null && clientId != 0) {
@@ -42,12 +40,12 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     WaiterModel? waiter;
-    final waiterId = inv?.waiter?.id;
+    final waiterId = inv?.waiterId ?? inv?.waiter?.id;
     if (waiterId != null && waiterId != 0) {
       waiter = WaiterModel(
         id: waiterId,
-        arabicName: inv?.waiter?.arabicName ?? '',
-        latinName: inv?.waiter?.latinName ?? '',
+        arabicName: inv?.waiterArabicName ?? inv?.waiter?.arabicName ?? '',
+        latinName: inv?.waiterLatinName ?? inv?.waiter?.latinName ?? '',
       );
     }
 
@@ -64,35 +62,41 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     DeliveryCompanyModel? deliveryCompany;
-    final compId = inv?.deliveryCompany?.id;
+    final compId = inv?.deliveryCompanyId ?? inv?.deliveryCompany?.id;
     if (compId != null && compId != 0) {
       deliveryCompany = DeliveryCompanyModel(
         id: compId,
-        arabicName: inv?.deliveryCompany?.arabicName ?? '',
-        latinName: inv?.deliveryCompany?.latinName ?? '',
+        arabicName:
+            inv?.deliveryCompanyArabicName ??
+            inv?.deliveryCompany?.arabicName ??
+            '',
+        latinName:
+            inv?.deliveryCompanyLatinName ??
+            inv?.deliveryCompany?.latinName ??
+            '',
       );
     }
 
     TableEntity? table;
-    final tableId = inv?.foodTableId ?? inv?.foodTable?.id;
-    if (tableId != null && tableId != 0) {
+    // Normalize to String: foodTableId is int?, foodTable.id is String?
+    final String? tableId = inv?.foodTableId?.toString() ?? inv?.foodTable?.id;
+    if (tableId != null && tableId.isNotEmpty && tableId != '0') {
       table = TableEntity(
-        id: tableId.toString(),
+        id: tableId,
         arabicName:
             inv?.foodTableArabicName ?? inv?.foodTable?.arabicName ?? '',
         latinName: inv?.foodTableLatinName ?? inv?.foodTable?.latinName ?? '',
       );
     }
 
-    // -------------------------------------------------------------------
-    // 3. EXTRACT INVOICE DISCOUNT
-    // -------------------------------------------------------------------
+    // 3. INVOICE DISCOUNT
     RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
     if (inv?.invoiceDiscount != null) {
       final discount = inv!.invoiceDiscount!;
       final double val = discount.discountValue ?? 0.0;
       if (val > 0) {
-        // discountType 1 = Percentage, 2 = Fixed Value
+        // TODO: confirm with backend whether discountType or discountNatural
+        // decides percentage vs fixed.
         final bool isPerc = discount.discountNatural == 1;
         restaurantPosDiscountRequest = RestaurantPosDiscountRequest(
           type: isPerc ? 1 : 2,
@@ -101,14 +105,12 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       }
     }
 
-    // -------------------------------------------------------------------
-    // 4. MAP ITEMS AND ADDONS
-    // -------------------------------------------------------------------
+    // 4. ITEMS AND ADDONS
     final mainItemsMap = <int, RestoredInvoiceItem>{};
     final flatAdditivesMap = <int, List<RestoredInvoiceItem>>{};
     int fallbackCounter = 1;
 
-    for (var item in rawItems) {
+    for (final item in rawItems) {
       if (item.parentTransactionId == null || item.parentTransactionId == 0) {
         final int transId =
             (item.transactionId != null && item.transactionId != 0)
@@ -117,7 +119,6 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
 
         mainItemsMap[transId] = item;
       } else {
-        // Collect flat additives linked to a parent transaction ID
         flatAdditivesMap
             .putIfAbsent(item.parentTransactionId!, () => [])
             .add(item);
@@ -126,7 +127,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
 
     final List<OrderItem> orderItems = [];
 
-    for (var entry in mainItemsMap.entries) {
+    for (final entry in mainItemsMap.entries) {
       final transId = entry.key;
       final mainItem = entry.value;
 
@@ -151,7 +152,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         itemCode: '',
         itemNameAr: itemNameAr,
         itemNameEn: itemNameEn,
-        imagePath: mainItem.item?.imagePath,
+        imagePath: mainItem.item?.imagePath ?? mainItem.itemImagePath,
         categoryId: mainItem.item?.categoryId ?? 0,
         defaultPrice: mainItem.price ?? mainItem.item?.price ?? 0.0,
         isOffer: false,
@@ -160,27 +161,30 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         posTypes: const [],
         sizes: selectedSize != null ? [selectedSize] : const [],
         offersItems: const [],
-        isTobaccoTax: inv?.tobaccoTax != null && inv!.tobaccoTax! > 0,
+        // Per-item flag (was: invoice-level tobaccoTax > 0 for every item)
+        isTobaccoTax: mainItem.isTobaccoTax ?? false,
       );
 
-      // Combine both nested additives and flat additives linked by parentTransactionId
-      final List<AdditiveModel> allAddons = [];
-      allAddons.addAll(_mapNestedAddons(mainItem.additives));
-      allAddons.addAll(_mapFlatAddons(flatAdditivesMap[transId]));
+      final List<AdditiveModel> allAddons = [
+        ..._mapNestedAddons(mainItem.additives, transId),
+        ..._mapFlatAddons(flatAdditivesMap[transId], transId),
+      ];
 
-      double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
-      bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
-
+      final double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
+      final bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
+      log("mainItem.invoiceDetailsId : ${mainItem.invoiceDetailsId}");
       orderItems.add(
         OrderItem(
           transactionId: transId.toString(),
           menuItem: restaurantItem,
           selectedSize: selectedSize,
           quantity: (mainItem.quantity ?? 1).toInt(),
-          notes: mainItem.itemNote,
+          notes: mainItem.itemNote ?? mainItem.notes,
           addons: allAddons,
           discount: discountVal,
           isPercentageDiscount: isPercentage,
+          invoiceDetailsId: mainItem.invoiceDetailsId,
+          availableQuantity: mainItem.availableQuantity,
         ),
       );
     }
@@ -199,12 +203,20 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       deliveryCompany: deliveryCompany,
       table: table,
       restaurantPosDiscountRequest: restaurantPosDiscountRequest,
+      isReturnInvoice: isReturn,
+      payments: payments ?? const [],
+      totalInvoicePrice: inv?.totalInvoicePrice,
+      paidAmount: inv?.paidAmount,
+      notes: inv?.notes,
+      voucherCode: inv?.voucherCode,
+      deliveryCost: inv?.deliveryCost,
+      totalVat: inv?.totalVat,
     );
   }
 
-  /// Converts nested `RestoredInvoiceAdditive` items into a flat list of `AdditiveModel`.
   List<AdditiveModel> _mapNestedAddons(
     List<RestoredInvoiceAdditive>? rawAddons,
+    int parentTransId,
   ) {
     final result = <AdditiveModel>[];
     if (rawAddons == null) return result;
@@ -225,16 +237,21 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
             latinName: enName,
             price: price,
             imagePath: rawAddon.imagePath,
+            transactionId: rawAddon.transactionId?.toString(),
+            parentTransactionId: (rawAddon.parentTransactionId ?? parentTransId)
+                .toString(),
+            // invoiceDetailsId: rawAddon.invoiceDetailsId, // if added
           ),
         );
       }
     }
-
     return result;
   }
 
-  /// Converts flat `RestoredInvoiceItem` additives into a list of `AdditiveModel`.
-  List<AdditiveModel> _mapFlatAddons(List<RestoredInvoiceItem>? flatAddons) {
+  List<AdditiveModel> _mapFlatAddons(
+    List<RestoredInvoiceItem>? flatAddons,
+    int parentTransId,
+  ) {
     final result = <AdditiveModel>[];
     if (flatAddons == null) return result;
 
@@ -258,12 +275,14 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
             arabicName: arName,
             latinName: enName,
             price: price,
-            imagePath: addonItem.itemImagePath,
+            imagePath: addonItem.itemImagePath ?? addonItem.item?.imagePath,
+            transactionId: addonItem.transactionId?.toString(),
+            parentTransactionId: parentTransId.toString(),
+            // invoiceDetailsId: addonItem.invoiceDetailsId, // if added
           ),
         );
       }
     }
-
     return result;
   }
 }

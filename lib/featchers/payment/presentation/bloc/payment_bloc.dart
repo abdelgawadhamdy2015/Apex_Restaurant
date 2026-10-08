@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
-
+import 'package:apex_restaurant/core/service/api_error_handler.dart';
+import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_request_model.dart';
-
 import '../../../../core/service/api_result.dart';
 import '../../data/model/payment_success_model.dart';
 import '../../domain/usecase/process_payment_usecase.dart';
@@ -13,14 +14,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final SavePaymentRestaurantPosInvoiceUseCase processPaymentUseCase;
   final PaymentMethodsUseCase paymentMethodsUseCase;
+  final SaveRestaurantPosReturnInvoiceUseCase
+  saveRestaurantPosReturnInvoiceUseCase;
   // final PrintKitchenUseCase printKitchenUseCase;
   PaymentBloc({
     required this.processPaymentUseCase,
     required this.paymentMethodsUseCase,
+    required this.saveRestaurantPosReturnInvoiceUseCase,
     // required this.printKitchenUseCase,
   }) : super(const PaymentState()) {
     on<InitializePaymentEvent>(_onInitializePayment);
     on<ChangePaymentMethodEvent>(_onChangePaymentMethod);
+    on<SaveRestaurantPosPartialReturnInvoiceEvent>(
+      _saveRestaurantPosPartialReturnInvoice,
+    );
     //on<PrintKitchenPaymentEvent>(_printKitchen);
     on<UpdatePaidAmountEvent>(_onUpdatePaidAmount);
     on<UpdateReferenceNumberEvent>(_onUpdateReferenceNumber);
@@ -93,6 +100,59 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       ),
     );
     log('Updated split amounts: ${state.splitAmounts} , ');
+  }
+
+  Future<void> _saveRestaurantPosPartialReturnInvoice(
+    SaveRestaurantPosPartialReturnInvoiceEvent event,
+    Emitter<PaymentState> emit,
+  ) async {
+    emit(state.copyWith(status: PaymentStatus.loading));
+
+    try {
+      final response = await saveRestaurantPosReturnInvoiceUseCase(
+        request: event.request,
+      );
+      response.when(
+        success: (data) {
+          if (data?.result == 1) {
+            emit(
+              state.copyWith(
+                partialReturnResponseData: data?.data,
+                printResponseData: data?.printingData ?? PrintResponseData(),
+                status: PaymentStatus.success,
+                isFullReturn: true,
+                errorMessage: null,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                errorMessage: data?.errorMessageAr,
+                status: PaymentStatus.error,
+                isFullReturn: false,
+              ),
+            );
+          }
+        },
+        failure: (errorHandler) {
+          emit(
+            state.copyWith(
+              errorMessage: errorHandler.apiErrorModel.errorMessageAr,
+              status: PaymentStatus.error,
+              isFullReturn: false,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+          status: PaymentStatus.error,
+          isFullReturn: false,
+        ),
+      );
+    }
   }
 
   Future<void> _onSubmitPayment(

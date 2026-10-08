@@ -1,5 +1,7 @@
 import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
 import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
 
@@ -13,6 +15,8 @@ abstract class SharedDatasource {
   Future<InvoiceReportResponse?> getInvoiceReport({
     required InvoiceReportRequest request,
   });
+  Future<BaseResponse<ReturnResponseData?>>
+  saveRestaurantPosPartialReturnInvoice({required ReturnRequest request});
 }
 
 class SharedDatasourceImpl implements SharedDatasource {
@@ -31,5 +35,13 @@ class SharedDatasourceImpl implements SharedDatasource {
     required InvoiceReportRequest request,
   }) {
     return _apiService.getInvoiceReport(request);
+  }
+
+  @override
+  Future<BaseResponse<ReturnResponseData?>>
+  saveRestaurantPosPartialReturnInvoice({
+    required ReturnRequest request,
+  }) async {
+    return await _apiService.saveRestaurantPosReturnInvoice(request);
   }
 }

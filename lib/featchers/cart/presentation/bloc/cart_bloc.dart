@@ -53,6 +53,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SelectPersonEvent>(_onSelectPerson);
+
     on<UpdateItemsPriceWithCompanyEvent>(_updateItemsPriceForCompanies);
     on<ClearVoucherDiscountEvent>(
       (event, emit) => emit(
@@ -255,6 +256,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         //     .success, // Triggers state listeners without breaking UI flow
         isLoading: false,
         errorMessage: null,
+        isReturnInvoice: data.isReturnInvoice,
       ),
     );
   }
@@ -462,6 +464,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearRestaurantPosDiscountRequest: true,
         clearInvoiceId: true,
         clearCart: true,
+        isReturnInvoice: false,
       ),
     );
   }

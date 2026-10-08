@@ -74,6 +74,8 @@ RestoredInvoiceInfo _$RestoredInvoiceInfoFromJson(Map<String, dynamic> json) =>
       deliveryCost: (json['deliveryCost'] as num?)?.toDouble(),
       dineInCost: (json['dineInCost'] as num?)?.toDouble(),
       tobaccoTax: (json['tobaccoTax'] as num?)?.toDouble(),
+      net: (json['net'] as num?)?.toDouble(),
+      totalDiscount: (json['totalDiscount'] as num?)?.toDouble(),
       client: json['client'] == null
           ? null
           : RestoredClient.fromJson(json['client'] as Map<String, dynamic>),
@@ -95,7 +97,18 @@ RestoredInvoiceInfo _$RestoredInvoiceInfoFromJson(Map<String, dynamic> json) =>
           : RestoredFoodTable.fromJson(
               json['foodTable'] as Map<String, dynamic>,
             ),
+      casher: json['casher'] == null
+          ? null
+          : RestoredCasher.fromJson(json['casher'] as Map<String, dynamic>),
       voucherId: json['voucherId'] as String?,
+      voucherCode: json['voucherCode'] as String?,
+      isReturn: json['isReturn'] as bool?,
+      isAccredite: json['isAccredite'] as bool?,
+      orderReceivedTime: json['orderReceivedTime'] == null
+          ? null
+          : DateTime.parse(json['orderReceivedTime'] as String),
+      canEditReasonAr: json['canEditReasonAr'] as String?,
+      canEditReasonEn: json['canEditReasonEn'] as String?,
       canEdit: json['canEdit'] as bool? ?? true,
     );
 
@@ -109,6 +122,8 @@ Map<String, dynamic> _$RestoredInvoiceInfoToJson(
   'invoiceDate': instance.invoiceDate?.toIso8601String(),
   'posType': instance.posType,
   'canEdit': instance.canEdit,
+  'canEditReasonAr': instance.canEditReasonAr,
+  'canEditReasonEn': instance.canEditReasonEn,
   'foodTableId': instance.foodTableId,
   'foodTableArabicName': instance.foodTableArabicName,
   'foodTableLatinName': instance.foodTableLatinName,
@@ -137,12 +152,19 @@ Map<String, dynamic> _$RestoredInvoiceInfoToJson(
   'deliveryCost': instance.deliveryCost,
   'dineInCost': instance.dineInCost,
   'tobaccoTax': instance.tobaccoTax,
+  'net': instance.net,
+  'totalDiscount': instance.totalDiscount,
   'client': instance.client,
   'waiter': instance.waiter,
   'deliveryCompany': instance.deliveryCompany,
   'deliveryMan': instance.deliveryMan,
   'foodTable': instance.foodTable,
+  'casher': instance.casher,
   'voucherId': instance.voucherId,
+  'voucherCode': instance.voucherCode,
+  'isReturn': instance.isReturn,
+  'isAccredite': instance.isAccredite,
+  'orderReceivedTime': instance.orderReceivedTime?.toIso8601String(),
 };
 
 RestoredAddress _$RestoredAddressFromJson(Map<String, dynamic> json) =>
@@ -218,6 +240,10 @@ RestoredClient _$RestoredClientFromJson(Map<String, dynamic> json) =>
       latinName: json['latinName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       categoryId: (json['categoryId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+      imagePath: json['imagePath'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestoredClientToJson(RestoredClient instance) =>
@@ -227,6 +253,36 @@ Map<String, dynamic> _$RestoredClientToJson(RestoredClient instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
+    };
+
+RestoredCasher _$RestoredCasherFromJson(Map<String, dynamic> json) =>
+    RestoredCasher(
+      id: (json['id'] as num?)?.toInt(),
+      arabicName: json['arabicName'] as String?,
+      latinName: json['latinName'] as String?,
+      price: (json['price'] as num?)?.toDouble(),
+      categoryId: (json['categoryId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+      imagePath: json['imagePath'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$RestoredCasherToJson(RestoredCasher instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'arabicName': instance.arabicName,
+      'latinName': instance.latinName,
+      'price': instance.price,
+      'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
     };
 
 RestoredWaiter _$RestoredWaiterFromJson(Map<String, dynamic> json) =>
@@ -236,6 +292,10 @@ RestoredWaiter _$RestoredWaiterFromJson(Map<String, dynamic> json) =>
       latinName: json['latinName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       categoryId: (json['categoryId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+      imagePath: json['imagePath'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestoredWaiterToJson(RestoredWaiter instance) =>
@@ -245,6 +305,10 @@ Map<String, dynamic> _$RestoredWaiterToJson(RestoredWaiter instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
     };
 
 RestoredDeliveryCompany _$RestoredDeliveryCompanyFromJson(
@@ -255,6 +319,10 @@ RestoredDeliveryCompany _$RestoredDeliveryCompanyFromJson(
   latinName: json['latinName'] as String?,
   price: (json['price'] as num?)?.toDouble(),
   categoryId: (json['categoryId'] as num?)?.toInt(),
+  transactionId: (json['transactionId'] as num?)?.toInt(),
+  parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+  imagePath: json['imagePath'] as String?,
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$RestoredDeliveryCompanyToJson(
@@ -265,6 +333,10 @@ Map<String, dynamic> _$RestoredDeliveryCompanyToJson(
   'latinName': instance.latinName,
   'price': instance.price,
   'categoryId': instance.categoryId,
+  'transactionId': instance.transactionId,
+  'parentTransactionId': instance.parentTransactionId,
+  'imagePath': instance.imagePath,
+  'invoiceDetailsId': instance.invoiceDetailsId,
 };
 
 RestoredDeliveryMan _$RestoredDeliveryManFromJson(Map<String, dynamic> json) =>
@@ -274,6 +346,10 @@ RestoredDeliveryMan _$RestoredDeliveryManFromJson(Map<String, dynamic> json) =>
       latinName: json['latinName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       categoryId: (json['categoryId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+      imagePath: json['imagePath'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestoredDeliveryManToJson(
@@ -284,6 +360,10 @@ Map<String, dynamic> _$RestoredDeliveryManToJson(
   'latinName': instance.latinName,
   'price': instance.price,
   'categoryId': instance.categoryId,
+  'transactionId': instance.transactionId,
+  'parentTransactionId': instance.parentTransactionId,
+  'imagePath': instance.imagePath,
+  'invoiceDetailsId': instance.invoiceDetailsId,
 };
 
 RestoredFoodTable _$RestoredFoodTableFromJson(Map<String, dynamic> json) =>
@@ -293,6 +373,10 @@ RestoredFoodTable _$RestoredFoodTableFromJson(Map<String, dynamic> json) =>
       latinName: json['latinName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       categoryId: (json['categoryId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+      imagePath: json['imagePath'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestoredFoodTableToJson(RestoredFoodTable instance) =>
@@ -302,6 +386,10 @@ Map<String, dynamic> _$RestoredFoodTableToJson(RestoredFoodTable instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
     };
 
 RestoredInvoiceItem _$RestoredInvoiceItemFromJson(Map<String, dynamic> json) =>
@@ -317,6 +405,7 @@ RestoredInvoiceItem _$RestoredInvoiceItemFromJson(Map<String, dynamic> json) =>
       sizeLatinName: json['sizeLatinName'] as String?,
       quantity: (json['quantity'] as num?)?.toDouble(),
       price: (json['price'] as num?)?.toDouble(),
+      notes: json['notes'] as String?,
       itemNote: json['itemNote'] as String?,
       itemDiscount: json['itemDiscount'] == null
           ? null
@@ -336,6 +425,9 @@ RestoredInvoiceItem _$RestoredInvoiceItemFromJson(Map<String, dynamic> json) =>
           : RestoredSize.fromJson(json['size'] as Map<String, dynamic>),
       additive: json['additive'],
       foodAdditiveId: (json['foodAdditiveId'] as num?)?.toInt(),
+      isTobaccoTax: json['isTobaccoTax'] as bool?,
+      availableQuantity: (json['availableQuantity'] as num?)?.toDouble(),
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestoredInvoiceItemToJson(
@@ -352,6 +444,7 @@ Map<String, dynamic> _$RestoredInvoiceItemToJson(
   'sizeLatinName': instance.sizeLatinName,
   'quantity': instance.quantity,
   'price': instance.price,
+  'notes': instance.notes,
   'itemNote': instance.itemNote,
   'itemDiscount': instance.itemDiscount,
   'additives': instance.additives,
@@ -359,6 +452,9 @@ Map<String, dynamic> _$RestoredInvoiceItemToJson(
   'size': instance.size,
   'additive': instance.additive,
   'foodAdditiveId': instance.foodAdditiveId,
+  'isTobaccoTax': instance.isTobaccoTax,
+  'availableQuantity': instance.availableQuantity,
+  'invoiceDetailsId': instance.invoiceDetailsId,
 };
 
 RestoredItemDiscount _$RestoredItemDiscountFromJson(
@@ -399,6 +495,7 @@ RestoredInvoiceAdditive _$RestoredInvoiceAdditiveFromJson(
       : RestoredAdditive.fromJson(json['additive'] as Map<String, dynamic>),
   transactionId: (json['transactionId'] as num?)?.toInt(),
   parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$RestoredInvoiceAdditiveToJson(
@@ -413,6 +510,7 @@ Map<String, dynamic> _$RestoredInvoiceAdditiveToJson(
   'additive': instance.additive,
   'transactionId': instance.transactionId,
   'parentTransactionId': instance.parentTransactionId,
+  'invoiceDetailsId': instance.invoiceDetailsId,
 };
 
 RestoredAdditive _$RestoredAdditiveFromJson(Map<String, dynamic> json) =>
@@ -422,6 +520,10 @@ RestoredAdditive _$RestoredAdditiveFromJson(Map<String, dynamic> json) =>
       latinName: json['latinName'] as String?,
       price: (json['price'] as num?)?.toDouble(),
       categoryId: (json['categoryId'] as num?)?.toInt(),
+      transactionId: (json['transactionId'] as num?)?.toInt(),
+      parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+      imagePath: json['imagePath'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$RestoredAdditiveToJson(RestoredAdditive instance) =>
@@ -431,6 +533,10 @@ Map<String, dynamic> _$RestoredAdditiveToJson(RestoredAdditive instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
     };
 
 RestoredItem _$RestoredItemFromJson(Map<String, dynamic> json) => RestoredItem(
@@ -442,6 +548,7 @@ RestoredItem _$RestoredItemFromJson(Map<String, dynamic> json) => RestoredItem(
   transactionId: (json['transactionId'] as num?)?.toInt(),
   parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
   imagePath: json['imagePath'] as String?,
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$RestoredItemToJson(RestoredItem instance) =>
@@ -454,6 +561,7 @@ Map<String, dynamic> _$RestoredItemToJson(RestoredItem instance) =>
       'transactionId': instance.transactionId,
       'parentTransactionId': instance.parentTransactionId,
       'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
     };
 
 RestoredSize _$RestoredSizeFromJson(Map<String, dynamic> json) => RestoredSize(
@@ -462,6 +570,10 @@ RestoredSize _$RestoredSizeFromJson(Map<String, dynamic> json) => RestoredSize(
   latinName: json['latinName'] as String?,
   price: (json['price'] as num?)?.toDouble(),
   categoryId: (json['categoryId'] as num?)?.toInt(),
+  transactionId: (json['transactionId'] as num?)?.toInt(),
+  parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+  imagePath: json['imagePath'] as String?,
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$RestoredSizeToJson(RestoredSize instance) =>
@@ -471,18 +583,60 @@ Map<String, dynamic> _$RestoredSizeToJson(RestoredSize instance) =>
       'latinName': instance.latinName,
       'price': instance.price,
       'categoryId': instance.categoryId,
+      'transactionId': instance.transactionId,
+      'parentTransactionId': instance.parentTransactionId,
+      'imagePath': instance.imagePath,
+      'invoiceDetailsId': instance.invoiceDetailsId,
     };
 
 RestoredInvoicePayment _$RestoredInvoicePaymentFromJson(
   Map<String, dynamic> json,
 ) => RestoredInvoicePayment(
   paymentMethodId: (json['paymentMethodId'] as num?)?.toInt(),
+  arabicName: json['arabicName'] as String?,
+  latinName: json['latinName'] as String?,
   amount: (json['amount'] as num?)?.toDouble(),
+  paymentMethod: json['paymentMethod'] == null
+      ? null
+      : RestoredPaymentMethod.fromJson(
+          json['paymentMethod'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$RestoredInvoicePaymentToJson(
   RestoredInvoicePayment instance,
 ) => <String, dynamic>{
   'paymentMethodId': instance.paymentMethodId,
+  'arabicName': instance.arabicName,
+  'latinName': instance.latinName,
   'amount': instance.amount,
+  'paymentMethod': instance.paymentMethod,
+};
+
+RestoredPaymentMethod _$RestoredPaymentMethodFromJson(
+  Map<String, dynamic> json,
+) => RestoredPaymentMethod(
+  id: (json['id'] as num?)?.toInt(),
+  arabicName: json['arabicName'] as String?,
+  latinName: json['latinName'] as String?,
+  price: (json['price'] as num?)?.toDouble(),
+  categoryId: (json['categoryId'] as num?)?.toInt(),
+  transactionId: (json['transactionId'] as num?)?.toInt(),
+  parentTransactionId: (json['parentTransactionId'] as num?)?.toInt(),
+  imagePath: json['imagePath'] as String?,
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
+);
+
+Map<String, dynamic> _$RestoredPaymentMethodToJson(
+  RestoredPaymentMethod instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'arabicName': instance.arabicName,
+  'latinName': instance.latinName,
+  'price': instance.price,
+  'categoryId': instance.categoryId,
+  'transactionId': instance.transactionId,
+  'parentTransactionId': instance.parentTransactionId,
+  'imagePath': instance.imagePath,
+  'invoiceDetailsId': instance.invoiceDetailsId,
 };

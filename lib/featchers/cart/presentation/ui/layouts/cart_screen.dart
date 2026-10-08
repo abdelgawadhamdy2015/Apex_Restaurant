@@ -238,7 +238,9 @@ class _CartContent extends StatelessWidget {
               ),
             ),
 
-            if (state.canEdit && !state.isPreviousInvoice)
+            if (state.canEdit ||
+                state.isPreviousInvoice ||
+                state.isReturnInvoice == true)
               BottomActionBar(canEdit: canEdit),
           ],
         );

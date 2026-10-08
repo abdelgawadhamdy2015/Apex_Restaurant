@@ -1,3 +1,8 @@
+import 'dart:developer';
+
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
+
 import 'restaurant_constants.dart';
 import '../service/api_error_handler.dart';
 import '../settings/settings_cubit.dart';
@@ -64,4 +69,51 @@ extension AppThemeContextX on BuildContext {
       );
 
   AppExtraTheme get appExtraTheme => Theme.of(this).extension<AppExtraTheme>()!;
+}
+
+extension ReturnRequestFromSaveRequest on SaveRestaurantPosInvoiceRequest {
+  ReturnRequest toReturnRequest() {
+    final returnedItems = <ReturnedInvoiceItem>[];
+    log("items: ${items.length}");
+    for (final item in items) {
+      log("invoiceDetailsId : ${item.invoiceDetailsId}");
+      // Restaurant item
+      if (item.invoiceDetailsId != null) {
+        returnedItems.add(
+          ReturnedInvoiceItem(
+            invoiceDetailId: item.invoiceDetailsId!,
+            quantity: item.quantity,
+          ),
+        );
+      }
+
+      // Item additives
+      for (final additive in item.additives) {
+        if (additive.invoiceDetailsId != null) {
+          returnedItems.add(
+            ReturnedInvoiceItem(
+              invoiceDetailId: additive.invoiceDetailsId!,
+              quantity: additive.quantity,
+            ),
+          );
+        }
+      }
+    }
+
+    return ReturnRequest(
+      originalInvoiceId: invoice.invoiceId ?? 0,
+      isTotalReturn: false,
+      notes: invoice.notes,
+      totalInvoicePrice: invoice.totalInvoicePrice,
+      returnedInvoiceItems: returnedItems,
+      paymentMethods: payments
+          .map(
+            (p) => PaymentMethod(
+              paymentMethodId: p.paymentMethodId,
+              value: p.amount,
+            ),
+          )
+          .toList(),
+    );
+  }
 }

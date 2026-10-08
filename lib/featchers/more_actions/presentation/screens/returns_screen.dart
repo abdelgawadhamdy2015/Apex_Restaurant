@@ -6,10 +6,10 @@ import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/shared/widgets/date_text_field.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/ui/layouts/cart_tablet_screen.dart';
-import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_bloc.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_event.dart';
@@ -63,15 +63,26 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (BuildContext context, MoreActionsState state) {
         if (state.status == MoreActionsStatus.success) {
+          if (state.returnResponseData != null) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: lang.invoiceReturnedSuccessfully,
+              isError: false,
+            );
+          }
           if (state.returnedInvoice != null) {
             final restoresd = state.returnedInvoice?.toRestoredCartData(
               context,
+              isReturn: true,
             );
             if (restoresd == null) return;
             if (state.isFullReturn == false) {
               context.read<CartBloc>().add(SyncRestoredInvoiceEvent(restoresd));
               SizeHelper.isTablet
                   ? showBottomSheet(
+                      enableDrag: true,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      showDragHandle: true,
                       context: context,
                       builder: (context) {
                         return TabletCartPanel();
@@ -497,9 +508,10 @@ class _InvoiceCard extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             context.read<MoreActionsBloc>().add(
-                              AddPOSTotalReturnEvent(
-                                request: AddPOSTotalReturnInvoiceRequest(
-                                  id: invoiceId,
+                              SaveRestaurantPosReturnInvoiceEvent(
+                                request: ReturnRequest(
+                                  originalInvoiceId: invoiceId,
+                                  isTotalReturn: true,
                                 ),
                               ),
                             );

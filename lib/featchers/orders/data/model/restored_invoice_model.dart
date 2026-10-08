@@ -25,6 +25,9 @@ class RestoredInvoiceInfo {
   final DateTime? invoiceDate;
   final int? posType;
   final bool canEdit;
+  final String? canEditReasonAr;
+  final String? canEditReasonEn;
+
   final int? foodTableId;
   final String? foodTableArabicName;
   final String? foodTableLatinName;
@@ -61,14 +64,21 @@ class RestoredInvoiceInfo {
   final double? deliveryCost;
   final double? dineInCost;
   final double? tobaccoTax;
+  final double? net;
+  final double? totalDiscount;
 
   final RestoredClient? client;
   final RestoredWaiter? waiter;
   final RestoredDeliveryCompany? deliveryCompany;
   final RestoredDeliveryMan? deliveryMan;
   final RestoredFoodTable? foodTable;
+  final RestoredCasher? casher;
 
   final String? voucherId;
+  final String? voucherCode;
+  final bool? isReturn;
+  final bool? isAccredite;
+  final DateTime? orderReceivedTime;
 
   const RestoredInvoiceInfo({
     this.invoiceId,
@@ -105,12 +115,21 @@ class RestoredInvoiceInfo {
     this.deliveryCost,
     this.dineInCost,
     this.tobaccoTax,
+    this.net,
+    this.totalDiscount,
     this.client,
     this.waiter,
     this.deliveryCompany,
     this.deliveryMan,
     this.foodTable,
+    this.casher,
     this.voucherId,
+    this.voucherCode,
+    this.isReturn,
+    this.isAccredite,
+    this.orderReceivedTime,
+    this.canEditReasonAr,
+    this.canEditReasonEn,
     this.canEdit = true,
   });
 
@@ -203,6 +222,10 @@ class RestoredClient {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredClient({
     this.id,
@@ -210,6 +233,10 @@ class RestoredClient {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredClient.fromJson(Map<String, dynamic> json) =>
@@ -219,12 +246,46 @@ class RestoredClient {
 }
 
 @JsonSerializable()
+class RestoredCasher {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
+
+  const RestoredCasher({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
+  });
+
+  factory RestoredCasher.fromJson(Map<String, dynamic> json) =>
+      _$RestoredCasherFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredCasherToJson(this);
+}
+
+@JsonSerializable()
 class RestoredWaiter {
   final int? id;
   final String? arabicName;
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredWaiter({
     this.id,
@@ -232,6 +293,10 @@ class RestoredWaiter {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredWaiter.fromJson(Map<String, dynamic> json) =>
@@ -247,6 +312,10 @@ class RestoredDeliveryCompany {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredDeliveryCompany({
     this.id,
@@ -254,6 +323,10 @@ class RestoredDeliveryCompany {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredDeliveryCompany.fromJson(Map<String, dynamic> json) =>
@@ -269,6 +342,10 @@ class RestoredDeliveryMan {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredDeliveryMan({
     this.id,
@@ -276,6 +353,10 @@ class RestoredDeliveryMan {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredDeliveryMan.fromJson(Map<String, dynamic> json) =>
@@ -291,6 +372,10 @@ class RestoredFoodTable {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredFoodTable({
     this.id,
@@ -298,6 +383,10 @@ class RestoredFoodTable {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredFoodTable.fromJson(Map<String, dynamic> json) =>
@@ -322,6 +411,7 @@ class RestoredInvoiceItem {
 
   final double? quantity;
   final double? price;
+  final String? notes;
   final String? itemNote;
 
   final RestoredItemDiscount? itemDiscount;
@@ -332,6 +422,9 @@ class RestoredInvoiceItem {
 
   final dynamic additive;
   final int? foodAdditiveId;
+  final bool? isTobaccoTax;
+  final double? availableQuantity;
+  final int? invoiceDetailsId;
 
   const RestoredInvoiceItem({
     this.transactionId,
@@ -345,6 +438,7 @@ class RestoredInvoiceItem {
     this.sizeLatinName,
     this.quantity,
     this.price,
+    this.notes,
     this.itemNote,
     this.itemDiscount,
     this.additives,
@@ -352,6 +446,9 @@ class RestoredInvoiceItem {
     this.size,
     this.additive,
     this.foodAdditiveId,
+    this.isTobaccoTax,
+    this.availableQuantity,
+    this.invoiceDetailsId,
   });
 
   factory RestoredInvoiceItem.fromJson(Map<String, dynamic> json) =>
@@ -392,14 +489,12 @@ class RestoredInvoiceAdditive {
   final String? arabicName;
   final String? latinName;
   final String? imagePath;
-
   final double? quantity;
   final double? price;
-
   final RestoredAdditive? additive;
-
   final int? transactionId;
   final int? parentTransactionId;
+  final int? invoiceDetailsId;
 
   const RestoredInvoiceAdditive({
     this.additiveId,
@@ -411,6 +506,7 @@ class RestoredInvoiceAdditive {
     this.additive,
     this.transactionId,
     this.parentTransactionId,
+    this.invoiceDetailsId,
   });
 
   factory RestoredInvoiceAdditive.fromJson(Map<String, dynamic> json) =>
@@ -426,6 +522,10 @@ class RestoredAdditive {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredAdditive({
     this.id,
@@ -433,6 +533,10 @@ class RestoredAdditive {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredAdditive.fromJson(Map<String, dynamic> json) =>
@@ -451,6 +555,7 @@ class RestoredItem {
   final int? transactionId;
   final int? parentTransactionId;
   final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredItem({
     this.id,
@@ -461,6 +566,7 @@ class RestoredItem {
     this.transactionId,
     this.parentTransactionId,
     this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredItem.fromJson(Map<String, dynamic> json) =>
@@ -476,6 +582,10 @@ class RestoredSize {
   final String? latinName;
   final double? price;
   final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
 
   const RestoredSize({
     this.id,
@@ -483,6 +593,10 @@ class RestoredSize {
     this.latinName,
     this.price,
     this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
   });
 
   factory RestoredSize.fromJson(Map<String, dynamic> json) =>
@@ -494,12 +608,51 @@ class RestoredSize {
 @JsonSerializable()
 class RestoredInvoicePayment {
   final int? paymentMethodId;
+  final String? arabicName;
+  final String? latinName;
   final double? amount;
+  final RestoredPaymentMethod? paymentMethod;
 
-  const RestoredInvoicePayment({this.paymentMethodId, this.amount});
+  const RestoredInvoicePayment({
+    this.paymentMethodId,
+    this.arabicName,
+    this.latinName,
+    this.amount,
+    this.paymentMethod,
+  });
 
   factory RestoredInvoicePayment.fromJson(Map<String, dynamic> json) =>
       _$RestoredInvoicePaymentFromJson(json);
 
   Map<String, dynamic> toJson() => _$RestoredInvoicePaymentToJson(this);
+}
+
+@JsonSerializable()
+class RestoredPaymentMethod {
+  final int? id;
+  final String? arabicName;
+  final String? latinName;
+  final double? price;
+  final int? categoryId;
+  final int? transactionId;
+  final int? parentTransactionId;
+  final String? imagePath;
+  final int? invoiceDetailsId;
+
+  const RestoredPaymentMethod({
+    this.id,
+    this.arabicName,
+    this.latinName,
+    this.price,
+    this.categoryId,
+    this.transactionId,
+    this.parentTransactionId,
+    this.imagePath,
+    this.invoiceDetailsId,
+  });
+
+  factory RestoredPaymentMethod.fromJson(Map<String, dynamic> json) =>
+      _$RestoredPaymentMethodFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RestoredPaymentMethodToJson(this);
 }

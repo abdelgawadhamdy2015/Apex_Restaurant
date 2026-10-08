@@ -7,12 +7,12 @@ import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_s
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
-import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
-import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
@@ -178,11 +178,6 @@ abstract class ApiService {
     @Body() ReserveFoodTableRequest request,
   );
 
-  @POST(ApiConstants.saveRestaurantPosInvoice)
-  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
-    @Body() SaveRestaurantPosInvoiceRequest request,
-  );
-
   @POST(ApiConstants.savePendingRestaurantPosInvoice)
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
     @Body() SaveRestaurantPosInvoiceRequest request,
@@ -240,14 +235,13 @@ abstract class ApiService {
     @Query("financialYearId") int financialYearId,
   );
 
-  @POST(ApiConstants.addPOSReturnInvoice)
-  Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice(
-    @Body() GetAllPosInvoiceRequest request,
+  @POST(ApiConstants.saveRestaurantPosInvoice)
+  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
+    @Body() SaveRestaurantPosInvoiceRequest request,
   );
-
-  @POST(ApiConstants.addPOSTotalReturnInvoice)
-  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice(
-    @Queries() AddPOSTotalReturnInvoiceRequest request,
+  @POST(ApiConstants.saveRestaurantPosReturnInvoice)
+  Future<BaseResponse<ReturnResponseData?>> saveRestaurantPosReturnInvoice(
+    @Body() ReturnRequest request,
   );
 
   @POST(ApiConstants.addCashTransactionForSession)

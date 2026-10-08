@@ -170,6 +170,9 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetInvoiceReportUseCase(getIt<SharedRepository>()),
   );
+  getIt.registerLazySingleton(
+    () => SaveRestaurantPosReturnInvoiceUseCase(getIt<SharedRepository>()),
+  );
   // AUTH
   getIt.registerLazySingleton(() => LoginUsecase(getIt<AuthRepo>()));
 
@@ -301,13 +304,7 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetAllPOSInvoicesUseCase(getIt<MoreActionsRepo>()),
   );
-  getIt.registerLazySingleton(
-    () => AddPOSResturnInvoiceUseCase(getIt<MoreActionsRepo>()),
-  );
 
-  getIt.registerLazySingleton(
-    () => AddPOSTotalReturnInvoiceUseCase(getIt<MoreActionsRepo>()),
-  );
   getIt.registerLazySingleton(
     () => AddCashTransactionForSessionUseCase(getIt<MoreActionsRepo>()),
   );
@@ -385,6 +382,8 @@ Future<void> setupGetIt() async {
     () => PaymentBloc(
       paymentMethodsUseCase: getIt<PaymentMethodsUseCase>(),
       processPaymentUseCase: getIt<SavePaymentRestaurantPosInvoiceUseCase>(),
+      saveRestaurantPosReturnInvoiceUseCase:
+          getIt<SaveRestaurantPosReturnInvoiceUseCase>(),
     ),
   );
 
@@ -425,8 +424,8 @@ Future<void> setupGetIt() async {
           getIt<GetCashTransactionForSessionUseCase>(),
       getPosInvoiceDataByIdUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       getAllPOSInvoicesUseCase: getIt<GetAllPOSInvoicesUseCase>(),
-      addPOSResturnInvoiceUseCase: getIt<AddPOSResturnInvoiceUseCase>(),
-      addPOSTotalReturnInvoiceUseCase: getIt<AddPOSTotalReturnInvoiceUseCase>(),
+      saveRestaurantPosReturnInvoiceUseCase:
+          getIt<SaveRestaurantPosReturnInvoiceUseCase>(),
       getInvoiceAccreditingDataUseCase:
           getIt<GetInvoiceAccreditingDataUseCase>(),
     ),

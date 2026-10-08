@@ -68,6 +68,7 @@ class CartState extends Equatable {
   final String? invoiceCode;
   final String? voucherId;
   final DateTime? restoredInvoiceDate;
+  final bool? isReturnInvoice;
   const CartState({
     this.selectedOrderType = CartOrderType.TAKEAWAY,
     this.selectedDiscountType = DiscountTypeEnum.coupon,
@@ -104,6 +105,7 @@ class CartState extends Equatable {
     this.voucherId,
     this.restoredInvoiceDate,
     this.voucherData,
+    this.isReturnInvoice,
   });
 
   // الخصومات الديناميكية
@@ -505,6 +507,7 @@ class CartState extends Equatable {
           parentTransactionId: resolvedParentTxId,
           additiveId: int.parse(addon.id),
           quantity: quantities[entry.key]!.toDouble(),
+          invoiceDetailsId: entry.value.invoiceDetailsId,
         );
       }).toList();
 
@@ -512,6 +515,7 @@ class CartState extends Equatable {
         RestaurantPosInvoiceItemRequest(
           transactionID: parentTxId,
           itemId: item.menuItem.itemId,
+          invoiceDetailsId: item.invoiceDetailsId,
           sizeId: item.selectedSize?.sizeId ?? 0,
           quantity: item.quantity.toDouble(),
           price:
@@ -637,6 +641,7 @@ class CartState extends Equatable {
     bool clearAddress = false,
     bool clearInvoiceId = false,
     bool clearCart = false,
+    bool? isReturnInvoice,
   }) {
     return CartState(
       settingsModel: settingsModel ?? this.settingsModel,
@@ -691,6 +696,7 @@ class CartState extends Equatable {
           ? null
           : restoredInvoiceDate ?? restoredInvoiceDate,
       isPreviousInvoice: isPreviousInvoice ?? this.isPreviousInvoice,
+      isReturnInvoice: isReturnInvoice ?? this.isReturnInvoice,
     );
   }
 
@@ -730,5 +736,6 @@ class CartState extends Equatable {
     restoredInvoiceDate,
     voucherData,
     isPreviousInvoice,
+    isReturnInvoice,
   ];
 }

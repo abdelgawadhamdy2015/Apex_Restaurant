@@ -160,6 +160,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
                         inCartScreen: false,
                         personList: context.read<CartBloc>().state.persons,
                       ),
+                      SizedBox.shrink(),
                       TabletMoreOptions(),
                     ],
                   ),

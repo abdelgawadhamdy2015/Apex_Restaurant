@@ -3,6 +3,8 @@ import 'package:apex_restaurant/core/shared/model/base_response.dart';
 import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
 import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
 import 'package:apex_restaurant/core/shared/repo/shared_repo.dart';
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
 
@@ -23,4 +25,12 @@ class GetInvoiceReportUseCase {
   Future<ApiResult<InvoiceReportResponse?>> call({
     required InvoiceReportRequest request,
   }) => repository.getInvoiceReport(request: request);
+}
+
+class SaveRestaurantPosReturnInvoiceUseCase {
+  final SharedRepository repository;
+  SaveRestaurantPosReturnInvoiceUseCase(this.repository);
+  Future<ApiResult<BaseResponse<ReturnResponseData?>?>> call({
+    required ReturnRequest request,
+  }) => repository.saveRestaurantPosReturnInvoice(request: request);
 }

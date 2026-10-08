@@ -11,6 +11,9 @@ class OrderItem extends Equatable {
   final List<AdditiveModel> addons;
   final double discount;
   final bool isPercentageDiscount;
+  final double? availableQuantity; // new
+
+  final int? invoiceDetailsId;
 
   const OrderItem({
     required this.transactionId,
@@ -21,6 +24,8 @@ class OrderItem extends Equatable {
     this.addons = const [],
     this.discount = 0.0,
     this.isPercentageDiscount = false,
+    this.invoiceDetailsId,
+    this.availableQuantity,
   });
 
   /// Alias getter for selectedAddons
@@ -76,6 +81,8 @@ class OrderItem extends Equatable {
     List<AdditiveModel>? addons,
     double? discount,
     bool? isPercentageDiscount,
+    int? invoiceDetailsId,
+    double? availableQuantity,
   }) {
     return OrderItem(
       transactionId: transactionId ?? this.transactionId,
@@ -86,6 +93,8 @@ class OrderItem extends Equatable {
       addons: addons ?? this.addons,
       discount: discount ?? this.discount,
       isPercentageDiscount: isPercentageDiscount ?? this.isPercentageDiscount,
+      invoiceDetailsId: invoiceDetailsId ?? this.invoiceDetailsId,
+      availableQuantity: availableQuantity ?? this.availableQuantity,
     );
   }
 
@@ -99,5 +108,7 @@ class OrderItem extends Equatable {
     addons,
     discount,
     isPercentageDiscount,
+    invoiceDetailsId,
+    availableQuantity,
   ];
 }

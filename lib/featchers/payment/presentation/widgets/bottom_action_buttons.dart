@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../cart/data/models/invoice_request.dart';
 import '../../data/model/payment_request_model.dart';
@@ -8,8 +12,6 @@ import '../../../../generated/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Bottom bar with "Pay" and "Cancel" actions. Builds the final payment
-/// payload from the current [PaymentState] and submits it via [PaymentBloc].
 class BottomActionButtons extends StatelessWidget {
   final PaymentState state;
   final SaveRestaurantPosInvoiceRequest invoiceRequestModel;
@@ -80,11 +82,21 @@ class BottomActionButtons extends StatelessWidget {
                             payments: paymentsList,
                             gediaKey: state.referenceNumber,
                           );
-
-                      // 3. Trigger submit payment event with complete payload
-                      context.read<PaymentBloc>().add(
-                        SubmitPaymentEvent(finalInvoiceRequest),
-                      );
+                      if (context.read<CartBloc>().state.isReturnInvoice ==
+                          true) {
+                        final returnRequest = finalInvoiceRequest
+                            .toReturnRequest();
+                        log(returnRequest.toJson().toString());
+                        context.read<PaymentBloc>().add(
+                          SaveRestaurantPosPartialReturnInvoiceEvent(
+                            request: returnRequest,
+                          ),
+                        );
+                      } else {
+                        context.read<PaymentBloc>().add(
+                          SubmitPaymentEvent(finalInvoiceRequest),
+                        );
+                      }
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: context.appExtraTheme.greenBackground,

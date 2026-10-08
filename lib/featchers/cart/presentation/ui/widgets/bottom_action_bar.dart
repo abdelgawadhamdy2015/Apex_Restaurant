@@ -104,7 +104,9 @@ class BottomActionBar extends StatelessWidget {
     final spacing = context.spacing;
     final icons = context.iconSizes;
     final lang = S.of(context);
-
+    final isReturnInvoice = context.select(
+      (CartBloc bloc) => bloc.state.isReturnInvoice,
+    );
     return BlocListener<CartBloc, CartState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
@@ -178,54 +180,55 @@ class BottomActionBar extends StatelessWidget {
 
                 SizedBox(width: spacing.sm),
 
-                OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: spacing.md,
-                      vertical: spacing.sm + spacing.xxs / 2,
+                if (isReturnInvoice != true)
+                  OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: spacing.md,
+                        vertical: spacing.sm + spacing.xxs / 2,
+                      ),
+                      backgroundColor: theme.colorScheme.onSurface,
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(spacing.radiusMd),
+                      ),
                     ),
-                    backgroundColor: theme.colorScheme.onSurface,
-                    side: BorderSide(color: theme.colorScheme.outlineVariant),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(spacing.radiusMd),
-                    ),
-                  ),
-                  onPressed: canEdit
-                      ? () {
-                          final state = context.read<CartBloc>().state;
+                    onPressed: canEdit
+                        ? () {
+                            final state = context.read<CartBloc>().state;
 
-                          if (selectedOrderType == CartOrderType.DINE_IN) {
-                            context.read<CartBloc>().add(
-                              SaveTableOrderEvent(
-                                request:
-                                    state.toSaveRestaurantPosInvoiceRequest,
-                              ),
-                            );
-                          } else {
-                            context.read<CartBloc>().add(
-                              HoldOrderEvent(
-                                request:
-                                    state.toSaveRestaurantPosInvoiceRequest,
-                              ),
-                            );
+                            if (selectedOrderType == CartOrderType.DINE_IN) {
+                              context.read<CartBloc>().add(
+                                SaveTableOrderEvent(
+                                  request:
+                                      state.toSaveRestaurantPosInvoiceRequest,
+                                ),
+                              );
+                            } else {
+                              context.read<CartBloc>().add(
+                                HoldOrderEvent(
+                                  request:
+                                      state.toSaveRestaurantPosInvoiceRequest,
+                                ),
+                              );
+                            }
                           }
-                        }
-                      : null,
-                  icon: Icon(
-                    Icons.pause_circle_outline,
-                    color: theme.colorScheme.onPrimary,
-                    size: icons.md,
-                  ),
-                  label: Text(
-                    selectedOrderType == CartOrderType.DINE_IN
-                        ? lang.save
-                        : lang.holdOrder,
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                        : null,
+                    icon: Icon(
+                      Icons.pause_circle_outline,
                       color: theme.colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
+                      size: icons.md,
+                    ),
+                    label: Text(
+                      selectedOrderType == CartOrderType.DINE_IN
+                          ? lang.save
+                          : lang.holdOrder,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           );

@@ -43,6 +43,7 @@ class AdditiveModel {
   final String? imagePath;
   final String? transactionId;
   final String? parentTransactionId;
+  final int? invoiceDetailsId;
 
   const AdditiveModel({
     required this.id,
@@ -53,6 +54,7 @@ class AdditiveModel {
     this.imagePath,
     this.transactionId,
     this.parentTransactionId,
+    this.invoiceDetailsId,
   });
 
   factory AdditiveModel.fromJson(Map<String, dynamic> json) =>
