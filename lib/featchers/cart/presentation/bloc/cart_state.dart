@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 
@@ -480,6 +482,7 @@ class CartState extends Equatable {
       final quantities = <String, int>{};
 
       for (final addon in item.addons) {
+        log(addon.toJson().toString());
         final key =
             '${addon.id}_${addon.transactionId}_${addon.parentTransactionId}';
         grouped[key] = addon;
@@ -501,7 +504,7 @@ class CartState extends Equatable {
                 addon.parentTransactionId!.isNotEmpty)
             ? addon.parentTransactionId!
             : parentTxId;
-
+        log("cart state :${entry.value.invoiceDetailsId}");
         return RestaurantPosItemAdditiveRequest(
           transactionID: addonTxId,
           parentTransactionId: resolvedParentTxId,
@@ -517,7 +520,9 @@ class CartState extends Equatable {
           itemId: item.menuItem.itemId,
           invoiceDetailsId: item.invoiceDetailsId,
           sizeId: item.selectedSize?.sizeId ?? 0,
-          quantity: item.quantity.toDouble(),
+          quantity: isReturnInvoice == true
+              ? item.availableQuantity ?? 0
+              : item.quantity.toDouble(),
           price:
               item.selectedSize?.price ??
               (item.menuItem.sizes.isNotEmpty

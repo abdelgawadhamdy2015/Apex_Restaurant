@@ -49,15 +49,34 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
     }
   }
 
-  /// Prefills addons once when additives are loaded
-  void prefillAddonsOnce(List<AdditiveModel> additives, OrderItem? existing) {
+  /// Prefills addons once when additives are loaded.
+  /// Return invoice: the amount shown is the addon's availableQuantity.
+  void prefillAddonsOnce(
+    List<AdditiveModel> additives,
+    OrderItem? existing, {
+    bool isReturn = false,
+  }) {
     if (addonsPrefilled || additives.isEmpty || existing == null) return;
 
     addonQuantities.clear();
-    for (final addon in existing.addons) {
-      final idx = additives.indexWhere((a) => a.arabicName == addon.arabicName);
-      if (idx != -1) {
-        addonQuantities[idx] = (addonQuantities[idx] ?? 0) + 1;
+    if (isReturn) {
+      final handled = <String>{};
+      for (final addon in existing.addons) {
+        if (!handled.add(addon.arabicName)) continue;
+        final idx = additives.indexWhere(
+          (a) => a.arabicName == addon.arabicName,
+        );
+        final qty = (addon.availableQuantity ?? 0).toInt();
+        if (idx != -1 && qty > 0) addonQuantities[idx] = qty;
+      }
+    } else {
+      for (final addon in existing.addons) {
+        final idx = additives.indexWhere(
+          (a) => a.arabicName == addon.arabicName,
+        );
+        if (idx != -1) {
+          addonQuantities[idx] = (addonQuantities[idx] ?? 0) + 1;
+        }
       }
     }
     addonsPrefilled = true;
@@ -73,13 +92,53 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
     return matchCat.isNotEmpty ? (matchCat.first.additives ?? []) : [];
   }
 
-  /// Converts selected addon quantities map to a flattened list of additives
-  List<AdditiveModel> getSelectedAddonsList(List<AdditiveModel> additives) {
+  /// Converts selected addon quantities map to a flattened list of additives.
+  ///
+  /// When editing an existing cart item, addons that were already on it are
+  /// reused (matched by arabicName) so they keep their invoiceDetailsId,
+  /// transactionId and parentTransactionId. Only addons added during the edit
+  /// come from the fresh menu [additives].
+  List<AdditiveModel> getSelectedAddonsList(
+    List<AdditiveModel> additives, {
+    OrderItem? existing,
+    bool isReturn = false,
+  }) {
+    // Return invoice: clone the original addon line (keeps invoiceDetailsId
+    // and transaction ids) once per selected unit, and store the selected
+    // amount in availableQuantity. New addons can't be added to a return.
+    if (isReturn && existing != null) {
+      final templates = <String, AdditiveModel>{};
+      for (final a in existing.addons) {
+        templates.putIfAbsent(a.arabicName, () => a);
+      }
+      final result = <AdditiveModel>[];
+      addonQuantities.forEach((index, qty) {
+        if (index >= additives.length || qty <= 0) return;
+        final template = templates[additives[index].arabicName];
+        if (template == null) return;
+        for (int i = 0; i < qty; i++) {
+          result.add(template.copyWith(availableQuantity: qty.toDouble()));
+        }
+      });
+      return result;
+    }
+
+    final existingPool = <String, List<AdditiveModel>>{};
+    for (final addon in existing?.addons ?? const <AdditiveModel>[]) {
+      existingPool.putIfAbsent(addon.arabicName, () => []).add(addon);
+    }
+
     final List<AdditiveModel> selectedList = [];
     addonQuantities.forEach((index, qty) {
       if (index < additives.length) {
+        final menuAddon = additives[index];
+        final reusable = existingPool[menuAddon.arabicName];
         for (int i = 0; i < qty; i++) {
-          selectedList.add(additives[index]);
+          if (reusable != null && reusable.isNotEmpty) {
+            selectedList.add(reusable.removeAt(0));
+          } else {
+            selectedList.add(menuAddon);
+          }
         }
       }
     });

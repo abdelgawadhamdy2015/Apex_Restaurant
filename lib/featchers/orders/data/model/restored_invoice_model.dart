@@ -489,9 +489,13 @@ class RestoredInvoiceAdditive {
   final String? arabicName;
   final String? latinName;
   final String? imagePath;
+
   final double? quantity;
   final double? price;
+  final double? availableQuantity;
+
   final RestoredAdditive? additive;
+
   final int? transactionId;
   final int? parentTransactionId;
   final int? invoiceDetailsId;
@@ -503,6 +507,7 @@ class RestoredInvoiceAdditive {
     this.imagePath,
     this.quantity,
     this.price,
+    this.availableQuantity,
     this.additive,
     this.transactionId,
     this.parentTransactionId,

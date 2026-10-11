@@ -33,6 +33,17 @@ class TabletItemCustomizationDialog extends StatefulWidget {
   final OrderItem? existingItem;
   final int? cartIndex;
 
+  /// True when editing an item of a return invoice. In that case the stepper
+  /// edits availableQuantity (1..[returnLimit]) and addons can't exceed the
+  /// counts they had when the dialog opened.
+  final bool isReturnInvoice;
+
+  /// Original returnable amount of the item (only used for return invoices).
+  final int returnLimit;
+
+  /// Original returnable amount per addon, keyed by addon arabicName.
+  final Map<String, int> addonReturnLimits;
+
   const TabletItemCustomizationDialog({
     super.key,
     required this.item,
@@ -40,6 +51,9 @@ class TabletItemCustomizationDialog extends StatefulWidget {
     required this.onConfirm,
     this.existingItem,
     this.cartIndex,
+    this.isReturnInvoice = false,
+    this.returnLimit = 0,
+    this.addonReturnLimits = const {},
   });
 
   static void show(
@@ -59,6 +73,9 @@ class TabletItemCustomizationDialog extends StatefulWidget {
     onConfirm, {
     OrderItem? existingItem,
     int? cartIndex,
+    bool isReturnInvoice = false,
+    int returnLimit = 0,
+    Map<String, int> addonReturnLimits = const {},
   }) {
     showDialog(
       context: context,
@@ -83,6 +100,9 @@ class TabletItemCustomizationDialog extends StatefulWidget {
               onConfirm: onConfirm,
               existingItem: existingItem,
               cartIndex: cartIndex,
+              isReturnInvoice: isReturnInvoice,
+              returnLimit: returnLimit,
+              addonReturnLimits: addonReturnLimits,
             ),
           ),
         ),
@@ -102,15 +122,42 @@ class _TabletItemCustomizationDialogState
   RestaurantItem get item => widget.item;
   bool get _isEditMode => widget.existingItem != null;
 
+  bool get _isReturn => widget.isReturnInvoice && _isEditMode;
+
+  /// Return invoice with nothing available: nothing can be changed.
+  bool get _isLockedReturn => _isReturn && widget.returnLimit <= 0;
+
   @override
   void initState() {
     super.initState();
     prefillFromExistingItem(widget.existingItem);
 
+    // Return invoice: the editable amount is availableQuantity, not quantity.
+    if (_isReturn && widget.returnLimit > 0) {
+      final available = (widget.existingItem?.availableQuantity ?? 0).toInt();
+      quantity = available.clamp(1, widget.returnLimit).toInt();
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() => syncDiscountFieldsWithSize(context));
     });
+  }
+
+  bool get _canIncreaseQuantity =>
+      !_isLockedReturn && (!_isReturn || quantity < widget.returnLimit);
+
+  bool get _canDecreaseQuantity => !_isLockedReturn && quantity > 1;
+
+  bool _canIncreaseAddon(
+    int index,
+    int currentQty,
+    List<AdditiveModel> additives,
+  ) {
+    if (_isLockedReturn) return false;
+    if (!_isReturn) return true;
+    final limit = widget.addonReturnLimits[additives[index].arabicName] ?? 0;
+    return currentQty < limit;
   }
 
   @override
@@ -127,7 +174,11 @@ class _TabletItemCustomizationDialogState
         bloc: widget.posBloc,
         builder: (context, posState) {
           final additives = additivesFor(posState);
-          prefillAddonsOnce(additives, widget.existingItem);
+          prefillAddonsOnce(
+            additives,
+            widget.existingItem,
+            isReturn: _isReturn,
+          );
 
           return Column(
             children: [
@@ -170,16 +221,29 @@ class _TabletItemCustomizationDialogState
                               return ItemAddonTile(
                                 addon: addon,
                                 quantity: currentQty,
-                                onDecrement: () => setState(() {
-                                  if (currentQty > 1) {
-                                    addonQuantities[index] = currentQty - 1;
-                                  } else {
-                                    addonQuantities.remove(index);
+                                onDecrement: () {
+                                  if (_isLockedReturn) return;
+                                  setState(() {
+                                    if (currentQty > 1) {
+                                      addonQuantities[index] = currentQty - 1;
+                                    } else {
+                                      addonQuantities.remove(index);
+                                    }
+                                  });
+                                },
+                                onIncrement: () {
+                                  // Return invoice: never above original count.
+                                  if (!_canIncreaseAddon(
+                                    index,
+                                    currentQty,
+                                    additives,
+                                  )) {
+                                    return;
                                   }
-                                }),
-                                onIncrement: () => setState(() {
-                                  addonQuantities[index] = currentQty + 1;
-                                }),
+                                  setState(() {
+                                    addonQuantities[index] = currentQty + 1;
+                                  });
+                                },
                               );
                             }),
                         ],
@@ -231,7 +295,7 @@ class _TabletItemCustomizationDialogState
                                     Icons.remove,
                                     color: theme.colorScheme.onSecondary,
                                   ),
-                                  onPressed: quantity > 1
+                                  onPressed: _canDecreaseQuantity
                                       ? () => setState(() => quantity--)
                                       : null,
                                 ),
@@ -241,7 +305,9 @@ class _TabletItemCustomizationDialogState
                                     Icons.add,
                                     color: theme.colorScheme.onSecondary,
                                   ),
-                                  onPressed: () => setState(() => quantity++),
+                                  onPressed: _canIncreaseQuantity
+                                      ? () => setState(() => quantity++)
+                                      : null,
                                 ),
                               ],
                             ),
@@ -256,8 +322,13 @@ class _TabletItemCustomizationDialogState
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              onPressed: () =>
-                                  _handleConfirm(context, additives, lang),
+                              onPressed: _isLockedReturn
+                                  ? null
+                                  : () => _handleConfirm(
+                                      context,
+                                      additives,
+                                      lang,
+                                    ),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -314,7 +385,11 @@ class _TabletItemCustomizationDialogState
       widget.item,
       additives,
       selectedSize: selectedSize,
-      selectedAddons: getSelectedAddonsList(additives),
+      selectedAddons: getSelectedAddonsList(
+        additives,
+        existing: widget.existingItem,
+        isReturn: _isReturn,
+      ),
       discount: double.tryParse(discountController.text) ?? 0.0,
       isPercentageDiscount: isPercentageDiscount,
       notes: notesController.text,
@@ -387,42 +462,4 @@ class _TabletItemCustomizationDialogState
       child: Icon(Icons.fastfood, color: theme.colorScheme.onSurfaceVariant),
     );
   }
-
-  // void _handleConfirm(
-  //   BuildContext context,
-  //   List<AdditiveModel> additives,
-  //   S lang,
-  // ) {
-  //   if (widget.item.sizes.isEmpty) {
-  //     HelperMethods.showSnackBar(
-  //       context: context,
-  //       message: lang.thisItemHasNoValidSize,
-  //       isError: true,
-  //     );
-  //     return;
-  //   }
-
-  //   final selectedSize = widget.item.sizes[selectedSizeIndex];
-
-  //   if (widget.item.sizes.length > 1 && (selectedSize.sizeId ?? 0) <= 0) {
-  //     HelperMethods.showSnackBar(
-  //       context: context,
-  //       message: lang.pleaseSelectValidSize,
-  //       isError: true,
-  //     );
-  //     return;
-  //   }
-
-  //   Navigator.pop(context);
-  //   widget.onConfirm(
-  //     widget.item,
-  //     additives,
-  //     selectedSize: selectedSize,
-  //     selectedAddons: _getSelectedAddonsList(additives),
-  //     discount: double.tryParse(discountController.text) ?? 0.0,
-  //     isPercentageDiscount: isPercentageDiscount,
-  //     notes: notesController.text,
-  //     quantity: _quantity,
-  //   );
-  // }
 }

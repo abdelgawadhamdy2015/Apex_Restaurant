@@ -490,6 +490,7 @@ RestoredInvoiceAdditive _$RestoredInvoiceAdditiveFromJson(
   imagePath: json['imagePath'] as String?,
   quantity: (json['quantity'] as num?)?.toDouble(),
   price: (json['price'] as num?)?.toDouble(),
+  availableQuantity: (json['availableQuantity'] as num?)?.toDouble(),
   additive: json['additive'] == null
       ? null
       : RestoredAdditive.fromJson(json['additive'] as Map<String, dynamic>),
@@ -507,6 +508,7 @@ Map<String, dynamic> _$RestoredInvoiceAdditiveToJson(
   'imagePath': instance.imagePath,
   'quantity': instance.quantity,
   'price': instance.price,
+  'availableQuantity': instance.availableQuantity,
   'additive': instance.additive,
   'transactionId': instance.transactionId,
   'parentTransactionId': instance.parentTransactionId,

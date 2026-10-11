@@ -86,10 +86,11 @@ extension ReturnRequestFromSaveRequest on SaveRestaurantPosInvoiceRequest {
           ),
         );
       }
-
       // Item additives
       for (final additive in item.additives) {
         if (additive.invoiceDetailsId != null) {
+          log("to return Request : ${additive.toJson()}");
+
           returnedItems.add(
             ReturnedInvoiceItem(
               invoiceDetailId: additive.invoiceDetailsId!,

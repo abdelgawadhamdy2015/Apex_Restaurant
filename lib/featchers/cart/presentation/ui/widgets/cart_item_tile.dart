@@ -36,11 +36,20 @@ class CartItemTile extends StatelessWidget {
     return true;
   }
 
-  List<String> _formattedAddons() {
+  List<String> _formattedAddons({required bool isReturn}) {
     final addonCounts = <String, int>{};
 
     for (final addon in item.addons) {
-      addonCounts[addon.arabicName] = (addonCounts[addon.arabicName] ?? 0) + 1;
+      if (isReturn) {
+        // Return invoice: show the addon's availableQuantity.
+        addonCounts.putIfAbsent(
+          addon.arabicName,
+          () => (addon.availableQuantity ?? 0).toInt(),
+        );
+      } else {
+        addonCounts[addon.arabicName] =
+            (addonCounts[addon.arabicName] ?? 0) + 1;
+      }
     }
 
     return addonCounts.entries
@@ -49,7 +58,7 @@ class CartItemTile extends StatelessWidget {
   }
 
   Future<void> _openEditSheet(BuildContext context) async {
-    // Prevent double tap
+    // Prevent double tap.
     if (!_canOpen(index)) return;
 
     final posBloc = context.read<PosBloc>();
@@ -74,6 +83,14 @@ class CartItemTile extends StatelessWidget {
         );
 
     if (!context.mounted) return;
+
+    final isReturn = cartBloc.state.isReturnInvoice == true;
+    final addonLimits = isReturn
+        ? {
+            for (final a in item.addons)
+              a.arabicName: cartBloc.returnAddonLimitFor(a),
+          }
+        : <String, int>{};
 
     if (SizeHelper.isMobile) {
       ItemCustomizationSheet.show(
@@ -104,6 +121,9 @@ class CartItemTile extends StatelessWidget {
         },
         existingItem: item,
         cartIndex: index,
+        isReturnInvoice: cartBloc.state.isReturnInvoice == true,
+        returnLimit: cartBloc.returnLimitFor(item),
+        addonReturnLimits: addonLimits,
       );
     } else {
       TabletItemCustomizationDialog.show(
@@ -134,6 +154,9 @@ class CartItemTile extends StatelessWidget {
         },
         existingItem: item,
         cartIndex: index,
+        isReturnInvoice: cartBloc.state.isReturnInvoice == true,
+        returnLimit: cartBloc.returnLimitFor(item),
+        addonReturnLimits: addonLimits,
       );
     }
   }
@@ -146,9 +169,37 @@ class CartItemTile extends StatelessWidget {
     final lang = S.of(context);
 
     final sizeName = item.selectedSize?.sizeNameAr ?? '';
-    final formattedAddons = _formattedAddons();
+    final formattedAddons = _formattedAddons(
+      isReturn: context.read<CartBloc>().state.isReturnInvoice == true,
+    );
     final hasNotes = item.notes != null && item.notes!.isNotEmpty;
+
     final cartState = context.read<CartBloc>().state;
+    final isReturnInvoice = cartState.isReturnInvoice == true;
+
+    // Return invoice: show/edit availableQuantity. Normal: quantity.
+    final int displayedQuantity = isReturnInvoice
+        ? (item.availableQuantity ?? 0).toInt()
+        : item.quantity;
+
+    // Original returnable amount (only meaningful for return invoices).
+    final int returnLimit = isReturnInvoice
+        ? context.read<CartBloc>().returnLimitFor(item)
+        : 0;
+
+    // Return invoice with nothing available: lock both buttons.
+    final bool isLockedReturn = isReturnInvoice && returnLimit <= 0;
+
+    final bool canIncreaseQuantity =
+        cartState.canEdit &&
+        !isLockedReturn &&
+        (!isReturnInvoice || displayedQuantity < returnLimit);
+
+    final bool canDecreaseQuantity =
+        cartState.canEdit &&
+        !isLockedReturn &&
+        (!isReturnInvoice || displayedQuantity > 1);
+
     return Container(
       color: theme.colorScheme.onSurface,
       padding: EdgeInsets.symmetric(
@@ -156,7 +207,9 @@ class CartItemTile extends StatelessWidget {
         vertical: spacing.sm,
       ),
       child: InkWell(
-        onTap: cartState.canEdit ? () => _openEditSheet(context) : null,
+        onTap: cartState.canEdit && !isLockedReturn
+            ? () => _openEditSheet(context)
+            : null,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         child: Column(
           children: [
@@ -204,7 +257,8 @@ class CartItemTile extends StatelessWidget {
                             ),
                             SizedBox(width: spacing.xs),
                             Text(
-                              '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySarShort}',
+                              '${item.totalPrice.toStringAsFixed(2)} '
+                              '${lang.currencySarShort}',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: theme.colorScheme.primary,
@@ -277,7 +331,7 @@ class CartItemTile extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.add, size: 18),
                                     color: theme.colorScheme.onSecondary,
-                                    onPressed: cartState.canEdit
+                                    onPressed: canIncreaseQuantity
                                         ? () => context.read<CartBloc>().add(
                                             UpdateItemQuantityEvent(index, 1),
                                           )
@@ -288,7 +342,7 @@ class CartItemTile extends StatelessWidget {
                                       horizontal: spacing.xs,
                                     ),
                                     child: Text(
-                                      '${item.quantity}',
+                                      '$displayedQuantity',
                                       style: theme.textTheme.titleMedium
                                           ?.copyWith(
                                             fontWeight: FontWeight.bold,
@@ -298,7 +352,7 @@ class CartItemTile extends StatelessWidget {
                                   IconButton(
                                     icon: const Icon(Icons.remove, size: 18),
                                     color: theme.colorScheme.onSecondary,
-                                    onPressed: cartState.canEdit
+                                    onPressed: canDecreaseQuantity
                                         ? () => context.read<CartBloc>().add(
                                             UpdateItemQuantityEvent(index, -1),
                                           )

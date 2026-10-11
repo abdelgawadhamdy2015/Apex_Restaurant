@@ -34,6 +34,31 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final UpdatePosClientUseCase updatePosClientUseCase;
   final GetDynamicInvoiceDiscountUseCase getDynamicInvoiceDiscountUseCase;
 
+  /// Original returnable amount per invoice line (keyed by invoiceDetailsId),
+  /// captured when a return invoice is restored. availableQuantity itself is
+  /// edited by the user, so this keeps the upper limit.
+  final Map<int, int> _returnLimits = {};
+
+  /// Maximum quantity that can be returned for [item].
+  int returnLimitFor(OrderItem item) {
+    final current = (item.availableQuantity ?? 0).toInt();
+    final key = item.invoiceDetailsId;
+    if (key == null) return current;
+    return _returnLimits[key] ?? current;
+  }
+
+  /// Original returnable amount per additive line (keyed by its
+  /// invoiceDetailsId), captured when a return invoice is restored.
+  final Map<int, int> _addonReturnLimits = {};
+
+  /// Maximum quantity that can be returned for [addon].
+  int returnAddonLimitFor(AdditiveModel addon) {
+    final current = (addon.availableQuantity ?? 0).toInt();
+    final key = addon.invoiceDetailsId;
+    if (key == null) return current;
+    return _addonReturnLimits[key] ?? current;
+  }
+
   CartBloc({
     required this.getWaitersUseCase,
     required this.getDeliveryAgentsUseCase,
@@ -121,22 +146,24 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     final items = List<OrderItem>.from(state.items);
     final old = items[event.index];
 
-    double addonsTotal = 0.0;
-    for (final addon in event.selectedAddons) {
-      addonsTotal += addon.price;
-    }
-    double lineTotal =
-        (event.selectedSize.price ?? 0 + addonsTotal) * event.quantity;
-    if (event.isPercentageDiscount) {
-      lineTotal = lineTotal * (1 - (event.discount / 100));
-    } else {
-      lineTotal = (lineTotal - event.discount).clamp(0.0, double.infinity);
+    final isReturn = state.isReturnInvoice == true;
+    var quantity = event.quantity;
+    int? returnQuantity;
+
+    // Return invoices: the returned amount lives in availableQuantity and
+    // must stay between 1 and the original returnable amount.
+    if (isReturn) {
+      final limit = returnLimitFor(old);
+      if (limit <= 0) return;
+      returnQuantity = event.quantity.clamp(1, limit).toInt();
+      quantity = old.quantity; // untouched
     }
 
     items[event.index] = old.copyWith(
       selectedSize: event.selectedSize,
       addons: event.selectedAddons,
-      quantity: event.quantity,
+      quantity: quantity,
+      availableQuantity: returnQuantity?.toDouble() ?? old.availableQuantity,
       notes: event.notes,
       discount: event.discount,
       isPercentageDiscount: event.isPercentageDiscount,
@@ -200,6 +227,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) {
     final data = event.data;
+
+    _returnLimits.clear();
+    _addonReturnLimits.clear();
+    if (data.isReturnInvoice == true) {
+      for (final i in data.items) {
+        final id = i.invoiceDetailsId;
+        if (id != null) _returnLimits[id] = (i.availableQuantity ?? 0).toInt();
+        for (final a in i.addons) {
+          final aid = a.invoiceDetailsId;
+          if (aid != null) {
+            _addonReturnLimits[aid] = (a.availableQuantity ?? 0).toInt();
+          }
+        }
+      }
+    }
+
     // 1. Determine discount strategy based on restored invoice data
     final hasInvoiceDiscount =
         data.restaurantPosDiscountRequest != null &&
@@ -402,27 +445,33 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     UpdateItemQuantityEvent event,
     Emitter<CartState> emit,
   ) {
-    final updated = List<OrderItem>.from(state.items);
-    if (event.index >= 0 && event.index < updated.length) {
-      final currentItem = updated[event.index];
-      final newQty = currentItem.quantity + event.delta;
+    if (event.index < 0 || event.index >= state.items.length) return;
 
-      if (newQty <= 0) {
-        updated.removeAt(event.index);
+    final updatedItems = List<OrderItem>.from(state.items);
+    final currentItem = updatedItems[event.index];
+
+    if (state.isReturnInvoice == true) {
+      // Return invoice: work with availableQuantity (1..original limit).
+      final limit = returnLimitFor(currentItem);
+      final current = (currentItem.availableQuantity ?? 0).toInt();
+      final next = current + event.delta;
+
+      if (limit <= 0 || next < 1 || next > limit) return;
+
+      updatedItems[event.index] = currentItem.copyWith(
+        availableQuantity: next.toDouble(),
+      );
+    } else {
+      // Normal invoice: work with quantity.
+      final next = currentItem.quantity + event.delta;
+      if (next <= 0) {
+        updatedItems.removeAt(event.index);
       } else {
-        updated[event.index] = OrderItem(
-          menuItem: currentItem.menuItem,
-          selectedSize: currentItem.selectedSize,
-          addons: currentItem.addons,
-          quantity: newQty,
-          notes: currentItem.notes,
-          discount: currentItem.discount,
-          isPercentageDiscount: currentItem.isPercentageDiscount,
-          transactionId: currentItem.transactionId,
-        );
+        updatedItems[event.index] = currentItem.copyWith(quantity: next);
       }
-      emit(state.copyWith(items: updated));
     }
+
+    emit(state.copyWith(items: updatedItems));
   }
 
   void _onRemoveItem(RemoveItemEvent event, Emitter<CartState> emit) {
@@ -433,6 +482,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onClearCartEvent(ClearCartEvent event, Emitter<CartState> emit) {
+    _returnLimits.clear();
+    _addonReturnLimits.clear();
     emit(
       state.copyWith(
         items: [],
@@ -748,14 +799,5 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         );
       },
     );
-
-    // emit(
-    //   state.copyWith(
-    //     couponDiscountvalue: discountVal,
-    //     restaurantPosDiscountRequest: null, // Reset direct discount
-    //     selectedDiscountType: DiscountTypeEnum.coupon,
-    //     activeDiscountModel: null,
-    //   ),
-    // );
   }
 }

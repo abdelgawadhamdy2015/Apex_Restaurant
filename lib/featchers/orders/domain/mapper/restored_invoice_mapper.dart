@@ -228,11 +228,15 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       final enName = rawAddon.latinName ?? rawAddon.additive?.latinName ?? '';
       final price = rawAddon.price ?? rawAddon.additive?.price ?? 0.0;
       final qty = (rawAddon.quantity ?? 1).toInt().clamp(1, 1 << 20);
-
+      final invoiceDetailsId = rawAddon.invoiceDetailsId;
+      final avialableQuantity = rawAddon.availableQuantity;
+      log("mapper : $invoiceDetailsId");
       for (int i = 0; i < qty; i++) {
         result.add(
           AdditiveModel(
             id: additiveId,
+            availableQuantity: avialableQuantity,
+            invoiceDetailsId: invoiceDetailsId,
             arabicName: arName,
             latinName: enName,
             price: price,
@@ -240,7 +244,6 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
             transactionId: rawAddon.transactionId?.toString(),
             parentTransactionId: (rawAddon.parentTransactionId ?? parentTransId)
                 .toString(),
-            // invoiceDetailsId: rawAddon.invoiceDetailsId, // if added
           ),
         );
       }
@@ -267,18 +270,21 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       final enName = addonItem.itemLatinName ?? addonItem.item?.latinName ?? '';
       final price = addonItem.price ?? addonItem.item?.price ?? 0.0;
       final qty = (addonItem.quantity ?? 1).toInt().clamp(1, 1 << 20);
+      final invoiceDetailsId = addonItem.invoiceDetailsId;
+      final avialableQuantity = addonItem.availableQuantity;
 
       for (int i = 0; i < qty; i++) {
         result.add(
           AdditiveModel(
             id: additiveId,
+            availableQuantity: avialableQuantity,
+            invoiceDetailsId: invoiceDetailsId,
             arabicName: arName,
             latinName: enName,
             price: price,
             imagePath: addonItem.itemImagePath ?? addonItem.item?.imagePath,
             transactionId: addonItem.transactionId?.toString(),
             parentTransactionId: parentTransId.toString(),
-            // invoiceDetailsId: addonItem.invoiceDetailsId, // if added
           ),
         );
       }

@@ -80,14 +80,18 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
               context.read<CartBloc>().add(SyncRestoredInvoiceEvent(restoresd));
               SizeHelper.isTablet
                   ? showBottomSheet(
+                      context: context,
                       enableDrag: true,
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       showDragHandle: true,
-                      context: context,
                       builder: (context) {
                         return TabletCartPanel();
                       },
-                    )
+                    ).closed.whenComplete(() {
+                      if (context.mounted) {
+                        context.read<CartBloc>().add(ClearCartEvent());
+                      }
+                    })
                   : context.pushReplacementNamed(Routes.cartScreen);
             } else {
               HelperMethods.showSnackBar(
