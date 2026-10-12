@@ -1,6 +1,7 @@
 // lib/core/themes/app_spacing_theme.dart
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 
 /// Semantic, pre-scaled spacing & radius tokens.
 /// Never hardcode EdgeInsets/SizedBox/BorderRadius numbers in widgets again —

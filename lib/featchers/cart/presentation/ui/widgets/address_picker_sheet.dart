@@ -5,7 +5,7 @@ import '../../../data/models/pos_client_model.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -78,7 +78,7 @@ class AddressPickerSheet extends StatelessWidget {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: addresses.length,
-                  separatorBuilder: (_, __) => SizedBox(height: spacing.sm),
+                  separatorBuilder: (_, _) => SizedBox(height: spacing.sm),
                   itemBuilder: (context, index) => _AddressOption(
                     address: addresses[index],
                     selectedAddressId: selectedAddress?.id,
@@ -165,7 +165,7 @@ class _AddressOption extends StatelessWidget {
         padding: EdgeInsets.all(spacing.sm),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.primary.withOpacity(0.05)
+              ? theme.colorScheme.primary.withValues(alpha: 0.05)
               : null,
           borderRadius: BorderRadius.circular(spacing.radiusMd),
           border: Border.all(

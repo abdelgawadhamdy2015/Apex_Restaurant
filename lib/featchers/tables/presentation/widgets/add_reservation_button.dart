@@ -1,7 +1,7 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AddReservationButton extends StatelessWidget {
   const AddReservationButton({super.key, required this.onPressed});

@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/responsibility_shared_widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -255,7 +255,7 @@ class _BalanceSummaryCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withOpacity(0.2),
+        color: colorScheme.primary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(spacing.radiusMd),
       ),
       child: Column(

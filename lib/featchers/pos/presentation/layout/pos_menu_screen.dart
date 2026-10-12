@@ -12,7 +12,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/screens/menu_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/more_options.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_bottom_nav_bar.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PosMenuScreen extends StatefulWidget {

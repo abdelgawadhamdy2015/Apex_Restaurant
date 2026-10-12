@@ -1,7 +1,7 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ItemSizeSelector extends StatelessWidget {
   const ItemSizeSelector({
@@ -35,7 +35,7 @@ class ItemSizeSelector extends StatelessWidget {
               padding: EdgeInsets.all(spacing.sm),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? theme.colorScheme.primary.withOpacity(0.04)
+                    ? theme.colorScheme.primary.withValues(alpha: 0.04)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(spacing.radiusLg),
                 border: Border.all(

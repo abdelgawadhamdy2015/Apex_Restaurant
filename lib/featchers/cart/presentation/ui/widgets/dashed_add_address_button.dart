@@ -1,5 +1,5 @@
 import '../../../../../core/helpers/extensions.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DashedAddButton extends StatelessWidget {
   const DashedAddButton({super.key, required this.label, required this.onTap});

@@ -3,7 +3,7 @@ import 'package:apex_restaurant/core/themes/app_colors.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/category_model.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ItemAddonTile extends StatelessWidget {
   const ItemAddonTile({
@@ -41,7 +41,7 @@ class ItemAddonTile extends StatelessWidget {
         border: Border.all(
           color: isSelected
               ? activeGreenColor
-              : theme.colorScheme.outlineVariant.withOpacity(0.5),
+              : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
           width: isSelected ? 2.0 : 1.0,
         ),
       ),

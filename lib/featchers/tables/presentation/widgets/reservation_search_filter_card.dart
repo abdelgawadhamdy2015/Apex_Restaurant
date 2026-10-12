@@ -12,7 +12,7 @@ import '../../domain/entities/table_entity.dart';
 import '../../../../generated/l10n.dart';
 import '../bloc/tables_bloc.dart';
 import '../bloc/tables_event.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReservationSearchFilterCard extends StatefulWidget {

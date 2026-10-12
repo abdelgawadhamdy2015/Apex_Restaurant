@@ -3,7 +3,7 @@ import 'package:svg_flutter/svg_flutter.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/category_model.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PosCategoriesBar extends StatelessWidget {
   const PosCategoriesBar({
@@ -30,7 +30,7 @@ class PosCategoriesBar extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: spacing.md),
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
-        separatorBuilder: (_, __) => SizedBox(width: spacing.sm),
+        separatorBuilder: (_, _) => SizedBox(width: spacing.sm),
         itemBuilder: (context, index) {
           final cat = categories[index];
           final isSelected = selectedCategoryId == cat.id;

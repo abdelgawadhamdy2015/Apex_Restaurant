@@ -1,7 +1,7 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../domain/entities/reservation_entity.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ReservationStatusFilters extends StatelessWidget {
   const ReservationStatusFilters({
@@ -93,7 +93,7 @@ class _FilterTab extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: spacing.xs),
         decoration: BoxDecoration(
           color: isSelected
-              ? theme.colorScheme.onPrimary.withOpacity(.2)
+              ? theme.colorScheme.onPrimary.withValues(alpha: .2)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
         ),

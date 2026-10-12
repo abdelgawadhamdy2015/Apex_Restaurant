@@ -23,7 +23,7 @@ import '../../../pos/data/enums/table_status.dart';
 import '../../domain/entities/table_entity.dart';
 import '../widgets/add_reservation_bottom_sheet.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 

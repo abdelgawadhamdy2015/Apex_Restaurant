@@ -20,7 +20,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ReturnsScreen extends StatefulWidget {
   const ReturnsScreen({super.key});
@@ -315,6 +315,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
                     financialYearId: 1,
                     invoiceDate: selectedInvoiceDate,
                     invoiceType: moreActionState.invoiceType,
+                    isRestaurantReturnScreen: true,
                   ),
                 ),
               );

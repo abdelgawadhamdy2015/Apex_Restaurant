@@ -15,7 +15,7 @@ import 'package:apex_restaurant/featchers/payment/presentation/widgets/payment_m
 import 'package:apex_restaurant/featchers/payment/presentation/widgets/reference_number_input_field.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/widgets/total_amount_card.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabletPaymentDialog extends StatelessWidget {

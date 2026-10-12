@@ -16,7 +16,7 @@ import '../widgets/remaining_amount_card.dart';
 import '../widgets/split_methods_list.dart';
 import '../widgets/total_amount_card.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentScreen extends StatefulWidget {

@@ -2,7 +2,7 @@ import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/font_weight_helper.dart';
 import '../bloc/payment_bloc.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Displays the amount due for cash/card payment flows.
@@ -31,7 +31,7 @@ class DueAmountCard extends StatelessWidget {
           width: double.infinity,
           padding: EdgeInsets.all(spacing.md),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primary.withOpacity(0.2),
+            color: theme.colorScheme.primary.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(spacing.radiusMd),
           ),
           child: Row(

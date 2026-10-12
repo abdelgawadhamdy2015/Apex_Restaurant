@@ -1,6 +1,6 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PosFiltersBar extends StatelessWidget {
   const PosFiltersBar({
@@ -32,13 +32,13 @@ class PosFiltersBar extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: spacing.md),
         scrollDirection: Axis.horizontal,
         itemCount: filters.length,
-        separatorBuilder: (_, __) => SizedBox(width: spacing.xs),
+        separatorBuilder: (_, _) => SizedBox(width: spacing.xs),
         itemBuilder: (context, index) {
           final isSelected = selectedIndex == index;
           return ChoiceChip(
             label: Text(filters[index]),
             selected: isSelected,
-            selectedColor: theme.colorScheme.secondary.withOpacity(0.2),
+            selectedColor: theme.colorScheme.secondary.withValues(alpha: 0.2),
             backgroundColor: theme.colorScheme.surface,
             labelStyle: theme.textTheme.bodySmall?.copyWith(
               color: isSelected

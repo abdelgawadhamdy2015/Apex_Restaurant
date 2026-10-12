@@ -5,7 +5,7 @@ import 'package:apex_restaurant/featchers/tables/domain/entities/table_entity.da
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_bloc.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_event.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/bloc/tables_state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';

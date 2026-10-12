@@ -18,7 +18,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DailyCloseScreen extends StatefulWidget {
   const DailyCloseScreen({super.key});
@@ -352,7 +352,7 @@ class _DailyCloseScreenState extends State<DailyCloseScreen> {
               color: theme.colorScheme.onSecondary,
             ),
           ),
-          activeColor: AppColors.green,
+          activeThumbColor: AppColors.green,
           contentPadding: EdgeInsets.zero,
         ),
         SwitchListTile(
@@ -364,7 +364,7 @@ class _DailyCloseScreenState extends State<DailyCloseScreen> {
               color: theme.colorScheme.onSecondary,
             ),
           ),
-          activeColor: AppColors.green,
+          activeThumbColor: AppColors.green,
           contentPadding: EdgeInsets.zero,
         ),
       ],
@@ -548,7 +548,7 @@ class _MetricsSummaryCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceVariant.withOpacity(0.2),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(spacing.radiusMd),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
@@ -617,7 +617,7 @@ class _ExpectedCashCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.md),
       decoration: BoxDecoration(
-        color: theme.colorScheme.primaryContainer.withOpacity(0.2),
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(spacing.radiusMd),
       ),
       child: Column(
@@ -685,7 +685,9 @@ class _AmountInputField extends StatelessWidget {
           decoration: InputDecoration(
             isDense: true,
             filled: true,
-            fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+            fillColor: theme.colorScheme.surfaceContainerHighest.withValues(
+              alpha: 0.3,
+            ),
             suffixIcon: Padding(
               padding: EdgeInsets.all(spacing.sm),
               child: Text(

@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
 import '../../domain/entities/reservation_entity.dart';
@@ -25,7 +25,9 @@ class TabletReservationCardsList extends StatelessWidget {
       children: [
         // Table Header
         Container(
-          color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          color: theme.colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.3,
+          ),
           padding: EdgeInsets.symmetric(
             horizontal: spacing.lg,
             vertical: spacing.md,
@@ -49,7 +51,7 @@ class TabletReservationCardsList extends StatelessWidget {
         Expanded(
           child: ListView.separated(
             itemCount: reservations.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
+            separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (context, index) {
               final reservation = reservations[index];
               return Padding(

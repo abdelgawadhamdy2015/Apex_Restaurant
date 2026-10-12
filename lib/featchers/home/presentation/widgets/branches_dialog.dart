@@ -7,7 +7,7 @@ import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart'
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_state.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -108,7 +108,7 @@ class _BranchesDialogState extends State<BranchesDialog> {
             child: ListView.separated(
               shrinkWrap: true,
               itemCount: widget.branches.length,
-              separatorBuilder: (_, __) =>
+              separatorBuilder: (_, _) =>
                   Divider(height: 1, color: theme.colorScheme.outlineVariant),
               itemBuilder: (context, index) {
                 final branch = widget.branches[index];

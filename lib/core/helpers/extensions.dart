@@ -11,7 +11,7 @@ import '../themes/app_extra_theme.dart';
 import '../themes/app_icon_theme.dart';
 import '../themes/app_spacing_theme.dart';
 import '../themes/app_text_style.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 

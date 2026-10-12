@@ -299,7 +299,6 @@
     "specialNotes": "ملاحظات خاصة",
     "specialNotesHint": "مثال: زيادة تسوية، وضع الصوص في علبة خارجية...",
     "priceWithCurrency": "{price} ر.س",
-    "navSettings": "الإعدادات",
     "navCart": "السلة",
     "navOrders": "الطلبات",
     "navMenu": "القائمة",
@@ -532,5 +531,17 @@
     "no": "لا",
     "yes": "نعم",
     "confirmCancelReservation": "هل أنت متأكد من إلغاء حجز {customerName} على {tableNumber}؟",
-    "confirmCancelReservationTitle": "تأكيد إلغاء الحجز"
+    "confirmCancelReservationTitle": "تأكيد إلغاء الحجز",
+    "settings": "الإعدادات",
+    "appearance": "المظهر",
+    "systemTheme": "النظام",
+    "lightTheme": "فاتح",
+    "darkTheme": "داكن",
+    "accentColor": "لون التمييز",
+    "fontSize": "حجم الخط",
+    "iconSize": "حجم الأيقونات",
+    "elementSpacing": "التباعد بين العناصر",
+    "restoreDefaultSettings": "استعادة الإعدادات الافتراضية",
+    "arabicLanguage": "العربية",
+    "englishLanguage": "English"
 }

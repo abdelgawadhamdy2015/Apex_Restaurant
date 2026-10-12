@@ -1,7 +1,7 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CartFloatingSummaryBar extends StatelessWidget {
   const CartFloatingSummaryBar({
@@ -46,7 +46,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.all(spacing.xs),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.onPrimary.withOpacity(0.2),
+                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -80,7 +80,7 @@ class CartFloatingSummaryBar extends StatelessWidget {
                   Text(
                     lang.itemsCount(itemCount),
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.white.withOpacity(.8),
+                      color: AppColors.white.withValues(alpha: .8),
                       fontWeight: FontWeight.w600,
                     ),
                   ),

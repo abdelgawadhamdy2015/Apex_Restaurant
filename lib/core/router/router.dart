@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/helpers/size_helper.dart';
+import 'package:apex_restaurant/core/shared/widgets/tablet_setting_screen.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/cashier_custody_screen.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/custody_log_screen.dart';
@@ -22,7 +24,7 @@ import '../../featchers/pos/presentation/pages/pos_page.dart';
 import '../../featchers/tables/data/models/tables_screen_arg.dart';
 import '../../featchers/tables/presentation/bloc/tables_bloc.dart';
 import '../../featchers/tables/presentation/pages/tables_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -168,7 +170,9 @@ class AppRouter {
         path: Routes.settingsScreen,
         name: Routes.settingsScreen,
         builder: (context, state) {
-          return const SettingsScreen();
+          return SizeHelper.isMobile
+              ? SettingsScreen(changeLanguage: changeLanguage)
+              : TabletSettingsScreen(changeLanguage: changeLanguage);
         },
       ),
     ],

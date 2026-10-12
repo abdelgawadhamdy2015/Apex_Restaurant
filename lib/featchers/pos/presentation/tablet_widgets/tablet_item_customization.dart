@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -251,7 +251,7 @@ class _TabletItemCustomizationDialogState
                     ),
                     VerticalDivider(
                       width: 1,
-                      color: theme.dividerColor.withOpacity(0.1),
+                      color: theme.dividerColor.withValues(alpha: 0.1),
                     ),
 
                     // Column 2: Controls & Actions
@@ -445,7 +445,7 @@ class _TabletItemCustomizationDialogState
                     width: 48,
                     height: 48,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _buildPlaceholderImage(theme),
+                    errorBuilder: (_, _, _) => _buildPlaceholderImage(theme),
                   )
                 : _buildPlaceholderImage(theme),
           ),

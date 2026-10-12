@@ -1,6 +1,7 @@
 // lib/core/themes/app_icon_theme.dart
 import 'dart:ui';
-import 'package:flutter/material.dart';
+
+import 'package:material_ui/material_ui.dart';
 
 /// Semantic, pre-scaled icon sizes. Pull these via `context.iconSizes`
 /// instead of writing `Icon(x, size: 18)` anywhere in the app.

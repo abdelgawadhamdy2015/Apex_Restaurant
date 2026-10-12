@@ -4,7 +4,7 @@ import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tab
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_list.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_search_filter.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/tablet_reservation_status_filter.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -96,7 +96,7 @@ class _ReservationsTabletViewState extends State<ReservationsTabletView> {
                       style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.zero,
                         backgroundColor: _searchFilterOpen
-                            ? theme.colorScheme.primary.withOpacity(.1)
+                            ? theme.colorScheme.primary.withValues(alpha: .1)
                             : null,
                         side: BorderSide(
                           color: theme.colorScheme.outlineVariant,

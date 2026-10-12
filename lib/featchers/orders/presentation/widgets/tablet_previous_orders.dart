@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/restaurant_constants.dart';
@@ -83,7 +83,7 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: state.previousOrders.length,
-                      separatorBuilder: (_, __) => const Divider(height: 1),
+                      separatorBuilder: (_, _) => const Divider(height: 1),
                       itemBuilder: (context, index) {
                         return _buildTableRow(
                           context,
@@ -225,7 +225,7 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
   // Table Headers
   Widget _buildTableHeader(ThemeData theme, AppSpacing spacing, S l10n) {
     return Container(
-      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       padding: EdgeInsets.symmetric(
         horizontal: spacing.md,
         vertical: spacing.sm,
@@ -344,7 +344,9 @@ class _PreviousOrdersTabletViewState extends State<PreviousOrdersTabletView> {
                 _buildIconButton(
                   icon: Icons.visibility_outlined,
                   color: theme.colorScheme.primary,
-                  backgroundColor: theme.colorScheme.primary.withOpacity(0.12),
+                  backgroundColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.12,
+                  ),
                   onPressed: () {
                     context.read<OrdersBloc>().add(
                       RestoreOrderEvent(

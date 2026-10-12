@@ -9,7 +9,7 @@ import '../../bloc/cart_event.dart';
 import '../../bloc/cart_state.dart';
 import '../../../../payment/presentation/screens/tablet_payment_dialog.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -146,7 +146,7 @@ class BottomActionBar extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: spacing.sm - spacing.xxs / 2,
                   offset: Offset(0, -spacing.xxs),
                 ),

@@ -24,7 +24,7 @@ import '../widgets/header_info_card.dart';
 import '../widgets/order_summary_card.dart';
 import '../widgets/order_type_selector.dart';
 import '../widgets/takeaway_section.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartScreen extends StatefulWidget {

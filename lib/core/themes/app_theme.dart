@@ -1,9 +1,10 @@
+import 'package:material_ui/material_ui.dart';
+
 import 'app_extra_theme.dart';
 import 'app_icon_theme.dart';
 import 'app_spacing_theme.dart';
 import 'app_text_style.dart';
 import 'app_typography.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 

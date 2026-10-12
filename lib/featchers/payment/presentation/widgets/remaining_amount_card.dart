@@ -2,7 +2,7 @@ import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../bloc/payment_bloc.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Displays the remaining/change amount for cash payments.

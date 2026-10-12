@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/shared/widgets/settings_screen.dart';
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
@@ -17,14 +17,17 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_top_header.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/pages/tablet_tables_screen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../cart/presentation/bloc/cart_bloc.dart';
 import '../../../cart/presentation/bloc/cart_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PosTabletMenuScreen extends StatefulWidget {
-  const PosTabletMenuScreen({super.key});
+  const PosTabletMenuScreen({super.key, required this.changeLanguage});
+  final Function(Locale) changeLanguage;
+
   @override
   State<PosTabletMenuScreen> createState() => _PosTabletMenuScreenState();
 }
@@ -124,12 +127,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
           branchName: homeState.selectedEmployeeBranch?.arabicName ?? "",
           userRole: homeState.userDataModel?.employees?.arabicName ?? "",
           onSettingsPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return SettingsScreen();
-              },
-            );
+            context.pushNamed(Routes.settingsScreen);
           },
         ),
       ),
@@ -146,7 +144,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
                 VerticalDivider(
                   width: 1,
                   thickness: 1,
-                  color: theme.dividerColor.withOpacity(0.1),
+                  color: theme.dividerColor.withValues(alpha: 0.1),
                 ),
                 Expanded(
                   flex: 9,
@@ -278,7 +276,7 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+            backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
             child: Icon(Icons.person, color: theme.colorScheme.primary),
           ),
           const SizedBox(width: 12),

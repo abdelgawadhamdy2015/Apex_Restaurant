@@ -1,6 +1,6 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DiscountTypeToggle extends StatelessWidget {
   const DiscountTypeToggle({
@@ -61,7 +61,7 @@ class _Option extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: spacing.sm),
         decoration: BoxDecoration(
           color: isSelected && isEnabled
-              ? theme.colorScheme.onSurface.withOpacity(0.04)
+              ? theme.colorScheme.onSurface.withValues(alpha: 0.04)
               : theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
           border: Border.all(
@@ -87,7 +87,7 @@ class _Option extends StatelessWidget {
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: isEnabled
                     ? null
-                    : theme.colorScheme.onSecondary.withOpacity(0.38),
+                    : theme.colorScheme.onSecondary.withValues(alpha: 0.38),
               ),
             ),
           ],

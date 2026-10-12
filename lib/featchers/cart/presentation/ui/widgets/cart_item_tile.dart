@@ -10,7 +10,7 @@ import '../../../../pos/domain/entities/menu_item.dart';
 import '../../../../pos/presentation/bloc/pos_bloc.dart';
 import '../../../../pos/presentation/widgets/item_customization_sheet.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// A single order item row: image, name, price, size/addons/notes and
@@ -295,8 +295,8 @@ class CartItemTile extends StatelessWidget {
                           Text(
                             item.notes!,
                             style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onPrimary.withOpacity(
-                                .5,
+                              color: theme.colorScheme.onPrimary.withValues(
+                                alpha: .5,
                               ),
                             ),
                           ),
@@ -373,7 +373,7 @@ class CartItemTile extends StatelessWidget {
             Divider(
               height: 1,
               thickness: 0.8,
-              color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
             ),
           ],
         ),

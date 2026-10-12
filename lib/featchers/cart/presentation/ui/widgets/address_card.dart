@@ -3,7 +3,7 @@ import '../../../data/models/pos_client_model.dart';
 import '../../bloc/cart_bloc.dart';
 import 'address_picker_sheet.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Shows the selected delivery address and lets the user change it

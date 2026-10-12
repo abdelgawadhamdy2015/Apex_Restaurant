@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class CustomBottomNavItem extends BottomNavigationBarItem {
   CustomBottomNavItem({

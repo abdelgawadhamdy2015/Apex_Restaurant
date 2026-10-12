@@ -298,7 +298,6 @@
     "specialNotes": "Special Notes",
     "specialNotesHint": "Example: Extra cooked, put sauce on the side...",
     "priceWithCurrency": "{price} SAR",
-    "navSettings": "Settings",
     "navCart": "Cart",
     "navOrders": "Orders",
     "navMenu": "Menu",
@@ -556,5 +555,17 @@
     "no": "No",
     "yes": "Yes",
     "confirmCancelReservation": "Are you sure you want to cancel {customerName}'s reservation on {tableNumber}?",
-    "confirmCancelReservationTitle": "Confirm Reservation Cancellation"
+    "confirmCancelReservationTitle": "Confirm Reservation Cancellation",
+    "settings": "Settings",
+    "appearance": "Appearance",
+    "systemTheme": "System",
+    "lightTheme": "Light",
+    "darkTheme": "Dark",
+    "accentColor": "Accent Color",
+    "fontSize": "Font Size",
+    "iconSize": "Icon Size",
+    "elementSpacing": "Element Spacing",
+    "restoreDefaultSettings": "Restore Default Settings",
+    "arabicLanguage": "Arabic",
+    "englishLanguage": "English"
 }

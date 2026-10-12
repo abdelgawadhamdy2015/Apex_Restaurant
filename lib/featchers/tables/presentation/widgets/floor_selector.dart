@@ -1,6 +1,6 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../domain/entities/floor_entity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FloorSelector extends StatelessWidget {
   const FloorSelector({

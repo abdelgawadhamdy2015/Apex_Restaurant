@@ -76,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
       "Request Permission",
     ),
     "absence": MessageLookupByLibrary.simpleMessage("Absence"),
+    "accentColor": MessageLookupByLibrary.simpleMessage("Accent Color"),
     "accept": MessageLookupByLibrary.simpleMessage("Accept"),
     "accessDenied": MessageLookupByLibrary.simpleMessage("Access Denied"),
     "account": MessageLookupByLibrary.simpleMessage("Account"),
@@ -135,6 +136,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "annualLeave": MessageLookupByLibrary.simpleMessage("Annual leave"),
     "apartmentNumber": MessageLookupByLibrary.simpleMessage("Apartment Number"),
     "appVersion": m2,
+    "appearance": MessageLookupByLibrary.simpleMessage("Appearance"),
     "apply": MessageLookupByLibrary.simpleMessage("Apply"),
     "approvals": MessageLookupByLibrary.simpleMessage("Approvals"),
     "approve": MessageLookupByLibrary.simpleMessage("Approve"),
@@ -143,6 +145,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "approved": MessageLookupByLibrary.simpleMessage("Approved"),
     "arabic": MessageLookupByLibrary.simpleMessage("Arabic"),
+    "arabicLanguage": MessageLookupByLibrary.simpleMessage("Arabic"),
     "attachReceiptOrInvoice": MessageLookupByLibrary.simpleMessage(
       "Attach Receipt or Invoice",
     ),
@@ -295,6 +298,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyWorkingHours": MessageLookupByLibrary.simpleMessage(
       "from 9:00 A.M to 6:00 P.M",
     ),
+    "darkTheme": MessageLookupByLibrary.simpleMessage("Dark"),
     "date": MessageLookupByLibrary.simpleMessage("Date"),
     "dateFormatHint": MessageLookupByLibrary.simpleMessage("mm/dd/yyyy"),
     "datePlaceholder": MessageLookupByLibrary.simpleMessage("mm/dd/yyyy"),
@@ -338,6 +342,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("Edit"),
     "editCustomer": MessageLookupByLibrary.simpleMessage("Edit Customer"),
     "editReservation": MessageLookupByLibrary.simpleMessage("Edit Reservation"),
+    "elementSpacing": MessageLookupByLibrary.simpleMessage("Element Spacing"),
     "email": MessageLookupByLibrary.simpleMessage(" Email"),
     "emailNotFound": MessageLookupByLibrary.simpleMessage(
       "Email address not found. Please try again.",
@@ -363,6 +368,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "employeeStatus": MessageLookupByLibrary.simpleMessage("Employee Status"),
     "endDate": MessageLookupByLibrary.simpleMessage("End Date"),
     "english": MessageLookupByLibrary.simpleMessage("English"),
+    "englishLanguage": MessageLookupByLibrary.simpleMessage("English"),
     "enterCustomerNameHint": MessageLookupByLibrary.simpleMessage(
       "Enter customer name",
     ),
@@ -402,6 +408,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fixedAmountDiscount": MessageLookupByLibrary.simpleMessage("Fixed Amount"),
     "floor": MessageLookupByLibrary.simpleMessage("Floor"),
     "floors": MessageLookupByLibrary.simpleMessage("Floors"),
+    "fontSize": MessageLookupByLibrary.simpleMessage("Font Size"),
     "forgetPassword": MessageLookupByLibrary.simpleMessage("Forget Password?"),
     "formattedDateTime": m6,
     "free": MessageLookupByLibrary.simpleMessage("Free"),
@@ -427,6 +434,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hour": MessageLookupByLibrary.simpleMessage("hour"),
     "hours": MessageLookupByLibrary.simpleMessage("Hour"),
     "hoursAgo": m7,
+    "iconSize": MessageLookupByLibrary.simpleMessage("Icon Size"),
     "identityConfirmed": MessageLookupByLibrary.simpleMessage(
       "Identity Confirmed",
     ),
@@ -469,6 +477,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "leaveRecord": MessageLookupByLibrary.simpleMessage("Leave recorded at "),
     "leaveTime": MessageLookupByLibrary.simpleMessage("Leave Time"),
     "leaving": MessageLookupByLibrary.simpleMessage("Leaving"),
+    "lightTheme": MessageLookupByLibrary.simpleMessage("Light"),
     "location": MessageLookupByLibrary.simpleMessage("My Location"),
     "locationServicesDisabled": MessageLookupByLibrary.simpleMessage(
       "Location Services Disabled",
@@ -499,7 +508,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "navCart": MessageLookupByLibrary.simpleMessage("Cart"),
     "navMenu": MessageLookupByLibrary.simpleMessage("Menu"),
     "navOrders": MessageLookupByLibrary.simpleMessage("Orders"),
-    "navSettings": MessageLookupByLibrary.simpleMessage("Settings"),
     "needSignOut": MessageLookupByLibrary.simpleMessage(
       "Are you shure you need log signOut? ",
     ),
@@ -699,6 +707,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "restaurantManager": MessageLookupByLibrary.simpleMessage(
       "Restaurant Manager",
     ),
+    "restoreDefaultSettings": MessageLookupByLibrary.simpleMessage(
+      "Restore Default Settings",
+    ),
     "restoreOrder": MessageLookupByLibrary.simpleMessage("Restore Order"),
     "resumeSession": MessageLookupByLibrary.simpleMessage("Resume Session"),
     "retry": MessageLookupByLibrary.simpleMessage("Retry"),
@@ -756,6 +767,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectedTable": MessageLookupByLibrary.simpleMessage("Selected Table"),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
     "sessionExpired": MessageLookupByLibrary.simpleMessage("Session Expired"),
+    "settings": MessageLookupByLibrary.simpleMessage("Settings"),
     "shift": MessageLookupByLibrary.simpleMessage("Shift"),
     "shift1": MessageLookupByLibrary.simpleMessage("first shift"),
     "shift2": MessageLookupByLibrary.simpleMessage("second shift"),
@@ -798,6 +810,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "surplus": MessageLookupByLibrary.simpleMessage("Surplus"),
     "suspendSession": MessageLookupByLibrary.simpleMessage("Suspend Session"),
+    "systemTheme": MessageLookupByLibrary.simpleMessage("System"),
     "systemTime": MessageLookupByLibrary.simpleMessage("System time"),
     "table": MessageLookupByLibrary.simpleMessage("Table"),
     "tableArrangement": MessageLookupByLibrary.simpleMessage(

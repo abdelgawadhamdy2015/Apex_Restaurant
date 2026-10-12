@@ -3,7 +3,7 @@ import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {

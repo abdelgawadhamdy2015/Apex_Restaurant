@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -80,7 +80,7 @@ class _ReservationsTabViewState extends State<ReservationsTabView> {
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.zero,
                     backgroundColor: _searchFilterOpen
-                        ? theme.colorScheme.primary.withOpacity(.1)
+                        ? theme.colorScheme.primary.withValues(alpha: .1)
                         : null,
                     side: BorderSide(color: theme.colorScheme.outlineVariant),
                     shape: RoundedRectangleBorder(

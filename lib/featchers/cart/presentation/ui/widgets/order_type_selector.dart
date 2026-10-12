@@ -5,7 +5,7 @@ import '../../../data/enums/cart_enum.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Horizontal row of chips letting the user pick the order type

@@ -8,7 +8,7 @@ import '../bloc/tables_bloc.dart';
 import '../bloc/tables_event.dart';
 import '../bloc/tables_state.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TabletAddReservationDialog extends StatefulWidget {
@@ -159,7 +159,9 @@ class _TabletAddReservationDialogState
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: theme.dividerColor.withOpacity(0.3)),
+        borderSide: BorderSide(
+          color: theme.dividerColor.withValues(alpha: 0.3),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -281,7 +283,7 @@ class _TabletAddReservationDialogState
 
   Widget _buildTableDropdown(ThemeData theme, S lang) {
     return DropdownButtonFormField<TableEntity>(
-      value: _selectedTable,
+      initialValue: _selectedTable,
       decoration: _decoration(theme, lang.selectTableHint),
       icon: const Icon(Icons.keyboard_arrow_down),
       items: widget.tables
@@ -306,7 +308,7 @@ class _TabletAddReservationDialogState
     S lang,
   ) {
     return Container(
-      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.4),
+      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [

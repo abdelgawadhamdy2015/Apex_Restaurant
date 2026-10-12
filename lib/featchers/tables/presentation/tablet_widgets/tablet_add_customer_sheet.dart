@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -174,7 +174,7 @@ class _TabletAddReservationBottomSheetState
           borderRadius: BorderRadius.circular(spacing.radiusLg),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -191,8 +191,8 @@ class _TabletAddReservationBottomSheetState
                 vertical: spacing.md,
               ),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest.withOpacity(
-                  0.3,
+                color: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
                 ),
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(spacing.radiusLg),
@@ -460,7 +460,7 @@ class _TabletAddReservationBottomSheetState
     return SizedBox(
       height: 48,
       child: DropdownButtonFormField<TableEntity>(
-        value: _selectedTable,
+        initialValue: _selectedTable,
         decoration: _inputDecoration(theme, 'اختر الطاولة'),
         items: widget.tables
             .map(

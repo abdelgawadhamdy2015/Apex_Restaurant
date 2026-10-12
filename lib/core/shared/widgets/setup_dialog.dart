@@ -16,7 +16,7 @@ import '../../service/dio_factory.dart';
 import '../../../featchers/auth/presentation/pages/login_screen.dart';
 import '../../../generated/l10n.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppDialogType { error, warning, success, info }

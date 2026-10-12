@@ -1,5 +1,5 @@
 // colors.dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppColors {
   // Primary palette
@@ -21,10 +21,10 @@ class AppColors {
   static const Color successGrad2 = Color(0xFFF8F9FF);
   static const Color successGrad3 = Color(0xFF01060B);
   static Gradient lightSuceesGrad = LinearGradient(
-    colors: [successGrad1.withOpacity(.2), successGrad2],
+    colors: [successGrad1.withValues(alpha: .2), successGrad2],
   );
   static Gradient darkSuceesGrad = LinearGradient(
-    colors: [successGrad1.withOpacity(.5), successGrad3],
+    colors: [successGrad1.withValues(alpha: .5), successGrad3],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );

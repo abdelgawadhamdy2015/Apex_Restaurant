@@ -7,7 +7,7 @@ import '../../domain/entities/reservation_entity.dart';
 import '../bloc/tables_bloc.dart';
 import '../bloc/tables_event.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReservationItemCard extends StatelessWidget {
@@ -154,7 +154,7 @@ class ReservationItemCard extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     backgroundColor: isCancelled
                         ? Colors.grey.shade100
-                        : theme.colorScheme.error.withOpacity(.1),
+                        : theme.colorScheme.error.withValues(alpha: .1),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -187,7 +187,7 @@ class _StatusBadge extends StatelessWidget {
         vertical: spacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(spacing.radiusLg),
       ),
       child: Row(

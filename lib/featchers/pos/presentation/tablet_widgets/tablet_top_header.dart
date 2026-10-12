@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/gen/assets.gen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
@@ -85,7 +85,7 @@ class TabletPosTopHeader extends StatelessWidget
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(spacing.radiusMd),
                     borderSide: BorderSide(
-                      color: colorScheme.primary.withOpacity(0.5),
+                      color: colorScheme.primary.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
@@ -165,7 +165,7 @@ class TabletPosTopHeader extends StatelessWidget
 
           CircleAvatar(
             radius: spacing.radiusLg,
-            backgroundColor: colorScheme.primary.withOpacity(.2),
+            backgroundColor: colorScheme.primary.withValues(alpha: .2),
             child: Icon(
               Icons.person,
               color: colorScheme.primary,

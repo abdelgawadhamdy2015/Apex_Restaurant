@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/shared/enums/ui_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'pos_invoice_data.g.dart';
@@ -11,7 +12,10 @@ class PosInvoiceData {
   final DateTime invoiceDate;
   final double totalPrice;
   final double discount;
-  final int invoiceSubTypesId;
+
+  @JsonKey(fromJson: ReturnType.fromValue, toJson: _returnTypeToJson)
+  final ReturnType invoiceSubTypesId;
+
   final int paymentType;
   final String personNameAr;
   final String personNameEn;
@@ -39,3 +43,5 @@ class PosInvoiceData {
 
   Map<String, dynamic> toJson() => _$PosInvoiceDataToJson(this);
 }
+
+int _returnTypeToJson(ReturnType type) => type.value;

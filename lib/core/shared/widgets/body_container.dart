@@ -1,5 +1,5 @@
 import '../../helpers/restaurant_constants.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BodyContainer extends StatelessWidget {
   final Widget child;

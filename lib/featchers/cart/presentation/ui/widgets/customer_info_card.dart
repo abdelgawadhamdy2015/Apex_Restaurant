@@ -8,7 +8,7 @@ import '../../../../../core/router/routes.dart';
 import '../../../data/models/pos_client_model.dart';
 import '../screens/ass_customer_tablet.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 /// Shows the currently selected customer (or a placeholder) with
@@ -41,7 +41,7 @@ class CustomerInfoCard extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: theme.colorScheme.primary.withOpacity(.5),
+            backgroundColor: theme.colorScheme.primary.withValues(alpha: .5),
             radius: icons.lg - icons.sm / 2,
             child: Icon(
               Icons.person,

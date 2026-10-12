@@ -4,7 +4,7 @@ import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/cashier_custody_screen.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/returns_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -225,7 +225,7 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
       _MoreCardData(
         title: lang.cashierCustody,
         icon: Icons.account_balance_wallet_outlined,
-        iconBgColor: colorScheme.primary.withOpacity(.2),
+        iconBgColor: colorScheme.primary.withValues(alpha: .2),
         iconColor: colorScheme.primary,
         onTap: () {
           _showView(_MoreOptionsView.cashierCustody);
@@ -234,35 +234,35 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
       _MoreCardData(
         title: lang.returns,
         icon: Icons.receipt_long_outlined,
-        iconBgColor: colorScheme.primary.withOpacity(.2),
+        iconBgColor: colorScheme.primary.withValues(alpha: .2),
         iconColor: colorScheme.primary,
         onTap: () => _showView(_MoreOptionsView.returns),
       ),
       _MoreCardData(
         title: lang.closeCustody,
         icon: Icons.lock_clock_outlined,
-        iconBgColor: colorScheme.primary.withOpacity(.2),
+        iconBgColor: colorScheme.primary.withValues(alpha: .2),
         iconColor: colorScheme.primary,
         onTap: () => _showView(_MoreOptionsView.closeCustody),
       ),
       _MoreCardData(
         title: lang.suspendSession,
         icon: Icons.pause_circle_outline,
-        iconBgColor: colorScheme.primary.withOpacity(.2),
+        iconBgColor: colorScheme.primary.withValues(alpha: .2),
         iconColor: colorScheme.secondaryContainer,
         onTap: () => context.pushNamed(Routes.homeScreen), // ← changed
       ),
       _MoreCardData(
         title: lang.closeSession,
         icon: Icons.power_settings_new,
-        iconBgColor: colorScheme.primary.withOpacity(.2),
+        iconBgColor: colorScheme.primary.withValues(alpha: .2),
         iconColor: colorScheme.primary,
         onTap: () => _requestCloseSession(context),
       ),
       _MoreCardData(
         title: lang.logout,
         icon: Icons.logout,
-        iconBgColor: colorScheme.errorContainer.withOpacity(.2),
+        iconBgColor: colorScheme.errorContainer.withValues(alpha: .2),
         iconColor: colorScheme.error,
         isDestructive: true,
         onTap: () {
@@ -334,7 +334,9 @@ class _TabletMoreOptionsState extends State<TabletMoreOptions> {
           }
         },
         child: Scaffold(
-          backgroundColor: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+          backgroundColor: colorScheme.surfaceContainerHighest.withValues(
+            alpha: 0.3,
+          ),
           body: SafeArea(
             child: Column(
               children: [
@@ -394,7 +396,7 @@ class _MoreOptionCard extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: data.isDestructive
-              ? colorScheme.errorContainer.withOpacity(0.12)
+              ? colorScheme.errorContainer.withValues(alpha: 0.12)
               : colorScheme.surface,
           borderRadius: BorderRadius.circular(spacing.radiusLg),
           border: Border.all(

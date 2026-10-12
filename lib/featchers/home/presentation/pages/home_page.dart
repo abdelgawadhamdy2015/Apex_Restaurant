@@ -18,7 +18,7 @@ import '../../../pos/presentation/bloc/pos_event.dart';
 import '../../../pos/presentation/bloc/pos_state.dart';
 import '../../../pos/presentation/widgets/pos_top_app_bar.dart';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -326,7 +326,7 @@ class _SessionCard extends StatelessWidget {
                   _BranchSelector(selectedBranch: selectedEmployeeBranch),
 
                   Divider(
-                    color: theme.dividerColor.withOpacity(0.4),
+                    color: theme.dividerColor.withValues(alpha: 0.4),
                     height: spacing.md,
                   ),
 

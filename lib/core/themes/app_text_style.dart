@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Semantic, pre-scaled text styles for card/list-style UI (CupCard, etc).
 /// Colors that are theme-driven (accent, onSurface) are baked in at

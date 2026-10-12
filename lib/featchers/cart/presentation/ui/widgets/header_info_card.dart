@@ -4,7 +4,7 @@ import '../../../../../core/helpers/extensions.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_state.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Displays the order number, invoice number and current date in a

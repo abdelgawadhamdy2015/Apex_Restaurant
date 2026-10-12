@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/router/routes.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 /// Screens narrower than this render a single-page mobile layout.
@@ -98,7 +98,7 @@ class ResponsibilityPageTabs extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? colorScheme.primary
-              : colorScheme.primary.withOpacity(0.08),
+              : colorScheme.primary.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(spacing.radiusSm),
         ),
         alignment: Alignment.center,
@@ -133,7 +133,7 @@ class ResponsibilityFilterChips extends StatelessWidget {
     final lang = S.of(context);
     return Expanded(
       child: Card(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -212,7 +212,7 @@ class CustodyTypeBadge extends StatelessWidget {
     final color = isAddition ? AppColors.success : colorScheme.error;
     final bg = isAddition
         ? AppColors.successLightTranslucent
-        : colorScheme.error.withOpacity(0.08);
+        : colorScheme.error.withValues(alpha: 0.08);
 
     return Container(
       padding: EdgeInsets.symmetric(

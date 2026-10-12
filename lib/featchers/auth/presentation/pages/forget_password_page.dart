@@ -5,7 +5,7 @@ import '../../../../core/shared/widgets/grediant_container.dart';
 import '../../../../core/shared/widgets/mytextfile.dart';
 import '../../../../gen/assets.gen.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 

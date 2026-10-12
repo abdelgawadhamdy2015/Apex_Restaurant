@@ -8,7 +8,7 @@ import 'package:apex_restaurant/core/shared/model/return_request.dart';
 import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 abstract class SharedRepository {
   Future<ApiResult<BaseResponse<PrintKitchenResponse?>>> printKitchen({

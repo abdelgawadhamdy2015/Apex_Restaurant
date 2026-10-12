@@ -15,6 +15,7 @@ class GetAllPosInvoiceRequest {
   final int storeId;
   final int personId;
   final bool isReturn;
+  final bool isRestaurantReturnScreen;
   final int sessionId;
   final int financialYearId;
 
@@ -32,6 +33,7 @@ class GetAllPosInvoiceRequest {
     this.isReturn = true,
     this.sessionId = 0,
     this.financialYearId = 0,
+    this.isRestaurantReturnScreen = false,
   });
 
   factory GetAllPosInvoiceRequest.fromJson(Map<String, dynamic> json) =>

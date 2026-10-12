@@ -13,7 +13,7 @@ import 'package:apex_restaurant/featchers/auth/presentation/bloc/auth_state.dart
 import 'package:apex_restaurant/featchers/auth/presentation/widget/login_bloc_listener.dart';
 import 'package:apex_restaurant/gen/assets.gen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -134,7 +134,7 @@ class LoginMobileScreenState extends State<LoginMobileScreen> {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withValues(alpha: 0.08),
                     blurRadius: 24,
                     offset: const Offset(0, 8),
                   ),

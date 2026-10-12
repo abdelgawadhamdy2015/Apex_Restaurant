@@ -1,5 +1,5 @@
 import '../../themes/app_colors.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppButtonText extends StatelessWidget {
   final double? borderRadius;

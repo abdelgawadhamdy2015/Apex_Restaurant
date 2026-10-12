@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/featchers/tables/presentation/widgets/reservations_tab_view.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/widgets/tables_tab_view.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';

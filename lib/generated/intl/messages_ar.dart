@@ -73,6 +73,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "RequestPermission": MessageLookupByLibrary.simpleMessage("طلب إذن"),
     "absence": MessageLookupByLibrary.simpleMessage("الغياب"),
+    "accentColor": MessageLookupByLibrary.simpleMessage("لون التمييز"),
     "accept": MessageLookupByLibrary.simpleMessage("قبول"),
     "accessDenied": MessageLookupByLibrary.simpleMessage("تم رفض الوصول"),
     "account": MessageLookupByLibrary.simpleMessage("الحساب"),
@@ -127,6 +128,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "annualLeave": MessageLookupByLibrary.simpleMessage("إجازة سنوية"),
     "apartmentNumber": MessageLookupByLibrary.simpleMessage("رقم الشقة"),
     "appVersion": m2,
+    "appearance": MessageLookupByLibrary.simpleMessage("المظهر"),
     "apply": MessageLookupByLibrary.simpleMessage("تطبيق"),
     "approvals": MessageLookupByLibrary.simpleMessage("الاعتمادات"),
     "approve": MessageLookupByLibrary.simpleMessage("اعتماد"),
@@ -135,6 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "approved": MessageLookupByLibrary.simpleMessage("موافق عليه"),
     "arabic": MessageLookupByLibrary.simpleMessage("العربية"),
+    "arabicLanguage": MessageLookupByLibrary.simpleMessage("العربية"),
     "attachReceiptOrInvoice": MessageLookupByLibrary.simpleMessage(
       "إرفاق إيصال أو فاتورة",
     ),
@@ -277,6 +280,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "dailyWorkingHours": MessageLookupByLibrary.simpleMessage(
       "من 9:00 صباحًا الي 6:00 مساءً",
     ),
+    "darkTheme": MessageLookupByLibrary.simpleMessage("داكن"),
     "date": MessageLookupByLibrary.simpleMessage("التاريخ"),
     "dateFormatHint": MessageLookupByLibrary.simpleMessage("mm/dd/yyyy"),
     "datePlaceholder": MessageLookupByLibrary.simpleMessage("mm/dd/yyyy"),
@@ -318,6 +322,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "edit": MessageLookupByLibrary.simpleMessage("تعديل"),
     "editCustomer": MessageLookupByLibrary.simpleMessage("تعديل عميل"),
     "editReservation": MessageLookupByLibrary.simpleMessage("تعديل الحجز"),
+    "elementSpacing": MessageLookupByLibrary.simpleMessage(
+      "التباعد بين العناصر",
+    ),
     "email": MessageLookupByLibrary.simpleMessage("البريد الإلكتروني"),
     "emailNotFound": MessageLookupByLibrary.simpleMessage(
       "لم يتم العثور على عنوان البريد الإلكتروني. يرجى المحاولة مرة أخرى.",
@@ -343,6 +350,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "employeeStatus": MessageLookupByLibrary.simpleMessage("حالة الموظف"),
     "endDate": MessageLookupByLibrary.simpleMessage("تاريخ النهاية"),
     "english": MessageLookupByLibrary.simpleMessage("الإنجليزية"),
+    "englishLanguage": MessageLookupByLibrary.simpleMessage("English"),
     "enterCustomerNameHint": MessageLookupByLibrary.simpleMessage(
       "اكتب اسم العميل",
     ),
@@ -380,6 +388,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "fixedAmountDiscount": MessageLookupByLibrary.simpleMessage("قيمة ثابتة"),
     "floor": MessageLookupByLibrary.simpleMessage("الدور"),
     "floors": MessageLookupByLibrary.simpleMessage("الطوابق"),
+    "fontSize": MessageLookupByLibrary.simpleMessage("حجم الخط"),
     "forgetPassword": MessageLookupByLibrary.simpleMessage("نسيت كلمة المرور؟"),
     "formattedDateTime": m6,
     "free": MessageLookupByLibrary.simpleMessage("مجاناً"),
@@ -405,6 +414,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "hour": MessageLookupByLibrary.simpleMessage("ساعة"),
     "hours": MessageLookupByLibrary.simpleMessage("ساعة"),
     "hoursAgo": m7,
+    "iconSize": MessageLookupByLibrary.simpleMessage("حجم الأيقونات"),
     "identityConfirmed": MessageLookupByLibrary.simpleMessage(
       "تم تأكيد الهوية",
     ),
@@ -449,6 +459,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "leaveTime": MessageLookupByLibrary.simpleMessage("وقت الانصراف"),
     "leaving": MessageLookupByLibrary.simpleMessage("انصراف"),
+    "lightTheme": MessageLookupByLibrary.simpleMessage("فاتح"),
     "location": MessageLookupByLibrary.simpleMessage("موقعي"),
     "locationServicesDisabled": MessageLookupByLibrary.simpleMessage(
       "تم تعطيل خدمات الموقع",
@@ -479,7 +490,6 @@ class MessageLookup extends MessageLookupByLibrary {
     "navCart": MessageLookupByLibrary.simpleMessage("السلة"),
     "navMenu": MessageLookupByLibrary.simpleMessage("القائمة"),
     "navOrders": MessageLookupByLibrary.simpleMessage("الطلبات"),
-    "navSettings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "needSignOut": MessageLookupByLibrary.simpleMessage(
       "هل أنت متأكد أنك بحاجة إلى تسجيل الخروج",
     ),
@@ -667,6 +677,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "reserved": MessageLookupByLibrary.simpleMessage("محجوز"),
     "restMinutes": MessageLookupByLibrary.simpleMessage("راحة 60 دقيقة"),
     "restaurantManager": MessageLookupByLibrary.simpleMessage("مدير المطعم"),
+    "restoreDefaultSettings": MessageLookupByLibrary.simpleMessage(
+      "استعادة الإعدادات الافتراضية",
+    ),
     "restoreOrder": MessageLookupByLibrary.simpleMessage("استعادة الطلب"),
     "resumeSession": MessageLookupByLibrary.simpleMessage("استئناف الجلسة"),
     "retry": MessageLookupByLibrary.simpleMessage("حاول ثانية"),
@@ -722,6 +735,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectedTable": MessageLookupByLibrary.simpleMessage("الطاولة المحددة"),
     "send": MessageLookupByLibrary.simpleMessage("إرسال"),
     "sessionExpired": MessageLookupByLibrary.simpleMessage("انتهت الجلسة"),
+    "settings": MessageLookupByLibrary.simpleMessage("الإعدادات"),
     "shift": MessageLookupByLibrary.simpleMessage("الدوام"),
     "shift1": MessageLookupByLibrary.simpleMessage("الفترة الأولى"),
     "shift2": MessageLookupByLibrary.simpleMessage("الفترة الثانية"),
@@ -762,6 +776,7 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "surplus": MessageLookupByLibrary.simpleMessage("الفائض"),
     "suspendSession": MessageLookupByLibrary.simpleMessage("تعليق الجلسة"),
+    "systemTheme": MessageLookupByLibrary.simpleMessage("النظام"),
     "systemTime": MessageLookupByLibrary.simpleMessage("توقيت النظام"),
     "table": MessageLookupByLibrary.simpleMessage("طاولة"),
     "tableArrangement": MessageLookupByLibrary.simpleMessage("ترتيب الطاولات"),

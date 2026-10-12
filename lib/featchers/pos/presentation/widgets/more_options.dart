@@ -15,7 +15,7 @@ import '../screens/close_session_dialog.dart';
 import '../../../more_actions/presentation/screens/daily_close_screen.dart';
 import '../../../tables/data/models/tables_screen_arg.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -117,7 +117,7 @@ class _MoreOptionsState extends State<MoreOptions> {
         onTap: () => context.pushReplacementNamed(Routes.homeScreen),
       ),
       OptionItem(
-        title: lang.navSettings,
+        title: lang.settings,
         icon: Icons.settings,
         onTap: () {
           context.pushNamed(Routes.settingsScreen);
@@ -312,7 +312,7 @@ class OptionItem extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(spacing.radiusMd),
           color: isLogOut
-              ? colorScheme.errorContainer.withOpacity(.08)
+              ? colorScheme.errorContainer.withValues(alpha: .08)
               : colorScheme.onSurface,
           border: Border.all(color: colorScheme.outlineVariant),
         ),
