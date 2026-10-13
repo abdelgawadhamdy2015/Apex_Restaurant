@@ -60,7 +60,7 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
   @POST(ApiConstants.login)
-  // @Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
+  @Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
   Future<BaseResponse<LoginData?>> login(@Body() LoginRequest loginRequestBody);
   @GET(ApiConstants.openRestaurantPos)
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
@@ -196,6 +196,7 @@ abstract class ApiService {
   @GET(ApiConstants.getPosInvoiceDataById)
   Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     @Query('InvoiceId') int invoiceId,
+    @Query("isRestaurantReturnScreen") bool isRestaurantReturnScreen,
   );
 
   @GET(ApiConstants.getItemById)

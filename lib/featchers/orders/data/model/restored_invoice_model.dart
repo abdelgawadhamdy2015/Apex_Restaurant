@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/shared/enums/ui_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'restored_invoice_model.g.dart';
@@ -79,7 +80,9 @@ class RestoredInvoiceInfo {
   final bool? isReturn;
   final bool? isAccredite;
   final DateTime? orderReceivedTime;
-
+  @JsonKey(fromJson: ReturnType.fromValue, toJson: _returnTypeToJson)
+  final ReturnType invoiceSubTypesId;
+  final bool? priceIncludeVat;
   const RestoredInvoiceInfo({
     this.invoiceId,
     this.invoiceDiscountId,
@@ -131,6 +134,8 @@ class RestoredInvoiceInfo {
     this.canEditReasonAr,
     this.canEditReasonEn,
     this.canEdit = true,
+    this.invoiceSubTypesId = ReturnType.nothing,
+    this.priceIncludeVat,
   });
 
   factory RestoredInvoiceInfo.fromJson(Map<String, dynamic> json) =>
@@ -425,7 +430,7 @@ class RestoredInvoiceItem {
   final bool? isTobaccoTax;
   final double? availableQuantity;
   final int? invoiceDetailsId;
-
+  final double? splitedDiscountValue;
   const RestoredInvoiceItem({
     this.transactionId,
     this.parentTransactionId,
@@ -449,6 +454,7 @@ class RestoredInvoiceItem {
     this.isTobaccoTax,
     this.availableQuantity,
     this.invoiceDetailsId,
+    this.splitedDiscountValue,
   });
 
   factory RestoredInvoiceItem.fromJson(Map<String, dynamic> json) =>
@@ -661,3 +667,5 @@ class RestoredPaymentMethod {
 
   Map<String, dynamic> toJson() => _$RestoredPaymentMethodToJson(this);
 }
+
+int _returnTypeToJson(ReturnType type) => type.value;

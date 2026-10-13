@@ -138,7 +138,10 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
       appBar: CustomAppBar(
         title: lang.returns,
         showBackButton: true,
-        onBackPressed: () => Navigator.of(context).pop(),
+        onBackPressed: () {
+          //context.read<CartBloc>().add(ClearCartEvent());
+          context.pop();
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -313,9 +316,9 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
                     pageSize: 20,
                     invoiceTypeId: 11,
                     financialYearId: 1,
+                    isReturn: true,
                     invoiceDate: selectedInvoiceDate,
                     invoiceType: moreActionState.invoiceType,
-                    isRestaurantReturnScreen: true,
                   ),
                 ),
               );

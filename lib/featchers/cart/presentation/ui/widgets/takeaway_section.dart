@@ -16,7 +16,9 @@ class TakeawaySection extends StatefulWidget {
 class _TakeawaySectionState extends State<TakeawaySection> {
   @override
   Widget build(BuildContext context) {
-    final canEdit = context.select((CartBloc b) => b.state.canEdit);
+    final canEdit = context.select(
+      (CartBloc b) => b.state.canEdit && !b.state.isReturn,
+    );
     return DateTextField(
       type: DateTextFieldType.dateTime,
       controller: widget.controller,

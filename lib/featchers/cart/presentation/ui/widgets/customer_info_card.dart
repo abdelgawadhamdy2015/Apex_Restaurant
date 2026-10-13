@@ -31,6 +31,7 @@ class CustomerInfoCard extends StatelessWidget {
     final lang = S.of(context);
     final phones = selectedPerson?.personPhones;
     final cartState = context.read<CartBloc>().state;
+    final canEdit = cartState.canEdit && !cartState.isReturn;
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
@@ -52,7 +53,7 @@ class CustomerInfoCard extends StatelessWidget {
           SizedBox(width: spacing.sm),
           Expanded(
             child: GestureDetector(
-              onTap: cartState.canEdit
+              onTap: canEdit
                   ? () => HelperMethods.openPicker(context, persons)
                   : null,
               behavior: HitTestBehavior.opaque,

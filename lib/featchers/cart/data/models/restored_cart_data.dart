@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/shared/enums/ui_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart'
     show RestoredInvoicePayment;
@@ -33,6 +34,9 @@ class RestoredCartData {
   final String? voucherCode;
   final double? deliveryCost;
   final double? totalVat;
+  final bool? priceIncludeVat;
+  final ReturnType? invoiceSubTypesId;
+
   const RestoredCartData({
     required this.items,
     required this.orderType,
@@ -56,5 +60,7 @@ class RestoredCartData {
     this.voucherCode,
     this.deliveryCost,
     this.totalVat,
+    this.priceIncludeVat,
+    this.invoiceSubTypesId,
   });
 }

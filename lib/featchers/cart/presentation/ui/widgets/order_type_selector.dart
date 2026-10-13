@@ -8,8 +8,6 @@ import '../../../../../generated/l10n.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Horizontal row of chips letting the user pick the order type
-/// (takeaway, dine-in, delivery or delivery company).
 class OrderTypeSelector extends StatelessWidget {
   const OrderTypeSelector({super.key});
 
@@ -80,7 +78,7 @@ class _OrderTypeChip extends StatelessWidget {
       (CartBloc b) => b.state.selectedOrderType == type,
     );
     final canEdit = context.select(
-      (CartBloc b) => b.state.canEdit,
+      (CartBloc b) => b.state.canEdit && !b.state.isReturn,
     ); // ✅ now reactive
 
     final activeColor = theme.colorScheme.primary;

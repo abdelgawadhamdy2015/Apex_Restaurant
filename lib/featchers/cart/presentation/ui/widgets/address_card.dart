@@ -34,6 +34,7 @@ class AddressCard extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
     final cartState = context.read<CartBloc>().state;
+    final canEdit = cartState.canEdit && !cartState.isReturn;
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
@@ -67,9 +68,7 @@ class AddressCard extends StatelessWidget {
                 ],
               ),
               InkWell(
-                onTap: cartState.canEdit
-                    ? () => _openAddressPicker(context)
-                    : null,
+                onTap: canEdit ? () => _openAddressPicker(context) : null,
                 borderRadius: BorderRadius.circular(spacing.radiusMd),
                 child: Padding(
                   padding: EdgeInsets.symmetric(

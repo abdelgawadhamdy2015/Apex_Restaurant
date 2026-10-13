@@ -1,3 +1,7 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
@@ -58,12 +62,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
               message: state.errorMessage ?? lang.somethingWentWrong,
               isError: true,
             );
+          } else if (state.status == PaymentStatus.success ||
+              state.isFullReturn == true) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.errorMessage ?? lang.invoiceReturnedSuccessfully,
+              isError: false,
+            );
           }
         },
         builder: (context, state) {
-          if (state.status == PaymentStatus.success &&
-              state.successModel != null) {
-            return PaymentSuccess(model: state.successModel!);
+          if (state.status == PaymentStatus.success) {
+            context.read<CartBloc>().add(ClearCartEvent());
+            if (state.successModel != null) {
+              return PaymentSuccess(model: state.successModel!);
+            } else if (state.isFullReturn == true) {
+              context.pop();
+            }
           }
 
           return Scaffold(

@@ -211,6 +211,8 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       voucherCode: inv?.voucherCode,
       deliveryCost: inv?.deliveryCost,
       totalVat: inv?.totalVat,
+      invoiceSubTypesId: inv?.invoiceSubTypesId,
+      priceIncludeVat: inv?.priceIncludeVat,
     );
   }
 

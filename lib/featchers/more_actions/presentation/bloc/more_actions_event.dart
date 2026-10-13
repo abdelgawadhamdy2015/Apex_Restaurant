@@ -38,6 +38,7 @@ class AccreditePOSInvoicesEvent extends MoreActionsEvent {
 
 class FetchInvoiceByIdEvent extends MoreActionsEvent {
   final int invoiceId;
+
   const FetchInvoiceByIdEvent({required this.invoiceId});
   @override
   List<Object?> get props => [invoiceId];

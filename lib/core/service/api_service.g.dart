@@ -26,11 +26,20 @@ class _ApiService implements ApiService {
   Future<BaseResponse<LoginData?>> login(LoginRequest loginRequestBody) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
+    final _headers = <String, dynamic>{
+      r'Content-Type': 'application/json-patch+json',
+      r'accept': '*/*',
+    };
+    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     _data.addAll(loginRequestBody.toJson());
     final _options = _setStreamType<BaseResponse<LoginData?>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(
+            method: 'POST',
+            headers: _headers,
+            extra: _extra,
+            contentType: 'application/json-patch+json',
+          )
           .compose(
             _dio.options,
             'api/Login',
@@ -1178,9 +1187,13 @@ class _ApiService implements ApiService {
   @override
   Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     int invoiceId,
+    bool isRestaurantReturnScreen,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'InvoiceId': invoiceId};
+    final queryParameters = <String, dynamic>{
+      r'InvoiceId': invoiceId,
+      r'isRestaurantReturnScreen': isRestaurantReturnScreen,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<RestoredInvoiceModel?>>(

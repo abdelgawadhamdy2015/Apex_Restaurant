@@ -110,6 +110,10 @@ RestoredInvoiceInfo _$RestoredInvoiceInfoFromJson(Map<String, dynamic> json) =>
       canEditReasonAr: json['canEditReasonAr'] as String?,
       canEditReasonEn: json['canEditReasonEn'] as String?,
       canEdit: json['canEdit'] as bool? ?? true,
+      invoiceSubTypesId: json['invoiceSubTypesId'] == null
+          ? ReturnType.nothing
+          : ReturnType.fromValue((json['invoiceSubTypesId'] as num).toInt()),
+      priceIncludeVat: json['priceIncludeVat'] as bool?,
     );
 
 Map<String, dynamic> _$RestoredInvoiceInfoToJson(
@@ -165,6 +169,8 @@ Map<String, dynamic> _$RestoredInvoiceInfoToJson(
   'isReturn': instance.isReturn,
   'isAccredite': instance.isAccredite,
   'orderReceivedTime': instance.orderReceivedTime?.toIso8601String(),
+  'invoiceSubTypesId': _returnTypeToJson(instance.invoiceSubTypesId),
+  'priceIncludeVat': instance.priceIncludeVat,
 };
 
 RestoredAddress _$RestoredAddressFromJson(Map<String, dynamic> json) =>
@@ -428,6 +434,7 @@ RestoredInvoiceItem _$RestoredInvoiceItemFromJson(Map<String, dynamic> json) =>
       isTobaccoTax: json['isTobaccoTax'] as bool?,
       availableQuantity: (json['availableQuantity'] as num?)?.toDouble(),
       invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
+      splitedDiscountValue: (json['splitedDiscountValue'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$RestoredInvoiceItemToJson(
@@ -455,6 +462,7 @@ Map<String, dynamic> _$RestoredInvoiceItemToJson(
   'isTobaccoTax': instance.isTobaccoTax,
   'availableQuantity': instance.availableQuantity,
   'invoiceDetailsId': instance.invoiceDetailsId,
+  'splitedDiscountValue': instance.splitedDiscountValue,
 };
 
 RestoredItemDiscount _$RestoredItemDiscountFromJson(

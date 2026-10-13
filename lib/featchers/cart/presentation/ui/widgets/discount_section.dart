@@ -114,7 +114,8 @@ class _DiscountSectionState extends State<DiscountSection> {
         (!widget.dynamicIsActive &&
             state.isInvoiceManualDiscountEnabled &&
             !HelperMethods.anyItemHasDiscount(state.items)) &&
-        state.canEdit;
+        state.canEdit &&
+        !state.isReturn;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
         if (val != null) {
@@ -137,7 +138,7 @@ class _DiscountSectionState extends State<DiscountSection> {
               AppRadioGroup<DiscountTypeEnum>(
                 value: DiscountTypeEnum.coupon,
                 groupValue: discountType,
-                enabled: true,
+                enabled: !state.isReturn,
                 label: Text(
                   lang.coupon,
                   style: theme.textTheme.bodyMedium?.copyWith(

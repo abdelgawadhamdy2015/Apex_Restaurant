@@ -13,7 +13,7 @@ class DeliveryCompanySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final cartState = context.watch<CartBloc>().state;
 
-    final canEdit = cartState.canEdit;
+    final canEdit = cartState.canEdit && !cartState.isReturn;
     final companies = cartState.companiesList;
     final selectedCompany = cartState.selectedDeliveryCompany;
 

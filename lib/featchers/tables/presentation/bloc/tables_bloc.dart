@@ -164,7 +164,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     emit(state.copyWith(restoringInvoiceId: event.invoiceId));
 
     try {
-      final response = await restoreHeldOrderUseCase(event.invoiceId);
+      final response = await restoreHeldOrderUseCase(event.invoiceId, false);
       response.when(
         success: (data) {
           if (data.result == 1 && data.data != null) {

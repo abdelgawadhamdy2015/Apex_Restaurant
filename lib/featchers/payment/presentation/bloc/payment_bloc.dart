@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
 import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
 import 'package:apex_restaurant/core/shared/model/return_response.dart';
@@ -75,9 +74,6 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     Emitter<PaymentState> emit,
   ) {
     emit(state.copyWith(paidAmount: event.amount));
-    log(
-      'Updated paid amount: ${state.paidAmount} , Remaining amount: ${state.remainingAmount}',
-    );
   }
 
   void _onUpdateReferenceNumber(
@@ -99,7 +95,6 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         updatedMap.values.fold(0.0, (sum, amount) => sum + amount),
       ),
     );
-    log('Updated split amounts: ${state.splitAmounts} , ');
   }
 
   Future<void> _saveRestaurantPosPartialReturnInvoice(

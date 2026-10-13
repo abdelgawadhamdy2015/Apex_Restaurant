@@ -100,6 +100,6 @@ class TablesRemoteDataSourceImpl implements TablesRemoteDataSource {
   Future<BaseResponse<RestoredInvoiceModel?>> restorePosRestuarantInvoice(
     int invoiceId,
   ) async {
-    return await _apiService.getPosInvoiceDataById(invoiceId);
+    return await _apiService.getPosInvoiceDataById(invoiceId, false);
   }
 }

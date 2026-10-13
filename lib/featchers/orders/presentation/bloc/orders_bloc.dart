@@ -315,7 +315,10 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     emit(state.copyWith(restoringInvoiceId: event.invoiceId));
 
     try {
-      final response = await getPosInvoiceDataByIdUseCase(event.invoiceId);
+      final response = await getPosInvoiceDataByIdUseCase(
+        event.invoiceId,
+        false,
+      );
       response.when(
         success: (data) {
           if (data.result == 1 && data.data != null) {

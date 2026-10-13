@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
@@ -81,18 +82,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     on<UpdateItemsPriceWithCompanyEvent>(_updateItemsPriceForCompanies);
     on<ClearVoucherDiscountEvent>(
-      (event, emit) => emit(
-        state.copyWith(voucherData: null, clearVoucherDiscountValue: true),
-      ),
+      (event, emit) => state.isReturn
+          ? null
+          : emit(
+              state.copyWith(
+                voucherData: null,
+                clearVoucherDiscountValue: true,
+              ),
+            ),
     );
     on<ClearDiscountEvent>(
-      (event, emit) => emit(
-        state.copyWith(
-          restaurantPosDiscountRequest: null,
-          clearRestaurantPosDiscountRequest: true,
-          discountAmount: 0,
-        ),
-      ),
+      (event, emit) => state.isReturn
+          ? null
+          : emit(
+              state.copyWith(
+                restaurantPosDiscountRequest: null,
+                clearRestaurantPosDiscountRequest: true,
+                discountAmount: 0,
+              ),
+            ),
     );
     on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
@@ -165,8 +173,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       quantity: quantity,
       availableQuantity: returnQuantity?.toDouble() ?? old.availableQuantity,
       notes: event.notes,
-      discount: event.discount,
-      isPercentageDiscount: event.isPercentageDiscount,
+      // Return invoices keep the discount restored from the original invoice
+      discount: isReturn ? old.discount : event.discount,
+      isPercentageDiscount: isReturn
+          ? old.isPercentageDiscount
+          : event.isPercentageDiscount,
     );
 
     emit(state.copyWith(items: items));
@@ -258,6 +269,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             (c) => c.id == data.deliveryCompany?.id,
           )
         : null;
+    log("in cart : ${data.priceIncludeVat}");
     emit(
       state.copyWith(
         // Primary Restored Data
@@ -293,6 +305,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             ? (data.restaurantPosDiscountRequest!.value)
             : 0.0,
 
+        // Drop any stale "current" discounts from a previous cart so only
+        // the restored invoice discounts remain.
+        clearActiveDiscountModel: true,
+        clearCustomerDiscount: true,
+        clearVoucherDiscountValue: true,
+
         // State Flags & Status
         justRestored: true,
         // status: CartStatus
@@ -300,6 +318,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         isLoading: false,
         errorMessage: null,
         isReturnInvoice: data.isReturnInvoice,
+        priceIncludeVat: data.priceIncludeVat,
       ),
     );
   }
@@ -426,7 +445,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   void _onChangeOrderType(ChangeOrderTypeEvent event, Emitter<CartState> emit) {
     final oldType = state.selectedOrderType;
-
+    if (state.isReturn) return;
     emit(
       state.copyWith(
         selectedOrderType: event.orderType,
@@ -753,6 +772,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     ApplyDiscountEvent event,
     Emitter<CartState> emit,
   ) async {
+    // Return invoices keep the discount restored from the original invoice
+    if (state.isReturn) return;
+
     emit(
       state.copyWith(
         restaurantPosDiscountRequest: event.restaurantPosDiscountRequest,
@@ -768,6 +790,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     ApplyVoucherDiscountEvent event,
     Emitter<CartState> emit,
   ) async {
+    // Vouchers are not allowed on return invoices
+    if (state.isReturn) return;
+
     final response = await checkVoucherUseCase(event.request);
 
     response.when(

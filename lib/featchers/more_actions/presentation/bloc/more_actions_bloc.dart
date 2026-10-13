@@ -54,7 +54,10 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
   ) async {
     emit(state.copyWith(status: MoreActionsStatus.loading));
     try {
-      final response = await getPosInvoiceDataByIdUseCase(event.invoiceId);
+      final response = await getPosInvoiceDataByIdUseCase(
+        event.invoiceId,
+        true,
+      );
       response.when(
         success: (data) {
           if (data.result == 1) {
@@ -178,6 +181,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 invoices: items,
                 clearReturned: true,
                 status: MoreActionsStatus.success,
+
                 isFullReturn: false,
                 errorMessage: null,
               ),
