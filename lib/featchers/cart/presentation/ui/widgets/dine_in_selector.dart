@@ -31,9 +31,7 @@ class DineInSelector extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
     final selectedTable = context.select((CartBloc b) => b.state.selectedTable);
-    final canEdit = context.select(
-      (CartBloc b) => b.state.canEdit && !b.state.isReturn,
-    );
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(

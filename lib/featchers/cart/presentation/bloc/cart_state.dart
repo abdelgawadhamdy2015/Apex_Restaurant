@@ -753,6 +753,7 @@
 // }
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 
@@ -870,6 +871,7 @@ class CartState extends Equatable {
   /// discount + per-item discount). Dynamic / size / customer / voucher
   /// discounts are ignored.
   bool get isReturn => isReturnInvoice == true;
+  bool get canEditInvoice => canEdit && !isReturn && !isPreviousInvoice;
 
   // الخصومات الديناميكية
   DynamicDiscountModel? get matchedDynamicDiscount {
@@ -1162,7 +1164,6 @@ class CartState extends Equatable {
     if (selectedOrderType == CartOrderType.DINE_IN) {
       dineInRatio = selectedTable?.serviceRatio ?? 0.0;
     }
-    log("is returned : $isReturnInvoice , includeVat : $priceIncludeVat");
     final input = InvoiceCalculationInput(
       discountOnTotal: discountOnTotal,
       discountType: calcDiscountType,
@@ -1174,6 +1175,8 @@ class CartState extends Equatable {
           : settingsModel?.posRestaurant?.priceIncludeVat ?? false,
       items: _mapItemsToCalculationInputs(),
       voucher: voucherInput,
+      dynamicDiscount: matchedDynamicDiscount?.discount
+          ?.toDynamicDiscountInput(),
     );
 
     const calculator = InvoiceCalculator(

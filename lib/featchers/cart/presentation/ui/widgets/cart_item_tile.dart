@@ -207,7 +207,7 @@ class CartItemTile extends StatelessWidget {
         vertical: spacing.sm,
       ),
       child: InkWell(
-        onTap: cartState.canEdit && !isLockedReturn
+        onTap: cartState.canEditInvoice && !isLockedReturn
             ? () => _openEditSheet(context)
             : null,
         borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -310,7 +310,7 @@ class CartItemTile extends StatelessWidget {
                                 color: theme.colorScheme.error,
                                 size: icons.md,
                               ),
-                              onPressed: cartState.canEdit
+                              onPressed: cartState.canEditInvoice
                                   ? () => context.read<CartBloc>().add(
                                       RemoveItemEvent(index),
                                     )

@@ -151,7 +151,7 @@ class _PosTabletCartContent extends StatelessWidget {
             ),
           ),
         ),
-        if (state.canEdit) BottomActionBar(canEdit: state.canEdit),
+        if (state.canEditInvoice || state.isReturn) BottomActionBar(),
       ],
     );
   }

@@ -17,9 +17,7 @@ class DeliveryAgentSelector extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final lang = S.of(context);
-    final canEdit = context.select(
-      (CartBloc b) => b.state.canEdit && !b.state.isReturn,
-    );
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
     final selectedDeliveryMan = context.select(
       (CartBloc b) => b.state.selectedDeliveryMan,
     );

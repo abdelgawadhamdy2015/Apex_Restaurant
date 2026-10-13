@@ -77,9 +77,7 @@ class _OrderTypeChip extends StatelessWidget {
     final isSelected = context.select(
       (CartBloc b) => b.state.selectedOrderType == type,
     );
-    final canEdit = context.select(
-      (CartBloc b) => b.state.canEdit && !b.state.isReturn,
-    ); // ✅ now reactive
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
 
     final activeColor = theme.colorScheme.primary;
     final inactiveColor = theme.colorScheme.surfaceContainerHighest;

@@ -59,7 +59,10 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final clearCrt = context.select(
+      (CartBloc c) =>
+          (c.state.isPreviousInvoice && !c.state.canEdit) || c.state.isReturn,
+    );
     return BlocConsumer<CartBloc, CartState>(
       listener: _onCartStateChanged,
       builder: (context, state) {
@@ -82,12 +85,11 @@ class _CartScreenState extends State<CartScreen> {
             },
             child: Scaffold(
               appBar: CartTopBar(
-                // Disable clear all button in top bar if editing is locked
                 onClearAll: state.canEdit
                     ? () => context.read<CartBloc>().add(ClearCartEvent())
                     : null,
                 onBack: () {
-                  if (state.isPreviousInvoice && !state.canEdit) {
+                  if (clearCrt) {
                     context.read<CartBloc>().add(ClearCartEvent());
                   }
                   context.pop();
@@ -238,10 +240,7 @@ class _CartContent extends StatelessWidget {
               ),
             ),
 
-            if (state.canEdit ||
-                state.isPreviousInvoice ||
-                state.isReturnInvoice == true)
-              BottomActionBar(canEdit: canEdit),
+            if (state.canEditInvoice || state.isReturn) BottomActionBar(),
           ],
         );
       },

@@ -31,7 +31,7 @@ class CustomerInfoCard extends StatelessWidget {
     final lang = S.of(context);
     final phones = selectedPerson?.personPhones;
     final cartState = context.read<CartBloc>().state;
-    final canEdit = cartState.canEdit && !cartState.isReturn;
+    final canEdit = cartState.canEditInvoice;
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(

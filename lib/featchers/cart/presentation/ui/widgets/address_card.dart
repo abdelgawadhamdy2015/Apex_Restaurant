@@ -34,7 +34,7 @@ class AddressCard extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
     final cartState = context.read<CartBloc>().state;
-    final canEdit = cartState.canEdit && !cartState.isReturn;
+    final canEdit = cartState.canEditInvoice;
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(

@@ -114,8 +114,7 @@ class _DiscountSectionState extends State<DiscountSection> {
         (!widget.dynamicIsActive &&
             state.isInvoiceManualDiscountEnabled &&
             !HelperMethods.anyItemHasDiscount(state.items)) &&
-        state.canEdit &&
-        !state.isReturn;
+        state.canEditInvoice;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
         if (val != null) {

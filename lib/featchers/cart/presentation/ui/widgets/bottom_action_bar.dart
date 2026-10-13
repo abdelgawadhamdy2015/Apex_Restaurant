@@ -15,8 +15,7 @@ import 'package:go_router/go_router.dart';
 
 /// Fixed bottom bar with the checkout and hold-order actions.
 class BottomActionBar extends StatelessWidget {
-  const BottomActionBar({super.key, required this.canEdit});
-  final bool canEdit;
+  const BottomActionBar({super.key});
 
   void _checkout(BuildContext context) {
     // Validate cart state before proceeding to checkout
@@ -104,6 +103,7 @@ class BottomActionBar extends StatelessWidget {
     final spacing = context.spacing;
     final icons = context.iconSizes;
     final lang = S.of(context);
+    final canEdit = context.select((CartBloc c) => c.state.canEditInvoice);
     final isReturnInvoice = context.select(
       (CartBloc bloc) => bloc.state.isReturnInvoice,
     );
@@ -166,7 +166,9 @@ class BottomActionBar extends StatelessWidget {
                         borderRadius: BorderRadius.circular(spacing.radiusMd),
                       ),
                     ),
-                    onPressed: canEdit ? () => _checkout(context) : null,
+                    onPressed: canEdit || isReturnInvoice == true
+                        ? () => _checkout(context)
+                        : null,
                     icon: Icon(Icons.payments_outlined, size: icons.md),
                     label: Text(
                       lang.checkout,
