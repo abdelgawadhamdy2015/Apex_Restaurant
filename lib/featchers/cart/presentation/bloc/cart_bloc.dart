@@ -279,18 +279,15 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         fromBranchDateTime: null,
         canEdit: event.canEdit,
         isPending: event.isPending,
-        isPreviousInvoice: true,
-        //  selectedTable: isDineIn ? data.table : null,
+        isPreviousInvoice:
+            !(event.data.isReturnInvoice ?? false) && !event.isPending,
         selectedWaiter: isDineIn ? data.waiter : null,
         selectedDeliveryMan: isDelivery
             ? state.deliveryAgents.firstWhere(
                 (d) => d.id == data.deliveryMan?.id,
               )
             : null,
-        selectedPerson:
-            // state.persons.isNotEmpty
-            //     ? state.persons.firstWhere((p) => p.id == data.client?.id)
-            data.client,
+        selectedPerson: data.client,
         selectedDeliveryCompany: selectedDeliveryCompany,
         voucherId: data.voucherId,
         invoiceCode: data.invoiceCode,
@@ -507,6 +504,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         items: [],
         isPreviousInvoice: false,
+        errorMessage: null,
         successMessage: null,
         selectedAddress: null,
         selectedDeliveryCompany: null,

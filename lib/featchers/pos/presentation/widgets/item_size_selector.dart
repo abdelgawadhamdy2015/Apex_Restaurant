@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../../../generated/l10n.dart';
@@ -22,14 +25,14 @@ class ItemSizeSelector extends StatelessWidget {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
-
+    final cartState = context.select((CartBloc b) => b.state);
     return Row(
       children: List.generate(sizes.length, (index) {
         final size = sizes[index];
         final isSelected = selectedIndex == index;
         return Expanded(
           child: GestureDetector(
-            onTap: () => onSelected(index),
+            onTap: () => cartState.isReturn ? null : onSelected(index),
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: spacing.xxs),
               padding: EdgeInsets.all(spacing.sm),

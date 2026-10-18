@@ -462,3 +462,29 @@ void showPauseSessionDialogState(BuildContext context) {
     },
   );
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// Delete confirmation dialog
+// ─────────────────────────────────────────────────────────────────────────────
+
+void showDeleteConfirmDialogState(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String confirmLabel,
+  required String cancelLabel,
+  required VoidCallback onConfirm,
+}) {
+  showAppDialog(
+    context,
+    type: AppDialogType.warning,
+    title: title,
+    message: message,
+    confirmLabel: confirmLabel,
+    cancelLabel: cancelLabel,
+    onCancel: () => Navigator.of(context, rootNavigator: true).pop(),
+    onConfirm: () {
+      Navigator.of(context, rootNavigator: true).pop(); // close dialog first
+      onConfirm();
+    },
+  );
+}

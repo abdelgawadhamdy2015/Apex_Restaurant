@@ -177,6 +177,7 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
         discountValue <= 0 &&
         !invoiceDynamicDiscount &&
         !invoiceDiscount &&
+        !cartState.isReturn &&
         cartState.settingsModel?.posRestaurant?.activeDiscount == true &&
         !item.isOffer;
   }

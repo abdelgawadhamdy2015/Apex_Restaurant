@@ -1,6 +1,3 @@
-// lib/featchers/cart/presentation/ui/widgets/cart_top_bar.dart
-import 'dart:developer';
-
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
@@ -47,7 +44,6 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
                     onBack ??
                     () {
                       if (clearCart) {
-                        log("clear");
                         context.read<CartBloc>().add(ClearCartEvent());
                       }
                       context.pop();

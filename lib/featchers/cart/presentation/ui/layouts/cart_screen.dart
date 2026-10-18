@@ -85,9 +85,8 @@ class _CartScreenState extends State<CartScreen> {
             },
             child: Scaffold(
               appBar: CartTopBar(
-                onClearAll: state.canEdit
-                    ? () => context.read<CartBloc>().add(ClearCartEvent())
-                    : null,
+                onClearAll: () =>
+                    context.read<CartBloc>().add(ClearCartEvent()),
                 onBack: () {
                   if (clearCrt) {
                     context.read<CartBloc>().add(ClearCartEvent());

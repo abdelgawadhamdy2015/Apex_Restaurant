@@ -52,7 +52,11 @@ class OrderItem extends Equatable {
   }
 
   /// Base price scaled by quantity (addons are NOT included here).
-  double get basePriceTotal => unitBasePrice * quantity;
+  double get basePriceTotal =>
+      unitBasePrice *
+      ((invoiceDetailsId != null && invoiceDetailsId! > 0)
+          ? availableQuantity ?? quantity
+          : quantity);
 
   /// Full line total before discount: quantity-scaled base price + addons.
   double get totalPriceBeforeDiscount => basePriceTotal + addonsTotalPrice;

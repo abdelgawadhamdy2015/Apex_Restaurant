@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../data/model/pinding_invoice_model.dart';
@@ -32,7 +34,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final buttonTheme = context.appExtraTheme;
-    final l10n = widget.l10n;
+    final lang = widget.l10n;
     final order = widget.order;
 
     final invoiceId = order.invoiceId;
@@ -115,14 +117,14 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                       children: [
                         Text(
                           itemsCount == 1
-                              ? l10n.singleItemCount
-                              : l10n.itemsCount(itemsCount),
+                              ? lang.singleItemCount
+                              : lang.itemsCount(itemsCount),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSecondary,
                           ),
                         ),
                         Text(
-                          l10n.priceWithCurrency(
+                          lang.priceWithCurrency(
                             invoiceTotal.toStringAsFixed(2),
                           ),
                           style: theme.textTheme.bodyMedium?.copyWith(
@@ -156,7 +158,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        l10n.orderDetails,
+                        lang.orderDetails,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSecondary,
                         ),
@@ -191,7 +193,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                               ],
                             ),
                             Text(
-                              l10n.priceWithCurrency(
+                              lang.priceWithCurrency(
                                 itemTotal.toStringAsFixed(2),
                               ),
                               style: theme.textTheme.bodySmall?.copyWith(
@@ -247,7 +249,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                                         size: iconSizes.sm,
                                       ),
                                 label: Text(
-                                  l10n.restoreOrder,
+                                  lang.restoreOrder,
                                   style: const TextStyle(
                                     color: AppColors.white,
                                     fontWeight: FontWeight.bold,
@@ -275,8 +277,19 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                             onPressed: invoiceId == null
                                 ? null
                                 : () {
-                                    context.read<OrdersBloc>().add(
-                                      DeleteOrderEvent(id: invoiceId),
+                                    final ordersBloc = context
+                                        .read<OrdersBloc>();
+                                    showDeleteConfirmDialogState(
+                                      context,
+                                      title: lang.sureDelete,
+                                      message: lang.sureDelete,
+                                      confirmLabel: lang.deleteOrder,
+                                      cancelLabel: lang.cancel,
+                                      onConfirm: () {
+                                        ordersBloc.add(
+                                          DeleteOrderEvent(id: invoiceId),
+                                        );
+                                      },
                                     );
                                   },
                             icon: Icon(
@@ -285,7 +298,7 @@ class _HeldOrderExpandableCardState extends State<HeldOrderExpandableCard> {
                               size: iconSizes.sm,
                             ),
                             label: Text(
-                              l10n.deleteOrder,
+                              lang.deleteOrder,
                               style: TextStyle(
                                 color: theme.colorScheme.errorContainer,
                                 fontWeight: FontWeight.bold,

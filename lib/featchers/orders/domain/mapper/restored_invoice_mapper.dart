@@ -18,6 +18,7 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
   RestoredCartData toRestoredCartData(BuildContext context, {bool? isReturn}) {
     final rawItems = items ?? [];
     final inv = invoice;
+    final bool returning = isReturn == true;
 
     // 1. ORDER TYPE
     CartOrderType orderType = CartOrderType.TAKEAWAY;
@@ -90,12 +91,15 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     // 3. INVOICE DISCOUNT
+    // On return invoices the invoice-level discount is NOT restored here:
+    // it is split across the items (see step 4) so that removing an item
+    // removes only its own share of the discount.
     RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
-    if (inv?.invoiceDiscount != null) {
+    if (!returning && inv?.invoiceDiscount != null) {
       final discount = inv!.invoiceDiscount!;
       final double val = discount.discountValue ?? 0.0;
       if (val > 0) {
-        // TODO: confirm with backend whether discountType or discountNatural
+        //  confirm with backend whether discountType or discountNatural
         // decides percentage vs fixed.
         final bool isPerc = discount.discountNatural == 1;
         restaurantPosDiscountRequest = RestaurantPosDiscountRequest(
@@ -170,8 +174,38 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         ..._mapFlatAddons(flatAdditivesMap[transId], transId),
       ];
 
-      final double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
-      final bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
+      double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
+      bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
+
+      // RETURN INVOICES ONLY: build a fixed discount for the returned
+      // quantity = item's own discount + its share of the invoice discount
+      // (splitedDiscountValue). Other invoice types are untouched.
+      if (returning) {
+        final double soldQty = mainItem.quantity ?? 0.0;
+        final double returnQty = mainItem.availableQuantity ?? soldQty;
+        final double ratio = soldQty > 0
+            ? (returnQty / soldQty).clamp(0.0, 1.0).toDouble()
+            : 0.0;
+        final double unitPrice = mainItem.price ?? mainItem.item?.price ?? 0.0;
+
+        // Item's own discount converted to a fixed amount for returned qty
+        double ownDiscount = 0.0;
+        if (discountVal > 0) {
+          ownDiscount = isPercentage
+              ? unitPrice * returnQty * discountVal / 100
+              : discountVal * ratio;
+        }
+
+        // This item's share of the invoice-level discount
+        final double splitShare =
+            (mainItem.splitedDiscountValue ?? 0.0) * ratio;
+
+        discountVal = double.parse(
+          (ownDiscount + splitShare).toStringAsFixed(2),
+        );
+        isPercentage = false; // always a fixed amount on returns
+      }
+
       log("mainItem.invoiceDetailsId : ${mainItem.invoiceDetailsId}");
       orderItems.add(
         OrderItem(
