@@ -24,8 +24,7 @@ class CloseSessionDialog extends StatelessWidget {
     return BlocConsumer<PosBloc, PosState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
-        if (state.status == PosStatus.loaded &&
-            state.toastMessage == 'تم إغلاق الجلسة بنجاح') {
+        if (state.status == PosStatus.sessionClosed) {
           context.pop();
           context.read<PosBloc>().add(
             SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),

@@ -57,11 +57,12 @@ class MoreActionsState extends Equatable {
     RestaurantInvoiceAccreditingData? acreditData,
     ReturnResponseData? returnResponseData,
     PrintResponseData? printResponseData,
+    bool clearErrorMessage = false,
   }) {
     return MoreActionsState(
       status: status ?? this.status,
       invoices: invoices ?? this.invoices,
-      message: errorMessage,
+      message: clearErrorMessage ? null : errorMessage,
       invoiceType: invoiceType ?? this.invoiceType,
       invoiceDate: invoiceDate ?? this.invoiceDate,
       activeTab: activeTab ?? this.activeTab,

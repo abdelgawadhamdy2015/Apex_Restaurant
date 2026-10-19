@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';

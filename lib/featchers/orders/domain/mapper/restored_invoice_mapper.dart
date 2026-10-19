@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/return_discount_allocator.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../cart/data/enums/cart_enum.dart';
@@ -13,6 +12,8 @@ import '../../../pos/data/models/restaurant_item.dart';
 import '../../../pos/domain/entities/menu_item.dart';
 import '../../../tables/domain/entities/table_entity.dart';
 import '../../data/model/restored_invoice_model.dart';
+
+typedef _ItemDiscount = ({double value, bool isPercentage});
 
 extension RestoredInvoiceMapper on RestoredInvoiceModel {
   RestoredCartData toRestoredCartData(BuildContext context, {bool? isReturn}) {
@@ -92,15 +93,13 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
 
     // 3. INVOICE DISCOUNT
     // On return invoices the invoice-level discount is NOT restored here:
-    // it is split across the items (see step 4) so that removing an item
-    // removes only its own share of the discount.
+    // it is split across the items (step 4) so returning an item returns only
+    // its own share of the discount.
     RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
     if (!returning && inv?.invoiceDiscount != null) {
       final discount = inv!.invoiceDiscount!;
       final double val = discount.discountValue ?? 0.0;
       if (val > 0) {
-        //  confirm with backend whether discountType or discountNatural
-        // decides percentage vs fixed.
         final bool isPerc = discount.discountNatural == 1;
         restaurantPosDiscountRequest = RestaurantPosDiscountRequest(
           type: isPerc ? 1 : 2,
@@ -128,6 +127,11 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
             .add(item);
       }
     }
+
+    // RETURN ONLY: split the invoice discount over the items once, up front.
+    final returnDiscounts = returning
+        ? _allocateReturnDiscounts(mainItemsMap)
+        : const <String, ReturnLineDiscount>{};
 
     final List<OrderItem> orderItems = [];
 
@@ -165,7 +169,6 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         posTypes: const [],
         sizes: selectedSize != null ? [selectedSize] : const [],
         offersItems: const [],
-        // Per-item flag (was: invoice-level tobaccoTax > 0 for every item)
         isTobaccoTax: mainItem.isTobaccoTax ?? false,
       );
 
@@ -174,39 +177,10 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         ..._mapFlatAddons(flatAdditivesMap[transId], transId),
       ];
 
-      double discountVal = mainItem.itemDiscount?.discountValue ?? 0.0;
-      bool isPercentage = mainItem.itemDiscount?.discountNatural == 1;
+      final discount = returning
+          ? _returnItemDiscount(returnDiscounts[transId.toString()])
+          : _normalItemDiscount(mainItem);
 
-      // RETURN INVOICES ONLY: build a fixed discount for the returned
-      // quantity = item's own discount + its share of the invoice discount
-      // (splitedDiscountValue). Other invoice types are untouched.
-      if (returning) {
-        final double soldQty = mainItem.quantity ?? 0.0;
-        final double returnQty = mainItem.availableQuantity ?? soldQty;
-        final double ratio = soldQty > 0
-            ? (returnQty / soldQty).clamp(0.0, 1.0).toDouble()
-            : 0.0;
-        final double unitPrice = mainItem.price ?? mainItem.item?.price ?? 0.0;
-
-        // Item's own discount converted to a fixed amount for returned qty
-        double ownDiscount = 0.0;
-        if (discountVal > 0) {
-          ownDiscount = isPercentage
-              ? unitPrice * returnQty * discountVal / 100
-              : discountVal * ratio;
-        }
-
-        // This item's share of the invoice-level discount
-        final double splitShare =
-            (mainItem.splitedDiscountValue ?? 0.0) * ratio;
-
-        discountVal = double.parse(
-          (ownDiscount + splitShare).toStringAsFixed(2),
-        );
-        isPercentage = false; // always a fixed amount on returns
-      }
-
-      log("mainItem.invoiceDetailsId : ${mainItem.invoiceDetailsId}");
       orderItems.add(
         OrderItem(
           transactionId: transId.toString(),
@@ -215,8 +189,8 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
           quantity: (mainItem.quantity ?? 1).toInt(),
           notes: mainItem.itemNote ?? mainItem.notes,
           addons: allAddons,
-          discount: discountVal,
-          isPercentageDiscount: isPercentage,
+          discount: discount.value,
+          isPercentageDiscount: discount.isPercentage,
           invoiceDetailsId: mainItem.invoiceDetailsId,
           availableQuantity: mainItem.availableQuantity,
         ),
@@ -250,6 +224,48 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Item discount: normal invoices vs returns
+  // ---------------------------------------------------------------------------
+
+  /// New / pending / previous invoices: the discount as stored on the item.
+  _ItemDiscount _normalItemDiscount(RestoredInvoiceItem item) => (
+    value: item.itemDiscount?.discountValue ?? 0.0,
+    isPercentage: item.itemDiscount?.discountNatural == 1,
+  );
+
+  /// Return invoices: ONE fixed amount for the SOLD quantity
+  /// (own discount + share of the invoice discount).
+  /// It is deliberately NOT scaled to the returned quantity here;
+  /// ReturnInvoiceMode.itemDiscountValue does that, so it happens only once.
+  _ItemDiscount _returnItemDiscount(ReturnLineDiscount? discount) =>
+      (value: (discount ?? ReturnLineDiscount.none).total, isPercentage: false);
+
+  Map<String, ReturnLineDiscount> _allocateReturnDiscounts(
+    Map<int, RestoredInvoiceItem> mainItems,
+  ) {
+    final invoiceDiscount = invoice?.invoiceDiscount;
+
+    return const ReturnDiscountAllocator().allocate(
+      lines: [
+        for (final e in mainItems.entries)
+          ReturnDiscountLine(
+            key: e.key.toString(),
+            unitPrice: e.value.price ?? e.value.item?.price ?? 0.0,
+            soldQuantity: e.value.quantity ?? 0.0,
+            ownDiscountValue: e.value.itemDiscount?.discountValue ?? 0.0,
+            ownDiscountIsPercentage: e.value.itemDiscount?.discountNatural == 1,
+          ),
+      ],
+      invoiceDiscountValue: invoiceDiscount?.discountValue ?? 0.0,
+      invoiceDiscountIsPercentage: invoiceDiscount?.discountNatural == 1,
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Addons
+  // ---------------------------------------------------------------------------
+
   List<AdditiveModel> _mapNestedAddons(
     List<RestoredInvoiceAdditive>? rawAddons,
     int parentTransId,
@@ -264,15 +280,13 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       final enName = rawAddon.latinName ?? rawAddon.additive?.latinName ?? '';
       final price = rawAddon.price ?? rawAddon.additive?.price ?? 0.0;
       final qty = (rawAddon.quantity ?? 1).toInt().clamp(1, 1 << 20);
-      final invoiceDetailsId = rawAddon.invoiceDetailsId;
-      final avialableQuantity = rawAddon.availableQuantity;
-      log("mapper : $invoiceDetailsId");
+
       for (int i = 0; i < qty; i++) {
         result.add(
           AdditiveModel(
             id: additiveId,
-            availableQuantity: avialableQuantity,
-            invoiceDetailsId: invoiceDetailsId,
+            availableQuantity: rawAddon.availableQuantity,
+            invoiceDetailsId: rawAddon.invoiceDetailsId,
             arabicName: arName,
             latinName: enName,
             price: price,
@@ -306,15 +320,13 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       final enName = addonItem.itemLatinName ?? addonItem.item?.latinName ?? '';
       final price = addonItem.price ?? addonItem.item?.price ?? 0.0;
       final qty = (addonItem.quantity ?? 1).toInt().clamp(1, 1 << 20);
-      final invoiceDetailsId = addonItem.invoiceDetailsId;
-      final avialableQuantity = addonItem.availableQuantity;
 
       for (int i = 0; i < qty; i++) {
         result.add(
           AdditiveModel(
             id: additiveId,
-            availableQuantity: avialableQuantity,
-            invoiceDetailsId: invoiceDetailsId,
+            availableQuantity: addonItem.availableQuantity,
+            invoiceDetailsId: addonItem.invoiceDetailsId,
             arabicName: arName,
             latinName: enName,
             price: price,

@@ -150,7 +150,7 @@ class _OpeningBalanceDialogState extends State<OpeningBalanceDialog> {
                 ),
               ),
               SizedBox(height: spacing.xl),
-              // drobdown for safes
+
               BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
                   return DropdownButtonFormField<SafeModel>(

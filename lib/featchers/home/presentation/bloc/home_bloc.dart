@@ -48,6 +48,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.treasuryLoaded,
                 safes: data.data ?? [],
+                clearError: true,
               ),
             );
             add(SelectTreasuryEvent(state.safes!.first));
@@ -101,6 +102,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.userDataLoaded,
                 userDataModel: data.data,
+                clearError: true,
               ),
             );
           } else {
@@ -138,6 +140,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.branchesLoaded,
                 branches: data.data ?? [],
+                clearError: true,
               ),
             );
           } else {
@@ -191,6 +194,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.openSessionLoaded,
                 sessionModel: data.data,
+                clearError: true,
               ),
             );
           } else {
@@ -236,6 +240,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.openSessionLoaded,
                 sessionModel: data.data,
+                clearError: true,
               ),
             );
           } else {
@@ -283,6 +288,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             state.copyWith(
               status: HomeStatus.branchSelected,
               selectedEmployeeBranch: event.branch,
+              clearError: true,
             ),
           );
         } else {

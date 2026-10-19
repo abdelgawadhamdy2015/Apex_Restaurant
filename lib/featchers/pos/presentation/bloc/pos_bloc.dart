@@ -121,7 +121,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
           if (data.result == 1) {
             emit(
               state.copyWith(
-                status: PosStatus.loaded, // أو حالة نجاح مخصصة عند الرغبة
+                status: PosStatus.sessionClosed,
                 toastMessage: 'تم إغلاق الجلسة بنجاح',
                 currentSessionId: null,
                 clear: true,

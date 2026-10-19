@@ -37,6 +37,10 @@ class RestoredCartData {
   final bool? priceIncludeVat;
   final ReturnType? invoiceSubTypesId;
 
+  /// RETURN ONLY: each item's share of the original invoice discount for the
+  /// sold quantity, keyed by transactionId. Empty for non-return invoices.
+  final Map<String, double> returnInvoiceDiscountShares;
+
   const RestoredCartData({
     required this.items,
     required this.orderType,
@@ -62,5 +66,6 @@ class RestoredCartData {
     this.totalVat,
     this.priceIncludeVat,
     this.invoiceSubTypesId,
+    this.returnInvoiceDiscountShares = const {},
   });
 }

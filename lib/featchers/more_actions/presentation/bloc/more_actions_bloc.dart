@@ -67,7 +67,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 returnedInvoice: invoice,
                 status: MoreActionsStatus.success,
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -128,7 +128,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 printResponseData: data?.printingData ?? PrintResponseData(),
                 status: MoreActionsStatus.success,
                 isFullReturn: true,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -183,7 +183,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 status: MoreActionsStatus.success,
 
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -238,7 +238,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 clearReturned: true,
                 status: MoreActionsStatus.success,
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -290,7 +290,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 status: MoreActionsStatus.success,
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -340,7 +340,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 transactionsResponse: data.data,
                 status: MoreActionsStatus.success,
-                errorMessage: null,
+                clearErrorMessage: true,
                 isFullReturn: false,
               ),
             );
@@ -390,7 +390,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             emit(
               state.copyWith(
                 status: MoreActionsStatus.successAcredit,
-                errorMessage: null,
+                clearErrorMessage: true,
                 isFullReturn: false,
               ),
             );
