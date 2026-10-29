@@ -1,6 +1,6 @@
 import '../../../../core/service/signal_r_service.dart';
 import 'login_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 SignalRService mySignalRService = SignalRService();
 

@@ -9,6 +9,8 @@ part of 'login_data.dart';
 LoginData _$LoginDataFromJson(Map<String, dynamic> json) => LoginData(
   isPeriodEnded: json['isPeriodEnded'] as bool?,
   isGedieaActive: json['isGedieaActive'] as bool?,
+  isTobaccoActive: json['isTobaccoActive'] as bool?,
+  isDeliveryCompanyActive: json['isDeliveryCompanyActive'] as bool?,
   startPeriod: json['startPeriod'] == null
       ? null
       : DateTime.parse(json['startPeriod'] as String),
@@ -32,27 +34,29 @@ LoginData _$LoginDataFromJson(Map<String, dynamic> json) => LoginData(
   serverID: (json['serverID'] as num?)?.toInt(),
   maxPosCode: (json['maxPosCode'] as num?)?.toInt(),
   maxReturnPosCode: (json['maxReturnPosCode'] as num?)?.toInt(),
-  forcedMessagesAr: json['forcedMessagesAr'] as List<dynamic>?,
-  forcedMessagesEn: json['forcedMessagesEn'] as List<dynamic>?,
+  forcedMessagesAr: json['forcedMessages_ar'] as List<dynamic>?,
+  forcedMessagesEn: json['forcedMessages_en'] as List<dynamic>?,
   isRestaurant: json['isRestaurant'] as bool?,
 );
 
 Map<String, dynamic> _$LoginDataToJson(LoginData instance) => <String, dynamic>{
   'isPeriodEnded': instance.isPeriodEnded,
   'isGedieaActive': instance.isGedieaActive,
+  'isTobaccoActive': instance.isTobaccoActive,
+  'isDeliveryCompanyActive': instance.isDeliveryCompanyActive,
   'startPeriod': instance.startPeriod?.toIso8601String(),
   'endPeriod': instance.endPeriod?.toIso8601String(),
-  'apps': instance.apps,
-  'authToken': instance.authToken,
+  'apps': instance.apps?.map((e) => e.toJson()).toList(),
+  'authToken': instance.authToken?.toJson(),
   'isHaveUpdate': instance.isHaveUpdate,
-  'premissions': instance.permissions,
-  'companyInfo': instance.companyInfo,
+  'premissions': instance.permissions?.map((e) => e.toJson()).toList(),
+  'companyInfo': instance.companyInfo?.toJson(),
   'updateNumber': instance.updateNumber,
   'serverID': instance.serverID,
   'maxPosCode': instance.maxPosCode,
   'maxReturnPosCode': instance.maxReturnPosCode,
-  'forcedMessagesAr': instance.forcedMessagesAr,
-  'forcedMessagesEn': instance.forcedMessagesEn,
+  'forcedMessages_ar': instance.forcedMessagesAr,
+  'forcedMessages_en': instance.forcedMessagesEn,
   'isRestaurant': instance.isRestaurant,
 };
 
@@ -76,9 +80,9 @@ AuthTokenModel _$AuthTokenModelFromJson(Map<String, dynamic> json) =>
           : LoginUserData.fromJson(json['userInfo'] as Map<String, dynamic>),
       allowedModule: json['allowedModule'] as List<dynamic>?,
       allowedForms: json['allowedForms'] as List<dynamic>?,
-      expiresInn: json['expiresInn'] == null
+      expiresInn: json['expires_in'] == null
           ? null
-          : DateTime.parse(json['expiresInn'] as String),
+          : DateTime.parse(json['expires_in'] as String),
     );
 
 Map<String, dynamic> _$AuthTokenModelToJson(AuthTokenModel instance) =>
@@ -87,7 +91,7 @@ Map<String, dynamic> _$AuthTokenModelToJson(AuthTokenModel instance) =>
       'userInfo': instance.userInfo?.toJson(),
       'allowedModule': instance.allowedModule,
       'allowedForms': instance.allowedForms,
-      'expiresInn': instance.expiresInn?.toIso8601String(),
+      'expires_in': instance.expiresInn?.toIso8601String(),
     };
 
 LoginUserData _$LoginUserDataFromJson(Map<String, dynamic> json) =>
@@ -145,20 +149,25 @@ SubPermissionModel _$SubPermissionModelFromJson(Map<String, dynamic> json) =>
       isDelete: json['isDelete'] as bool?,
       isShow: json['isShow'] as bool?,
       isPrint: json['isPrint'] as bool?,
+      subPermissions: (json['subPermissions'] as List<dynamic>?)
+          ?.map((e) => SubPermissionModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
-Map<String, dynamic> _$SubPermissionModelToJson(SubPermissionModel instance) =>
-    <String, dynamic>{
-      'mainFormCode': instance.mainFormCode,
-      'subFormCode': instance.subFormCode,
-      'arabicName': instance.arabicName,
-      'latinName': instance.latinName,
-      'isAdd': instance.isAdd,
-      'isEdit': instance.isEdit,
-      'isDelete': instance.isDelete,
-      'isShow': instance.isShow,
-      'isPrint': instance.isPrint,
-    };
+Map<String, dynamic> _$SubPermissionModelToJson(
+  SubPermissionModel instance,
+) => <String, dynamic>{
+  'mainFormCode': instance.mainFormCode,
+  'subFormCode': instance.subFormCode,
+  'arabicName': instance.arabicName,
+  'latinName': instance.latinName,
+  'isAdd': instance.isAdd,
+  'isEdit': instance.isEdit,
+  'isDelete': instance.isDelete,
+  'isShow': instance.isShow,
+  'isPrint': instance.isPrint,
+  'subPermissions': instance.subPermissions?.map((e) => e.toJson()).toList(),
+};
 
 CompanyInfoModel _$CompanyInfoModelFromJson(Map<String, dynamic> json) =>
     CompanyInfoModel(

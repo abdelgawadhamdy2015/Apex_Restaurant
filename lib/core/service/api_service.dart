@@ -1,17 +1,21 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
+import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
 import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
-import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_all_pos_invoice_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/get_invoice_accrediting_data_request.dart';
-import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
 
 import 'api_constants.dart';
@@ -77,6 +81,10 @@ abstract class ApiService {
   Future<BaseResponse<UserDataModel?>> getUserData(@Path("id") int id);
   @GET(ApiConstants.getEmployeeBranches)
   Future<BaseResponse<List<EmployeeBranch>?>> getEmployeeBranches();
+  @POST("${ApiConstants.updatedSelectedBranch}/{branchId}")
+  Future<BaseResponse<dynamic>> updatedSelectedBranch({
+    @Path("branchId") required int branchId,
+  });
 
   @GET(ApiConstants.getAllCategoriesDropDown)
   Future<BaseResponse<List<CategoryModel>?>> getAllCategories();
@@ -170,11 +178,6 @@ abstract class ApiService {
     @Body() ReserveFoodTableRequest request,
   );
 
-  @POST(ApiConstants.saveRestaurantPosInvoice)
-  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
-    @Body() SaveRestaurantPosInvoiceRequest request,
-  );
-
   @POST(ApiConstants.savePendingRestaurantPosInvoice)
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
     @Body() SaveRestaurantPosInvoiceRequest request,
@@ -193,6 +196,7 @@ abstract class ApiService {
   @GET(ApiConstants.getPosInvoiceDataById)
   Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     @Query('InvoiceId') int invoiceId,
+    @Query("isRestaurantReturnScreen") bool isRestaurantReturnScreen,
   );
 
   @GET(ApiConstants.getItemById)
@@ -232,14 +236,13 @@ abstract class ApiService {
     @Query("financialYearId") int financialYearId,
   );
 
-  @POST(ApiConstants.addPOSReturnInvoice)
-  Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice(
-    @Body() GetAllPosInvoiceRequest request,
+  @POST(ApiConstants.saveRestaurantPosInvoice)
+  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
+    @Body() SaveRestaurantPosInvoiceRequest request,
   );
-
-  @POST(ApiConstants.addPOSTotalReturnInvoice)
-  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice(
-    @Queries() AddPOSTotalReturnInvoiceRequest request,
+  @POST(ApiConstants.saveRestaurantPosReturnInvoice)
+  Future<BaseResponse<ReturnResponseData?>> saveRestaurantPosReturnInvoice(
+    @Body() ReturnRequest request,
   );
 
   @POST(ApiConstants.addCashTransactionForSession)
@@ -253,4 +256,14 @@ abstract class ApiService {
 
   @GET(ApiConstants.getAllTreasuryByUserDropDown)
   Future<BaseResponse<List<SafeModel>?>> getAllTreasuryByUserDropDown();
+
+  @GET(ApiConstants.getInvoiceReport)
+  Future<InvoiceReportResponse?> getInvoiceReport(
+    @Queries() InvoiceReportRequest request,
+  );
+
+  @POST(ApiConstants.printKitchen)
+  Future<BaseResponse<PrintKitchenResponse?>> printKitchen(
+    @Body() PrintKitchenRequest request,
+  );
 }

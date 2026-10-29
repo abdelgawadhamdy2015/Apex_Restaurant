@@ -1,9 +1,11 @@
+import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/router/routes.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,12 +24,12 @@ class CloseSessionDialog extends StatelessWidget {
     return BlocConsumer<PosBloc, PosState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
-        // عند النجاح: إغلاق الـ Dialog والتوجيه للـ Home Screen
-        if (state.status == PosStatus.loaded &&
-            state.toastMessage == 'تم إغلاق الجلسة بنجاح') {
-          Navigator.of(context).pop(); // إغلاق الـ Dialog
-
-          context.go(Routes.homeScreen); // أو context.go(Routes.homeScreen);
+        if (state.status == PosStatus.sessionClosed) {
+          context.pop();
+          context.read<PosBloc>().add(
+            SelectedNavIndexEvent(selectedNavIndex: PosBottomNavEnm.menu),
+          );
+          context.goNamed(Routes.homeScreen);
         }
 
         // عند وجود خطأ
@@ -53,11 +55,11 @@ class CloseSessionDialog extends StatelessWidget {
               color: colorScheme.onSurface,
               borderRadius: BorderRadius.circular(spacing.radiusLg),
               border: Border.all(
-                color: colorScheme.outlineVariant.withOpacity(0.5),
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.08),
+                  color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 28,
                   offset: const Offset(0, 10),
                 ),
@@ -70,7 +72,7 @@ class CloseSessionDialog extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(spacing.sm),
                   decoration: BoxDecoration(
-                    color: colorScheme.errorContainer.withOpacity(0.4),
+                    color: colorScheme.errorContainer.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

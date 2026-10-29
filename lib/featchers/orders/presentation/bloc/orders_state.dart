@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
+
 import '../../data/model/get_pinding_invoice.dart';
 import '../../data/model/get_previous_invoice_request.dart';
 import '../../data/model/order_model.dart';
@@ -5,7 +8,18 @@ import '../../data/model/pinding_invoice_model.dart';
 import '../../data/model/previous_invoice_model.dart';
 import '../../data/model/restored_invoice_model.dart';
 
-enum OrdersStatus { loading, failure, sussess }
+enum OrdersStatus {
+  loading,
+  failure,
+  success,
+  printSuccess,
+  invoiceReportSuccess,
+  invoiceReportFailure,
+  invoiceReportLoading,
+  printKitchenLoading,
+  printKitchenSuccess,
+  printKitchenFailure,
+}
 
 /// Shared page size for both paginated lists on this screen.
 const int kOrdersPageSize = 10;
@@ -18,7 +32,8 @@ class OrdersState {
   final List<PindingInvoiceModel> pindingInvoices;
   final int? totalPindingCount;
   final int? totalPreviousCount;
-
+  final InvoiceReportResponse? invoiceReport;
+  final PrintKitchenResponse? printKitchenResponse;
   final String? errorMessage;
   final bool canEdite;
   final bool isPending;
@@ -70,6 +85,8 @@ class OrdersState {
     this.toDate,
     this.totalPindingCount = 0,
     this.totalPreviousCount = 0,
+    this.invoiceReport,
+    this.printKitchenResponse,
   });
 
   int get totalPreviouspages => (totalPreviousCount! / 10).ceil();
@@ -99,6 +116,8 @@ class OrdersState {
     DateTime? toDate,
     int? totalPindingCount,
     int? totalPreviousCount,
+    InvoiceReportResponse? invoiceReport,
+    PrintKitchenResponse? printKitchenResponse,
   }) {
     return OrdersState(
       status: status ?? this.status,
@@ -131,6 +150,8 @@ class OrdersState {
       toDate: toDate ?? this.toDate,
       totalPindingCount: totalPindingCount ?? this.totalPindingCount,
       totalPreviousCount: totalPreviousCount ?? this.totalPreviousCount,
+      invoiceReport: invoiceReport ?? this.invoiceReport,
+      printKitchenResponse: printKitchenResponse ?? this.printKitchenResponse,
     );
   }
 }

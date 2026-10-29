@@ -12,7 +12,7 @@ import '../../../../home/data/models/employee_branch.dart';
 import '../../../../home/presentation/bloc/home_bloc.dart';
 import '../../../../home/presentation/bloc/home_state.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../data/models/pos_client_model.dart';
@@ -684,11 +684,13 @@ class _BottomBar extends StatelessWidget {
                             ? Icons.save_outlined
                             : Icons.check_circle_outline,
                         size: icons.sm,
+                        color: AppColors.white,
                       ),
                 label: Text(
                   isEditMode ? lang.save : lang.save,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.bold,
+                    color: AppColors.white,
                   ),
                 ),
               ),

@@ -11,7 +11,8 @@ class ApiConstants {
   static const String getUserData = "api/General/UsersManager/getUserById";
 
   // Restaurants apis
-
+  static const String updatedSelectedBranch =
+      "api/Store/GeneralAPIs/updatedSelectedBranch";
   static const String getSettings = "api/Store/InvGeneralSettings/GetSettings";
   static const String openRestaurantPos =
       "api/Restaurants/RestaurantPos/OpenRestaurantPos";
@@ -57,8 +58,7 @@ class ApiConstants {
       "api/Restaurants/RestaurantPos/getRestaurantInvoiceAccreditingData";
   static const String accreditePOSInvoices =
       "api/Restaurants/RestaurantPos/AccreditePOSInvoices";
-  static const String addPOSTotalReturnInvoice =
-      'api/Store/POS/AddPOSTotalReturnInvoice';
+
   static const String addPOSReturnInvoice = 'api/Store/POS/AddPOSReturnInvoice';
 
   static const String getAllPersons = "api/Store/Persons/GetListOfPersonsPOS";
@@ -89,15 +89,22 @@ class ApiConstants {
 
   // return
   static const String getAllPOSInvoices = "api/Store/POS/GetAllPOSInvoices";
+  static const String saveRestaurantPosReturnInvoice =
+      "api/Restaurants/RestaurantPos/SaveRestaurantPosReturnInvoice";
 
   // close custody
   static const String addCashTransactionForSession =
       "api/Restaurants/RestaurantPos/AddCashTransactionForSession";
   static const String getCashTransactionForSession =
       "api/Restaurants/RestaurantPos/getCashTransactionForSession";
+
   // General apis
   static const String getEmployeeBranches =
       "api/Store/GeneralAPIs/getEmployeeBranchs";
+
+  // invoice report
+  static const String getInvoiceReport = "api/InvioceReport/InvoiceReport";
+  static const String printKitchen = "api/Store/POS/PrintKitchen";
 
   static const String getAllTreasuryByUserDropDown =
       "api/GeneralLedger/Treasury/GetAllTreasuryByUserDropDown";
@@ -108,6 +115,7 @@ class ApiConstants {
   static int? userId;
 
   static int? empId;
+  static bool? isDeliveryCompanyActive;
 }
 
 class ApiErrors {

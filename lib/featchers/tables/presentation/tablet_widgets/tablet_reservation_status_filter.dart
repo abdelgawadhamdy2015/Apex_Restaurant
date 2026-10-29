@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
 import '../../domain/entities/reservation_entity.dart';

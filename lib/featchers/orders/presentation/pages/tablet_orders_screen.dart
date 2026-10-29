@@ -2,7 +2,7 @@ import 'package:apex_restaurant/featchers/orders/presentation/widgets/tablet_pre
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';

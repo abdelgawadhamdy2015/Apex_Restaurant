@@ -6,7 +6,7 @@ import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/pos_client_model.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 class CustomerPickerSheet extends StatefulWidget {
@@ -161,7 +161,7 @@ class _CustomerPickerSheetState extends State<CustomerPickerSheet> {
                         controller: scrollController,
                         padding: EdgeInsets.symmetric(horizontal: spacing.md),
                         itemCount: _filtered.length,
-                        separatorBuilder: (_, __) => Divider(
+                        separatorBuilder: (_, _) => Divider(
                           height: 1,
                           color: theme.colorScheme.outlineVariant,
                         ),

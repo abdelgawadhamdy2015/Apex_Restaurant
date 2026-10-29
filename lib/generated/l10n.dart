@@ -2321,11 +2321,6 @@ class S {
     );
   }
 
-  /// `Settings`
-  String get navSettings {
-    return Intl.message('Settings', name: 'navSettings', desc: '', args: []);
-  }
-
   /// `Cart`
   String get navCart {
     return Intl.message('Cart', name: 'navCart', desc: '', args: []);
@@ -4210,6 +4205,111 @@ class S {
       desc: '',
       args: [],
     );
+  }
+
+  /// `No`
+  String get no {
+    return Intl.message('No', name: 'no', desc: '', args: []);
+  }
+
+  /// `Yes`
+  String get yes {
+    return Intl.message('Yes', name: 'yes', desc: '', args: []);
+  }
+
+  /// `Are you sure you want to cancel {customerName}'s reservation on {tableNumber}?`
+  String confirmCancelReservation(Object customerName, Object tableNumber) {
+    return Intl.message(
+      'Are you sure you want to cancel $customerName\'s reservation on $tableNumber?',
+      name: 'confirmCancelReservation',
+      desc: '',
+      args: [customerName, tableNumber],
+    );
+  }
+
+  /// `Confirm Reservation Cancellation`
+  String get confirmCancelReservationTitle {
+    return Intl.message(
+      'Confirm Reservation Cancellation',
+      name: 'confirmCancelReservationTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Settings`
+  String get settings {
+    return Intl.message('Settings', name: 'settings', desc: '', args: []);
+  }
+
+  /// `Appearance`
+  String get appearance {
+    return Intl.message('Appearance', name: 'appearance', desc: '', args: []);
+  }
+
+  /// `System`
+  String get systemTheme {
+    return Intl.message('System', name: 'systemTheme', desc: '', args: []);
+  }
+
+  /// `Light`
+  String get lightTheme {
+    return Intl.message('Light', name: 'lightTheme', desc: '', args: []);
+  }
+
+  /// `Dark`
+  String get darkTheme {
+    return Intl.message('Dark', name: 'darkTheme', desc: '', args: []);
+  }
+
+  /// `Accent Color`
+  String get accentColor {
+    return Intl.message(
+      'Accent Color',
+      name: 'accentColor',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Font Size`
+  String get fontSize {
+    return Intl.message('Font Size', name: 'fontSize', desc: '', args: []);
+  }
+
+  /// `Icon Size`
+  String get iconSize {
+    return Intl.message('Icon Size', name: 'iconSize', desc: '', args: []);
+  }
+
+  /// `Element Spacing`
+  String get elementSpacing {
+    return Intl.message(
+      'Element Spacing',
+      name: 'elementSpacing',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Restore Default Settings`
+  String get restoreDefaultSettings {
+    return Intl.message(
+      'Restore Default Settings',
+      name: 'restoreDefaultSettings',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Arabic`
+  String get arabicLanguage {
+    return Intl.message('Arabic', name: 'arabicLanguage', desc: '', args: []);
+  }
+
+  /// `English`
+  String get englishLanguage {
+    return Intl.message('English', name: 'englishLanguage', desc: '', args: []);
   }
 }
 

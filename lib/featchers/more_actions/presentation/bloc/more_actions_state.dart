@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/more_actions/data/model/invoice_return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/pos_invoice_data.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/restaurant_invoice_accrediting_data.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/transactions_response.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/screens/responsibility_shared_widgets.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
@@ -23,7 +24,8 @@ class MoreActionsState extends Equatable {
   final TransactionsResponse? transactionsResponse;
   final bool? isFullReturn;
   final RestaurantInvoiceAccreditingData? acreditData;
-
+  final ReturnResponseData? returnResponseData;
+  final PrintResponseData? printResponseData;
   const MoreActionsState({
     this.status,
     this.invoices = const [],
@@ -36,6 +38,8 @@ class MoreActionsState extends Equatable {
     this.transactionsResponse,
     this.isFullReturn,
     this.acreditData,
+    this.returnResponseData,
+    this.printResponseData,
   });
 
   MoreActionsState copyWith({
@@ -51,11 +55,14 @@ class MoreActionsState extends Equatable {
     TransactionsResponse? transactionsResponse,
     bool? isFullReturn,
     RestaurantInvoiceAccreditingData? acreditData,
+    ReturnResponseData? returnResponseData,
+    PrintResponseData? printResponseData,
+    bool clearErrorMessage = false,
   }) {
     return MoreActionsState(
       status: status ?? this.status,
       invoices: invoices ?? this.invoices,
-      message: errorMessage,
+      message: clearErrorMessage ? null : errorMessage,
       invoiceType: invoiceType ?? this.invoiceType,
       invoiceDate: invoiceDate ?? this.invoiceDate,
       activeTab: activeTab ?? this.activeTab,
@@ -68,6 +75,8 @@ class MoreActionsState extends Equatable {
       invoiceReturnResponse: clearReturned == true
           ? null
           : invoiceReturnResponse ?? this.invoiceReturnResponse,
+      returnResponseData: returnResponseData ?? this.returnResponseData,
+      printResponseData: printResponseData ?? this.printResponseData,
     );
   }
 

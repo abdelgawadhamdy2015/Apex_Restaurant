@@ -2,7 +2,7 @@ import 'package:apex_restaurant/core/helpers/helper_methods.dart';
 import 'package:apex_restaurant/core/themes/app_extra_theme.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/widgets/custody_log_tablet_view.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -150,7 +150,7 @@ class _CashierCustodyScreenState extends State<CashierCustodyScreen> {
 
               return _ActionButtons(
                 onConfirm: _onConfirm,
-                onCancel: () => Navigator.of(context).pop(),
+                onCancel: () => context.pop(),
               );
             },
           ),
@@ -300,7 +300,7 @@ class _CustodyLogTableTablet extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(spacing.xxs),
               decoration: BoxDecoration(
-                color: colorScheme.onSurface.withOpacity(0.05),
+                color: colorScheme.onSurface.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(spacing.radiusPill),
               ),
               child: Row(
@@ -437,7 +437,7 @@ class _TableDataRow extends StatelessWidget {
         : colorScheme.error;
     final badgeBg = isAdd
         ? AppColors.successLightTranslucent
-        : colorScheme.error.withOpacity(0.12);
+        : colorScheme.error.withValues(alpha: 0.12);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -690,7 +690,7 @@ class _SegmentTab extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? colorScheme.primary
-              : colorScheme.onSurface.withOpacity(0.05),
+              : colorScheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(spacing.radiusSm),
         ),
         child: Row(
@@ -739,7 +739,7 @@ class _AmountField extends StatelessWidget {
             vertical: spacing.xs,
           ),
           decoration: BoxDecoration(
-            color: colorScheme.primary.withOpacity(0.1),
+            color: colorScheme.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(spacing.radiusSm),
           ),
           child: Text(
@@ -940,7 +940,7 @@ class _RecentTransactionsCard extends StatelessWidget {
             amount: (state.transactionsResponse?.totalRemoves ?? 0).toString(),
             isPositive: false,
             accentColor: colorScheme.error,
-            accentBg: colorScheme.error.withOpacity(0.08),
+            accentBg: colorScheme.error.withValues(alpha: 0.08),
             icon: Icons.north_east,
           ),
 
@@ -951,7 +951,7 @@ class _RecentTransactionsCard extends StatelessWidget {
             child: TextButton(
               onPressed: onViewFullLog,
               style: TextButton.styleFrom(
-                backgroundColor: colorScheme.primary.withOpacity(0.08),
+                backgroundColor: colorScheme.primary.withValues(alpha: 0.08),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(spacing.radiusSm),
                 ),

@@ -3,7 +3,7 @@ import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../domain/entities/table_entity.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'table_card.dart';
 

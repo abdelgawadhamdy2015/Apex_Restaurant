@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/apex_restaurant_app.dart';
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 void main() async {

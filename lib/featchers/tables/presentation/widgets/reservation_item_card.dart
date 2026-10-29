@@ -1,11 +1,13 @@
+import 'package:apex_restaurant/core/shared/widgets/setup_dialog.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/widgets/add_reservation_bottom_sheet.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../domain/entities/reservation_entity.dart';
 import '../bloc/tables_bloc.dart';
 import '../bloc/tables_event.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ReservationItemCard extends StatelessWidget {
@@ -22,6 +24,31 @@ class ReservationItemCard extends StatelessWidget {
       default:
         return (Colors.amber, l10n.pending);
     }
+  }
+
+  /// Shows the shared app dialog and cancels the reservation only on confirm.
+  void _confirmCancel(BuildContext context) {
+    final lang = S.of(context);
+
+    // Capture these now so the callbacks don't depend on a stale context.
+    final bloc = context.read<TablesBloc>();
+
+    showAppDialog(
+      context,
+      type: AppDialogType.warning,
+      title: lang.confirmCancelReservationTitle,
+      message: lang.confirmCancelReservation(
+        reservation.customerName,
+        reservation.tableNumber,
+      ),
+      confirmLabel: lang.yes,
+      cancelLabel: lang.no,
+      onConfirm: () {
+        context.pop();
+        bloc.add(CancelReservationEvent(reservation.id));
+      },
+      onCancel: () => context.pop(),
+    );
   }
 
   @override
@@ -64,7 +91,12 @@ class ReservationItemCard extends StatelessWidget {
               _InfoColumn(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 label: lang.customerName,
-                value: reservation.customerName,
+                value: reservation.customerName.substring(
+                  0,
+                  reservation.customerName.length > 20
+                      ? 20
+                      : reservation.customerName.length,
+                ),
               ),
               _InfoColumn(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,11 +137,7 @@ class ReservationItemCard extends StatelessWidget {
               SizedBox(width: spacing.sm),
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: isCancelled
-                      ? null
-                      : () => context.read<TablesBloc>().add(
-                          CancelReservationEvent(reservation.id),
-                        ),
+                  onPressed: isCancelled ? null : () => _confirmCancel(context),
                   icon: Icon(
                     Icons.close,
                     color: isCancelled ? Colors.grey : theme.colorScheme.error,
@@ -126,7 +154,7 @@ class ReservationItemCard extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     backgroundColor: isCancelled
                         ? Colors.grey.shade100
-                        : theme.colorScheme.error.withOpacity(.1),
+                        : theme.colorScheme.error.withValues(alpha: .1),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -159,7 +187,7 @@ class _StatusBadge extends StatelessWidget {
         vertical: spacing.xxs,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(spacing.radiusLg),
       ),
       child: Row(
@@ -245,12 +273,16 @@ class _InfoColumn extends StatelessWidget {
       children: [
         Text(
           label,
+          overflow: TextOverflow.ellipsis,
+
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
         Text(
           value,
+          overflow: TextOverflow.ellipsis,
+
           style: theme.textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),

@@ -12,7 +12,7 @@ import '../../bloc/cart_event.dart';
 import '../../bloc/cart_state.dart';
 import '../../../../pos/presentation/widgets/discount_type_toggle.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DiscountSection extends StatefulWidget {
@@ -114,7 +114,7 @@ class _DiscountSectionState extends State<DiscountSection> {
         (!widget.dynamicIsActive &&
             state.isInvoiceManualDiscountEnabled &&
             !HelperMethods.anyItemHasDiscount(state.items)) &&
-        state.canEdit;
+        state.canEditInvoice;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
         if (val != null) {
@@ -137,7 +137,7 @@ class _DiscountSectionState extends State<DiscountSection> {
               AppRadioGroup<DiscountTypeEnum>(
                 value: DiscountTypeEnum.coupon,
                 groupValue: discountType,
-                enabled: true,
+                enabled: !state.isReturn,
                 label: Text(
                   lang.coupon,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -201,7 +201,7 @@ class _DiscountSectionState extends State<DiscountSection> {
                 padding: EdgeInsets.symmetric(horizontal: spacing.sm),
                 decoration: BoxDecoration(
                   shape: BoxShape.rectangle,
-                  color: buttonTheme.background.withOpacity(.1),
+                  color: buttonTheme.background.withValues(alpha: .1),
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
                 ),
 
@@ -232,7 +232,9 @@ class _DiscountSectionState extends State<DiscountSection> {
                 vertical: spacing.xxs,
               ),
               decoration: BoxDecoration(
-                color: context.appExtraTheme.greenBackground.withOpacity(.3),
+                color: context.appExtraTheme.greenBackground.withValues(
+                  alpha: .3,
+                ),
                 border: BoxBorder.all(
                   color: context.appExtraTheme.greenBackground,
                 ),

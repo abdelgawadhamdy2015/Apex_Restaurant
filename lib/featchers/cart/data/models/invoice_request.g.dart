@@ -134,6 +134,7 @@ RestaurantPosInvoiceItemRequest _$RestaurantPosInvoiceItemRequestFromJson(
           )
           .toList() ??
       const [],
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$RestaurantPosInvoiceItemRequestToJson(
@@ -148,6 +149,7 @@ Map<String, dynamic> _$RestaurantPosInvoiceItemRequestToJson(
   'Discount': ?instance.discount,
   'ItemDiscountId': ?instance.itemDiscountId,
   'Additives': instance.additives,
+  'invoiceDetailsId': ?instance.invoiceDetailsId,
 };
 
 RestaurantPosItemAdditiveRequest _$RestaurantPosItemAdditiveRequestFromJson(
@@ -157,6 +159,7 @@ RestaurantPosItemAdditiveRequest _$RestaurantPosItemAdditiveRequestFromJson(
   quantity: (json['Quantity'] as num).toDouble(),
   transactionID: json['TransactionID'] as String?,
   parentTransactionId: json['ParentTransactionId'] as String?,
+  invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$RestaurantPosItemAdditiveRequestToJson(
@@ -166,6 +169,7 @@ Map<String, dynamic> _$RestaurantPosItemAdditiveRequestToJson(
   'Quantity': instance.quantity,
   'TransactionID': ?instance.transactionID,
   'ParentTransactionId': ?instance.parentTransactionId,
+  'invoiceDetailsId': ?instance.invoiceDetailsId,
 };
 
 RestaurantPosPaymentRequest _$RestaurantPosPaymentRequestFromJson(

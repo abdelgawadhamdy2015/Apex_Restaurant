@@ -46,6 +46,8 @@ AdditiveModel _$AdditiveModelFromJson(Map<String, dynamic> json) =>
       imagePath: json['imagePath'] as String?,
       transactionId: json['transactionId'] as String?,
       parentTransactionId: json['parentTransactionId'] as String?,
+      invoiceDetailsId: (json['invoiceDetailsId'] as num?)?.toInt(),
+      availableQuantity: (json['availableQuantity'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$AdditiveModelToJson(AdditiveModel instance) =>
@@ -58,4 +60,6 @@ Map<String, dynamic> _$AdditiveModelToJson(AdditiveModel instance) =>
       'imagePath': instance.imagePath,
       'transactionId': instance.transactionId,
       'parentTransactionId': instance.parentTransactionId,
+      'invoiceDetailsId': instance.invoiceDetailsId,
+      'availableQuantity': instance.availableQuantity,
     };

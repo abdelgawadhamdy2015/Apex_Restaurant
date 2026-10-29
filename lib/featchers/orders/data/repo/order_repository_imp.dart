@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/service/api_error_handler.dart';
 import '../../../../core/service/api_result.dart';
@@ -47,9 +47,13 @@ class OrdersRepositoryImpl implements OrdersRepository {
   @override
   Future<ApiResult<BaseResponse<RestoredInvoiceModel?>>> getPosInvoiceDataById(
     int invoiceId,
+    bool isRestaurantReturnScreen,
   ) async {
     try {
-      final response = await remoteDataSource.getPosInvoiceDataById(invoiceId);
+      final response = await remoteDataSource.getPosInvoiceDataById(
+        invoiceId,
+        isRestaurantReturnScreen,
+      );
       return ApiResult.success(response);
     } catch (e, s) {
       debugPrint("$e , \n $s");

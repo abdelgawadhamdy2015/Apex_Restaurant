@@ -21,7 +21,7 @@ import '../widgets/item_customization_sheet.dart';
 import '../widgets/pos_categories_bar.dart';
 import '../widgets/pos_menu_item_card.dart';
 import '../widgets/pos_top_app_bar.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 

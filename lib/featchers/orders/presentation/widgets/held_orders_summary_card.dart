@@ -1,6 +1,6 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Header card on the "Held Orders" tab showing the total held-order count.
 class HeldOrdersSummaryCard extends StatelessWidget {
@@ -50,7 +50,7 @@ class HeldOrdersSummaryCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(spacing.md),
             decoration: BoxDecoration(
-              color: theme.colorScheme.secondary.withOpacity(0.15),
+              color: theme.colorScheme.secondary.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
             child: Icon(

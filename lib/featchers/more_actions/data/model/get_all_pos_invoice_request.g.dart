@@ -28,6 +28,7 @@ GetAllPosInvoiceRequest _$GetAllPosInvoiceRequestFromJson(
   isReturn: json['isReturn'] as bool? ?? true,
   sessionId: (json['sessionId'] as num?)?.toInt() ?? 0,
   financialYearId: (json['financialYearId'] as num?)?.toInt() ?? 0,
+  isRestaurantReturnScreen: json['isRestaurantReturnScreen'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$GetAllPosInvoiceRequestToJson(
@@ -44,6 +45,7 @@ Map<String, dynamic> _$GetAllPosInvoiceRequestToJson(
   'storeId': instance.storeId,
   'personId': instance.personId,
   'isReturn': instance.isReturn,
+  'isRestaurantReturnScreen': instance.isRestaurantReturnScreen,
   'sessionId': instance.sessionId,
   'financialYearId': instance.financialYearId,
 };

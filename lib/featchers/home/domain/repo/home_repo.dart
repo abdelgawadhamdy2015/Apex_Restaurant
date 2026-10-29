@@ -18,4 +18,8 @@ abstract class HomeRepository {
   );
   Future<ApiResult<BaseResponse<List<SafeModel>?>>>
   getAllTreasuryByUserDropDown();
+
+  Future<ApiResult<BaseResponse<dynamic>>> updatedSelectedBranch({
+    required int branchId,
+  });
 }

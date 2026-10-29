@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
 import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
 
 import '../../data/model/payment_request_model.dart';
@@ -18,6 +20,11 @@ class PaymentState extends Equatable {
   final SuccessResponseModel? successResponseModel;
   final String? errorMessage;
   final List<PaymentMethodResponseModel>? paymentMethods;
+  final PrintKitchenResponse? printKitchenResponse;
+  final ReturnResponseData? partialReturnResponseData;
+  final PrintResponseData? printResponseData;
+  final bool? isFullReturn;
+
   const PaymentState({
     this.status = PaymentStatus.initial,
     this.totalAmount = 0.0,
@@ -29,6 +36,10 @@ class PaymentState extends Equatable {
     this.errorMessage,
     this.successResponseModel,
     this.paymentMethods,
+    this.printKitchenResponse,
+    this.partialReturnResponseData,
+    this.printResponseData,
+    this.isFullReturn,
   });
 
   double get remainingAmount =>
@@ -45,6 +56,10 @@ class PaymentState extends Equatable {
     SuccessResponseModel? successResponseModel,
     String? errorMessage,
     List<PaymentMethodResponseModel>? paymentMethods,
+    PrintKitchenResponse? printKitchenResponse,
+    ReturnResponseData? partialReturnResponseData,
+    PrintResponseData? printResponseData,
+    bool? isFullReturn,
   }) {
     return PaymentState(
       status: status ?? this.status,
@@ -57,6 +72,7 @@ class PaymentState extends Equatable {
       successResponseModel: successResponseModel ?? this.successResponseModel,
       errorMessage: errorMessage ?? this.errorMessage,
       paymentMethods: paymentMethods ?? this.paymentMethods,
+      printKitchenResponse: printKitchenResponse ?? this.printKitchenResponse,
     );
   }
 
@@ -72,5 +88,6 @@ class PaymentState extends Equatable {
     errorMessage,
     paymentMethods,
     successResponseModel,
+    printKitchenResponse,
   ];
 }

@@ -14,13 +14,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final OpenRestaurantPosSessionUseCase openRestaurantPosSessionUseCase;
   final OpenRestaurantPosUseCase openRestaurantPosUseCase;
   final GetAllTreasuryByUserDropDownUseCase getAllTreasuryByUserDropDownUseCase;
-
+  final UpdatedSelectedBranchUseCase updatedSelectedBranchUseCase;
   HomeBloc({
     required this.getEmployeeBranches,
     required this.getUseDataUseCase,
     required this.openRestaurantPosSessionUseCase,
     required this.openRestaurantPosUseCase,
     required this.getAllTreasuryByUserDropDownUseCase,
+    required this.updatedSelectedBranchUseCase,
   }) : super(HomeState.initial()) {
     on<LoadUserDataEvent>(_onLoadUserData);
     on<LoadBranchesEvent>(_onLoadEmployeeBranches);
@@ -47,6 +48,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.treasuryLoaded,
                 safes: data.data ?? [],
+                clearError: true,
               ),
             );
             add(SelectTreasuryEvent(state.safes!.first));
@@ -100,6 +102,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.userDataLoaded,
                 userDataModel: data.data,
+                clearError: true,
               ),
             );
           } else {
@@ -137,6 +140,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.branchesLoaded,
                 branches: data.data ?? [],
+                clearError: true,
               ),
             );
           } else {
@@ -190,6 +194,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.openSessionLoaded,
                 sessionModel: data.data,
+                clearError: true,
               ),
             );
           } else {
@@ -235,6 +240,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               state.copyWith(
                 status: HomeStatus.openSessionLoaded,
                 sessionModel: data.data,
+                clearError: true,
               ),
             );
           } else {
@@ -258,8 +264,43 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     }
   }
 
-  void _onSelectBranch(SelectBranchEvent event, Emitter<HomeState> emit) {
+  Future<void> _onSelectBranch(
+    SelectBranchEvent event,
+    Emitter<HomeState> emit,
+  ) async {
+    emit(state.copyWith(status: HomeStatus.branchUpdating, clearError: true));
+
     RestaurantConstants.currentBranch = event.branch;
-    emit(state.copyWith(selectedEmployeeBranch: event.branch));
+
+    final response = await updatedSelectedBranchUseCase(
+      branchId: event.branch.branchId,
+    );
+    response.when(
+      failure: (e) => emit(
+        state.copyWith(
+          status: HomeStatus.error,
+          errorMessage: e.apiErrorModel.errorMessageAr,
+        ),
+      ),
+      success: (BaseResponse<dynamic> data) {
+        if (data.result == 1) {
+          emit(
+            state.copyWith(
+              status: HomeStatus.branchSelected,
+              selectedEmployeeBranch: event.branch,
+              clearError: true,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              status: HomeStatus.error,
+              errorMessage: data.errorMessageAr,
+              apiResponse: data,
+            ),
+          );
+        }
+      },
+    );
   }
 }

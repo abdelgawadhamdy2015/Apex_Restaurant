@@ -2,7 +2,7 @@ import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/app_colors.dart';
 import 'quantity_counter.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AddToCartBar extends StatelessWidget {
   const AddToCartBar({

@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/featchers/tables/presentation/widgets/reservations_tab_view.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/widgets/tables_tab_view.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -17,11 +17,9 @@ import '../../../../generated/l10n.dart';
 class TablesScreen extends StatefulWidget {
   const TablesScreen({
     super.key,
-    required this.branchId,
     required this.personList,
     required this.inCartScreen,
   });
-  final int branchId;
   final List<PosClientModel> personList;
   final bool inCartScreen;
 
@@ -36,13 +34,7 @@ class _TablesScreenState extends State<TablesScreen> {
     final bloc = context.read<TablesBloc>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.add(
-        FetchFloorsEvent(
-          GetFloorsRequest(
-            branchId: widget.branchId,
-            pageNumber: 1,
-            pageSize: 100,
-          ),
-        ),
+        FetchFloorsEvent(GetFloorsRequest(pageNumber: 1, pageSize: 100)),
       );
     });
   }

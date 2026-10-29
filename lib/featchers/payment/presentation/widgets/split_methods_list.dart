@@ -1,5 +1,5 @@
 import 'package:apex_restaurant/featchers/payment/data/model/payment_method_response_model.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import 'split_amount_field.dart';

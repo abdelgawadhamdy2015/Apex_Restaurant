@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_cash_transaction_request.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/add_pos_total_return_invoice_request.dart';
@@ -37,14 +38,15 @@ class AccreditePOSInvoicesEvent extends MoreActionsEvent {
 
 class FetchInvoiceByIdEvent extends MoreActionsEvent {
   final int invoiceId;
+
   const FetchInvoiceByIdEvent({required this.invoiceId});
   @override
   List<Object?> get props => [invoiceId];
 }
 
-class AddPOSTotalReturnEvent extends MoreActionsEvent {
-  final AddPOSTotalReturnInvoiceRequest request;
-  const AddPOSTotalReturnEvent({required this.request});
+class SaveRestaurantPosReturnInvoiceEvent extends MoreActionsEvent {
+  final ReturnRequest request;
+  const SaveRestaurantPosReturnInvoiceEvent({required this.request});
   @override
   List<Object?> get props => [request];
 }

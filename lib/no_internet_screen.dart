@@ -1,7 +1,7 @@
 import 'core/shared/widgets/body_container.dart';
 import 'gen/assets.gen.dart';
 import 'generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class NoInternetScreen extends StatelessWidget {
   const NoInternetScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/tablet_widgets/order_item_entity.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class OrderItemRow extends StatelessWidget {
   const OrderItemRow({

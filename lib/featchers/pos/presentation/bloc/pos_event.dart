@@ -123,8 +123,10 @@ class CloseRestaurantPosSessionEvent extends PosEvent {
 }
 
 class CurrentRestaurantPosSessionEvent extends PosEvent {
-  const CurrentRestaurantPosSessionEvent();
+  const CurrentRestaurantPosSessionEvent({required this.openCloseDialog});
+
+  final bool openCloseDialog;
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [openCloseDialog];
 }

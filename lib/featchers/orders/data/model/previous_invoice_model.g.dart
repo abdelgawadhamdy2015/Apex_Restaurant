@@ -17,6 +17,7 @@ PreviousInvoiceModel _$PreviousInvoiceModelFromJson(
   personNameAr: json['personNameAr'] as String?,
   personNameEn: json['personNameEn'] as String?,
   totalAmount: (json['totalAmount'] as num?)?.toDouble(),
+  posType: (json['posType'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$PreviousInvoiceModelToJson(
@@ -28,4 +29,5 @@ Map<String, dynamic> _$PreviousInvoiceModelToJson(
   'personNameAr': instance.personNameAr,
   'personNameEn': instance.personNameEn,
   'totalAmount': instance.totalAmount,
+  'posType': instance.posType,
 };

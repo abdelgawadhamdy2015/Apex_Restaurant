@@ -2,7 +2,7 @@ import 'package:apex_restaurant/core/themes/app_colors.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MainSegmentedTab extends StatelessWidget {
   const MainSegmentedTab({

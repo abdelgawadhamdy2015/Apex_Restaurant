@@ -1,7 +1,8 @@
+import 'package:material_ui/material_ui.dart';
+
 import 'app_accent_colors.dart';
 import 'app_font_scale.dart';
 import '../shared/enums/ui_enum.dart';
-import 'package:flutter/material.dart' show ThemeMode;
 
 class SettingsState {
   final ThemeMode themeMode;

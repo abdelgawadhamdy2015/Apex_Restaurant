@@ -16,7 +16,7 @@ import '../../service/dio_factory.dart';
 import '../../../featchers/auth/presentation/pages/login_screen.dart';
 import '../../../generated/l10n.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 enum AppDialogType { error, warning, success, info }
@@ -456,7 +456,35 @@ void showPauseSessionDialogState(BuildContext context) {
     onConfirm: closeDialog,
     onCancel: () {
       closeDialog();
-      context.read<PosBloc>().add(CurrentRestaurantPosSessionEvent());
+      context.read<PosBloc>().add(
+        CurrentRestaurantPosSessionEvent(openCloseDialog: true),
+      );
+    },
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// Delete confirmation dialog
+// ─────────────────────────────────────────────────────────────────────────────
+
+void showDeleteConfirmDialogState(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String confirmLabel,
+  required String cancelLabel,
+  required VoidCallback onConfirm,
+}) {
+  showAppDialog(
+    context,
+    type: AppDialogType.warning,
+    title: title,
+    message: message,
+    confirmLabel: confirmLabel,
+    cancelLabel: cancelLabel,
+    onCancel: () => Navigator.of(context, rootNavigator: true).pop(),
+    onConfirm: () {
+      Navigator.of(context, rootNavigator: true).pop(); // close dialog first
+      onConfirm();
     },
   );
 }

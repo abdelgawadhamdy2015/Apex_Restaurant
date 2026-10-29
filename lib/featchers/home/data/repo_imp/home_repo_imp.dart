@@ -72,4 +72,18 @@ class HomeRepoImpl implements HomeRepository {
       return ApiResult.failure(ErrorHandler.handle(error));
     }
   }
+
+  @override
+  Future<ApiResult<BaseResponse<dynamic>>> updatedSelectedBranch({
+    required int branchId,
+  }) async {
+    try {
+      final response = await _remoteDataSource.updatedSelectedBranch(
+        branchId: branchId,
+      );
+      return ApiResult.success(response);
+    } catch (error) {
+      return ApiResult.failure(ErrorHandler.handle(error));
+    }
+  }
 }

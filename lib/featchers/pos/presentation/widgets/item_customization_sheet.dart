@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -35,6 +35,17 @@ class ItemCustomizationSheet extends StatefulWidget {
   final OrderItem? existingItem;
   final int? cartIndex;
 
+  /// True when editing an item of a return invoice. In that case the counter
+  /// edits availableQuantity (1..[returnLimit]) and addons can't exceed the
+  /// counts they had when the sheet opened.
+  final bool isReturnInvoice;
+
+  /// Original returnable amount of the item (only used for return invoices).
+  final int returnLimit;
+
+  /// Original returnable amount per addon, keyed by addon arabicName.
+  final Map<String, int> addonReturnLimits;
+
   const ItemCustomizationSheet({
     super.key,
     required this.item,
@@ -42,6 +53,9 @@ class ItemCustomizationSheet extends StatefulWidget {
     required this.onConfirm,
     this.existingItem,
     this.cartIndex,
+    this.isReturnInvoice = false,
+    this.returnLimit = 0,
+    this.addonReturnLimits = const {},
   });
 
   static void show(
@@ -61,6 +75,9 @@ class ItemCustomizationSheet extends StatefulWidget {
     onConfirm, {
     OrderItem? existingItem,
     int? cartIndex,
+    bool isReturnInvoice = false,
+    int returnLimit = 0,
+    Map<String, int> addonReturnLimits = const {},
   }) {
     showModalBottomSheet(
       context: context,
@@ -74,6 +91,9 @@ class ItemCustomizationSheet extends StatefulWidget {
           onConfirm: onConfirm,
           existingItem: existingItem,
           cartIndex: cartIndex,
+          isReturnInvoice: isReturnInvoice,
+          returnLimit: returnLimit,
+          addonReturnLimits: addonReturnLimits,
         ),
       ),
     );
@@ -88,16 +108,43 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
   @override
   RestaurantItem get item => widget.item;
 
+  bool get _isReturn => widget.isReturnInvoice && widget.existingItem != null;
+
+  /// Return invoice with nothing available: nothing can be changed.
+  bool get _isLockedReturn => _isReturn && widget.returnLimit <= 0;
+
   @override
   void initState() {
     super.initState();
     prefillFromExistingItem(widget.existingItem);
+
+    // Return invoice: the editable amount is availableQuantity, not quantity.
+    if (_isReturn && widget.returnLimit > 0) {
+      final available = (widget.existingItem?.availableQuantity ?? 0).toInt();
+      quantity = available.clamp(1, widget.returnLimit).toInt();
+    }
 
     // مزامنة الخصم التلقائي بعد رسم الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       setState(() => syncDiscountFieldsWithSize(context));
     });
+  }
+
+  bool get _canIncreaseQuantity =>
+      !_isLockedReturn && (!_isReturn || quantity < widget.returnLimit);
+
+  bool get _canDecreaseQuantity => !_isLockedReturn && quantity > 1;
+
+  bool _canIncreaseAddon(
+    int index,
+    int currentQty,
+    List<AdditiveModel> additives,
+  ) {
+    if (_isLockedReturn) return false;
+    if (!_isReturn) return true;
+    final limit = widget.addonReturnLimits[additives[index].arabicName] ?? 0;
+    return currentQty < limit;
   }
 
   @override
@@ -127,7 +174,11 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
                 posState.status == PosStatus.loading;
             final List<AdditiveModel> additives = additivesFor(posState);
 
-            prefillAddonsOnce(additives, widget.existingItem);
+            prefillAddonsOnce(
+              additives,
+              widget.existingItem,
+              isReturn: _isReturn,
+            );
 
             return Column(
               mainAxisSize: MainAxisSize.min,
@@ -198,6 +249,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
                             addon: addon,
                             quantity: currentQty,
                             onDecrement: () {
+                              if (_isLockedReturn) return;
                               setState(() {
                                 if (currentQty > 1) {
                                   addonQuantities[index] = currentQty - 1;
@@ -207,6 +259,14 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
                               });
                             },
                             onIncrement: () {
+                              // Return invoice: never above original count.
+                              if (!_canIncreaseAddon(
+                                index,
+                                currentQty,
+                                additives,
+                              )) {
+                                return;
+                              }
                               setState(() {
                                 addonQuantities[index] = currentQty + 1;
                               });
@@ -270,12 +330,17 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
                 // شريط إضافة إلى السلة والسعر الإجمالي
                 AddToCartBar(
                   quantity: quantity,
-                  onIncrement: () => setState(() => quantity++),
+                  onIncrement: () {
+                    if (_canIncreaseQuantity) setState(() => quantity++);
+                  },
                   onDecrement: () {
-                    if (quantity > 1) setState(() => quantity--);
+                    if (_canDecreaseQuantity) setState(() => quantity--);
                   },
                   totalPrice: calculateTotalPrice(additives: additives),
-                  onConfirm: () => _handleConfirm(context, additives, lang),
+                  onConfirm: () {
+                    if (_isLockedReturn) return;
+                    _handleConfirm(context, additives, lang);
+                  },
                 ),
               ],
             );
@@ -316,7 +381,11 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
       widget.item,
       additives,
       selectedSize: selectedSize,
-      selectedAddons: getSelectedAddonsList(additives),
+      selectedAddons: getSelectedAddonsList(
+        additives,
+        existing: widget.existingItem,
+        isReturn: _isReturn,
+      ),
       discount: double.tryParse(discountController.text) ?? 0.0,
       isPercentageDiscount: isPercentageDiscount,
       notes: notesController.text,

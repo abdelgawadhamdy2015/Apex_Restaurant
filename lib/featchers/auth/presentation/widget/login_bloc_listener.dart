@@ -12,7 +12,7 @@ import 'package:apex_restaurant/featchers/auth/presentation/bloc/auth_bloc.dart'
 import 'package:apex_restaurant/featchers/auth/presentation/bloc/auth_state.dart';
 import 'package:apex_restaurant/featchers/auth/presentation/pages/login_screen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -119,6 +119,7 @@ class _AuthBlocListenerState extends State<AuthBlocListener> {
     RestaurantConstants.image = data.authToken?.userInfo?.imageUrl;
     ApiConstants.userId = int.parse(userInfo?.userId ?? '0');
     ApiConstants.empId = userInfo?.employeesId;
+    ApiConstants.isDeliveryCompanyActive = data.isDeliveryCompanyActive;
     DioFactory.setToken(token);
 
     // ── Navigate ──────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import 'app_accent_colors.dart';
 import 'settings_state.dart';
 import '../themes/app_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AppThemeController {
   final SettingsState settings;

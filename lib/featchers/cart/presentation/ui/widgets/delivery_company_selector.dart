@@ -3,7 +3,7 @@ import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart'
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DeliveryCompanySelector extends StatelessWidget {
@@ -13,7 +13,7 @@ class DeliveryCompanySelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final cartState = context.watch<CartBloc>().state;
 
-    final canEdit = cartState.canEdit;
+    final canEdit = cartState.canEditInvoice;
     final companies = cartState.companiesList;
     final selectedCompany = cartState.selectedDeliveryCompany;
 
@@ -31,7 +31,7 @@ class DeliveryCompanySelector extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),

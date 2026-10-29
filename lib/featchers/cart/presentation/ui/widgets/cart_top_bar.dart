@@ -1,11 +1,10 @@
-// lib/featchers/cart/presentation/ui/widgets/cart_top_bar.dart
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,7 +24,7 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
-
+    final clearCart = context.select((CartBloc c) => !c.state.canEditInvoice);
     return SafeArea(
       child: Container(
         height: preferredSize.height,
@@ -44,7 +43,7 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
                 onPressed:
                     onBack ??
                     () {
-                      if (!context.read<CartBloc>().state.canEdit) {
+                      if (clearCart) {
                         context.read<CartBloc>().add(ClearCartEvent());
                       }
                       context.pop();

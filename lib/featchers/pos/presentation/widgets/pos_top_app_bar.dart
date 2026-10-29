@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PosTopAppBar extends StatefulWidget implements PreferredSizeWidget {
   const PosTopAppBar({super.key, this.onSearchChanged});
@@ -82,7 +82,9 @@ class _PosTopAppBarState extends State<PosTopAppBar> {
             children: [
               CircleAvatar(
                 radius: 20,
-                backgroundColor: theme.colorScheme.primary.withOpacity(0.4),
+                backgroundColor: theme.colorScheme.primary.withValues(
+                  alpha: 0.4,
+                ),
                 child: Icon(Icons.person, color: theme.colorScheme.primary),
               ),
               SizedBox(width: spacing.xs),
@@ -127,7 +129,7 @@ class _PosTopAppBarState extends State<PosTopAppBar> {
               isDense: true,
               hintText: lang.search,
               hintStyle: TextStyle(
-                color: theme.colorScheme.onPrimary.withOpacity(0.6),
+                color: theme.colorScheme.onPrimary.withValues(alpha: 0.6),
               ),
               border: InputBorder.none,
             ),

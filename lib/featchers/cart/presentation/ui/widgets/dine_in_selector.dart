@@ -8,7 +8,7 @@ import '../../../../home/presentation/bloc/home_bloc.dart';
 import '../../../../home/presentation/bloc/home_state.dart';
 import '../../../../tables/data/models/tables_screen_arg.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -31,11 +31,11 @@ class DineInSelector extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
     final selectedTable = context.select((CartBloc b) => b.state.selectedTable);
-    final canEdit = context.select((CartBloc b) => b.state.canEdit);
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),

@@ -43,6 +43,9 @@ class AdditiveModel {
   final String? imagePath;
   final String? transactionId;
   final String? parentTransactionId;
+  final int? invoiceDetailsId;
+
+  final double? availableQuantity;
 
   const AdditiveModel({
     required this.id,
@@ -53,10 +56,38 @@ class AdditiveModel {
     this.imagePath,
     this.transactionId,
     this.parentTransactionId,
+    this.invoiceDetailsId,
+    this.availableQuantity,
   });
 
   factory AdditiveModel.fromJson(Map<String, dynamic> json) =>
       _$AdditiveModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$AdditiveModelToJson(this);
+
+  AdditiveModel copyWith({
+    String? id,
+    String? arabicName,
+    String? latinName,
+    double? price,
+    String? notes,
+    String? imagePath,
+    String? transactionId,
+    String? parentTransactionId,
+    int? invoiceDetailsId,
+    double? availableQuantity,
+  }) {
+    return AdditiveModel(
+      id: id ?? this.id,
+      arabicName: arabicName ?? this.arabicName,
+      latinName: latinName ?? this.latinName,
+      price: price ?? this.price,
+      notes: notes ?? this.notes,
+      imagePath: imagePath ?? this.imagePath,
+      transactionId: transactionId ?? this.transactionId,
+      parentTransactionId: parentTransactionId ?? this.parentTransactionId,
+      invoiceDetailsId: invoiceDetailsId ?? this.invoiceDetailsId,
+      availableQuantity: availableQuantity ?? this.availableQuantity,
+    );
+  }
 }

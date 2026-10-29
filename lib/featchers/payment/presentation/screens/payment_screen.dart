@@ -1,3 +1,7 @@
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/shared/widgets/custom_app_bar.dart';
@@ -16,7 +20,7 @@ import '../widgets/remaining_amount_card.dart';
 import '../widgets/split_methods_list.dart';
 import '../widgets/total_amount_card.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -48,71 +52,85 @@ class _PaymentScreenState extends State<PaymentScreen> {
     final spacing = context.spacing;
     final lang = S.of(context);
 
-    return BlocConsumer<PaymentBloc, PaymentState>(
-      listener: (context, state) {
-        if (state.status == PaymentStatus.error) {
-          HelperMethods.showSnackBar(
-            context: context,
-            message: state.errorMessage ?? lang.somethingWentWrong,
-            isError: true,
-          );
-        }
-      },
-      builder: (context, state) {
-        if (state.status == PaymentStatus.success &&
-            state.successModel != null) {
-          return PaymentSuccess(model: state.successModel!);
-        }
+    return PopScope(
+      canPop: false,
+      child: BlocConsumer<PaymentBloc, PaymentState>(
+        listener: (context, state) {
+          if (state.status == PaymentStatus.error) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.errorMessage ?? lang.somethingWentWrong,
+              isError: true,
+            );
+          } else if (state.status == PaymentStatus.success ||
+              state.isFullReturn == true) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: state.errorMessage ?? lang.invoiceReturnedSuccessfully,
+              isError: false,
+            );
+          }
+        },
+        builder: (context, state) {
+          if (state.status == PaymentStatus.success) {
+            context.read<CartBloc>().add(ClearCartEvent());
+            if (state.successModel != null) {
+              return PaymentSuccess(model: state.successModel!);
+            } else if (state.isFullReturn == true) {
+              context.pop();
+            }
+          }
 
-        return Scaffold(
-          backgroundColor: theme.colorScheme.surface,
-          appBar: CustomAppBar(
-            title: lang.payment,
-            centerTitle: true,
-            showBackButton: false,
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(spacing.md),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const TotalAmountCard(),
-                        SizedBox(height: spacing.md),
-                        const PaymentMethodTabs(),
-                        SizedBox(height: spacing.md),
-                        const DueAmountCard(),
-                        SizedBox(height: spacing.md),
-                        if (state.selectedMethod ==
-                            PaymentMethodType.split) ...[
-                          SplitMethodsList(
-                            paymentMethods: state.paymentMethods ?? [],
-                          ),
-                        ] else ...[
-                          const PaidAmountInputField(),
+          return Scaffold(
+            backgroundColor: theme.colorScheme.surface,
+            appBar: CustomAppBar(
+              title: lang.payment,
+              centerTitle: true,
+              showBackButton: false,
+            ),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(spacing.md),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const TotalAmountCard(),
                           SizedBox(height: spacing.md),
-                          if (state.selectedMethod == PaymentMethodType.cash)
-                            const RemainingAmountCard()
-                          else if (state.selectedMethod ==
-                              PaymentMethodType.card)
-                            const ReferenceNumberInputField(),
+                          const PaymentMethodTabs(),
+                          SizedBox(height: spacing.md),
+                          const DueAmountCard(),
+                          SizedBox(height: spacing.md),
+                          if (state.selectedMethod ==
+                              PaymentMethodType.split) ...[
+                            SplitMethodsList(
+                              paymentMethods: state.paymentMethods ?? [],
+                            ),
+                          ] else ...[
+                            const PaidAmountInputField(),
+                            SizedBox(height: spacing.md),
+                            if (state.selectedMethod == PaymentMethodType.cash)
+                              const RemainingAmountCard()
+                            else if (state.selectedMethod ==
+                                PaymentMethodType.card)
+                              const ReferenceNumberInputField(),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                BottomActionButtons(
-                  state: state,
-                  invoiceRequestModel: widget.invoiceRequestModel,
-                ),
-              ],
+                  BottomActionButtons(
+                    state: state,
+                    invoiceRequestModel: widget.invoiceRequestModel,
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:apex_restaurant/core/themes/app_spacing_theme.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/ui/screens/ass_customer_tablet.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -98,7 +98,7 @@ class _CustomersTabletViewState extends State<CustomersTabletView> {
                                 )
                               : ListView.separated(
                                   itemCount: filteredPersons.length,
-                                  separatorBuilder: (_, __) =>
+                                  separatorBuilder: (_, _) =>
                                       const Divider(height: 1),
                                   itemBuilder: (context, index) {
                                     return _buildTableRow(
@@ -223,7 +223,7 @@ class _CustomersTabletViewState extends State<CustomersTabletView> {
   // Header Row matching mockup fields
   Widget _buildTableHeader(ThemeData theme, AppSpacing spacing, S lang) {
     return Container(
-      color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       padding: EdgeInsets.symmetric(
         horizontal: spacing.lg,
         vertical: spacing.md,

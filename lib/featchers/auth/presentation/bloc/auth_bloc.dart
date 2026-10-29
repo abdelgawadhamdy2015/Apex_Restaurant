@@ -5,7 +5,7 @@ import '../../data/models/login_request_body.dart';
 import '../../domain/usecases/auth_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {

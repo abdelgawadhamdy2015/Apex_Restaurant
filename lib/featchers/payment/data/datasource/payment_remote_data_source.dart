@@ -12,6 +12,7 @@ abstract class PaymentRemoteDataSource {
   Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   );
+
   Future<BaseResponse<List<PaymentMethodResponseModel>?>>
   getListOfPaymentMethods();
 }

@@ -1,6 +1,6 @@
 import '../../../../core/helpers/extensions.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ItemCustomizationHeader extends StatelessWidget {
   const ItemCustomizationHeader({
@@ -39,7 +39,7 @@ class ItemCustomizationHeader extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(spacing.radiusLg),
               ),
               child: Icon(Icons.restaurant, color: theme.colorScheme.primary),

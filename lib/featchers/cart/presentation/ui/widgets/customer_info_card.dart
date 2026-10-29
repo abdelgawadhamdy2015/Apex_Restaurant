@@ -8,7 +8,7 @@ import '../../../../../core/router/routes.dart';
 import '../../../data/models/pos_client_model.dart';
 import '../screens/ass_customer_tablet.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 
 /// Shows the currently selected customer (or a placeholder) with
@@ -31,6 +31,7 @@ class CustomerInfoCard extends StatelessWidget {
     final lang = S.of(context);
     final phones = selectedPerson?.personPhones;
     final cartState = context.read<CartBloc>().state;
+    final canEdit = cartState.canEditInvoice;
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
@@ -41,7 +42,7 @@ class CustomerInfoCard extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: theme.colorScheme.primary.withOpacity(.5),
+            backgroundColor: theme.colorScheme.primary.withValues(alpha: .5),
             radius: icons.lg - icons.sm / 2,
             child: Icon(
               Icons.person,
@@ -52,7 +53,7 @@ class CustomerInfoCard extends StatelessWidget {
           SizedBox(width: spacing.sm),
           Expanded(
             child: GestureDetector(
-              onTap: cartState.canEdit
+              onTap: canEdit
                   ? () => HelperMethods.openPicker(context, persons)
                   : null,
               behavior: HitTestBehavior.opaque,

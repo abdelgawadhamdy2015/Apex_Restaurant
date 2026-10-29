@@ -2,7 +2,7 @@ import '../../../../core/helpers/extensions.dart';
 import '../../../../core/themes/font_weight_helper.dart';
 import '../bloc/payment_bloc.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Card showing the total amount required for the invoice being paid.
@@ -60,7 +60,7 @@ class TotalAmountCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(spacing.sm),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(.1),
+              color: theme.colorScheme.primary.withValues(alpha: .1),
               shape: BoxShape.circle,
             ),
             child: Icon(

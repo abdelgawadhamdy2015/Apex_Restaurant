@@ -1,6 +1,6 @@
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/helper_methods.dart';
@@ -134,7 +134,7 @@ class _PosTabletMenuTabState extends State<PosTabletMenuTab> {
         VerticalDivider(
           width: 1,
           thickness: 1,
-          color: theme.dividerColor.withOpacity(0.1),
+          color: theme.dividerColor.withValues(alpha: 0.1),
         ),
 
         // Right Column: Cart Panel Summary

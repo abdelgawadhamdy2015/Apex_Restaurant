@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
+import 'package:apex_restaurant/core/shared/model/return_request.dart';
+
 import '../../../cart/data/models/invoice_request.dart';
 import '../../data/model/payment_request_model.dart';
 import 'package:equatable/equatable.dart';
@@ -30,6 +33,20 @@ class ChangePaymentMethodEvent extends PaymentEvent {
 
   @override
   List<Object?> get props => [method];
+}
+
+class SaveRestaurantPosPartialReturnInvoiceEvent extends PaymentEvent {
+  final ReturnRequest request;
+  const SaveRestaurantPosPartialReturnInvoiceEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
+}
+
+class PrintKitchenPaymentEvent extends PaymentEvent {
+  final PrintKitchenRequest request;
+  const PrintKitchenPaymentEvent({required this.request});
+  @override
+  List<Object?> get props => [request];
 }
 
 class UpdatePaidAmountEvent extends PaymentEvent {

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/helpers/extensions.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PosMenuItemCard extends StatelessWidget {
   const PosMenuItemCard({

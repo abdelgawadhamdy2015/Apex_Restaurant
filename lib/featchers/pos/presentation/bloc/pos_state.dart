@@ -18,6 +18,9 @@ enum PosStatus {
   loading,
   loaded,
   closeSession,
+  sessionLoaded,
+  sessionClosed,
+
   error,
   submitting,
   submitted,
@@ -136,7 +139,7 @@ class PosState extends Equatable implements ErrorableState {
       hasMoreItems: hasMoreItems ?? this.hasMoreItems,
       isLoadingMoreItems: isLoadingMoreItems ?? this.isLoadingMoreItems,
       currentItemsRequest: currentItemsRequest ?? this.currentItemsRequest,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: clear ? null : errorMessage ?? this.errorMessage,
       toastMessage: clearToast ? null : (toastMessage ?? this.toastMessage),
       isKitchenSent: isKitchenSent ?? this.isKitchenSent,
       orderType: orderType ?? this.orderType,

@@ -27,6 +27,32 @@ class ReservationEntity extends Equatable {
     this.notes,
   });
 
+  ReservationEntity copyWith({
+    String? id,
+    String? tableNumber,
+    String? tableId,
+    String? customerId,
+    String? customerName,
+    DateTime? dateTime,
+    int? seatsCount,
+    int? durationMinutes,
+    ReservationStatus? status,
+    String? notes,
+  }) {
+    return ReservationEntity(
+      id: id ?? this.id,
+      tableNumber: tableNumber ?? this.tableNumber,
+      tableId: tableId ?? this.tableId,
+      customerId: customerId ?? this.customerId,
+      customerName: customerName ?? this.customerName,
+      dateTime: dateTime ?? this.dateTime,
+      seatsCount: seatsCount ?? this.seatsCount,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
+      status: status ?? this.status,
+      notes: notes ?? this.notes,
+    );
+  }
+
   @override
   List<Object?> get props => [
     id,

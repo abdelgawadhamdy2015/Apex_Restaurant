@@ -1,13 +1,13 @@
+import 'package:apex_restaurant/core/service/api_constants.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../data/enums/cart_enum.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Horizontal row of chips letting the user pick the order type
-/// (takeaway, dine-in, delivery or delivery company).
 class OrderTypeSelector extends StatelessWidget {
   const OrderTypeSelector({super.key});
 
@@ -45,11 +45,12 @@ class OrderTypeSelector extends StatelessWidget {
             icon: Icons.store,
           ),
           SizedBox(width: spacing.xs),
-          _OrderTypeChip(
-            type: CartOrderType.DELIVERY_COMPANY,
-            label: lang.deliveryCompanies,
-            icon: Icons.storefront,
-          ),
+          if (ApiConstants.isDeliveryCompanyActive ?? false)
+            _OrderTypeChip(
+              type: CartOrderType.DELIVERY_COMPANY,
+              label: lang.deliveryCompanies,
+              icon: Icons.storefront,
+            ),
         ],
       ),
     );
@@ -76,9 +77,7 @@ class _OrderTypeChip extends StatelessWidget {
     final isSelected = context.select(
       (CartBloc b) => b.state.selectedOrderType == type,
     );
-    final canEdit = context.select(
-      (CartBloc b) => b.state.canEdit,
-    ); // ✅ now reactive
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
 
     final activeColor = theme.colorScheme.primary;
     final inactiveColor = theme.colorScheme.surfaceContainerHighest;

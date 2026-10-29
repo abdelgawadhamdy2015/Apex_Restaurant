@@ -18,6 +18,8 @@ enum HomeStatus {
   treasuryLoading,
   treasuryLoaded,
   error,
+  branchSelected,
+  branchUpdating,
 }
 
 class HomeState extends Equatable implements ErrorableState {

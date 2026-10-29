@@ -8,6 +8,7 @@ part of 'api_service.dart';
 // RetrofitGenerator
 // **************************************************************************
 
+// ignore_for_file: type=lint
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter,avoid_unused_constructor_parameters,unreachable_from_main,avoid_redundant_argument_values
 
 class _ApiService implements ApiService {
@@ -281,6 +282,38 @@ class _ApiService implements ApiService {
                   )
                   .toList()
             : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<dynamic>> updatedSelectedBranch({
+    required int branchId,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<BaseResponse<dynamic>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/GeneralAPIs/updatedSelectedBranch/${branchId}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<dynamic> _value;
+    try {
+      _value = BaseResponse<dynamic>.fromJson(
+        _result.data!,
+        (json) => json as dynamic,
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
@@ -1044,39 +1077,6 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
-    SaveRestaurantPosInvoiceRequest request,
-  ) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(request.toJson());
-    final _options = _setStreamType<BaseResponse<SuccessResponseModel>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'api/Restaurants/RestaurantPos/SaveRestaurantPosInvoice',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<SuccessResponseModel> _value;
-    try {
-      _value = BaseResponse<SuccessResponseModel>.fromJson(
-        _result.data!,
-        (json) => SuccessResponseModel.fromJson(json as Map<String, dynamic>),
-      );
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options, response: _result);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   ) async {
@@ -1187,9 +1187,13 @@ class _ApiService implements ApiService {
   @override
   Future<BaseResponse<RestoredInvoiceModel?>> getPosInvoiceDataById(
     int invoiceId,
+    bool isRestaurantReturnScreen,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'InvoiceId': invoiceId};
+    final queryParameters = <String, dynamic>{
+      r'InvoiceId': invoiceId,
+      r'isRestaurantReturnScreen': isRestaurantReturnScreen,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<BaseResponse<RestoredInvoiceModel?>>(
@@ -1505,32 +1509,30 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<PosInvoiceData?>> addPOSResturnInvoice(
-    GetAllPosInvoiceRequest request,
+  Future<BaseResponse<SuccessResponseModel>> saveRestaurantPosInvoice(
+    SaveRestaurantPosInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(request.toJson());
-    final _options = _setStreamType<BaseResponse<PosInvoiceData?>>(
+    final _options = _setStreamType<BaseResponse<SuccessResponseModel>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Store/POS/AddPOSReturnInvoice',
+            'api/Restaurants/RestaurantPos/SaveRestaurantPosInvoice',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<PosInvoiceData?> _value;
+    late BaseResponse<SuccessResponseModel> _value;
     try {
-      _value = BaseResponse<PosInvoiceData?>.fromJson(
+      _value = BaseResponse<SuccessResponseModel>.fromJson(
         _result.data!,
-        (json) => json == null
-            ? null
-            : PosInvoiceData.fromJson(json as Map<String, dynamic>),
+        (json) => SuccessResponseModel.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
@@ -1540,32 +1542,32 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<InvoiceReturnResponse?>> addPOSTotalReturnInvoice(
-    AddPOSTotalReturnInvoiceRequest request,
+  Future<BaseResponse<ReturnResponseData?>> saveRestaurantPosReturnInvoice(
+    ReturnRequest request,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    queryParameters.addAll(request.toJson());
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<BaseResponse<InvoiceReturnResponse?>>(
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<BaseResponse<ReturnResponseData?>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'api/Store/POS/AddPOSTotalReturnInvoice',
+            'api/Restaurants/RestaurantPos/SaveRestaurantPosReturnInvoice',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<InvoiceReturnResponse?> _value;
+    late BaseResponse<ReturnResponseData?> _value;
     try {
-      _value = BaseResponse<InvoiceReturnResponse?>.fromJson(
+      _value = BaseResponse<ReturnResponseData?>.fromJson(
         _result.data!,
         (json) => json == null
             ? null
-            : InvoiceReturnResponse.fromJson(json as Map<String, dynamic>),
+            : ReturnResponseData.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
@@ -1669,6 +1671,73 @@ class _ApiService implements ApiService {
                   )
                   .toList()
             : List.empty(),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<InvoiceReportResponse?> getInvoiceReport(
+    InvoiceReportRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(request.toJson());
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<InvoiceReportResponse?>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/InvioceReport/InvoiceReport',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>?>(_options);
+    late InvoiceReportResponse? _value;
+    try {
+      _value = _result.data == null
+          ? null
+          : InvoiceReportResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BaseResponse<PrintKitchenResponse?>> printKitchen(
+    PrintKitchenRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<BaseResponse<PrintKitchenResponse?>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            'api/Store/POS/PrintKitchen',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BaseResponse<PrintKitchenResponse?> _value;
+    try {
+      _value = BaseResponse<PrintKitchenResponse?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : PrintKitchenResponse.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

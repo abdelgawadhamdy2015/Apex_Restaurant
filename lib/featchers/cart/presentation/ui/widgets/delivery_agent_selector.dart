@@ -3,7 +3,7 @@ import '../../../data/models/waiter_model.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Dropdown for choosing the delivery agent (rider) for a delivery order.
@@ -17,7 +17,7 @@ class DeliveryAgentSelector extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final lang = S.of(context);
-    final canEdit = context.select((CartBloc b) => b.state.canEdit);
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
     final selectedDeliveryMan = context.select(
       (CartBloc b) => b.state.selectedDeliveryMan,
     );
@@ -25,7 +25,7 @@ class DeliveryAgentSelector extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(spacing.radiusLg),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),

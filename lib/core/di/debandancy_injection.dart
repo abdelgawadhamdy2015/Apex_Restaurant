@@ -1,3 +1,6 @@
+import 'package:apex_restaurant/core/shared/datasource/shared_datasource.dart';
+import 'package:apex_restaurant/core/shared/repo/shared_repo.dart';
+import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/datasource/more_action_datasource.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/repo/more_action_repo_imp.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
@@ -66,6 +69,10 @@ Future<void> setupGetIt() async {
   /// Data Sources
   /// ─────────────────────────────────────────────────────────
 
+  // Shared
+  getIt.registerLazySingleton<SharedDatasource>(
+    () => SharedDatasourceImpl(getIt<ApiService>()),
+  );
   // AUTH
   getIt.registerLazySingleton<AuthDatasource>(
     () => AuthDatasourceImp(getIt<ApiService>()),
@@ -109,6 +116,10 @@ Future<void> setupGetIt() async {
   /// Repositories
   /// ─────────────────────────────────────────────────────────
 
+  //  Shared
+  getIt.registerLazySingleton<SharedRepository>(
+    () => SharedRepositoryImpl(getIt<SharedDatasource>()),
+  );
   // AUTH
   getIt.registerLazySingleton<AuthRepo>(
     () => AuthRepoImp(getIt<AuthDatasource>()),
@@ -152,6 +163,16 @@ Future<void> setupGetIt() async {
   /// Use Cases
   /// ─────────────────────────────────────────────────────────
 
+  // Shared
+  getIt.registerLazySingleton(
+    () => PrintKitchenUseCase(getIt<SharedRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => GetInvoiceReportUseCase(getIt<SharedRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => SaveRestaurantPosReturnInvoiceUseCase(getIt<SharedRepository>()),
+  );
   // AUTH
   getIt.registerLazySingleton(() => LoginUsecase(getIt<AuthRepo>()));
 
@@ -174,6 +195,9 @@ Future<void> setupGetIt() async {
 
   getIt.registerLazySingleton(
     () => GetAllTreasuryByUserDropDownUseCase(getIt<HomeRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => UpdatedSelectedBranchUseCase(getIt<HomeRepository>()),
   );
 
   //POS
@@ -280,13 +304,7 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => GetAllPOSInvoicesUseCase(getIt<MoreActionsRepo>()),
   );
-  getIt.registerLazySingleton(
-    () => AddPOSResturnInvoiceUseCase(getIt<MoreActionsRepo>()),
-  );
 
-  getIt.registerLazySingleton(
-    () => AddPOSTotalReturnInvoiceUseCase(getIt<MoreActionsRepo>()),
-  );
   getIt.registerLazySingleton(
     () => AddCashTransactionForSessionUseCase(getIt<MoreActionsRepo>()),
   );
@@ -319,6 +337,7 @@ Future<void> setupGetIt() async {
       getEmployeeBranches: getIt<GetEmployeeBranchesUseCase>(),
       openRestaurantPosSessionUseCase: getIt<OpenRestaurantPosSessionUseCase>(),
       openRestaurantPosUseCase: getIt<OpenRestaurantPosUseCase>(),
+      updatedSelectedBranchUseCase: getIt<UpdatedSelectedBranchUseCase>(),
     ),
   );
 
@@ -363,17 +382,21 @@ Future<void> setupGetIt() async {
     () => PaymentBloc(
       paymentMethodsUseCase: getIt<PaymentMethodsUseCase>(),
       processPaymentUseCase: getIt<SavePaymentRestaurantPosInvoiceUseCase>(),
+      saveRestaurantPosReturnInvoiceUseCase:
+          getIt<SaveRestaurantPosReturnInvoiceUseCase>(),
     ),
   );
 
   // Orders
   getIt.registerFactory(
     () => OrdersBloc(
+      printKitchenUseCase: getIt<PrintKitchenUseCase>(),
       getPreviousOrdersUseCase: getIt<GetPreviousOrdersUseCase>(),
       getPindingInvoicesUseCase: getIt<GetPindingInvoicesUseCase>(),
 
       getPosInvoiceDataByIdUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       deleteHeldOrderUseCase: getIt<DeleteHeldOrderUseCase>(),
+      getInvoiceReportUseCase: getIt<GetInvoiceReportUseCase>(),
     ),
   );
 
@@ -401,8 +424,8 @@ Future<void> setupGetIt() async {
           getIt<GetCashTransactionForSessionUseCase>(),
       getPosInvoiceDataByIdUseCase: getIt<GetPosInvoiceDataByIdUseCase>(),
       getAllPOSInvoicesUseCase: getIt<GetAllPOSInvoicesUseCase>(),
-      addPOSResturnInvoiceUseCase: getIt<AddPOSResturnInvoiceUseCase>(),
-      addPOSTotalReturnInvoiceUseCase: getIt<AddPOSTotalReturnInvoiceUseCase>(),
+      saveRestaurantPosReturnInvoiceUseCase:
+          getIt<SaveRestaurantPosReturnInvoiceUseCase>(),
       getInvoiceAccreditingDataUseCase:
           getIt<GetInvoiceAccreditingDataUseCase>(),
     ),

@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:apex_restaurant/core/service/api_error_handler.dart';
+import 'package:apex_restaurant/core/shared/model/return_response.dart';
+import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/usescase/more_actions_usescase.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_event.dart';
 import 'package:apex_restaurant/featchers/more_actions/presentation/bloc/more_actions_state.dart';
@@ -12,27 +14,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
   final GetAllPOSInvoicesUseCase getAllPOSInvoicesUseCase;
-  final AddPOSResturnInvoiceUseCase addPOSResturnInvoiceUseCase;
   final GetPosInvoiceDataByIdUseCase getPosInvoiceDataByIdUseCase;
-  final AddPOSTotalReturnInvoiceUseCase addPOSTotalReturnInvoiceUseCase;
   final AddCashTransactionForSessionUseCase addCashTransactionForSessionUseCase;
   final GetCashTransactionForSessionUseCase getCashTransactionForSessionUseCase;
   final GetInvoiceAccreditingDataUseCase getInvoiceAccreditingDataUseCase;
   final AccreditePOSInvoicesUseCase accreditePOSInvoicesUseCase;
+  final SaveRestaurantPosReturnInvoiceUseCase
+  saveRestaurantPosReturnInvoiceUseCase;
+
   MoreActionsBloc({
     required this.getAllPOSInvoicesUseCase,
-    required this.addPOSResturnInvoiceUseCase,
-    required this.addPOSTotalReturnInvoiceUseCase,
     required this.getPosInvoiceDataByIdUseCase,
     required this.addCashTransactionForSessionUseCase,
     required this.getCashTransactionForSessionUseCase,
     required this.getInvoiceAccreditingDataUseCase,
     required this.accreditePOSInvoicesUseCase,
+    required this.saveRestaurantPosReturnInvoiceUseCase,
   }) : super(const MoreActionsState()) {
     on<FetchAllInvoicesEvent>(_onFetchInvoices);
     on<FetchAllInvoicesAcreditDataEvent>(_onFetchInvoicesAcredit);
     on<FetchInvoiceByIdEvent>(_onFetchInvoiceById);
-    on<AddPOSTotalReturnEvent>(_onAddPOSTotalReturn);
+    on<SaveRestaurantPosReturnInvoiceEvent>(_onAddPOSTotalReturn);
+
     on<AccreditePOSInvoicesEvent>(_acreditPosInvoice);
     on<SelectInvoiceDateEvent>(
       (event, emit) => emit(state.copyWith(invoiceDate: event.invoiceDate)),
@@ -51,7 +54,10 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
   ) async {
     emit(state.copyWith(status: MoreActionsStatus.loading));
     try {
-      final response = await getPosInvoiceDataByIdUseCase(event.invoiceId);
+      final response = await getPosInvoiceDataByIdUseCase(
+        event.invoiceId,
+        true,
+      );
       response.when(
         success: (data) {
           if (data.result == 1) {
@@ -61,7 +67,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 returnedInvoice: invoice,
                 status: MoreActionsStatus.success,
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -97,28 +103,32 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
   }
 
   Future<void> _onAddPOSTotalReturn(
-    AddPOSTotalReturnEvent event,
+    SaveRestaurantPosReturnInvoiceEvent event,
     Emitter<MoreActionsState> emit,
   ) async {
     emit(state.copyWith(status: MoreActionsStatus.loading));
 
     try {
-      final response = await addPOSTotalReturnInvoiceUseCase(
+      final response = await saveRestaurantPosReturnInvoiceUseCase(
         request: event.request,
       );
       response.when(
         success: (data) {
           if (data?.result == 1) {
             final invoices = state.invoices
-                .where((invoice) => invoice.invoiceId != event.request.id)
+                .where(
+                  (invoice) =>
+                      invoice.invoiceId != event.request.originalInvoiceId,
+                )
                 .toList();
             emit(
               state.copyWith(
                 invoices: invoices,
-                invoiceReturnResponse: data?.data,
+                returnResponseData: data?.data,
+                printResponseData: data?.printingData ?? PrintResponseData(),
                 status: MoreActionsStatus.success,
                 isFullReturn: true,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -171,8 +181,9 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 invoices: items,
                 clearReturned: true,
                 status: MoreActionsStatus.success,
+
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -227,7 +238,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 clearReturned: true,
                 status: MoreActionsStatus.success,
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -279,7 +290,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 status: MoreActionsStatus.success,
                 isFullReturn: false,
-                errorMessage: null,
+                clearErrorMessage: true,
               ),
             );
           } else {
@@ -329,7 +340,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
               state.copyWith(
                 transactionsResponse: data.data,
                 status: MoreActionsStatus.success,
-                errorMessage: null,
+                clearErrorMessage: true,
                 isFullReturn: false,
               ),
             );
@@ -379,7 +390,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             emit(
               state.copyWith(
                 status: MoreActionsStatus.successAcredit,
-                errorMessage: null,
+                clearErrorMessage: true,
                 isFullReturn: false,
               ),
             );

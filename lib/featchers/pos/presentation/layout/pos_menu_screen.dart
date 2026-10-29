@@ -1,5 +1,7 @@
 import 'package:apex_restaurant/core/di/debandancy_injection.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/home/presentation/widgets/side_nav.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/orders_screen.dart';
@@ -10,7 +12,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/pages/pos_page.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/screens/menu_screen.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/more_options.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_bottom_nav_bar.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PosMenuScreen extends StatefulWidget {
@@ -32,6 +34,7 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
     return const [
       PosBottomNavEnm.menu,
       PosBottomNavEnm.orders,
+      PosBottomNavEnm.newOrder,
       PosBottomNavEnm.more,
     ];
   }
@@ -58,9 +61,13 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
             currentIndex: state.selectedNavIndex,
             items: navItems,
             onTap: (item) {
-              context.read<PosBloc>().add(
-                SelectedNavIndexEvent(selectedNavIndex: item),
-              );
+              if (item == PosBottomNavEnm.newOrder) {
+                context.read<CartBloc>().add(ClearCartEvent());
+              } else {
+                context.read<PosBloc>().add(
+                  SelectedNavIndexEvent(selectedNavIndex: item),
+                );
+              }
             },
           ),
         );
@@ -87,6 +94,8 @@ class _PosMenuScreenState extends State<PosMenuScreen> {
         // Tablet only
         return const SizedBox();
 
+      case PosBottomNavEnm.newOrder:
+        return MenuScreen();
       case PosBottomNavEnm.more:
         return MoreOptions();
     }

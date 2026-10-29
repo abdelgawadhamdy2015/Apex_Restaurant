@@ -2,7 +2,7 @@ import 'app_accent_colors.dart';
 import 'app_font_scale.dart';
 import 'settings_state.dart';
 import '../shared/enums/ui_enum.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

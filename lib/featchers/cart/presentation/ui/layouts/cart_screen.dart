@@ -24,7 +24,7 @@ import '../widgets/header_info_card.dart';
 import '../widgets/order_summary_card.dart';
 import '../widgets/order_type_selector.dart';
 import '../widgets/takeaway_section.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartScreen extends StatefulWidget {
@@ -59,7 +59,10 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
+    final clearCrt = context.select(
+      (CartBloc c) =>
+          (c.state.isPreviousInvoice && !c.state.canEdit) || c.state.isReturn,
+    );
     return BlocConsumer<CartBloc, CartState>(
       listener: _onCartStateChanged,
       builder: (context, state) {
@@ -82,12 +85,10 @@ class _CartScreenState extends State<CartScreen> {
             },
             child: Scaffold(
               appBar: CartTopBar(
-                // Disable clear all button in top bar if editing is locked
-                onClearAll: state.canEdit
-                    ? () => context.read<CartBloc>().add(ClearCartEvent())
-                    : null,
+                onClearAll: () =>
+                    context.read<CartBloc>().add(ClearCartEvent()),
                 onBack: () {
-                  if (state.isPreviousInvoice && !state.canEdit) {
+                  if (clearCrt) {
                     context.read<CartBloc>().add(ClearCartEvent());
                   }
                   context.pop();
@@ -238,7 +239,7 @@ class _CartContent extends StatelessWidget {
               ),
             ),
 
-            if (state.canEdit) BottomActionBar(canEdit: canEdit),
+            if (state.canEditInvoice || state.isReturn) BottomActionBar(),
           ],
         );
       },

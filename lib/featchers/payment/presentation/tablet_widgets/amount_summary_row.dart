@@ -3,7 +3,7 @@ import 'package:apex_restaurant/core/themes/app_colors.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_bloc.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/bloc/payment_event.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -160,7 +160,9 @@ class _AmountSummaryRowState extends State<AmountSummaryRow> {
                   vertical: spacing.md,
                 ),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                  color: theme.colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.3,
+                  ),
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
                   border: Border.all(color: theme.colorScheme.outlineVariant),
                 ),

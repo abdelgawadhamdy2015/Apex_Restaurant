@@ -10,7 +10,7 @@ import '../../bloc/cart_state.dart';
 import '../widgets/dashed_add_address_button.dart';
 import '../../../../home/presentation/bloc/home_bloc.dart';
 import '../../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Tablet "Add / Edit Customer" modal dialog.
@@ -322,7 +322,7 @@ class _AddCustomerDialogState extends State<AddCustomerDialog> {
                             padding: EdgeInsets.all(spacing.md),
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surfaceContainerHighest
-                                  .withOpacity(0.35),
+                                  .withValues(alpha: 0.35),
                               borderRadius: BorderRadius.circular(
                                 spacing.radiusLg,
                               ),
@@ -394,7 +394,9 @@ class _Header extends StatelessWidget {
         vertical: spacing.md,
       ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.25),
+        color: theme.colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.25,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -467,7 +469,7 @@ class _Footer extends StatelessWidget {
               lang.cancel,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onPrimary,
+                color: AppColors.white,
               ),
             ),
           ),

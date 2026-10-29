@@ -16,7 +16,7 @@ import '../widgets/orders_search_filter_card.dart';
 import '../widgets/orders_segmented_tab.dart';
 import '../widgets/previous_order_card.dart';
 import '../../../../generated/l10n.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -138,7 +138,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     SizedBox(height: spacing.md),
                     // Previous Orders List
                     ...state.previousOrders.map(
-                      (order) => PreviousOrderCard(order: order, l10n: lang),
+                      (order) => PreviousOrderCard(order: order, lang: lang),
                     ),
                     if (state.isLoadingMorePrevious)
                       Padding(
