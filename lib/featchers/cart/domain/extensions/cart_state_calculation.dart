@@ -35,6 +35,8 @@ extension CartStateCalculation on CartState {
     final input = InvoiceCalculationInput(
       discountOnTotal: invoiceDiscount.value,
       discountType: invoiceDiscount.type,
+      exposeInvoiceDiscountPerItem: !isReturn,
+
       deliveryCost: isDeliveryOrder
           ? settingsModel?.posRestaurant?.deliveryCost ?? 0.0
           : 0.0,

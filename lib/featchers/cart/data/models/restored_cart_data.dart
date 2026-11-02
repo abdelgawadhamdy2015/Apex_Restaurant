@@ -8,7 +8,7 @@ import 'invoice_request.dart';
 import 'pos_client_model.dart';
 import 'waiter_model.dart';
 import '../../../pos/data/models/delivery_company.dart';
-import '../../../pos/domain/entities/menu_item.dart';
+import '../../../pos/domain/entities/order_item.dart';
 import '../../../tables/domain/entities/table_entity.dart';
 
 class RestoredCartData {

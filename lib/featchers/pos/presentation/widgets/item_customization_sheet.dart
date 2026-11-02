@@ -7,7 +7,7 @@ import '../../../../core/helpers/item_discount_handler.dart';
 import '../../../../generated/l10n.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
-import '../../domain/entities/menu_item.dart';
+import '../../domain/entities/order_item.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_state.dart';
 import 'add_to_cart_bar.dart';

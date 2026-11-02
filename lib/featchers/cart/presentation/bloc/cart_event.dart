@@ -12,7 +12,7 @@ import '../../data/models/waiter_model.dart';
 import '../../../pos/data/models/category_model.dart';
 import '../../../pos/data/models/delivery_company.dart';
 import '../../../pos/data/models/restaurant_item.dart';
-import '../../../pos/domain/entities/menu_item.dart';
+import '../../../pos/domain/entities/order_item.dart';
 import '../../../tables/data/models/get_floor_request.dart';
 import '../../../tables/data/models/get_table_request.dart';
 import '../../../tables/domain/entities/table_entity.dart';

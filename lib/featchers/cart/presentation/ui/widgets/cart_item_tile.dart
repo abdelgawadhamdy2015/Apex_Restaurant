@@ -6,7 +6,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import '../../../../../core/helpers/extensions.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
-import '../../../../pos/domain/entities/menu_item.dart';
+import '../../../../pos/domain/entities/order_item.dart';
 import '../../../../pos/presentation/bloc/pos_bloc.dart';
 import '../../../../pos/presentation/widgets/item_customization_sheet.dart';
 import '../../../../../generated/l10n.dart';

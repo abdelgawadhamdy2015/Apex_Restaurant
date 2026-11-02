@@ -107,7 +107,7 @@ extension CartStateDiscounts on CartState {
       !hasSizeDiscount && items.any((i) => i.discount > 0);
 
   bool get isManualInvoiceDiscountApplied =>
-      mode.allowsInvoiceDiscount &&
+      (mode.allowsInvoiceDiscount || isReturn) &&
       selectedDiscountType == DiscountTypeEnum.direct &&
       (restaurantPosDiscountRequest?.value ?? 0) > 0;
 
