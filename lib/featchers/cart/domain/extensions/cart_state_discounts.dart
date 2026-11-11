@@ -21,7 +21,7 @@ const ResolvedItemDiscount _noItemDiscount = (
 extension CartStateDiscounts on CartState {
   int get currentPosTypeId => selectedOrderType.apiValue;
 
-  bool get _manualDiscountSettingOn =>
+  bool get manualDiscountSettingOn =>
       settingsModel?.posRestaurant?.activeDiscount ?? false;
 
   // ---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ extension CartStateDiscounts on CartState {
       mode.allowsManualDiscountEditing &&
       !dynamicDiscountIsActive &&
       !isCustomerDiscountApplied &&
-      _manualDiscountSettingOn &&
+      manualDiscountSettingOn &&
       !isManualItemDiscountApplied;
 
   bool get isItemManualDiscountEnabled =>
@@ -123,7 +123,7 @@ extension CartStateDiscounts on CartState {
       !dynamicDiscountIsActive &&
       !isCustomerDiscountApplied &&
       !hasSizeDiscount &&
-      _manualDiscountSettingOn &&
+      manualDiscountSettingOn &&
       !isManualInvoiceDiscountApplied;
 
   // ---------------------------------------------------------------------------

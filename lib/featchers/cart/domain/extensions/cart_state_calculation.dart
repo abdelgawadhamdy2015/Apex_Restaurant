@@ -90,7 +90,8 @@ extension CartStateCalculation on CartState {
     final voucher = voucherData;
     if (!mode.allowsVoucher ||
         selectedDiscountType != DiscountTypeEnum.coupon ||
-        voucher == null) {
+        voucher == null ||
+        manualDiscountSettingOn) {
       return null;
     }
     return VoucherInput(

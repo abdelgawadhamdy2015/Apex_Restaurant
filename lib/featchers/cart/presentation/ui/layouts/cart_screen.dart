@@ -223,11 +223,12 @@ class _CartContent extends StatelessWidget {
                           ),
 
                           SizedBox(height: spacing.md),
-                          DiscountSection(
-                            selectedPerson: state.selectedPerson,
-                            dynamicIsActive: state.dynamicDiscountIsActive,
-                            dynamicDiscountModel: state.activeDiscountModel,
-                          ),
+                          if (state.manualDiscountSettingOn)
+                            DiscountSection(
+                              selectedPerson: state.selectedPerson,
+                              dynamicIsActive: state.dynamicDiscountIsActive,
+                              dynamicDiscountModel: state.activeDiscountModel,
+                            ),
 
                           SizedBox(height: spacing.xxs),
                           const OrderSummaryCard(),
