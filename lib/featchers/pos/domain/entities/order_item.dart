@@ -11,7 +11,7 @@ class OrderItem extends Equatable {
   final List<AdditiveModel> addons;
   final double discount;
   final bool isPercentageDiscount;
-  final double? availableQuantity; // new
+  final double? availableQuantity;
 
   final int? invoiceDetailsId;
 
@@ -28,52 +28,61 @@ class OrderItem extends Equatable {
     this.availableQuantity,
   });
 
-  /// Alias getter for selectedAddons
+  /// Alias getter for selectedAddons.
   List<AdditiveModel> get selectedAddons => addons;
 
-  /// Base price based on selected size or default item price
+  /// Base price based on selected size or default item price.
   double get unitBasePrice {
     if (selectedSize != null) {
       return selectedSize?.price ?? 0;
     }
+
     if (itemHasSizes) {
       return menuItem.sizes.first.price ?? 0;
     }
+
     return menuItem.defaultPrice;
   }
 
   bool get itemHasSizes => menuItem.sizes.isNotEmpty;
 
-  /// Total price of all selected additives/addons for this line item.
-  /// Independent of `quantity` — addons don't scale with how many
-  /// units of the item were ordered.
+  /// Quantity used for calculating the main item price.
+  /// In return invoices, use availableQuantity when applicable.
+  double get effectiveQuantity =>
+      (invoiceDetailsId != null && invoiceDetailsId! > 0)
+      ? availableQuantity ?? quantity.toDouble()
+      : quantity.toDouble();
+
+  /// Main item price scaled by quantity.
+  /// Addons are excluded.
+  double get basePriceTotal => unitBasePrice * effectiveQuantity;
+
+  /// Total price of all selected additives.
+  /// Addons are independent of the main item discount.
   double get addonsTotalPrice {
-    return addons.fold(0.0, (sum, addon) => sum + (addon.price));
+    return addons.fold(0.0, (sum, addon) => sum + addon.price);
   }
 
-  /// Base price scaled by quantity (addons are NOT included here).
-  double get basePriceTotal =>
-      unitBasePrice *
-      ((invoiceDetailsId != null && invoiceDetailsId! > 0)
-          ? availableQuantity ?? quantity
-          : quantity);
-
-  /// Full line total before discount: quantity-scaled base price + addons.
+  /// Full line total before discount: main item + addons.
   double get totalPriceBeforeDiscount => basePriceTotal + addonsTotalPrice;
 
-  /// Discount amount applied on the full line total (not per unit).
+  /// Discount amount applied ONLY to the main item.
   double get discountAmount {
     if (discount <= 0) return 0.0;
+
     if (isPercentageDiscount) {
-      return (totalPriceBeforeDiscount * discount) / 100;
+      final percentage = discount.clamp(0.0, 100.0);
+      return basePriceTotal * percentage / 100.0;
     }
-    return discount;
+
+    // Fixed discount is applied to the main item line only.
+    return discount.clamp(0.0, basePriceTotal);
   }
 
-  /// Final total price for this order item line.
+  /// Final total: discounted main item + full addons price.
   double get totalPrice {
-    final net = totalPriceBeforeDiscount - discountAmount;
-    return net > 0 ? net : 0.0;
+    final mainItemAfterDiscount = basePriceTotal - discountAmount;
+    return mainItemAfterDiscount + addonsTotalPrice;
   }
 
   OrderItem copyWith({

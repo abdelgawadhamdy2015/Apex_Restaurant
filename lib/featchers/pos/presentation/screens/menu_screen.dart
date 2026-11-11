@@ -12,7 +12,7 @@ import '../../../cart/presentation/bloc/cart_state.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../domain/entities/get_items_request_model.dart';
-import '../../domain/entities/menu_item.dart';
+import '../../domain/entities/order_item.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
@@ -125,7 +125,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
           return CartFloatingSummaryBar(
             itemCount: totalItems,
-            totalAmount: cartState.subtotal,
+            totalAmount: cartState.grandTotal,
             onViewCartPressed: () => context.pushNamed(Routes.cartScreen),
           );
         },

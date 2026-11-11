@@ -11,7 +11,7 @@ import '../../../cart/presentation/bloc/cart_state.dart';
 import '../../../cart/presentation/ui/layouts/cart_tablet_screen.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
-import '../../domain/entities/menu_item.dart';
+import '../../domain/entities/order_item.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';

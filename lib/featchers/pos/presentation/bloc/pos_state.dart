@@ -9,7 +9,7 @@ import '../../data/models/delivery_company.dart';
 import '../../data/models/floor_model.dart';
 import '../../data/models/restaurant_item.dart';
 import '../../domain/entities/get_items_request_model.dart';
-import '../../domain/entities/menu_item.dart';
+import '../../domain/entities/order_item.dart';
 import '../../../tables/data/models/table_model.dart';
 import 'package:equatable/equatable.dart';
 

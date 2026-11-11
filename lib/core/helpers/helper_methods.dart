@@ -21,7 +21,7 @@ import '../../featchers/cart/presentation/bloc/cart_event.dart';
 import '../../featchers/cart/presentation/ui/widgets/customer_picker_sheet.dart';
 import '../../featchers/auth/presentation/pages/login_screen.dart';
 import '../../featchers/pos/data/models/category_model.dart';
-import '../../featchers/pos/domain/entities/menu_item.dart';
+import '../../featchers/pos/domain/entities/order_item.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

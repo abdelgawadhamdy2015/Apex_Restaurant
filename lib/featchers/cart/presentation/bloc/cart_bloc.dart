@@ -13,7 +13,7 @@ import '../../data/models/pos_client_model.dart';
 import '../../data/models/waiter_model.dart';
 import '../../domain/usescase/cart_usescase.dart';
 import '../../../pos/data/models/category_model.dart';
-import '../../../pos/domain/entities/menu_item.dart';
+import '../../../pos/domain/entities/order_item.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'cart_event.dart';

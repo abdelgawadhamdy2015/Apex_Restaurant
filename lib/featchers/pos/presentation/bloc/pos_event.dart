@@ -6,7 +6,7 @@ import 'package:equatable/equatable.dart';
 import '../../data/models/category_model.dart';
 import '../../domain/entities/get_food_additive_request.dart';
 import '../../domain/entities/get_items_request_model.dart';
-import '../../domain/entities/menu_item.dart';
+import '../../domain/entities/order_item.dart';
 
 abstract class PosEvent extends Equatable {
   const PosEvent();

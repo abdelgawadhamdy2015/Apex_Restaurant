@@ -6,7 +6,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet
 import '../../../../../core/helpers/extensions.dart';
 import '../../bloc/cart_bloc.dart';
 import '../../bloc/cart_event.dart';
-import '../../../../pos/domain/entities/menu_item.dart';
+import '../../../../pos/domain/entities/order_item.dart';
 import '../../../../pos/presentation/bloc/pos_bloc.dart';
 import '../../../../pos/presentation/widgets/item_customization_sheet.dart';
 import '../../../../../generated/l10n.dart';
@@ -254,12 +254,41 @@ class CartItemTile extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: spacing.xs),
-                            Text(
-                              '${item.totalPrice.toStringAsFixed(2)} '
-                              '${lang.currencySarShort}',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary,
+                            Text.rich(
+                              softWrap: true,
+                              TextSpan(
+                                children: [
+                                  if (item.selectedSize?.price != null &&
+                                      item.selectedSize!.price! >
+                                          item.totalPrice) ...[
+                                    TextSpan(
+                                      text:
+                                          '${item.selectedSize!.price!.toStringAsFixed(2)} ',
+                                      style: theme.textTheme.bodyMedium
+                                          ?.copyWith(
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                            decorationColor: theme
+                                                .colorScheme
+                                                .onPrimary
+                                                .withValues(alpha: .5),
+                                            color: theme.colorScheme.onPrimary
+                                                .withValues(alpha: .5),
+
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                    ),
+                                  ],
+                                  TextSpan(
+                                    text:
+                                        '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySarShort}',
+                                    style: theme.textTheme.titleMedium
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],

@@ -1,6 +1,4 @@
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/return_discount_allocator.dart';
 import 'package:material_ui/material_ui.dart';
-
 import '../../../cart/data/enums/cart_enum.dart';
 import '../../../cart/data/models/invoice_request.dart';
 import '../../../cart/data/models/pos_client_model.dart';
@@ -9,7 +7,7 @@ import '../../../cart/data/models/waiter_model.dart';
 import '../../../pos/data/models/category_model.dart';
 import '../../../pos/data/models/delivery_company.dart';
 import '../../../pos/data/models/restaurant_item.dart';
-import '../../../pos/domain/entities/menu_item.dart';
+import '../../../pos/domain/entities/order_item.dart';
 import '../../../tables/domain/entities/table_entity.dart';
 import '../../data/model/restored_invoice_model.dart';
 
@@ -19,7 +17,6 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
   RestoredCartData toRestoredCartData(BuildContext context, {bool? isReturn}) {
     final rawItems = items ?? [];
     final inv = invoice;
-    final bool returning = isReturn == true;
 
     // 1. ORDER TYPE
     CartOrderType orderType = CartOrderType.TAKEAWAY;
@@ -95,12 +92,16 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     // On return invoices the invoice-level discount is NOT restored here:
     // it is split across the items (step 4) so returning an item returns only
     // its own share of the discount.
+    // 3. INVOICE DISCOUNT
     RestaurantPosDiscountRequest? restaurantPosDiscountRequest;
-    if (!returning && inv?.invoiceDiscount != null) {
+
+    if (inv?.invoiceDiscount != null) {
       final discount = inv!.invoiceDiscount!;
       final double val = discount.discountValue ?? 0.0;
+
       if (val > 0) {
         final bool isPerc = discount.discountNatural == 1;
+
         restaurantPosDiscountRequest = RestaurantPosDiscountRequest(
           type: isPerc ? 1 : 2,
           value: val,
@@ -129,9 +130,9 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
     }
 
     // RETURN ONLY: split the invoice discount over the items once, up front.
-    final returnDiscounts = returning
-        ? _allocateReturnDiscounts(mainItemsMap)
-        : const <String, ReturnLineDiscount>{};
+    // final returnDiscounts = returning
+    //     ? _allocateReturnDiscounts(mainItemsMap)
+    //     : const <String, ReturnLineDiscount>{};
 
     final List<OrderItem> orderItems = [];
 
@@ -177,10 +178,10 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
         ..._mapFlatAddons(flatAdditivesMap[transId], transId),
       ];
 
-      final discount = returning
-          ? _returnItemDiscount(returnDiscounts[transId.toString()])
-          : _normalItemDiscount(mainItem);
-
+      // final discount = returning
+      //     ? _returnItemDiscount(returnDiscounts[transId.toString()])
+      //     : _normalItemDiscount(mainItem);
+      final discount = _normalItemDiscount(mainItem);
       orderItems.add(
         OrderItem(
           transactionId: transId.toString(),
@@ -235,32 +236,30 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
   );
 
   /// Return invoices: ONE fixed amount for the SOLD quantity
-  /// (own discount + share of the invoice discount).
-  /// It is deliberately NOT scaled to the returned quantity here;
-  /// ReturnInvoiceMode.itemDiscountValue does that, so it happens only once.
-  _ItemDiscount _returnItemDiscount(ReturnLineDiscount? discount) =>
-      (value: (discount ?? ReturnLineDiscount.none).total, isPercentage: false);
 
-  Map<String, ReturnLineDiscount> _allocateReturnDiscounts(
-    Map<int, RestoredInvoiceItem> mainItems,
-  ) {
-    final invoiceDiscount = invoice?.invoiceDiscount;
+  // _ItemDiscount _returnItemDiscount(ReturnLineDiscount? discount) =>
+  //     (value: (discount ?? ReturnLineDiscount.none).total, isPercentage: false);
 
-    return const ReturnDiscountAllocator().allocate(
-      lines: [
-        for (final e in mainItems.entries)
-          ReturnDiscountLine(
-            key: e.key.toString(),
-            unitPrice: e.value.price ?? e.value.item?.price ?? 0.0,
-            soldQuantity: e.value.quantity ?? 0.0,
-            ownDiscountValue: e.value.itemDiscount?.discountValue ?? 0.0,
-            ownDiscountIsPercentage: e.value.itemDiscount?.discountNatural == 1,
-          ),
-      ],
-      invoiceDiscountValue: invoiceDiscount?.discountValue ?? 0.0,
-      invoiceDiscountIsPercentage: invoiceDiscount?.discountNatural == 1,
-    );
-  }
+  // Map<String, ReturnLineDiscount> _allocateReturnDiscounts(
+  //   Map<int, RestoredInvoiceItem> mainItems,
+  // ) {
+  //   final invoiceDiscount = invoice?.invoiceDiscount;
+
+  //   return const ReturnDiscountAllocator().allocate(
+  //     lines: [
+  //       for (final e in mainItems.entries)
+  //         ReturnDiscountLine(
+  //           key: e.key.toString(),
+  //           unitPrice: e.value.price ?? e.value.item?.price ?? 0.0,
+  //           soldQuantity: e.value.quantity ?? 0.0,
+  //           ownDiscountValue: e.value.itemDiscount?.discountValue ?? 0.0,
+  //           ownDiscountIsPercentage: e.value.itemDiscount?.discountNatural == 1,
+  //         ),
+  //     ],
+  //     invoiceDiscountValue: invoiceDiscount?.discountValue ?? 0.0,
+  //     invoiceDiscountIsPercentage: invoiceDiscount?.discountNatural == 1,
+  //   );
+  // }
 
   // ---------------------------------------------------------------------------
   // Addons

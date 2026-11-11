@@ -2,7 +2,7 @@ import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart'
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/menu_item.dart';
+import 'package:apex_restaurant/featchers/pos/domain/entities/order_item.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -187,25 +187,38 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
 
   double calculateTotalPrice({required List<AdditiveModel> additives}) {
     final basePrice = item.sizes.isNotEmpty
-        ? item.sizes[selectedSizeIndex].price ?? 0
+        ? item.sizes[selectedSizeIndex].price ?? 0.0
         : 0.0;
 
+    // Calculate addons separately. They must not receive item discounts.
     double addonsTotal = 0.0;
+
     addonQuantities.forEach((index, qty) {
       if (index < additives.length) {
         addonsTotal += additives[index].price * qty;
       }
     });
 
-    double itemTotal = (basePrice * quantity) + addonsTotal;
-    double discountVal = double.tryParse(discountController.text) ?? 0.0;
+    // Main item price only.
+    final mainItemTotal = basePrice * quantity;
+
+    final discountVal = double.tryParse(discountController.text) ?? 0.0;
+
+    // Apply discount exclusively to the main item.
+    double discountedMainItem;
 
     if (isPercentageDiscount) {
-      itemTotal = itemTotal * (1 - (discountVal / 100));
+      final percentage = discountVal.clamp(0.0, 100.0);
+      discountedMainItem = mainItemTotal * (1 - percentage / 100);
     } else {
-      itemTotal = (itemTotal - discountVal).clamp(0.0, double.infinity);
+      // Fixed discount is applied to the main item only.
+      discountedMainItem = (mainItemTotal - discountVal).clamp(
+        0.0,
+        double.infinity,
+      );
     }
 
-    return itemTotal;
+    // Add addons after calculating the item discount.
+    return discountedMainItem + addonsTotal;
   }
 }
