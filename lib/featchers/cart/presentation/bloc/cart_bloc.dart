@@ -126,7 +126,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       add(UpdateItemsPriceWithCompanyEvent());
     });
     on<AcknowledgeCartRestoredEvent>((event, emit) {
-      emit(state.copyWith(justRestored: false));
+      emit(
+        state.copyWith(
+          justRestored: false,
+          errorMessage: null,
+          successMessage: null,
+          clearMessage: true,
+        ),
+      );
     });
     on<ChangeDiscountTypeEvent>(
       (event, emit) =>
@@ -314,6 +321,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         //     .success, // Triggers state listeners without breaking UI flow
         isLoading: false,
         errorMessage: null,
+        successMessage: null,
+        clearMessage: true,
         isReturnInvoice: data.isReturnInvoice,
         priceIncludeVat: data.priceIncludeVat,
       ),
@@ -434,7 +443,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(
       state.copyWith(
         selectedPerson: event.person,
-        clearAddress: true,
+        selectedAddress:
+            (event.person == null || event.person!.personAddress!.isEmpty)
+            ? null
+            : event.person!.personAddress!.first,
         clearVoucherDiscountValue: state.selectedPerson != event.person,
       ),
     );
@@ -500,10 +512,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   void _onClearCartEvent(ClearCartEvent event, Emitter<CartState> emit) {
     _returnLimits.clear();
     _addonReturnLimits.clear();
+    log("Clearing cart, isReturnInvoice: ${state.isReturnInvoice}");
     emit(
       state.copyWith(
         items: [],
         isPreviousInvoice: false,
+        clearMessage: true,
         errorMessage: null,
         successMessage: null,
         selectedAddress: null,

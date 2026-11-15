@@ -568,6 +568,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "paymentMethodOther": MessageLookupByLibrary.simpleMessage("... أخرى"),
     "paymentMethodVisa": MessageLookupByLibrary.simpleMessage("فيزا"),
     "paymentMethodVoucher": MessageLookupByLibrary.simpleMessage("قسيمة شراء"),
+    "paymentSuccess": MessageLookupByLibrary.simpleMessage(
+      "تمت عملية الدفع بنجاح",
+    ),
     "paymentSuccessful": MessageLookupByLibrary.simpleMessage("تم الدفع بنجاح"),
     "pending": MessageLookupByLibrary.simpleMessage("في الانتظار"),
     "percentageDiscount": MessageLookupByLibrary.simpleMessage(

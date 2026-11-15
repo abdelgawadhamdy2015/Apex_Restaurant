@@ -62,14 +62,8 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
     return BlocConsumer<MoreActionsBloc, MoreActionsState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (BuildContext context, MoreActionsState state) {
-        if (state.status == MoreActionsStatus.success) {
-          if (state.returnResponseData != null) {
-            HelperMethods.showSnackBar(
-              context: context,
-              message: lang.invoiceReturnedSuccessfully,
-              isError: false,
-            );
-          }
+        if (state.status == MoreActionsStatus.successFullReturn ||
+            state.status == MoreActionsStatus.successPartialReturn) {
           if (state.returnedInvoice != null) {
             final restoresd = state.returnedInvoice?.toRestoredCartData(
               context,
@@ -100,7 +94,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
                 isError: false,
               );
             }
-          } else if (state.invoiceReturnResponse != null) {
+          } else if (state.returnResponseData != null) {
             HelperMethods.showSnackBar(
               context: context,
               message: lang.invoiceReturnedSuccessfully,
@@ -139,8 +133,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
         title: lang.returns,
         showBackButton: true,
         onBackPressed: () {
-          //context.read<CartBloc>().add(ClearCartEvent());
-          context.pop();
+          context.pushNamed(Routes.posScreen);
         },
       ),
       body: SafeArea(
@@ -159,7 +152,7 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
   }
 
   // ---------------------------------------------------------------------
-  // TABLET / DESKTOP LAYOUT (two panels, matches reference design)
+  // TABLET LAYOUT
   // ---------------------------------------------------------------------
   Widget _buildTabletLayout(BuildContext context, MoreActionsState state) {
     final spacing = context.spacing;
@@ -168,11 +161,9 @@ class _ReturnsScreenState extends State<ReturnsScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Left narrow panel: search filters.
           SizedBox(width: 340, child: _buildSearchCard(context)),
           SizedBox(width: spacing.md),
 
-          //Right  wide panel: invoices list.
           Expanded(child: _buildInvoicesPanel(context, state)),
         ],
       ),
@@ -379,7 +370,10 @@ class _InvoiceCard extends StatelessWidget {
     final appExtraTheme = context.appExtraTheme;
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
-
+    final state = context.read<MoreActionsBloc>().state;
+    final disabled =
+        state.status == MoreActionsStatus.loadingFullReturn ||
+        state.status == MoreActionsStatus.loadingPartialReturn;
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.onSurface,
@@ -466,122 +460,112 @@ class _InvoiceCard extends StatelessWidget {
                   ),
                   SizedBox(height: spacing.sm),
 
-                  // ...items.map(
-                  //   (item) => Padding(
-                  //     padding: EdgeInsets.only(bottom: spacing.xs),
-                  //     child: Column(
-                  //       children: [
-                  //         Row(
-                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //           children: [
-                  //             Row(
-                  //               children: [
-                  //                 Text(
-                  //                   item.name,
-                  //                   style: theme.textTheme.bodyMedium?.copyWith(
-                  //                     fontWeight: FontWeight.w600,
-                  //                   ),
-                  //                 ),
-                  //                 SizedBox(width: spacing.xs),
-                  //                 Text(
-                  //                   item.quantity,
-                  //                   style: theme.textTheme.bodyMedium?.copyWith(
-                  //                     fontWeight: FontWeight.bold,
-                  //                   ),
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //             Text(
-                  //               '${item.price} ${lang.currencySarShortShort}',
-                  //               style: theme.textTheme.bodyMedium?.copyWith(
-                  //                 fontWeight: FontWeight.bold,
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //         SizedBox(height: spacing.xs),
-                  //         Divider(
-                  //           height: 1,
-                  //           color: colorScheme.outlineVariant.withOpacity(0.5),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                   SizedBox(height: spacing.md),
 
                   Row(
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.read<MoreActionsBloc>().add(
-                              SaveRestaurantPosReturnInvoiceEvent(
-                                request: ReturnRequest(
-                                  originalInvoiceId: invoiceId,
-                                  isTotalReturn: true,
+                      state.status == MoreActionsStatus.loadingFullReturn
+                          ? Center(child: CircularProgressIndicator())
+                          : Expanded(
+                              child: ElevatedButton(
+                                onPressed: disabled
+                                    ? null
+                                    : () {
+                                        context.read<MoreActionsBloc>().add(
+                                          SaveRestaurantPosReturnInvoiceEvent(
+                                            request: ReturnRequest(
+                                              originalInvoiceId: invoiceId,
+                                              isTotalReturn: true,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: disabled
+                                      ? colorScheme.onPrimary.withOpacity(0.5)
+                                      : appExtraTheme.greenBackground
+                                            .withOpacity(0.1),
+                                  foregroundColor: disabled
+                                      ? colorScheme.onPrimary.withOpacity(0.5)
+                                      : appExtraTheme.greenBackground,
+                                  elevation: 0,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: spacing.sm,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      spacing.radiusSm,
+                                    ),
+                                    side: BorderSide(
+                                      color: disabled
+                                          ? colorScheme.onPrimary.withOpacity(
+                                              0.5,
+                                            )
+                                          : appExtraTheme.greenBackground
+                                                .withOpacity(0.4),
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  lang.fullReturn,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: appExtraTheme.greenBackground
-                                .withOpacity(0.1),
-                            foregroundColor: appExtraTheme.greenBackground,
-                            elevation: 0,
-                            padding: EdgeInsets.symmetric(vertical: spacing.sm),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                spacing.radiusSm,
-                              ),
-                              side: BorderSide(
-                                color: appExtraTheme.greenBackground
-                                    .withOpacity(0.4),
-                              ),
                             ),
-                          ),
-                          child: Text(
-                            lang.fullReturn,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
                       SizedBox(width: spacing.sm),
 
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.read<MoreActionsBloc>().add(
-                              FetchInvoiceByIdEvent(invoiceId: invoiceId),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colorScheme.primary.withOpacity(
-                              0.1,
-                            ),
-                            foregroundColor: colorScheme.primary,
-                            elevation: 0,
-                            padding: EdgeInsets.symmetric(vertical: spacing.sm),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                spacing.radiusSm,
+                      state.status == MoreActionsStatus.loadingPartialReturn
+                          ? Center(child: CircularProgressIndicator())
+                          : Expanded(
+                              child: ElevatedButton(
+                                onPressed: disabled
+                                    ? null
+                                    : () {
+                                        context.read<MoreActionsBloc>().add(
+                                          FetchInvoiceByIdEvent(
+                                            invoiceId: invoiceId,
+                                          ),
+                                        );
+                                      },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: disabled
+                                      ? colorScheme.onPrimary.withOpacity(0.5)
+                                      : colorScheme.primary.withOpacity(0.1),
+                                  foregroundColor: disabled
+                                      ? colorScheme.onPrimary.withOpacity(0.5)
+                                      : colorScheme.primary,
+                                  elevation: 0,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: spacing.sm,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      spacing.radiusSm,
+                                    ),
+                                    side: BorderSide(
+                                      color: disabled
+                                          ? colorScheme.onPrimary.withOpacity(
+                                              0.5,
+                                            )
+                                          : colorScheme.primary.withOpacity(
+                                              0.3,
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                                child: Text(
+                                  lang.partialReturn,
+                                  style: theme.textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: disabled
+                                        ? colorScheme.onPrimary.withOpacity(0.5)
+                                        : colorScheme.primary,
+                                  ),
+                                ),
                               ),
-                              side: BorderSide(
-                                color: colorScheme.primary.withOpacity(0.3),
-                              ),
                             ),
-                          ),
-                          child: Text(
-                            lang.partialReturn,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ],

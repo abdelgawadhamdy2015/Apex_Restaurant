@@ -60,6 +60,8 @@ class PaymentState extends Equatable {
     ReturnResponseData? partialReturnResponseData,
     PrintResponseData? printResponseData,
     bool? isFullReturn,
+    bool clearMessage = false,
+    bool clearSuccessModel = false,
   }) {
     return PaymentState(
       status: status ?? this.status,
@@ -68,11 +70,17 @@ class PaymentState extends Equatable {
       selectedMethod: selectedMethod ?? this.selectedMethod,
       referenceNumber: referenceNumber ?? this.referenceNumber,
       splitAmounts: splitAmounts ?? this.splitAmounts,
-      successModel: successModel ?? this.successModel,
+      successModel: clearSuccessModel
+          ? null
+          : (successModel ?? this.successModel),
       successResponseModel: successResponseModel ?? this.successResponseModel,
-      errorMessage: errorMessage ?? this.errorMessage,
       paymentMethods: paymentMethods ?? this.paymentMethods,
       printKitchenResponse: printKitchenResponse ?? this.printKitchenResponse,
+      partialReturnResponseData:
+          partialReturnResponseData ?? this.partialReturnResponseData,
+      printResponseData: printResponseData ?? this.printResponseData,
+      isFullReturn: isFullReturn ?? this.isFullReturn,
+      errorMessage: clearMessage ? null : (errorMessage ?? this.errorMessage),
     );
   }
 
@@ -89,5 +97,8 @@ class PaymentState extends Equatable {
     paymentMethods,
     successResponseModel,
     printKitchenResponse,
+    partialReturnResponseData,
+    printResponseData,
+    isFullReturn,
   ];
 }

@@ -56,18 +56,23 @@ class _PosPageState extends State<PosPage> {
     final size = MediaQuery.sizeOf(context);
     final isMobile = size.width < 600;
 
-    return BlocListener<PosBloc, PosState>(
-      listenWhen: (previous, current) => previous.settings != current.settings,
-      listener: (context, state) {
-        if (state.settings != null) {
-          context.read<CartBloc>().add(UpdateSettingsEvent(state.settings));
-        }
-      },
-      child: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: isMobile
-            ? PosMenuScreen(changeLanguage: widget.changeLanguage)
-            : PosTabletMenuScreen(changeLanguage: widget.changeLanguage),
+    return PopScope(
+      canPop: false,
+
+      child: BlocListener<PosBloc, PosState>(
+        listenWhen: (previous, current) =>
+            previous.settings != current.settings,
+        listener: (context, state) {
+          if (state.settings != null) {
+            context.read<CartBloc>().add(UpdateSettingsEvent(state.settings));
+          }
+        },
+        child: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: isMobile
+              ? PosMenuScreen(changeLanguage: widget.changeLanguage)
+              : PosTabletMenuScreen(changeLanguage: widget.changeLanguage),
+        ),
       ),
     );
   }

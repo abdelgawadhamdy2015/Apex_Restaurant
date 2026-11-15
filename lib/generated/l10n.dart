@@ -4311,6 +4311,16 @@ class S {
   String get englishLanguage {
     return Intl.message('English', name: 'englishLanguage', desc: '', args: []);
   }
+
+  /// `Payment Successful`
+  String get paymentSuccess {
+    return Intl.message(
+      'Payment Successful',
+      name: 'paymentSuccess',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

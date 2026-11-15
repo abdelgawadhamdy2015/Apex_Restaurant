@@ -543,5 +543,6 @@
     "elementSpacing": "التباعد بين العناصر",
     "restoreDefaultSettings": "استعادة الإعدادات الافتراضية",
     "arabicLanguage": "العربية",
-    "englishLanguage": "English"
+    "englishLanguage": "English",
+    "paymentSuccess": "تمت عملية الدفع بنجاح"
 }

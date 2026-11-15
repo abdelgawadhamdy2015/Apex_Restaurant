@@ -194,6 +194,7 @@ class CartState extends Equatable {
     bool clearAddress = false,
     bool clearInvoiceId = false,
     bool clearCart = false,
+    bool clearMessage = false,
     bool? isReturnInvoice,
     bool? priceIncludeVat,
   }) {
@@ -228,8 +229,10 @@ class CartState extends Equatable {
           : voucherData ?? this.voucherData,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      errorMessage: errorMessage,
-      successMessage: successMessage,
+      errorMessage: clearMessage ? null : errorMessage ?? this.errorMessage,
+      successMessage: clearMessage
+          ? null
+          : successMessage ?? this.successMessage,
       restaurantPosDiscountRequest: clearRestaurantPosDiscountRequest
           ? null
           : (restaurantPosDiscountRequest ?? this.restaurantPosDiscountRequest),

@@ -586,6 +586,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "paymentMethodOther": MessageLookupByLibrary.simpleMessage("... Other"),
     "paymentMethodVisa": MessageLookupByLibrary.simpleMessage("Visa"),
     "paymentMethodVoucher": MessageLookupByLibrary.simpleMessage("Voucher"),
+    "paymentSuccess": MessageLookupByLibrary.simpleMessage(
+      "Payment Successful",
+    ),
     "paymentSuccessful": MessageLookupByLibrary.simpleMessage(
       "Payment Successful",
     ),

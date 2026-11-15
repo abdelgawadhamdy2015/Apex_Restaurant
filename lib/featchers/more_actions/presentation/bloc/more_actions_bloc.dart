@@ -30,7 +30,12 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
     required this.getInvoiceAccreditingDataUseCase,
     required this.accreditePOSInvoicesUseCase,
     required this.saveRestaurantPosReturnInvoiceUseCase,
-  }) : super(const MoreActionsState()) {
+  }) : super(
+         const MoreActionsState(
+           status: MoreActionsStatus.initial,
+           invoices: [],
+         ),
+       ) {
     on<FetchAllInvoicesEvent>(_onFetchInvoices);
     on<FetchAllInvoicesAcreditDataEvent>(_onFetchInvoicesAcredit);
     on<FetchInvoiceByIdEvent>(_onFetchInvoiceById);
@@ -52,7 +57,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
     FetchInvoiceByIdEvent event,
     Emitter<MoreActionsState> emit,
   ) async {
-    emit(state.copyWith(status: MoreActionsStatus.loading));
+    emit(state.copyWith(status: MoreActionsStatus.loadingPartialReturn));
     try {
       final response = await getPosInvoiceDataByIdUseCase(
         event.invoiceId,
@@ -65,7 +70,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
             emit(
               state.copyWith(
                 returnedInvoice: invoice,
-                status: MoreActionsStatus.success,
+                status: MoreActionsStatus.successPartialReturn,
                 isFullReturn: false,
                 clearErrorMessage: true,
               ),
@@ -106,7 +111,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
     SaveRestaurantPosReturnInvoiceEvent event,
     Emitter<MoreActionsState> emit,
   ) async {
-    emit(state.copyWith(status: MoreActionsStatus.loading));
+    emit(state.copyWith(status: MoreActionsStatus.loadingFullReturn));
 
     try {
       final response = await saveRestaurantPosReturnInvoiceUseCase(
@@ -126,7 +131,7 @@ class MoreActionsBloc extends Bloc<MoreActionsEvent, MoreActionsState> {
                 invoices: invoices,
                 returnResponseData: data?.data,
                 printResponseData: data?.printingData ?? PrintResponseData(),
-                status: MoreActionsStatus.success,
+                status: MoreActionsStatus.successFullReturn,
                 isFullReturn: true,
                 clearErrorMessage: true,
               ),

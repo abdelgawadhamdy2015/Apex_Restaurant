@@ -161,6 +161,7 @@ class _PreviousOrderCardState extends State<PreviousOrderCard> {
               children: [
                 Text(
                   invoiceCode,
+                  textDirection: TextDirection.ltr,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
