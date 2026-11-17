@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/helpers/helper_methods.dart';
@@ -24,11 +26,10 @@ import '../widgets/header_info_card.dart';
 import '../widgets/order_summary_card.dart';
 import '../widgets/order_type_selector.dart';
 import '../widgets/takeaway_section.dart';
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key, this.args});
+
   final CartScreenArgs? args;
 
   @override
@@ -41,15 +42,17 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cartBloc = context.read<CartBloc>();
 
       if (widget.args?.isRestored == true) {
         cartBloc.add(const AcknowledgeCartRestoredEvent());
       }
-      cartBloc.add(LoadCartDataEvent());
 
+      cartBloc.add(LoadCartDataEvent());
       cartBloc.add(LoadDynamicDiscountsEvent());
+
       cartBloc.add(
         LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
@@ -59,19 +62,24 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     final clearCrt = context.select(
       (CartBloc c) =>
           (c.state.isPreviousInvoice && !c.state.canEdit) || c.state.isReturn,
     );
+
     return BlocConsumer<CartBloc, CartState>(
       listener: _onCartStateChanged,
       builder: (context, state) {
         log(
-          'CartScreen build: canEdit=${state.canEdit}, isPreviousInvoice=${state.isPreviousInvoice}',
+          'CartScreen build: canEdit=${state.canEdit}, '
+          'isPreviousInvoice=${state.isPreviousInvoice}',
         );
+
         if (state.status == CartStatus.loading) {
           return const Center(child: CircularProgressIndicator());
         }
+
         return SafeArea(
           top: false,
           child: PopScope(
@@ -85,12 +93,14 @@ class _CartScreenState extends State<CartScreen> {
             },
             child: Scaffold(
               appBar: CartTopBar(
-                onClearAll: () =>
-                    context.read<CartBloc>().add(ClearCartEvent()),
+                onClearAll: () {
+                  context.read<CartBloc>().add(ClearCartEvent());
+                },
                 onBack: () {
                   if (clearCrt) {
                     context.read<CartBloc>().add(ClearCartEvent());
                   }
+
                   context.pop();
                 },
               ),
@@ -111,6 +121,7 @@ class _CartScreenState extends State<CartScreen> {
         isError: true,
       );
     }
+
     if (state.successMessage != null) {
       HelperMethods.showSnackBar(
         context: context,
@@ -132,6 +143,7 @@ class _CartContent extends StatelessWidget {
     switch (state.selectedOrderType) {
       case CartOrderType.TAKEAWAY:
         return const SizedBox.shrink();
+
       case CartOrderType.DELIVERY:
         return DeliveryAgentSelector(deliveryMens: state.deliveryAgents);
 
@@ -148,6 +160,7 @@ class _CartContent extends StatelessWidget {
                 : '',
           ),
         );
+
       case CartOrderType.DELIVERY_COMPANY:
         return DeliveryCompanySelector();
     }
@@ -156,91 +169,140 @@ class _CartContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 700;
         final contentWidth = isWide ? 700.0 : constraints.maxWidth;
+
         final showAddressCard =
             state.selectedOrderType == CartOrderType.DELIVERY;
+
         final selectedPerson =
             state.selectedPerson ??
             (state.persons.isNotEmpty ? state.persons.first : null);
 
+        final saveButtonDisabled =
+            state.status == CartStatus.saveDineInInvoiceSuccess ||
+            state.items.isEmpty;
+
+        final showBottomActionBar = state.canEditInvoice || state.isReturn;
+
         return Column(
           children: [
+            // Cart content area with floating save button.
             Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.all(spacing.md),
-                child: IgnorePointer(
-                  ignoring: !canEdit,
-                  child: Center(
-                    child: SizedBox(
-                      width: contentWidth,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const HeaderInfoCard(),
-                          SizedBox(height: spacing.sm),
-                          const OrderTypeSelector(),
-                          SizedBox(height: spacing.sm),
-                          CustomerInfoCard(
-                            persons: state.persons,
-                            selectedPerson: selectedPerson,
-                          ),
-                          if (showAddressCard) ...[
-                            SizedBox(height: spacing.sm),
-                            AddressCard(
-                              selectedAddress: state.selectedAddress,
-                              addresses:
-                                  state.selectedPerson?.personAddress ??
-                                  const [],
-                            ),
-                          ],
-                          SizedBox(height: spacing.sm),
-                          _orderTypeSpecificSection(state),
-                          SizedBox(height: spacing.md),
-                          BlocBuilder<CartBloc, CartState>(
-                            builder: (context, state) {
-                              if (state.status == CartStatus.itemsUpdateing) {
-                                return Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return Column(
-                                children: [
-                                  for (
-                                    int index = 0;
-                                    index < state.items.length;
-                                    index++
-                                  )
-                                    CartItemTile(
-                                      index: index,
-                                      item: state.items[index],
-                                    ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(spacing.md),
+                      child: IgnorePointer(
+                        ignoring: !canEdit,
+                        child: Center(
+                          child: SizedBox(
+                            width: contentWidth,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const HeaderInfoCard(),
+
+                                SizedBox(height: spacing.sm),
+
+                                const OrderTypeSelector(),
+
+                                SizedBox(height: spacing.sm),
+
+                                CustomerInfoCard(
+                                  persons: state.persons,
+                                  selectedPerson: selectedPerson,
+                                ),
+
+                                if (showAddressCard) ...[
+                                  SizedBox(height: spacing.sm),
+                                  AddressCard(
+                                    selectedAddress: state.selectedAddress,
+                                    addresses:
+                                        state.selectedPerson?.personAddress ??
+                                        const [],
+                                  ),
                                 ],
-                              );
-                            },
-                          ),
 
-                          SizedBox(height: spacing.md),
-                          if (state.manualDiscountSettingOn)
-                            DiscountSection(
-                              selectedPerson: state.selectedPerson,
-                              dynamicIsActive: state.dynamicDiscountIsActive,
-                              dynamicDiscountModel: state.activeDiscountModel,
+                                SizedBox(height: spacing.sm),
+
+                                _orderTypeSpecificSection(state),
+
+                                SizedBox(height: spacing.md),
+
+                                BlocBuilder<CartBloc, CartState>(
+                                  builder: (context, state) {
+                                    if (state.status ==
+                                        CartStatus.itemsUpdateing) {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+
+                                    return Column(
+                                      children: [
+                                        for (
+                                          int index = 0;
+                                          index < state.items.length;
+                                          index++
+                                        )
+                                          CartItemTile(
+                                            index: index,
+                                            item: state.items[index],
+                                          ),
+                                      ],
+                                    );
+                                  },
+                                ),
+
+                                SizedBox(height: spacing.md),
+
+                                if (state.manualDiscountSettingOn)
+                                  DiscountSection(
+                                    selectedPerson: state.selectedPerson,
+                                    dynamicIsActive:
+                                        state.dynamicDiscountIsActive,
+                                    dynamicDiscountModel:
+                                        state.activeDiscountModel,
+                                  ),
+
+                                SizedBox(height: spacing.xxs),
+
+                                const OrderSummaryCard(),
+                              ],
                             ),
-
-                          SizedBox(height: spacing.xxs),
-                          const OrderSummaryCard(),
-                        ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+
+                  // Floating save button stays above BottomActionBar.
+                  if (!saveButtonDisabled)
+                    Positioned(
+                      left: spacing.md,
+                      bottom: spacing.md,
+                      child: FloatingActionButton(
+                        onPressed: () {
+                          context.read<CartBloc>().add(
+                            SaveTableOrderEvent(
+                              request: state.toSaveRestaurantPosInvoiceRequest,
+                            ),
+                          );
+                        },
+                        child: const Icon(Icons.save, color: Colors.white),
+                      ),
+                    ),
+                ],
               ),
             ),
 
-            if (state.canEditInvoice || state.isReturn) BottomActionBar(),
+            // Fixed bottom action bar, outside the Stack.
+            if (showBottomActionBar) BottomActionBar(),
           ],
         );
       },

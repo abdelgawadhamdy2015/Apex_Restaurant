@@ -568,5 +568,7 @@
     "restoreDefaultSettings": "Restore Default Settings",
     "arabicLanguage": "Arabic",
     "englishLanguage": "English",
-    "paymentSuccess": "Payment Successful"
+    "paymentSuccess": "Payment Successful",
+    "reservationPeriodError": "Please enter a valid reservation period.",
+    "guestsCountError": "Please enter a valid number of guests."
 }

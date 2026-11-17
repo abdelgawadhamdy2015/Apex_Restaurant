@@ -367,7 +367,7 @@ Future<void> setupGetIt() async {
           getIt<SavePendingRestaurantPosInvoiceUseCase>(),
       saveBookingTableRestaurantPosInvoiceUseCase:
           getIt<SaveBookingTableRestaurantPosInvoiceUseCase>(),
-
+      getInvoiceReportUseCase: getIt<GetInvoiceReportUseCase>(),
       getAllPersonsUseCase: getIt<GetAllPosClientsUseCase>(),
       addPosClientUseCase: getIt<AddPosClientUseCase>(),
       updatePosClientUseCase: getIt<UpdatePosClientUseCase>(),

@@ -45,9 +45,6 @@ class _PosPageState extends State<PosPage> {
   Future<void> _onRefresh() async {
     _loadData();
     context.read<CartBloc>().add(ClearCartEvent());
-    // Small delay so RefreshIndicator remains visible.
-    // Better to replace this with waiting for Bloc success state
-    // if you have a loading/status field.
     await Future.delayed(const Duration(milliseconds: 600));
   }
 

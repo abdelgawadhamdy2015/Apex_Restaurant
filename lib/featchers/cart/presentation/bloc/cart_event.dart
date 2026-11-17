@@ -1,4 +1,5 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 
 import '../../../../core/shared/entity/base_request.dart';
 import '../../../../core/shared/model/settings_model.dart';
@@ -272,6 +273,11 @@ class SaveTableOrderEvent extends CartEvent {
   const SaveTableOrderEvent({required this.request});
   @override
   List<Object?> get props => [request];
+}
+
+class GetInvoiceReportEvent extends CartEvent {
+  final InvoiceReportRequest request;
+  const GetInvoiceReportEvent({required this.request});
 }
 
 class ClearCartEvent extends CartEvent {}

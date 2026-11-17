@@ -46,8 +46,6 @@ class _ReservationsTabViewState extends State<ReservationsTabView> {
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
-    // Narrow selectors so this widget only rebuilds when one of these
-    // specific fields changes, instead of on every TablesBloc emission.
     final floors = context.select((TablesBloc b) => b.state.floors);
     final reservations = context.select((TablesBloc b) => b.state.reservations);
     final isLoading = context.select(
@@ -61,8 +59,6 @@ class _ReservationsTabViewState extends State<ReservationsTabView> {
           children: [
             Expanded(
               child: AddReservationButton(
-                // Add mode: no reservation passed. The sheet loads
-                // tables and clients itself from the blocs.
                 onPressed: () => AddReservationBottomSheet.show(context),
               ),
             ),

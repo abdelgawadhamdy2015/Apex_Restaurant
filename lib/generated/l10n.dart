@@ -4321,6 +4321,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Please enter a valid reservation period.`
+  String get reservationPeriodError {
+    return Intl.message(
+      'Please enter a valid reservation period.',
+      name: 'reservationPeriodError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid number of guests.`
+  String get guestsCountError {
+    return Intl.message(
+      'Please enter a valid number of guests.',
+      name: 'guestsCountError',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

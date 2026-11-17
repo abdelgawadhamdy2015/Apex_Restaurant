@@ -5,7 +5,6 @@ import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/bloc/orders_state.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../data/model/previous_invoice_model.dart';
@@ -35,59 +34,30 @@ class _PreviousOrderCardState extends State<PreviousOrderCard> {
   S get lang => widget.lang;
 
   void _showPrintDialog(BuildContext parentContext) {
-    final theme = Theme.of(context);
-    final spacing = parentContext.spacing;
     final orderState = parentContext.read<OrdersBloc>().state;
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          backgroundColor: theme.colorScheme.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(spacing.radiusLg),
-          ),
-          title: Text(
-            lang.print,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.order.posType == CartOrderType.DINE_IN.apiValue)
-                _PrintOptionButton(
-                  icon: Icons.restaurant_outlined,
-                  title: lang.btnPrintKitchen,
-                  color: theme.colorScheme.primary,
-                  onPressed: () {
-                    _waitingForReport = true; // <-- add this
 
-                    context.read<OrdersBloc>().add(
-                      PrintKitchenReportEvent(
-                        request: PrintKitchenRequest(
-                          invoiceId: order.invoiceId ?? 0,
-                        ),
-                      ),
-                    );
-                    dialogContext.pop();
-                  },
+    HelperMethods.showPrintDialog(
+      context: parentContext,
+      title: lang.print,
+      kitchenTitle: lang.btnPrintKitchen,
+      receiptTitle: lang.btnPrintReceipt,
+      receiptFileName: 'Receipt_${order.invoiceCode}.pdf',
+      onPrintKitchen: widget.order.posType == CartOrderType.DINE_IN.apiValue
+          ? () {
+              _waitingForReport = true;
+
+              parentContext.read<OrdersBloc>().add(
+                PrintKitchenReportEvent(
+                  request: PrintKitchenRequest(invoiceId: order.invoiceId ?? 0),
                 ),
-              SizedBox(height: spacing.sm),
-              _PrintOptionButton(
-                icon: Icons.receipt_long_outlined,
-                title: lang.btnPrintReceipt,
-                color: theme.colorScheme.secondary,
-                onPressed: () {
-                  HelperMethods.printDirectPdf(
-                    context,
-                    orderState.invoiceReport?.fileUrl,
-                    "Receipt_${order.invoiceCode}.pdf",
-                  );
-                },
-              ),
-            ],
-          ),
+              );
+            }
+          : null,
+      onPrintReceipt: () {
+        HelperMethods.printDirectPdf(
+          parentContext,
+          orderState.invoiceReport?.fileUrl,
+          'Receipt_${order.invoiceCode}.pdf',
         );
       },
     );
@@ -310,50 +280,6 @@ class _PreviousOrderCardState extends State<PreviousOrderCard> {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _PrintOptionButton extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final Color color;
-  final VoidCallback onPressed;
-
-  const _PrintOptionButton({
-    required this.icon,
-    required this.title,
-    required this.color,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-    final iconSizes = context.iconSizes;
-
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, color: color, size: iconSizes.md),
-        label: Text(
-          title,
-          style: theme.textTheme.titleSmall?.copyWith(
-            color: color,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: spacing.md),
-          backgroundColor: color.withValues(alpha: 0.08),
-          side: BorderSide(color: color.withValues(alpha: 0.25)),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(spacing.radiusMd),
-          ),
         ),
       ),
     );

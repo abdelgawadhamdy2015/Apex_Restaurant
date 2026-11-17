@@ -3,6 +3,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/core/shared/widgets/print_option_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
 
@@ -316,6 +318,65 @@ class HelperMethods {
       default:
         return Colors.grey;
     }
+  }
+
+  static Future<void> showPrintDialog({
+    required BuildContext context,
+    required String title,
+    required String kitchenTitle,
+    required String receiptTitle,
+    required String receiptFileName,
+    required VoidCallback onPrintReceipt,
+    VoidCallback? onPrintKitchen,
+    IconData kitchenIcon = Icons.restaurant_outlined,
+    IconData receiptIcon = Icons.receipt_long_outlined,
+  }) async {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(spacing.radiusLg),
+          ),
+          title: Text(
+            title,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (onPrintKitchen != null) ...[
+                PrintOptionButton(
+                  icon: kitchenIcon,
+                  title: kitchenTitle,
+                  color: theme.colorScheme.primary,
+                  onPressed: () {
+                    onPrintKitchen();
+                    Navigator.of(dialogContext).pop();
+                  },
+                ),
+                SizedBox(height: spacing.sm),
+              ],
+              PrintOptionButton(
+                icon: receiptIcon,
+                title: receiptTitle,
+                color: theme.colorScheme.secondary,
+                onPressed: () {
+                  Navigator.of(dialogContext).pop();
+                  onPrintReceipt();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   static bool containsModelWithId(List models, int targetId) =>

@@ -401,6 +401,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grandTotal": MessageLookupByLibrary.simpleMessage("الإجمالي النهائي"),
     "group": MessageLookupByLibrary.simpleMessage("المجموعة"),
     "guestsCount": MessageLookupByLibrary.simpleMessage("عدد الضيوف"),
+    "guestsCountError": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال عدد صحيح من الضيوف.",
+    ),
     "guestsCountHint": MessageLookupByLibrary.simpleMessage("مثال: 3"),
     "heldOrders": MessageLookupByLibrary.simpleMessage("طلبات معلقة"),
     "holdOrder": MessageLookupByLibrary.simpleMessage("تعليق الطلب"),
@@ -669,6 +672,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "requestType": MessageLookupByLibrary.simpleMessage("نوع الطلب"),
     "requests": MessageLookupByLibrary.simpleMessage("الطلبات"),
     "reservationPeriod": MessageLookupByLibrary.simpleMessage("فترة الحجز"),
+    "reservationPeriodError": MessageLookupByLibrary.simpleMessage(
+      "يرجى إدخال مدة حجز صحيحة.",
+    ),
     "reservationPeriodInMinutes": m16,
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(
       "تم إضافة الحجز بنجاح",

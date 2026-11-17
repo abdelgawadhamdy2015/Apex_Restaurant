@@ -544,5 +544,7 @@
     "restoreDefaultSettings": "استعادة الإعدادات الافتراضية",
     "arabicLanguage": "العربية",
     "englishLanguage": "English",
-    "paymentSuccess": "تمت عملية الدفع بنجاح"
+    "paymentSuccess": "تمت عملية الدفع بنجاح",
+    "reservationPeriodError": "يرجى إدخال مدة حجز صحيحة.",
+    "guestsCountError": "يرجى إدخال عدد صحيح من الضيوف."
 }

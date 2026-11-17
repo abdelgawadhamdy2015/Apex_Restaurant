@@ -421,6 +421,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grandTotal": MessageLookupByLibrary.simpleMessage("Grand Total"),
     "group": MessageLookupByLibrary.simpleMessage("Group"),
     "guestsCount": MessageLookupByLibrary.simpleMessage("Number of Guests"),
+    "guestsCountError": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid number of guests.",
+    ),
     "guestsCountHint": MessageLookupByLibrary.simpleMessage("e.g. 3"),
     "heldOrders": MessageLookupByLibrary.simpleMessage("Held Orders"),
     "holdOrder": MessageLookupByLibrary.simpleMessage("Hold Order"),
@@ -696,6 +699,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "requests": MessageLookupByLibrary.simpleMessage("Requests"),
     "reservationPeriod": MessageLookupByLibrary.simpleMessage(
       "Reservation Period",
+    ),
+    "reservationPeriodError": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid reservation period.",
     ),
     "reservationPeriodInMinutes": m16,
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(

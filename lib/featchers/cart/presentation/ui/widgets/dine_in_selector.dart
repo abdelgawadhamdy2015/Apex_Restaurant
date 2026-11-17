@@ -1,3 +1,5 @@
+import 'package:apex_restaurant/featchers/cart/presentation/ui/widgets/change_table_confirmation_dialog.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/router/routes.dart';
 import '../../../data/models/pos_client_model.dart';
@@ -71,39 +73,6 @@ class DineInSelector extends StatelessWidget {
           ),
           SizedBox(height: spacing.xs + spacing.xxs / 2),
 
-          // BlocBuilder<HomeBloc, HomeState>(
-          //   builder: (context, state) => OutlinedButton.icon(
-          //     style: OutlinedButton.styleFrom(
-          //       minimumSize: Size.fromHeight(icons.xl + spacing.md),
-          //       side: BorderSide(color: theme.colorScheme.tertiary),
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(spacing.radiusMd),
-          //       ),
-          //     ),
-          //     onPressed: canEdit
-          //         ? () => context.pushNamed(
-          //             Routes.tableScreen,
-          //             extra: TablesScreenArgs(
-          //               branchId: state.selectedEmployeeBranch?.branchId ?? 0,
-          //               personList: persons,
-          //               inCartScreen: true,
-          //             ),
-          //           )
-          //         : null,
-          //     icon: Icon(
-          //       Icons.table_restaurant,
-          //       color: theme.colorScheme.tertiary,
-          //       size: icons.md,
-          //     ),
-          //     label: Text(
-          //       selectedTable?.arabicName ?? lang.selectTable,
-          //       style: theme.textTheme.bodyMedium?.copyWith(
-          //         color: theme.colorScheme.tertiary,
-          //         fontWeight: FontWeight.bold,
-          //       ),
-          //     ),
-          //   ),
-          // ),
           BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) => OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
@@ -115,42 +84,25 @@ class DineInSelector extends StatelessWidget {
               ),
               onPressed: canEdit
                   ? () async {
-                      // If this is a restored invoice, ask for confirmation
-                      if (context.read<CartBloc>().state.justRestored == true) {
-                        final confirmed = await showDialog<bool>(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (dialogContext) {
-                            return AlertDialog(
-                              title: Text(lang.changeTable),
-                              content: Text(lang.changeTableConfirmation),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(dialogContext).pop(false);
-                                  },
-                                  child: Text(lang.cancel),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(dialogContext).pop(true);
-                                  },
-                                  child: Text(lang.confirm),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                      final cartState = context.read<CartBloc>().state;
 
-                        // User cancelled
-                        if (confirmed != true) {
-                          return;
-                        }
+                      if (cartState.items.isNotEmpty &&
+                          cartState.selectedTable != null) {
+                        final confirmed =
+                            await showChangeTableConfirmationDialog(
+                              context: context,
+                              title: lang.changeTable,
+                              message: lang.changeTableConfirmation,
+                              confirmText: lang.confirm,
+                              cancelText: lang.cancel,
+                            );
+
+                        if (!confirmed) return;
                       }
 
-                      // Open table screen
                       if (!context.mounted) return;
 
+                      // Open table selection screen.
                       context.pushNamed(
                         Routes.tableScreen,
                         extra: TablesScreenArgs(
