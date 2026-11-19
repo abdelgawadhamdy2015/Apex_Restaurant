@@ -59,6 +59,7 @@ class ReservationItemCard extends StatelessWidget {
     final appExtraTheme = context.appExtraTheme;
     final lang = S.of(context);
     final isCancelled = reservation.status == ReservationStatus.cancelled;
+
     final (statusColor, statusText) = _statusInfo(lang);
 
     final formattedDate =
@@ -112,21 +113,31 @@ class ReservationItemCard extends StatelessWidget {
               Expanded(
                 child: OutlinedButton.icon(
                   // Edit: the sheet loads tables/clients itself from the blocs
-                  onPressed: () => AddReservationBottomSheet.show(
-                    context,
-                    reservation: reservation,
-                  ),
+                  onPressed: isCancelled
+                      ? null
+                      : () => AddReservationBottomSheet.show(
+                          context,
+                          reservation: reservation,
+                        ),
                   icon: Icon(
                     Icons.edit_outlined,
-                    color: theme.colorScheme.primary,
+                    color: isCancelled
+                        ? Colors.grey
+                        : theme.colorScheme.primary,
                     size: iconSizes.xs,
                   ),
                   label: Text(
                     lang.edit,
-                    style: TextStyle(color: theme.colorScheme.primary),
+                    style: TextStyle(
+                      color: isCancelled
+                          ? Colors.grey
+                          : theme.colorScheme.primary,
+                    ),
                   ),
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: appExtraTheme.secondaryBackground,
+                    backgroundColor: isCancelled
+                        ? Colors.grey.shade200
+                        : appExtraTheme.secondaryBackground,
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(spacing.radiusLg),
@@ -153,7 +164,7 @@ class ReservationItemCard extends StatelessWidget {
                   ),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: isCancelled
-                        ? Colors.grey.shade100
+                        ? Colors.grey.shade200
                         : theme.colorScheme.error.withValues(alpha: .1),
                     side: BorderSide.none,
                     shape: RoundedRectangleBorder(

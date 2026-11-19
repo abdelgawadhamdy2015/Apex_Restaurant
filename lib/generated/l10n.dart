@@ -4341,6 +4341,16 @@ class S {
       args: [],
     );
   }
+
+  /// `Reservation date and time must be in the future.`
+  String get reservationDateTimeMustBeFuture {
+    return Intl.message(
+      'Reservation date and time must be in the future.',
+      name: 'reservationDateTimeMustBeFuture',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

@@ -697,6 +697,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "requestType": MessageLookupByLibrary.simpleMessage("Request Type"),
     "requests": MessageLookupByLibrary.simpleMessage("Requests"),
+    "reservationDateTimeMustBeFuture": MessageLookupByLibrary.simpleMessage(
+      "Reservation date and time must be in the future.",
+    ),
     "reservationPeriod": MessageLookupByLibrary.simpleMessage(
       "Reservation Period",
     ),

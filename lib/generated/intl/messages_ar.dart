@@ -671,6 +671,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "requestType": MessageLookupByLibrary.simpleMessage("نوع الطلب"),
     "requests": MessageLookupByLibrary.simpleMessage("الطلبات"),
+    "reservationDateTimeMustBeFuture": MessageLookupByLibrary.simpleMessage(
+      "يجب أن يكون تاريخ ووقت الحجز في المستقبل.",
+    ),
     "reservationPeriod": MessageLookupByLibrary.simpleMessage("فترة الحجز"),
     "reservationPeriodError": MessageLookupByLibrary.simpleMessage(
       "يرجى إدخال مدة حجز صحيحة.",

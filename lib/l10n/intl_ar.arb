@@ -546,5 +546,6 @@
     "englishLanguage": "English",
     "paymentSuccess": "تمت عملية الدفع بنجاح",
     "reservationPeriodError": "يرجى إدخال مدة حجز صحيحة.",
-    "guestsCountError": "يرجى إدخال عدد صحيح من الضيوف."
+    "guestsCountError": "يرجى إدخال عدد صحيح من الضيوف.",
+    "reservationDateTimeMustBeFuture": "يجب أن يكون تاريخ ووقت الحجز في المستقبل."
 }

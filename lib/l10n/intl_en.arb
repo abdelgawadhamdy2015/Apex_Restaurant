@@ -570,5 +570,6 @@
     "englishLanguage": "English",
     "paymentSuccess": "Payment Successful",
     "reservationPeriodError": "Please enter a valid reservation period.",
-    "guestsCountError": "Please enter a valid number of guests."
+    "guestsCountError": "Please enter a valid number of guests.",
+    "reservationDateTimeMustBeFuture": "Reservation date and time must be in the future."
 }

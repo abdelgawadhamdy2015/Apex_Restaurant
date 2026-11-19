@@ -27,11 +27,11 @@ class AddReservationBottomSheet extends StatefulWidget {
     super.key,
     this.reservation,
     this.selectedTable,
+    this.allowPastDateTime = false,
   });
 
   final ReservationEntity? reservation;
-
-  /// Table selected from the tables screen.
+  final bool allowPastDateTime;
   final TableEntity? selectedTable;
 
   bool get isEdit => reservation != null;
@@ -40,6 +40,7 @@ class AddReservationBottomSheet extends StatefulWidget {
     BuildContext context, {
     ReservationEntity? reservation,
     TableEntity? selectedTable,
+    bool allowPastDateTime = false,
   }) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
@@ -61,6 +62,7 @@ class AddReservationBottomSheet extends StatefulWidget {
         child: AddReservationBottomSheet(
           reservation: reservation,
           selectedTable: selectedTable,
+          allowPastDateTime: allowPastDateTime,
         ),
       ),
     );
@@ -96,11 +98,10 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     final cartBloc = context.read<CartBloc>();
 
     // Load tables if they are not already available.
-    if (tablesBloc.state.tables.isEmpty || widget.isEdit) {
-      tablesBloc.add(
-        FetchTablesEvent(GetTablesRequest(pageNumber: 1, pageSize: 1000)),
-      );
-    }
+
+    tablesBloc.add(
+      FetchTablesEvent(GetTablesRequest(pageNumber: 1, pageSize: 1000)),
+    );
 
     // Load customers if they are not already available.
     if (cartBloc.state.persons.isEmpty || widget.isEdit) {
@@ -216,10 +217,19 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate:
+          _selectedDate != null &&
+              _selectedDate!.isBefore(
+                widget.allowPastDateTime ? DateTime(2000) : today,
+              )
+          ? today
+          : _selectedDate ?? now,
+      firstDate: widget.allowPastDateTime ? DateTime(2000) : today,
       lastDate: DateTime(2100),
     );
 
@@ -232,12 +242,34 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   }
 
   Future<void> _pickTime() async {
+    final now = DateTime.now();
+
     final picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
     );
 
     if (picked == null) return;
+
+    final selectedDate = _selectedDate ?? now;
+
+    final selectedDateTime = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      picked.hour,
+      picked.minute,
+    );
+
+    if (!widget.allowPastDateTime &&
+        !selectedDateTime.isAfter(DateTime.now())) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: S.of(context).reservationDateTimeMustBeFuture,
+        isError: true,
+      );
+      return;
+    }
 
     setState(() {
       _selectedTime = picked;
@@ -250,6 +282,15 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   // ---------------------------------------------------------------------------
 
   void _submit(S lang) {
+    if (_selectedPerson == null) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.pleaseSelectValidCustomer,
+        isError: true,
+      );
+
+      return;
+    }
     if (_selectedDate == null || _selectedTime == null) {
       HelperMethods.showSnackBar(
         context: context,
@@ -267,28 +308,44 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
       _selectedTime!.hour,
       _selectedTime!.minute,
     );
-
-    final request = ReserveFoodTableRequest(
-      reservationId: widget.reservation?.id,
-      foodTablesId: _selectedTable?.id,
-      customerId: _selectedPerson?.id,
-      reservationDate: reservationDateTime.toIso8601String(),
-      seatsCount: int.tryParse(_seatsController.text) ?? 1,
-      reservationPeriod: int.tryParse(_periodController.text) ?? 60,
-    );
-
-    final bloc = context.read<TablesBloc>();
-
-    if (widget.isEdit) {
-      bloc.add(EditReservationEvent(request));
-    } else {
-      bloc.add(AddReservationEvent(request));
+    if (!widget.allowPastDateTime &&
+        !reservationDateTime.isAfter(DateTime.now())) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.reservationDateTimeMustBeFuture,
+        isError: true,
+      );
+      return;
     }
-    bloc.add(
-      FetchReservationsEvent(
-        GetReservationRequest(pageNumber: 1, pageSize: 20),
-      ),
-    );
+    if (_formKey.currentState!.validate()) {
+      final request = ReserveFoodTableRequest(
+        reservationId: widget.reservation?.id,
+        foodTablesId: _selectedTable?.id,
+        customerId: _selectedPerson?.id,
+        reservationDate: reservationDateTime.toIso8601String(),
+        seatsCount: int.tryParse(_seatsController.text) ?? 1,
+        reservationPeriod: int.tryParse(_periodController.text) ?? 60,
+      );
+
+      final bloc = context.read<TablesBloc>();
+      final state = bloc.state;
+      if (widget.isEdit) {
+        bloc.add(EditReservationEvent(request));
+      } else {
+        bloc.add(AddReservationEvent(request));
+      }
+      bloc.add(
+        FetchReservationsEvent(
+          GetReservationRequest(
+            pageNumber: 1,
+            pageSize: 20,
+            dateFrom: state.fromDateController.text,
+            dateTo: state.toDateController.text,
+            foodTableId: state.selectedTable?.id,
+          ),
+        ),
+      );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -352,9 +409,15 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
             FocusManager.instance.primaryFocus?.unfocus();
           },
           fieldViewBuilder: (context, textController, focusNode, _) {
-            return TextField(
+            return TextFormField(
               controller: textController,
               focusNode: focusNode,
+              validator: (value) {
+                if (value == null || value.isEmpty || _selectedPerson == null) {
+                  return lang.pleaseSelectValidCustomer;
+                }
+                return null;
+              },
               onChanged: (text) {
                 _customerNameController.text = text;
 
@@ -364,6 +427,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                   _selectedPerson = null;
                 }
               },
+
               decoration: _decoration(
                 theme,
                 lang.enterCustomerNameHint,
