@@ -1,5 +1,7 @@
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 
 import '../../../../core/calculation/restaurant_invoice_calculator.dart';
@@ -26,12 +28,18 @@ enum CartStatus {
   initial,
   loading,
   pindingLoading,
+  saveDineInInvoiceLoading,
   success,
   pindingSuccess,
+  saveDineInInvoiceSuccess,
   failure,
   pindingFailure,
+  saveDineInInvoiceFailure,
   itemsUpdateing,
   itemsUpdated,
+  invoiceReportLoading,
+  invoiceReportSuccess,
+  invoiceReportFailure,
 }
 
 enum DiscountSource { none, dynamic, customer, size, manualInvoice, manualItem }
@@ -56,7 +64,8 @@ class CartState extends Equatable {
   final List<WaiterModel> waiters;
   final List<WaiterModel> deliveryAgents;
   final List<DeliveryCompanyModel> companiesList;
-
+  final SaveTableData? saveTableData;
+  final InvoiceReportResponse? invoiceReportResponse;
   final List<PosClientModel> persons;
   final PosClientModel? selectedPerson;
   final DeliveryCompanyModel? selectedDeliveryCompany;
@@ -106,6 +115,8 @@ class CartState extends Equatable {
     this.settingsModel,
     this.canEdit = true,
     this.companiesList = const [],
+    this.saveTableData,
+    this.invoiceReportResponse,
     this.invoiceId,
     this.isPending = false,
     this.orderNumber,
@@ -186,6 +197,8 @@ class CartState extends Equatable {
     String? voucherId,
     DateTime? restoredInvoiceDate,
     bool? isPreviousInvoice,
+    SaveTableData? saveTableData,
+    InvoiceReportResponse? invoiceReportResponse,
     // Flags to force an explicit null
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
@@ -194,6 +207,7 @@ class CartState extends Equatable {
     bool clearAddress = false,
     bool clearInvoiceId = false,
     bool clearCart = false,
+    bool clearMessage = false,
     bool? isReturnInvoice,
     bool? priceIncludeVat,
   }) {
@@ -228,8 +242,10 @@ class CartState extends Equatable {
           : voucherData ?? this.voucherData,
       isLoading: isLoading ?? this.isLoading,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      errorMessage: errorMessage,
-      successMessage: successMessage,
+      errorMessage: clearMessage ? null : errorMessage ?? this.errorMessage,
+      successMessage: clearMessage
+          ? null
+          : successMessage ?? this.successMessage,
       restaurantPosDiscountRequest: clearRestaurantPosDiscountRequest
           ? null
           : (restaurantPosDiscountRequest ?? this.restaurantPosDiscountRequest),
@@ -252,6 +268,9 @@ class CartState extends Equatable {
       isPreviousInvoice: isPreviousInvoice ?? this.isPreviousInvoice,
       isReturnInvoice: isReturnInvoice ?? this.isReturnInvoice,
       priceIncludeVat: priceIncludeVat ?? this.priceIncludeVat,
+      saveTableData: saveTableData ?? this.saveTableData,
+      invoiceReportResponse:
+          invoiceReportResponse ?? this.invoiceReportResponse,
     );
   }
 
@@ -293,5 +312,7 @@ class CartState extends Equatable {
     isPreviousInvoice,
     isReturnInvoice,
     priceIncludeVat,
+    saveTableData,
+    invoiceReportResponse,
   ];
 }

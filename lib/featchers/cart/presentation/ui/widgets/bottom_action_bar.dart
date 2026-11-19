@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
+
 import '../../../../../core/helpers/extensions.dart';
 import '../../../../../core/helpers/helper_methods.dart';
 import '../../../../../core/helpers/size_helper.dart';
@@ -16,6 +20,26 @@ import 'package:go_router/go_router.dart';
 /// Fixed bottom bar with the checkout and hold-order actions.
 class BottomActionBar extends StatelessWidget {
   const BottomActionBar({super.key});
+
+  void _showPrintDialog(BuildContext parentContext) {
+    final cartState = parentContext.read<CartBloc>().state;
+    final lang = S.of(parentContext);
+    HelperMethods.showPrintDialog(
+      context: parentContext,
+      title: lang.print,
+      kitchenTitle: lang.btnPrintKitchen,
+      receiptTitle: lang.btnPrintReceipt,
+      receiptFileName: 'Receipt.pdf',
+
+      onPrintReceipt: () {
+        HelperMethods.printDirectPdf(
+          parentContext,
+          cartState.invoiceReportResponse?.fileUrl,
+          'Receipt_.pdf',
+        );
+      },
+    );
+  }
 
   void _checkout(BuildContext context) {
     // Validate cart state before proceeding to checkout
@@ -110,7 +134,8 @@ class BottomActionBar extends StatelessWidget {
     return BlocListener<CartBloc, CartState>(
       listenWhen: (previous, current) => previous.status != current.status,
       listener: (context, state) {
-        if (state.status == CartStatus.pindingSuccess) {
+        if (state.status == CartStatus.pindingSuccess ||
+            state.status == CartStatus.saveDineInInvoiceSuccess) {
           // إظهار الرسالة من successMessage وليس errorMessage
           final message =
               state.successMessage ?? S.of(context).savedSuccessfully;
@@ -121,22 +146,25 @@ class BottomActionBar extends StatelessWidget {
             isError: false,
           );
 
-          // مسح عناصر السلة بعد تعليق/حفظ الطلب بنجاح
+          // مسح عناصر السلة بعد حفظ الطلب بنجاح
           context.read<CartBloc>().add(ClearCartEvent());
-
-          // التوجيه إلى شاشة الـ POS وإغلاق باقي الشاشات
-          context.pushReplacementNamed(Routes.posScreen);
-        } else if (state.status == CartStatus.pindingFailure) {
+          if (state.status == CartStatus.pindingSuccess) {
+            context.pushReplacementNamed(Routes.posScreen);
+          }
+        } else if (state.status == CartStatus.pindingFailure ||
+            state.status == CartStatus.saveDineInInvoiceFailure) {
           HelperMethods.showSnackBar(
             context: context,
             message: state.errorMessage ?? S.of(context).somethingWentWrong,
             isError: true,
           );
+        } else if (state.status == CartStatus.invoiceReportSuccess) {
+          _showPrintDialog(context);
         }
       },
-      child: BlocSelector<CartBloc, CartState, CartOrderType>(
-        selector: (state) => state.selectedOrderType,
-        builder: (context, selectedOrderType) {
+      child: BlocSelector<CartBloc, CartState, List<dynamic>>(
+        selector: (state) => [state.selectedOrderType, state.status],
+        builder: (context, selectedOrderTypeAndStatus) {
           return Container(
             padding: EdgeInsets.all(spacing.md),
             decoration: BoxDecoration(
@@ -199,11 +227,21 @@ class BottomActionBar extends StatelessWidget {
                         ? () {
                             final state = context.read<CartBloc>().state;
 
-                            if (selectedOrderType == CartOrderType.DINE_IN) {
+                            if (selectedOrderTypeAndStatus[0] ==
+                                CartOrderType.DINE_IN) {
+                              // final invoiceCode =
+                              //     state.SaveTableData?.data?.eInvoiceCode;
+                              final invoiceId = state.saveTableData?.invoiceId;
+                              // final invoiceTypeId =
+                              //     state.SaveTableData?.data?.invoiceTypeId;
+                              log(
+                                "invoice  : ${state.saveTableData?.invoiceId}",
+                              );
                               context.read<CartBloc>().add(
-                                SaveTableOrderEvent(
-                                  request:
-                                      state.toSaveRestaurantPosInvoiceRequest,
+                                GetInvoiceReportEvent(
+                                  request: InvoiceReportRequest(
+                                    invoiceId: invoiceId,
+                                  ),
                                 ),
                               );
                             } else {
@@ -222,8 +260,8 @@ class BottomActionBar extends StatelessWidget {
                       size: icons.md,
                     ),
                     label: Text(
-                      selectedOrderType == CartOrderType.DINE_IN
-                          ? lang.save
+                      selectedOrderTypeAndStatus[0] == CartOrderType.DINE_IN
+                          ? lang.print
                           : lang.holdOrder,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onPrimary,

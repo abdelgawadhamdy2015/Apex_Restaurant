@@ -90,8 +90,8 @@ class SelectTableEvent extends TablesEvent {
 }
 
 class SelectFloorEvent extends TablesEvent {
-  final FloorEntity floorEntity;
-  const SelectFloorEvent({required this.floorEntity});
+  final FloorEntity? floorEntity;
+  const SelectFloorEvent({this.floorEntity});
   @override
   List<Object?> get props => [floorEntity];
 }

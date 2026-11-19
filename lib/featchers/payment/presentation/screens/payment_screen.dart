@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:go_router/go_router.dart';
@@ -62,13 +63,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
               message: state.errorMessage ?? lang.somethingWentWrong,
               isError: true,
             );
-          } else if (state.status == PaymentStatus.success ||
-              state.isFullReturn == true) {
+          } else if (state.status == PaymentStatus.success &&
+              state.successModel != null) {
             HelperMethods.showSnackBar(
               context: context,
-              message: state.errorMessage ?? lang.invoiceReturnedSuccessfully,
+              message: state.errorMessage ?? lang.paymentSuccess,
               isError: false,
             );
+            context.read<CartBloc>().add(ClearCartEvent());
+          } else if (state.status == PaymentStatus.success &&
+              state.partialReturnResponseData != null) {
+            HelperMethods.showSnackBar(
+              context: context,
+              message: lang.invoiceReturnedSuccessfully,
+              isError: false,
+            );
+            context.pushReplacementNamed(Routes.posScreen);
           }
         },
         builder: (context, state) {
@@ -76,8 +86,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
             context.read<CartBloc>().add(ClearCartEvent());
             if (state.successModel != null) {
               return PaymentSuccess(model: state.successModel!);
-            } else if (state.isFullReturn == true) {
-              context.pop();
             }
           }
 

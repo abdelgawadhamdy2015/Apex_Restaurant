@@ -543,5 +543,9 @@
     "elementSpacing": "التباعد بين العناصر",
     "restoreDefaultSettings": "استعادة الإعدادات الافتراضية",
     "arabicLanguage": "العربية",
-    "englishLanguage": "English"
+    "englishLanguage": "English",
+    "paymentSuccess": "تمت عملية الدفع بنجاح",
+    "reservationPeriodError": "يرجى إدخال مدة حجز صحيحة.",
+    "guestsCountError": "يرجى إدخال عدد صحيح من الضيوف.",
+    "reservationDateTimeMustBeFuture": "يجب أن يكون تاريخ ووقت الحجز في المستقبل."
 }

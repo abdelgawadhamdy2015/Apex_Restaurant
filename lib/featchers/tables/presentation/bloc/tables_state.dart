@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/featchers/orders/data/model/pinding_invoice_model.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../domain/entities/floor_entity.dart';
 import '../../domain/entities/reservation_entity.dart';
@@ -22,13 +23,15 @@ class TablesState extends Equatable {
   final TableEntity? selectedTable;
   final List<FloorEntity> floors;
   final FloorEntity? selectedFloor;
+  final TextEditingController fromDateController;
+  final TextEditingController toDateController;
   final List<ReservationEntity> reservations;
   final String? errorMessage;
   final List<PindingInvoiceModel>? pindingInvoices;
   final int? restoringInvoiceId;
   final RestoredInvoiceModel? restoredInvoiceModel;
   final bool canEdit;
-  const TablesState({
+  TablesState({
     this.status = TablesStatus.initial,
     this.activeTab = 0,
     this.reservations = const [],
@@ -41,7 +44,10 @@ class TablesState extends Equatable {
     this.canEdit = true,
     this.selectedTable,
     this.selectedFloor,
-  });
+    TextEditingController? fromDateController,
+    TextEditingController? toDateController,
+  }) : fromDateController = fromDateController ?? TextEditingController(),
+       toDateController = toDateController ?? TextEditingController();
 
   TablesState copyWith({
     TablesStatus? status,
@@ -55,18 +61,24 @@ class TablesState extends Equatable {
     String? errorMessage,
     int? restoringInvoiceId,
     RestoredInvoiceModel? restoredInvoiceModel,
+    TextEditingController? fromDateController,
+    TextEditingController? toDateController,
     bool? canEdit,
     bool? clearRestoringId,
-    bool? clearSelection,
+    bool clearSelection = false,
+    bool clearTables = false,
+    bool clearSelectedFloor = false,
   }) {
     return TablesState(
       status: status ?? this.status,
       activeTab: activeTab ?? this.activeTab,
-      tables: tables ?? this.tables,
-      selectedTable: clearSelection == true
+      tables: clearTables ? [] : tables ?? this.tables,
+      selectedTable: clearSelection
           ? null
           : selectedTable ?? this.selectedTable,
-      selectedFloor: selectedFloor ?? this.selectedFloor,
+      selectedFloor: clearSelectedFloor
+          ? null
+          : selectedFloor ?? this.selectedFloor,
       floors: floors ?? this.floors,
       pindingInvoices: pindingInvoices ?? this.pindingInvoices,
       reservations: reservations ?? this.reservations,
@@ -78,6 +90,8 @@ class TablesState extends Equatable {
           ? null
           : restoredInvoiceModel ?? this.restoredInvoiceModel,
       canEdit: canEdit ?? this.canEdit,
+      fromDateController: fromDateController ?? this.fromDateController,
+      toDateController: toDateController ?? this.toDateController,
     );
   }
 
@@ -94,5 +108,7 @@ class TablesState extends Equatable {
     pindingInvoices,
     restoringInvoiceId,
     restoredInvoiceModel,
+    fromDateController,
+    toDateController,
   ];
 }

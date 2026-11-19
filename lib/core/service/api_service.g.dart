@@ -13,7 +13,7 @@ part of 'api_service.dart';
 
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'https://restaurantback.erp-apex.com/';
+    baseUrl ??= 'http://192.168.1.253:1313/';
   }
 
   final Dio _dio;
@@ -26,20 +26,11 @@ class _ApiService implements ApiService {
   Future<BaseResponse<LoginData?>> login(LoginRequest loginRequestBody) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{
-      r'Content-Type': 'application/json-patch+json',
-      r'accept': '*/*',
-    };
-    _headers.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(loginRequestBody.toJson());
     final _options = _setStreamType<BaseResponse<LoginData?>>(
-      Options(
-            method: 'POST',
-            headers: _headers,
-            extra: _extra,
-            contentType: 'application/json-patch+json',
-          )
+      Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
             'api/Login',
@@ -1110,7 +1101,7 @@ class _ApiService implements ApiService {
   }
 
   @override
-  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+  Future<BaseResponse<SaveTableData>> saveBookingTableRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   ) async {
     final _extra = <String, dynamic>{};
@@ -1118,7 +1109,7 @@ class _ApiService implements ApiService {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(request.toJson());
-    final _options = _setStreamType<BaseResponse<dynamic>>(
+    final _options = _setStreamType<BaseResponse<SaveTableData>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -1129,11 +1120,11 @@ class _ApiService implements ApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<dynamic> _value;
+    late BaseResponse<SaveTableData> _value;
     try {
-      _value = BaseResponse<dynamic>.fromJson(
+      _value = BaseResponse<SaveTableData>.fromJson(
         _result.data!,
-        (json) => json as dynamic,
+        (json) => SaveTableData.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);

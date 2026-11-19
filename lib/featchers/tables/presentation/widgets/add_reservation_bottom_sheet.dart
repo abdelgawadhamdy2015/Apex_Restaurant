@@ -3,7 +3,9 @@ import 'package:apex_restaurant/featchers/cart/data/models/get_client_request.da
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
+import 'package:apex_restaurant/featchers/tables/data/models/get_reservations_request.dart';
 import 'package:apex_restaurant/featchers/tables/data/models/get_table_request.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
@@ -21,17 +23,24 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddReservationBottomSheet extends StatefulWidget {
-  const AddReservationBottomSheet({super.key, this.reservation});
+  const AddReservationBottomSheet({
+    super.key,
+    this.reservation,
+    this.selectedTable,
+    this.allowPastDateTime = false,
+  });
 
-  /// null     -> add mode
-  /// non-null -> edit mode (form is prefilled and saved as an update)
   final ReservationEntity? reservation;
+  final bool allowPastDateTime;
+  final TableEntity? selectedTable;
 
   bool get isEdit => reservation != null;
 
   static Future<void> show(
     BuildContext context, {
     ReservationEntity? reservation,
+    TableEntity? selectedTable,
+    bool allowPastDateTime = false,
   }) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
@@ -50,7 +59,11 @@ class AddReservationBottomSheet extends StatefulWidget {
           BlocProvider.value(value: context.read<TablesBloc>()),
           BlocProvider.value(value: context.read<CartBloc>()),
         ],
-        child: AddReservationBottomSheet(reservation: reservation),
+        child: AddReservationBottomSheet(
+          reservation: reservation,
+          selectedTable: selectedTable,
+          allowPastDateTime: allowPastDateTime,
+        ),
       ),
     );
   }
@@ -72,51 +85,58 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   PosClientModel? _selectedPerson;
+  final _formKey = GlobalKey<FormState>();
 
-  /// Autocomplete only reads its initial value once, so we change this key
-  /// to force a rebuild when the customer is prefilled after loading.
+  /// Autocomplete reads its initial value once.
   Key _customerKey = const ValueKey('customer');
 
   @override
   void initState() {
     super.initState();
+
     final tablesBloc = context.read<TablesBloc>();
     final cartBloc = context.read<CartBloc>();
 
-    // Load data only if it isn't already available.
-    if (tablesBloc.state.tables.isEmpty) {
-      tablesBloc.add(
-        FetchTablesEvent(GetTablesRequest(pageNumber: 1, pageSize: 1000)),
-      );
-    }
-    if (cartBloc.state.persons.isEmpty) {
+    // Load tables if they are not already available.
+
+    tablesBloc.add(
+      FetchTablesEvent(GetTablesRequest(pageNumber: 1, pageSize: 1000)),
+    );
+
+    // Load customers if they are not already available.
+    if (cartBloc.state.persons.isEmpty || widget.isEdit) {
       cartBloc.add(
         LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
       );
     }
 
-    // Edit mode: prefill the plain fields right away.
-    final r = widget.reservation;
-    if (r != null) {
-      final dt = r.dateTime;
-      _selectedDate = dt;
-      _selectedTime = TimeOfDay.fromDateTime(dt);
-      _dateController.text = _formatDate(dt);
-      _seatsController.text = r.seatsCount.toString();
-      _periodController.text = r.durationMinutes.toString();
-      _notesController.text = r.notes ?? '';
+    // Edit mode: prefill existing reservation fields.
+    final reservation = widget.reservation;
 
-      // time text needs a context -> set after first frame
+    if (reservation != null) {
+      final dateTime = reservation.dateTime;
+
+      _selectedDate = dateTime;
+      _selectedTime = TimeOfDay.fromDateTime(dateTime);
+
+      _dateController.text = _formatDate(dateTime);
+      _seatsController.text = reservation.seatsCount.toString();
+      _periodController.text = reservation.durationMinutes.toString();
+      _notesController.text = reservation.notes ?? '';
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          setState(() => _timeController.text = _selectedTime!.format(context));
-        }
+        if (!mounted) return;
+
+        setState(() {
+          _timeController.text = _selectedTime!.format(context);
+        });
       });
     }
 
-    // In case the data is already loaded.
+    // Synchronize initial data after the first frame.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+
       _syncTable(tablesBloc.state.tables);
       _syncPerson(cartBloc.state.persons);
     });
@@ -130,6 +150,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     _notesController.dispose();
     _dateController.dispose();
     _timeController.dispose();
+
     super.dispose();
   }
 
@@ -138,33 +159,48 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   // ---------------------------------------------------------------------------
 
   void _syncTable(List<TableEntity> tables) {
-    if (tables.isEmpty || _selectedTable != null) return;
+    if (tables.isEmpty) return;
+
+    // Edit mode has priority over the externally selected table.
+    final targetTableId =
+        widget.reservation?.tableId ?? widget.selectedTable?.id;
 
     TableEntity? match;
-    final r = widget.reservation;
-    if (r != null) {
-      for (final t in tables) {
-        if (t.id == r.tableId) {
-          // ASSUMED: the reservation's table id field is `tableId`
-          match = t;
+
+    if (targetTableId != null) {
+      for (final table in tables) {
+        if (table.id == targetTableId) {
+          match = table;
           break;
         }
       }
     }
-    setState(() => _selectedTable = match ?? tables.first);
+
+    // Fallback when no matching table is found.
+    match ??= tables.first;
+
+    if (_selectedTable?.id == match.id) return;
+
+    setState(() {
+      _selectedTable = match;
+    });
   }
 
   void _syncPerson(List<PosClientModel> persons) {
-    final r = widget.reservation;
-    if (r == null || _selectedPerson != null || persons.isEmpty) return;
+    final reservation = widget.reservation;
 
-    for (final p in persons) {
-      if (p.id.toString() == r.customerId.toString()) {
+    if (reservation == null || _selectedPerson != null || persons.isEmpty) {
+      return;
+    }
+
+    for (final person in persons) {
+      if (person.id.toString() == reservation.customerId.toString()) {
         setState(() {
-          _selectedPerson = p;
-          _customerNameController.text = p.arabicName ?? '';
-          _customerKey = ValueKey('customer-${p.id}');
+          _selectedPerson = person;
+          _customerNameController.text = person.arabicName ?? '';
+          _customerKey = ValueKey('customer-${person.id}');
         });
+
         return;
       }
     }
@@ -174,17 +210,29 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   // Pickers
   // ---------------------------------------------------------------------------
 
-  String _formatDate(DateTime d) =>
-      '${d.year}-${d.month.toString().padLeft(2, '0')}-'
-      '${d.day.toString().padLeft(2, '0')}';
+  String _formatDate(DateTime date) {
+    return '${date.year}-'
+        '${date.month.toString().padLeft(2, '0')}-'
+        '${date.day.toString().padLeft(2, '0')}';
+  }
 
   Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate:
+          _selectedDate != null &&
+              _selectedDate!.isBefore(
+                widget.allowPastDateTime ? DateTime(2000) : today,
+              )
+          ? today
+          : _selectedDate ?? now,
+      firstDate: widget.allowPastDateTime ? DateTime(2000) : today,
       lastDate: DateTime(2100),
     );
+
     if (picked == null) return;
 
     setState(() {
@@ -194,11 +242,34 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   }
 
   Future<void> _pickTime() async {
+    final now = DateTime.now();
+
     final picked = await showTimePicker(
       context: context,
       initialTime: _selectedTime ?? TimeOfDay.now(),
     );
+
     if (picked == null) return;
+
+    final selectedDate = _selectedDate ?? now;
+
+    final selectedDateTime = DateTime(
+      selectedDate.year,
+      selectedDate.month,
+      selectedDate.day,
+      picked.hour,
+      picked.minute,
+    );
+
+    if (!widget.allowPastDateTime &&
+        !selectedDateTime.isAfter(DateTime.now())) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: S.of(context).reservationDateTimeMustBeFuture,
+        isError: true,
+      );
+      return;
+    }
 
     setState(() {
       _selectedTime = picked;
@@ -211,12 +282,22 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
   // ---------------------------------------------------------------------------
 
   void _submit(S lang) {
+    if (_selectedPerson == null) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.pleaseSelectValidCustomer,
+        isError: true,
+      );
+
+      return;
+    }
     if (_selectedDate == null || _selectedTime == null) {
       HelperMethods.showSnackBar(
         context: context,
         message: lang.selectDateAndTimeError,
         isError: true,
       );
+
       return;
     }
 
@@ -227,21 +308,43 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
       _selectedTime!.hour,
       _selectedTime!.minute,
     );
+    if (!widget.allowPastDateTime &&
+        !reservationDateTime.isAfter(DateTime.now())) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: lang.reservationDateTimeMustBeFuture,
+        isError: true,
+      );
+      return;
+    }
+    if (_formKey.currentState!.validate()) {
+      final request = ReserveFoodTableRequest(
+        reservationId: widget.reservation?.id,
+        foodTablesId: _selectedTable?.id,
+        customerId: _selectedPerson?.id,
+        reservationDate: reservationDateTime.toIso8601String(),
+        seatsCount: int.tryParse(_seatsController.text) ?? 1,
+        reservationPeriod: int.tryParse(_periodController.text) ?? 60,
+      );
 
-    final request = ReserveFoodTableRequest(
-      reservationId: widget.reservation?.id,
-      foodTablesId: _selectedTable?.id,
-      customerId: _selectedPerson?.id,
-      reservationDate: reservationDateTime.toIso8601String(),
-      seatsCount: int.tryParse(_seatsController.text) ?? 1,
-      reservationPeriod: int.tryParse(_periodController.text) ?? 60,
-    );
-
-    final bloc = context.read<TablesBloc>();
-    if (widget.isEdit) {
-      bloc.add(EditReservationEvent(request));
-    } else {
-      bloc.add(AddReservationEvent(request));
+      final bloc = context.read<TablesBloc>();
+      final state = bloc.state;
+      if (widget.isEdit) {
+        bloc.add(EditReservationEvent(request));
+      } else {
+        bloc.add(AddReservationEvent(request));
+      }
+      bloc.add(
+        FetchReservationsEvent(
+          GetReservationRequest(
+            pageNumber: 1,
+            pageSize: 20,
+            dateFrom: state.fromDateController.text,
+            dateTo: state.toDateController.text,
+            foodTableId: state.selectedTable?.id,
+          ),
+        ),
+      );
     }
   }
 
@@ -272,6 +375,10 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Customer autocomplete
+  // ---------------------------------------------------------------------------
+
   Widget _buildCustomerField(
     ThemeData theme,
     dynamic spacing,
@@ -286,28 +393,41 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
           displayStringForOption: (person) => person.arabicName ?? "",
           optionsBuilder: (textEditingValue) {
             final query = textEditingValue.text.toLowerCase();
+
             if (query.isEmpty) return persons;
+
             return persons.where(
               (person) =>
                   (person.arabicName ?? "").toLowerCase().contains(query),
             );
           },
           onSelected: (selection) {
-            _selectedPerson = selection;
-            _customerNameController.text = selection.arabicName ?? "";
+            setState(() {
+              _selectedPerson = selection;
+              _customerNameController.text = selection.arabicName ?? "";
+            });
+            FocusManager.instance.primaryFocus?.unfocus();
           },
           fieldViewBuilder: (context, textController, focusNode, _) {
-            return TextField(
+            return TextFormField(
               controller: textController,
               focusNode: focusNode,
+              validator: (value) {
+                if (value == null || value.isEmpty || _selectedPerson == null) {
+                  return lang.pleaseSelectValidCustomer;
+                }
+                return null;
+              },
               onChanged: (text) {
                 _customerNameController.text = text;
-                // typed text no longer matches the picked person -> unlink
+
+                // Unlink the selected customer if the text changes.
                 if (_selectedPerson != null &&
                     _selectedPerson!.arabicName != text) {
                   _selectedPerson = null;
                 }
               },
+
               decoration: _decoration(
                 theme,
                 lang.enterCustomerNameHint,
@@ -318,7 +438,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
             return Align(
               alignment: Alignment.topLeft,
               child: Material(
-                elevation: 4.0,
+                elevation: 4,
                 shape: RoundedRectangleBorder(
                   side: BorderSide(color: context.appExtraTheme.cancelPorder),
                   borderRadius: BorderRadius.circular(spacing.radiusMd),
@@ -331,6 +451,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
                     itemCount: options.length,
                     itemBuilder: (context, index) {
                       final option = options.elementAt(index);
+
                       return Card(
                         color: theme.colorScheme.onSurface,
                         child: ListTile(
@@ -356,30 +477,51 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Table dropdown
+  // ---------------------------------------------------------------------------
+
   Widget _buildTableDropdown(
     ThemeData theme,
     S lang,
     List<TableEntity> tables,
   ) {
     return DropdownButtonFormField<TableEntity>(
-      // initialValue is read once -> rebuild when data/selection changes
       key: ValueKey('table-${tables.length}-${_selectedTable?.id}'),
       initialValue: _selectedTable,
       decoration: _decoration(theme, lang.selectTableHint),
+      // Close the customer autocomplete overlay.
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+
       items: tables
           .map(
-            (t) => DropdownMenuItem(
-              value: t,
+            (table) => DropdownMenuItem(
+              value: table,
               child: Text(
-                t.arabicName ?? "",
+                table.arabicName ?? "",
                 style: theme.textTheme.bodyMedium,
               ),
             ),
           )
           .toList(),
-      onChanged: null, // (val) => setState(() => _selectedTable = val),
+
+      onChanged: !widget.isEdit
+          ? (value) {
+              FocusManager.instance.primaryFocus?.unfocus();
+
+              setState(() {
+                _selectedTable = value;
+              });
+            }
+          : null,
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Action buttons
+  // ---------------------------------------------------------------------------
 
   Widget _buildActionButtons(
     ThemeData theme,
@@ -393,6 +535,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
           child: BlocBuilder<TablesBloc, TablesState>(
             builder: (context, state) {
               final isLoading = state.status == TablesStatus.loading;
+
               return ElevatedButton.icon(
                 onPressed: isLoading ? null : () => _submit(lang),
                 icon: isLoading
@@ -456,23 +599,30 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
 
-    // Rebuild whenever the loaded lists change.
-    final tables = context.select((TablesBloc b) => b.state.tables);
-    final persons = context.select((CartBloc b) => b.state.persons);
+    final tables = context.select((TablesBloc bloc) => bloc.state.tables);
+
+    final persons = context.select((CartBloc bloc) => bloc.state.persons);
 
     return MultiBlocListener(
       listeners: [
-        // Tables loaded -> pick the right table
+        // Tables loaded -> select the correct table.
         BlocListener<TablesBloc, TablesState>(
-          listenWhen: (p, c) => p.tables != c.tables,
-          listener: (_, state) => _syncTable(state.tables),
+          listenWhen: (previous, current) => previous.tables != current.tables,
+          listener: (_, state) {
+            _syncTable(state.tables);
+          },
         ),
-        // Clients loaded -> prefill the customer (edit mode)
+
+        // Customers loaded -> prefill customer in edit mode.
         BlocListener<CartBloc, CartState>(
-          listenWhen: (p, c) => p.persons != c.persons,
-          listener: (_, state) => _syncPerson(state.persons),
+          listenWhen: (previous, current) =>
+              previous.persons != current.persons,
+          listener: (_, state) {
+            _syncPerson(state.persons);
+          },
         ),
-        // Reservation result
+
+        // Reservation result.
         BlocListener<TablesBloc, TablesState>(
           listenWhen: (previous, current) =>
               previous.status != current.status ||
@@ -480,6 +630,7 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
           listener: (context, state) {
             if (state.status == TablesStatus.reservationSuccess) {
               Navigator.pop(context);
+
               HelperMethods.showSnackBar(
                 context: context,
                 message: widget.isEdit
@@ -505,79 +656,127 @@ class _AddReservationBottomSheetState extends State<AddReservationBottomSheet> {
             top: spacing.md,
             bottom: MediaQuery.of(context).viewInsets.bottom + spacing.md,
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomAppBar(
-                title: widget.isEdit
-                    ? lang.editReservation
-                    : lang.addNewReservation,
-              ),
-              SizedBox(height: spacing.md),
-              _labeledField(
-                theme: theme,
-                spacing: spacing,
-                label: lang.customerName,
-                field: _buildCustomerField(theme, spacing, lang, persons),
-              ),
-              SizedBox(height: spacing.sm),
-              _labeledField(
-                theme: theme,
-                spacing: spacing,
-                label: lang.table,
-                field: _buildTableDropdown(theme, lang, tables),
-              ),
-              SizedBox(height: spacing.sm),
-              DateTextField(
-                type: DateTextFieldType.date,
-                label: lang.date,
-                controller: _dateController,
-                onTap: _pickDate,
-              ),
-              SizedBox(height: spacing.sm),
-              DateTextField(
-                label: lang.time,
-                controller: _timeController,
-                onTap: _pickTime,
-                type: DateTextFieldType.time,
-              ),
-              SizedBox(height: spacing.sm),
-              _labeledField(
-                theme: theme,
-                spacing: spacing,
-                label: lang.reservationPeriod,
-                field: TextField(
-                  controller: _periodController,
-                  keyboardType: TextInputType.number,
-                  decoration: _decoration(theme, lang.selectReservationPeriod),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomAppBar(
+                  title: widget.isEdit
+                      ? lang.editReservation
+                      : lang.addNewReservation,
                 ),
-              ),
-              SizedBox(height: spacing.sm),
-              _labeledField(
-                theme: theme,
-                spacing: spacing,
-                label: lang.guestsCount,
-                field: TextField(
-                  controller: _seatsController,
-                  keyboardType: TextInputType.number,
-                  decoration: _decoration(theme, lang.guestsCountHint),
+
+                SizedBox(height: spacing.md),
+
+                _labeledField(
+                  theme: theme,
+                  spacing: spacing,
+                  label: lang.customerName,
+                  field: _buildCustomerField(theme, spacing, lang, persons),
                 ),
-              ),
-              SizedBox(height: spacing.sm),
-              _labeledField(
-                theme: theme,
-                spacing: spacing,
-                label: lang.additionalNotes,
-                field: TextField(
-                  controller: _notesController,
-                  maxLines: 3,
-                  decoration: _decoration(theme, lang.additionalNotesHint),
+
+                SizedBox(height: spacing.sm),
+
+                _labeledField(
+                  theme: theme,
+                  spacing: spacing,
+                  label: lang.table,
+                  field: _buildTableDropdown(theme, lang, tables),
                 ),
-              ),
-              SizedBox(height: spacing.lg),
-              _buildActionButtons(theme, spacing, iconSizes, lang),
-            ],
+
+                SizedBox(height: spacing.sm),
+
+                DateTextField(
+                  type: DateTextFieldType.date,
+                  label: lang.date,
+                  controller: _dateController,
+                  onTap: _pickDate,
+                ),
+
+                SizedBox(height: spacing.sm),
+
+                DateTextField(
+                  label: lang.time,
+                  controller: _timeController,
+                  onTap: _pickTime,
+                  type: DateTextFieldType.time,
+                ),
+
+                SizedBox(height: spacing.sm),
+
+                _labeledField(
+                  theme: theme,
+                  spacing: spacing,
+                  label: lang.reservationPeriod,
+                  field: TextFormField(
+                    controller: _periodController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      final period = int.tryParse(value ?? '');
+
+                      if (period == null || period <= 0) {
+                        return lang.reservationPeriodError;
+                      }
+
+                      return null;
+                    },
+                    decoration: _decoration(
+                      theme,
+                      lang.selectReservationPeriod,
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: spacing.sm),
+
+                _labeledField(
+                  theme: theme,
+                  spacing: spacing,
+                  label: lang.guestsCount,
+                  field: TextFormField(
+                    controller: _seatsController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                    ],
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      final seatsCount = int.tryParse(value ?? '');
+
+                      if (seatsCount == null || seatsCount <= 0) {
+                        return lang.guestsCountError;
+                      }
+
+                      return null;
+                    },
+                    decoration: _decoration(theme, lang.guestsCountHint),
+                  ),
+                ),
+
+                SizedBox(height: spacing.sm),
+
+                _labeledField(
+                  theme: theme,
+                  spacing: spacing,
+                  label: lang.additionalNotes,
+                  field: TextFormField(
+                    controller: _notesController,
+                    maxLines: 3,
+                    decoration: _decoration(theme, lang.additionalNotesHint),
+                  ),
+                ),
+
+                SizedBox(height: spacing.lg),
+
+                _buildActionButtons(theme, spacing, iconSizes, lang),
+              ],
+            ),
           ),
         ),
       ),

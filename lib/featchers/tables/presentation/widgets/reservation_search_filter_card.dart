@@ -35,15 +35,10 @@ class ReservationSearchFilterCard extends StatefulWidget {
 
 class _ReservationSearchFilterCardState
     extends State<ReservationSearchFilterCard> {
-  final _fromDateController = TextEditingController();
-  final _toDateController = TextEditingController();
-
   PosClientModel? _selectedClient;
 
   @override
   void dispose() {
-    _fromDateController.dispose();
-    _toDateController.dispose();
     super.dispose();
   }
 
@@ -58,6 +53,7 @@ class _ReservationSearchFilterCardState
   Future<void> _pickDate(
     TextEditingController controller, {
     DateTime? firstDate,
+    required TablesState tablesState,
   }) async {
     final existing = _parseDate(controller.text);
     final effectiveFirstDate = firstDate ?? DateTime(2000);
@@ -78,29 +74,35 @@ class _ReservationSearchFilterCardState
         controller.text = _formatDate(picked);
         // If the "from" date was pushed later than an already-picked "to"
         // date, clear the now-invalid "to" date so the range stays sane.
-        if (controller == _fromDateController) {
-          final toDate = _parseDate(_toDateController.text);
+        if (controller == tablesState.fromDateController) {
+          final toDate = _parseDate(tablesState.toDateController.text);
           if (toDate != null && toDate.isBefore(picked)) {
-            _toDateController.clear();
+            tablesState.toDateController.clear();
           }
         }
       });
     }
   }
 
-  void _pickFromDate() => _pickDate(_fromDateController);
+  void _pickFromDate({required TablesState tablesState}) =>
+      _pickDate(tablesState: tablesState, tablesState.fromDateController);
 
-  void _pickToDate() {
-    final fromDate = _parseDate(_fromDateController.text);
-    _pickDate(_toDateController, firstDate: fromDate);
+  void _pickToDate({required TablesState tablesState}) {
+    final fromDate = _parseDate(tablesState.fromDateController.text);
+    _pickDate(
+      tablesState: tablesState,
+      tablesState.toDateController,
+      firstDate: fromDate,
+    );
   }
 
   void _onFloorSelected(FloorEntity? floor) {
-    if (floor == null) return;
-    context.read<TablesBloc>().add(
-      SelectTableEvent(tableEntity: null, clearSelection: true),
-    );
+    // Update floor and clear previous table selection and tables.
     context.read<TablesBloc>().add(SelectFloorEvent(floorEntity: floor));
+
+    if (floor == null) return;
+
+    // Fetch tables belonging to the selected floor.
     context.read<TablesBloc>().add(
       FetchTablesEvent(
         GetTablesRequest(
@@ -118,9 +120,9 @@ class _ReservationSearchFilterCardState
     context.read<TablesBloc>().add(SelectTableEvent(tableEntity: table));
   }
 
-  void _onSearchPressed() {
-    final fromDate = _parseDate(_fromDateController.text);
-    final toDate = _parseDate(_toDateController.text);
+  void _onSearchPressed({required TablesState tablesState}) {
+    final fromDate = _parseDate(tablesState.fromDateController.text);
+    final toDate = _parseDate(tablesState.toDateController.text);
 
     if (fromDate != null && toDate != null && toDate.isBefore(fromDate)) {
       HelperMethods.showSnackBar(
@@ -137,8 +139,8 @@ class _ReservationSearchFilterCardState
       GetReservationRequest(
         pageNumber: 1,
         pageSize: 20,
-        dateFrom: _fromDateController.text,
-        dateTo: _toDateController.text,
+        dateFrom: tablesState.fromDateController.text,
+        dateTo: tablesState.toDateController.text,
         customerId: _selectedClient?.id.toString(),
         foodTableId: selectedTable?.id,
       ),
@@ -151,7 +153,7 @@ class _ReservationSearchFilterCardState
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final l10n = S.of(context);
-
+    final tablesState = context.select((TablesBloc b) => b.state);
     final selectedFloor = context.select(
       (TablesBloc b) => b.state.selectedFloor,
     );
@@ -313,23 +315,23 @@ class _ReservationSearchFilterCardState
               Expanded(
                 child: DateTextField(
                   label: l10n.fromDate,
-                  controller: _fromDateController,
-                  onTap: _pickFromDate,
+                  controller: tablesState.fromDateController,
+                  onTap: () => _pickFromDate(tablesState: tablesState),
                 ),
               ),
               SizedBox(width: spacing.xxs),
               Expanded(
                 child: DateTextField(
                   label: l10n.toDate,
-                  controller: _toDateController,
-                  onTap: _pickToDate,
+                  controller: tablesState.toDateController,
+                  onTap: () => _pickToDate(tablesState: tablesState),
                 ),
               ),
             ],
           ),
           SizedBox(height: spacing.md),
           ElevatedButton.icon(
-            onPressed: _onSearchPressed,
+            onPressed: () => _onSearchPressed(tablesState: tablesState),
             icon: Icon(
               Icons.search,
               color: AppColors.white,

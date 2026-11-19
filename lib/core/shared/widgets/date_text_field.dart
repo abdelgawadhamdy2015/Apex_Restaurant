@@ -10,6 +10,7 @@ class DateTextField extends StatelessWidget {
   final VoidCallback onTap;
   final DateTextFieldType type;
   final Color? fillColor;
+  final bool allowPastDateTime;
   const DateTextField({
     super.key,
     this.label,
@@ -17,6 +18,7 @@ class DateTextField extends StatelessWidget {
     required this.onTap,
     this.type = DateTextFieldType.date,
     this.fillColor,
+    this.allowPastDateTime = false,
   });
 
   IconData get _suffixIcon {
@@ -79,19 +81,31 @@ class DateTextField extends StatelessWidget {
   /// app's ambient `Theme.of(context)`, which already carries the correct
   /// `datePickerTheme` / `timePickerTheme` for whichever mode (light/dark)
   /// is currently active, via `AppTheme`.
+
   static Future<DateTime?> pickDateTime(
     BuildContext context, {
     DateTime? initialDate,
     DateTextFieldType? type,
+    bool allowPastDateTime = true,
   }) async {
     final now = DateTime.now();
     DateTime? pickedDate;
 
+    final today = DateTime(now.year, now.month, now.day);
+
     if (type == DateTextFieldType.dateTime || type == DateTextFieldType.date) {
+      final minimumDate = allowPastDateTime ? DateTime(2000) : today;
+
+      var initial = initialDate ?? now;
+
+      if (initial.isBefore(minimumDate)) {
+        initial = minimumDate;
+      }
+
       pickedDate = await showDatePicker(
         context: context,
-        initialDate: initialDate ?? now,
-        firstDate: DateTime(2000),
+        initialDate: initial,
+        firstDate: minimumDate,
         lastDate: DateTime(2100),
       );
 
@@ -102,21 +116,33 @@ class DateTextField extends StatelessWidget {
       }
     }
 
+    final initialTime = initialDate != null
+        ? TimeOfDay.fromDateTime(initialDate)
+        : TimeOfDay.now();
+
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(initialDate ?? now),
+      initialTime: initialTime,
     );
 
     if (pickedTime == null) return null;
+
     if (type == DateTextFieldType.time) {
-      return DateTime(0, 0, 0, pickedTime.hour, pickedTime.minute);
+      return DateTime(0, 1, 1, pickedTime.hour, pickedTime.minute);
     }
-    return DateTime(
+
+    final result = DateTime(
       pickedDate!.year,
       pickedDate.month,
       pickedDate.day,
       pickedTime.hour,
       pickedTime.minute,
     );
+
+    if (!allowPastDateTime && !result.isAfter(now)) {
+      return null;
+    }
+
+    return result;
   }
 }

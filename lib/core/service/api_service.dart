@@ -3,6 +3,7 @@ import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
 import 'package:apex_restaurant/core/shared/model/print_kitchen_request.dart';
 import 'package:apex_restaurant/core/shared/model/print_kitchen_response.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
 import 'package:apex_restaurant/featchers/home/data/models/open_restaurant_pos_session.dart';
 import 'package:apex_restaurant/featchers/home/data/models/safe_model.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/model/accredite_pos_invoices_request.dart';
@@ -60,7 +61,7 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
   @POST(ApiConstants.login)
-  @Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
+  //@Headers({'Content-Type': 'application/json-patch+json', 'accept': '*/*'})
   Future<BaseResponse<LoginData?>> login(@Body() LoginRequest loginRequestBody);
   @GET(ApiConstants.openRestaurantPos)
   Future<BaseResponse<SessionModel?>> openRestaurantPos();
@@ -184,7 +185,7 @@ abstract class ApiService {
   );
 
   @POST(ApiConstants.saveBookingTableRestaurantPosInvoice)
-  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+  Future<BaseResponse<SaveTableData>> saveBookingTableRestaurantPosInvoice(
     @Body() SaveRestaurantPosInvoiceRequest request,
   );
 

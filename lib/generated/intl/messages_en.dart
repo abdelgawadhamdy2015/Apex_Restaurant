@@ -421,6 +421,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "grandTotal": MessageLookupByLibrary.simpleMessage("Grand Total"),
     "group": MessageLookupByLibrary.simpleMessage("Group"),
     "guestsCount": MessageLookupByLibrary.simpleMessage("Number of Guests"),
+    "guestsCountError": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid number of guests.",
+    ),
     "guestsCountHint": MessageLookupByLibrary.simpleMessage("e.g. 3"),
     "heldOrders": MessageLookupByLibrary.simpleMessage("Held Orders"),
     "holdOrder": MessageLookupByLibrary.simpleMessage("Hold Order"),
@@ -586,6 +589,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "paymentMethodOther": MessageLookupByLibrary.simpleMessage("... Other"),
     "paymentMethodVisa": MessageLookupByLibrary.simpleMessage("Visa"),
     "paymentMethodVoucher": MessageLookupByLibrary.simpleMessage("Voucher"),
+    "paymentSuccess": MessageLookupByLibrary.simpleMessage(
+      "Payment Successful",
+    ),
     "paymentSuccessful": MessageLookupByLibrary.simpleMessage(
       "Payment Successful",
     ),
@@ -691,8 +697,14 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "requestType": MessageLookupByLibrary.simpleMessage("Request Type"),
     "requests": MessageLookupByLibrary.simpleMessage("Requests"),
+    "reservationDateTimeMustBeFuture": MessageLookupByLibrary.simpleMessage(
+      "Reservation date and time must be in the future.",
+    ),
     "reservationPeriod": MessageLookupByLibrary.simpleMessage(
       "Reservation Period",
+    ),
+    "reservationPeriodError": MessageLookupByLibrary.simpleMessage(
+      "Please enter a valid reservation period.",
     ),
     "reservationPeriodInMinutes": m16,
     "reservationSuccess": MessageLookupByLibrary.simpleMessage(

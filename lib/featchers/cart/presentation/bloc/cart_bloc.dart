@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -28,19 +29,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   savePendingRestaurantPosInvoiceUseCase;
   final SaveBookingTableRestaurantPosInvoiceUseCase
   saveBookingTableRestaurantPosInvoiceUseCase;
+  final GetInvoiceReportUseCase getInvoiceReportUseCase;
   final GetAllDeliveryCompanyUseCase getAllDeliveryCompanyUseCase;
-  final GetPosMenuItemsUseCase _getMenuItemsByCompanyIdUseCase;
+  final GetPosMenuItemsUseCase getMenuItemsByCompanyIdUseCase;
   final GetAllPosClientsUseCase getAllPersonsUseCase;
   final AddPosClientUseCase addPosClientUseCase;
   final UpdatePosClientUseCase updatePosClientUseCase;
   final GetDynamicInvoiceDiscountUseCase getDynamicInvoiceDiscountUseCase;
 
-  /// Original returnable amount per invoice line (keyed by invoiceDetailsId),
-  /// captured when a return invoice is restored. availableQuantity itself is
-  /// edited by the user, so this keeps the upper limit.
   final Map<int, int> _returnLimits = {};
 
-  /// Maximum quantity that can be returned for [item].
   int returnLimitFor(OrderItem item) {
     final current = (item.availableQuantity ?? 0).toInt();
     final key = item.invoiceDetailsId;
@@ -48,11 +46,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     return _returnLimits[key] ?? current;
   }
 
-  /// Original returnable amount per additive line (keyed by its
-  /// invoiceDetailsId), captured when a return invoice is restored.
   final Map<int, int> _addonReturnLimits = {};
 
-  /// Maximum quantity that can be returned for [addon].
   int returnAddonLimitFor(AdditiveModel addon) {
     final current = (addon.availableQuantity ?? 0).toInt();
     final key = addon.invoiceDetailsId;
@@ -72,7 +67,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.getDynamicInvoiceDiscountUseCase,
     required this.getAllDeliveryCompanyUseCase,
     required this.checkVoucherUseCase,
-    required this._getMenuItemsByCompanyIdUseCase,
+    required this.getMenuItemsByCompanyIdUseCase,
+    required this.getInvoiceReportUseCase,
   }) : super(const CartState()) {
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
@@ -88,6 +84,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               state.copyWith(
                 voucherData: null,
                 clearVoucherDiscountValue: true,
+                clearMessage: true,
               ),
             ),
     );
@@ -99,43 +96,72 @@ class CartBloc extends Bloc<CartEvent, CartState> {
                 restaurantPosDiscountRequest: null,
                 clearRestaurantPosDiscountRequest: true,
                 discountAmount: 0,
+                clearMessage: true,
               ),
             ),
     );
     on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
-      emit(state.copyWith(settingsModel: event.settings));
+      emit(state.copyWith(settingsModel: event.settings, clearMessage: true));
     });
     on<SelectCartTableEvent>(
-      (event, emit) => emit(state.copyWith(selectedTable: event.table)),
+      (event, emit) =>
+          emit(state.copyWith(selectedTable: event.table, clearMessage: true)),
     );
     on<ChangeOrderTypeEvent>(_onChangeOrderType);
     on<SelectWaiterEvent>(
-      (event, emit) => emit(state.copyWith(selectedWaiter: event.waiter)),
+      (event, emit) => emit(
+        state.copyWith(selectedWaiter: event.waiter, clearMessage: true),
+      ),
     );
     on<UpdateTakeawayDateTimeEvent>(
-      (event, emit) =>
-          emit(state.copyWith(fromBranchDateTime: event.takeawayDateTime)),
+      (event, emit) => emit(
+        state.copyWith(
+          fromBranchDateTime: event.takeawayDateTime,
+          clearMessage: true,
+        ),
+      ),
     );
     on<SelectDeliveryManEvent>(
-      (event, emit) =>
-          emit(state.copyWith(selectedDeliveryMan: event.deliveryMan)),
+      (event, emit) => emit(
+        state.copyWith(
+          selectedDeliveryMan: event.deliveryMan,
+          clearMessage: true,
+        ),
+      ),
     );
     on<SelectDeliveryCompanyEvent>((event, emit) {
-      emit(state.copyWith(selectedDeliveryCompany: event.deliveryCompanyModel));
+      emit(
+        state.copyWith(
+          selectedDeliveryCompany: event.deliveryCompanyModel,
+          clearMessage: true,
+        ),
+      );
       add(UpdateItemsPriceWithCompanyEvent());
     });
     on<AcknowledgeCartRestoredEvent>((event, emit) {
-      emit(state.copyWith(justRestored: false));
+      emit(
+        state.copyWith(
+          justRestored: false,
+          errorMessage: null,
+          successMessage: null,
+          clearMessage: true,
+        ),
+      );
     });
     on<ChangeDiscountTypeEvent>(
-      (event, emit) =>
-          emit(state.copyWith(selectedDiscountType: event.discountType)),
+      (event, emit) => emit(
+        state.copyWith(
+          selectedDiscountType: event.discountType,
+          clearMessage: true,
+        ),
+      ),
     );
     on<UpdateItemQuantityEvent>(_onUpdateItemQuantity);
     on<RemoveItemEvent>(_onRemoveItem);
     on<HoldOrderEvent>(_onHoldOrder);
     on<SaveTableOrderEvent>(_saveTableOrder);
+    on<GetInvoiceReportEvent>(_onInvoiceReport);
     on<ClearCartEvent>(_onClearCartEvent);
     on<AddPosClientEvent>(_addPosClient);
     on<UpdatePosClientEvent>(_updatePosClient);
@@ -147,7 +173,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   void _onChangeAddress(ChangeAddressEvent event, Emitter<CartState> emit) {
-    emit(state.copyWith(selectedAddress: event.address));
+    emit(
+      state.copyWith(
+        selectedAddress: event.address,
+        status: CartStatus.initial,
+        clearMessage: true,
+      ),
+    );
   }
 
   void _onEditCartItem(EditCartItemEvent event, Emitter<CartState> emit) {
@@ -158,13 +190,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     var quantity = event.quantity;
     int? returnQuantity;
 
-    // Return invoices: the returned amount lives in availableQuantity and
-    // must stay between 1 and the original returnable amount.
     if (isReturn) {
       final limit = returnLimitFor(old);
       if (limit <= 0) return;
       returnQuantity = event.quantity.clamp(1, limit).toInt();
-      quantity = old.quantity; // untouched
+      quantity = old.quantity;
     }
 
     items[event.index] = old.copyWith(
@@ -173,14 +203,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       quantity: quantity,
       availableQuantity: returnQuantity?.toDouble() ?? old.availableQuantity,
       notes: event.notes,
-      // Return invoices keep the discount restored from the original invoice
       discount: isReturn ? old.discount : event.discount,
       isPercentageDiscount: isReturn
           ? old.isPercentageDiscount
           : event.isPercentageDiscount,
     );
 
-    emit(state.copyWith(items: items));
+    emit(
+      state.copyWith(
+        items: items,
+        status: CartStatus.itemsUpdated,
+        clearMessage: true,
+      ),
+    );
   }
 
   Future<void> _updateItemsPriceForCompanies(
@@ -190,7 +225,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(state.copyWith(status: CartStatus.itemsUpdateing));
     final itmemIds = state.items.map((i) => i.menuItem.itemId).toList();
 
-    final response = await _getMenuItemsByCompanyIdUseCase(
+    final response = await getMenuItemsByCompanyIdUseCase(
       GetItemsRequest(
         itemIds: itmemIds,
         companyId: state.selectedOrderType == CartOrderType.DELIVERY_COMPANY
@@ -205,7 +240,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         if (items.isNotEmpty) {
           final orderItems = _updatePrices(items);
           emit(
-            state.copyWith(items: orderItems, status: CartStatus.itemsUpdated),
+            state.copyWith(
+              items: orderItems,
+              status: CartStatus.itemsUpdated,
+              clearMessage: true,
+            ),
           );
         }
       },
@@ -269,7 +308,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             (c) => c.id == data.deliveryCompany?.id,
           )
         : null;
-    log("in cart : ${data.priceIncludeVat}");
     emit(
       state.copyWith(
         // Primary Restored Data
@@ -314,6 +352,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         //     .success, // Triggers state listeners without breaking UI flow
         isLoading: false,
         errorMessage: null,
+        successMessage: null,
+        clearMessage: true,
         isReturnInvoice: data.isReturnInvoice,
         priceIncludeVat: data.priceIncludeVat,
       ),
@@ -380,12 +420,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         persons: personsList,
         selectedPerson: personsList.isNotEmpty ? personsList.first : null,
+        clearMessage: true,
       ),
     );
   }
 
   void _onSyncCartItems(SyncCartItemsEvent event, Emitter<CartState> emit) {
-    emit(state.copyWith(items: event.items));
+    emit(
+      state.copyWith(
+        status: CartStatus.itemsUpdated,
+        items: event.items,
+        clearMessage: true,
+      ),
+    );
   }
 
   void _onAddOrderItem(AddOrderItemToCartEvent event, Emitter<CartState> emit) {
@@ -416,7 +463,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       existingItems.add(event.item);
     }
 
-    emit(state.copyWith(items: existingItems));
+    emit(
+      state.copyWith(
+        items: existingItems,
+        status: CartStatus.itemsUpdated,
+        clearMessage: true,
+      ),
+    );
   }
 
   bool _areAddonsEqual(
@@ -434,8 +487,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(
       state.copyWith(
         selectedPerson: event.person,
-        clearAddress: true,
+        selectedAddress:
+            (event.person == null || event.person!.personAddress!.isEmpty)
+            ? null
+            : event.person!.personAddress!.first,
         clearVoucherDiscountValue: state.selectedPerson != event.person,
+        clearMessage: true,
       ),
     );
   }
@@ -449,6 +506,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearVoucherDiscountValue: event.orderType != state.selectedOrderType
             ? true
             : false,
+        clearMessage: true,
       ),
     );
     if (oldType == CartOrderType.DELIVERY_COMPANY ||
@@ -487,13 +545,25 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
     }
 
-    emit(state.copyWith(items: updatedItems));
+    emit(
+      state.copyWith(
+        items: updatedItems,
+        status: CartStatus.itemsUpdated,
+        clearMessage: true,
+      ),
+    );
   }
 
   void _onRemoveItem(RemoveItemEvent event, Emitter<CartState> emit) {
     if (event.index >= 0 && event.index < state.items.length) {
       final updated = List<OrderItem>.from(state.items)..removeAt(event.index);
-      emit(state.copyWith(items: updated));
+      emit(
+        state.copyWith(
+          items: updated,
+          status: CartStatus.itemsUpdated,
+          clearMessage: true,
+        ),
+      );
     }
   }
 
@@ -502,8 +572,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     _addonReturnLimits.clear();
     emit(
       state.copyWith(
+        status: CartStatus.initial,
         items: [],
         isPreviousInvoice: false,
+        clearMessage: true,
         errorMessage: null,
         successMessage: null,
         selectedAddress: null,
@@ -533,6 +605,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearInvoiceId: true,
         clearCart: true,
         isReturnInvoice: false,
+        // SaveTableData: null,
       ),
     );
   }
@@ -541,7 +614,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     HoldOrderEvent event,
     Emitter<CartState> emit,
   ) async {
-    emit(state.copyWith(status: CartStatus.pindingLoading));
+    emit(state.copyWith(status: CartStatus.pindingLoading, clearMessage: true));
     final response = await savePendingRestaurantPosInvoiceUseCase(
       event.request,
     );
@@ -578,23 +651,31 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     SaveTableOrderEvent event,
     Emitter<CartState> emit,
   ) async {
-    emit(state.copyWith(status: CartStatus.pindingLoading));
+    emit(
+      state.copyWith(
+        status: CartStatus.saveDineInInvoiceLoading,
+        clearMessage: true,
+      ),
+    );
     final response = await saveBookingTableRestaurantPosInvoiceUseCase(
       event.request,
     );
     response.when(
       success: (data) {
+        log(" success: ${data.data}");
         if (data.result == 1) {
+          log("data : ${data.data?.toJson()}");
           emit(
             state.copyWith(
-              status: CartStatus.pindingSuccess,
+              status: CartStatus.saveDineInInvoiceSuccess,
               successMessage: data.errorMessageAr,
+              saveTableData: data.data,
             ),
           );
         } else {
           emit(
             state.copyWith(
-              status: CartStatus.pindingFailure,
+              status: CartStatus.saveDineInInvoiceFailure,
               errorMessage: data.errorMessageAr,
             ),
           );
@@ -603,7 +684,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       failure: (errorHandler) {
         emit(
           state.copyWith(
-            status: CartStatus.pindingFailure,
+            status: CartStatus.saveDineInInvoiceFailure,
             errorMessage: errorHandler.apiErrorModel.errorMessageAr,
           ),
         );
@@ -611,12 +692,63 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
+  Future<void> _onInvoiceReport(
+    GetInvoiceReportEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(
+      state.copyWith(status: CartStatus.invoiceReportLoading, isLoading: true),
+    );
+    try {
+      final response = await getInvoiceReportUseCase(request: event.request);
+      response.when(
+        success: (data) {
+          if (data?.result != null && data!.result != 0) {
+            emit(
+              state.copyWith(
+                status: CartStatus.invoiceReportSuccess,
+                invoiceReportResponse: data,
+                isLoading: false,
+              ),
+            );
+          } else {
+            emit(
+              state.copyWith(
+                status: CartStatus.invoiceReportFailure,
+                errorMessage: data?.errorMessageAr ?? 'فشل استرجاع التقرير',
+                isLoading: false,
+              ),
+            );
+          }
+        },
+        failure: (err) {
+          emit(
+            state.copyWith(
+              status: CartStatus.invoiceReportFailure,
+              errorMessage:
+                  err.apiErrorModel.errorMessageAr ?? 'خطأ في الاتصال بالخادم',
+              isLoading: false,
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: CartStatus.invoiceReportFailure,
+          errorMessage: 'حدث خطأ غير متوقع أثناء استرجاع التقرير',
+          isLoading: false,
+        ),
+      );
+    }
+  }
+
   Future<void> _addPosClient(
     AddPosClientEvent event,
     Emitter<CartState> emit,
   ) async {
     try {
-      emit(state.copyWith(status: CartStatus.loading));
+      emit(state.copyWith(status: CartStatus.loading, clearMessage: true));
       final response = await addPosClientUseCase(request: event.request);
       response.when(
         success: (data) {
@@ -657,7 +789,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     Emitter<CartState> emit,
   ) async {
     try {
-      emit(state.copyWith(status: CartStatus.loading));
+      emit(state.copyWith(status: CartStatus.loading, clearMessage: true));
       final response = await updatePosClientUseCase(request: event.request);
       response.when(
         success: (data) {
@@ -704,7 +836,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           if (data.result == 1) {
             final activeDiscounts = checkAvailability(data.data);
 
-            emit(state.copyWith(activeDiscounts: activeDiscounts));
+            emit(
+              state.copyWith(
+                activeDiscounts: activeDiscounts,
+                clearMessage: true,
+              ),
+            );
           } else {
             emit(state.copyWith(errorMessage: data.errorMessageAr));
           }
@@ -775,11 +912,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     emit(
       state.copyWith(
+        status: CartStatus.itemsUpdated,
         restaurantPosDiscountRequest: event.restaurantPosDiscountRequest,
         couponDiscountvalue: 0.0, // Reset coupon discount
         selectedDiscountType: DiscountTypeEnum.direct,
         activeDiscountModel: null,
         voucherData: null,
+        clearMessage: true,
       ),
     );
   }
@@ -800,6 +939,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             state.copyWith(
               selectedDiscountType: DiscountTypeEnum.coupon,
               voucherData: data.data,
+              status: CartStatus.itemsUpdated,
+              clearMessage: true,
             ),
           );
         } else {

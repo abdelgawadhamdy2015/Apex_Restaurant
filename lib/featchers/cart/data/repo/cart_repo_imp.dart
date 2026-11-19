@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -99,7 +100,8 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<ApiResult<BaseResponse<dynamic>>> saveBookingTableRestaurantPosInvoice(
+  Future<ApiResult<BaseResponse<SaveTableData>>>
+  saveBookingTableRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   ) async {
     try {

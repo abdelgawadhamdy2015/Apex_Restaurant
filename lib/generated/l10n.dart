@@ -4311,6 +4311,46 @@ class S {
   String get englishLanguage {
     return Intl.message('English', name: 'englishLanguage', desc: '', args: []);
   }
+
+  /// `Payment Successful`
+  String get paymentSuccess {
+    return Intl.message(
+      'Payment Successful',
+      name: 'paymentSuccess',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid reservation period.`
+  String get reservationPeriodError {
+    return Intl.message(
+      'Please enter a valid reservation period.',
+      name: 'reservationPeriodError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Please enter a valid number of guests.`
+  String get guestsCountError {
+    return Intl.message(
+      'Please enter a valid number of guests.',
+      name: 'guestsCountError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Reservation date and time must be in the future.`
+  String get reservationDateTimeMustBeFuture {
+    return Intl.message(
+      'Reservation date and time must be in the future.',
+      name: 'reservationDateTimeMustBeFuture',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

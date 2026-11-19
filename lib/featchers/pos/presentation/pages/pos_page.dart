@@ -45,9 +45,6 @@ class _PosPageState extends State<PosPage> {
   Future<void> _onRefresh() async {
     _loadData();
     context.read<CartBloc>().add(ClearCartEvent());
-    // Small delay so RefreshIndicator remains visible.
-    // Better to replace this with waiting for Bloc success state
-    // if you have a loading/status field.
     await Future.delayed(const Duration(milliseconds: 600));
   }
 
@@ -56,18 +53,23 @@ class _PosPageState extends State<PosPage> {
     final size = MediaQuery.sizeOf(context);
     final isMobile = size.width < 600;
 
-    return BlocListener<PosBloc, PosState>(
-      listenWhen: (previous, current) => previous.settings != current.settings,
-      listener: (context, state) {
-        if (state.settings != null) {
-          context.read<CartBloc>().add(UpdateSettingsEvent(state.settings));
-        }
-      },
-      child: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: isMobile
-            ? PosMenuScreen(changeLanguage: widget.changeLanguage)
-            : PosTabletMenuScreen(changeLanguage: widget.changeLanguage),
+    return PopScope(
+      canPop: false,
+
+      child: BlocListener<PosBloc, PosState>(
+        listenWhen: (previous, current) =>
+            previous.settings != current.settings,
+        listener: (context, state) {
+          if (state.settings != null) {
+            context.read<CartBloc>().add(UpdateSettingsEvent(state.settings));
+          }
+        },
+        child: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: isMobile
+              ? PosMenuScreen(changeLanguage: widget.changeLanguage)
+              : PosTabletMenuScreen(changeLanguage: widget.changeLanguage),
+        ),
       ),
     );
   }

@@ -30,7 +30,7 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     required this.getTablesUseCase,
     required this.getPindingTableInvoiceUseCase,
     required this.restoreHeldOrderUseCase,
-  }) : super(const TablesState()) {
+  }) : super(TablesState()) {
     on<FetchReservationsEvent>(_onFetchReservations);
     on<SwitchMainTabEvent>(_onSwitchMainTab);
     on<AddReservationEvent>(_onAddReservation);
@@ -38,9 +38,17 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
     on<CancelReservationEvent>(_onCancelReservation);
     on<FetchFloorsEvent>(_onFetchFloors);
     on<FetchTablesEvent>(_onFetchTables);
-    on<SelectFloorEvent>(
-      (event, emit) => emit(state.copyWith(selectedFloor: event.floorEntity)),
-    );
+    on<SelectFloorEvent>((event, emit) {
+      emit(
+        state.copyWith(
+          selectedFloor: event.floorEntity,
+          clearSelection: true,
+          clearTables: true,
+          clearSelectedFloor: event.floorEntity == null,
+          status: TablesStatus.success,
+        ),
+      );
+    });
     on<SelectTableEvent>(
       (event, emit) => emit(
         state.copyWith(
@@ -259,8 +267,31 @@ class TablesBloc extends Bloc<TablesEvent, TablesState> {
       call: () => editReservationUseCase(event.reservation),
       isSuccessful: (data) => data.result == 1,
       errorMessage: (data) => data.errorMessageAr,
-      onSuccess: (_) =>
-          emit(state.copyWith(status: TablesStatus.reservationSuccess)),
+      onSuccess: (_) {
+        final updatedReservations = state.reservations.map((r) {
+          if (r.id == event.reservation.reservationId) {
+            return r.copyWith(
+              id: event.reservation.reservationId,
+              seatsCount: event.reservation.seatsCount,
+              tableId: event.reservation.foodTablesId,
+              dateTime: event.reservation.reservationDate != null
+                  ? DateTime.parse(event.reservation.reservationDate!)
+                  : r.dateTime,
+              durationMinutes: event.reservation.reservationPeriod,
+              notes: event.reservation.notes,
+            );
+          }
+
+          return r;
+        }).toList();
+
+        emit(
+          state.copyWith(
+            status: TablesStatus.reservationSuccess,
+            reservations: updatedReservations,
+          ),
+        );
+      },
     );
   }
 

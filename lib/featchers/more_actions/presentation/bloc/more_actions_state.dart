@@ -7,7 +7,18 @@ import 'package:apex_restaurant/featchers/more_actions/presentation/screens/resp
 import 'package:apex_restaurant/featchers/orders/data/model/restored_invoice_model.dart';
 import 'package:equatable/equatable.dart';
 
-enum MoreActionsStatus { loading, failure, success, successAcredit }
+enum MoreActionsStatus {
+  loading,
+  loadingFullReturn,
+  loadingPartialReturn,
+  failure,
+  success,
+  successAcredit,
+  initial,
+  successFullReturn,
+  successPartialReturn,
+  successPrint,
+}
 
 /// Shared page size for both paginated lists on this screen.
 const int kOrdersPageSize = 10;

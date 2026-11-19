@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
 import '../../../../core/service/api_service.dart';
@@ -47,7 +48,7 @@ abstract class CartRemoteDataSource {
   Future<BaseResponse<dynamic>> savePendingRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   );
-  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+  Future<BaseResponse<SaveTableData>> saveBookingTableRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   );
 }
@@ -102,7 +103,7 @@ class CartRemoteDataSourceImpl implements CartRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<dynamic>> saveBookingTableRestaurantPosInvoice(
+  Future<BaseResponse<SaveTableData>> saveBookingTableRestaurantPosInvoice(
     SaveRestaurantPosInvoiceRequest request,
   ) {
     return _apiService.saveBookingTableRestaurantPosInvoice(request);

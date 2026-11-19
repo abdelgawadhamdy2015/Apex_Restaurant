@@ -1,6 +1,7 @@
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/get_delivery_companies_request.dart';
+import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 
 import '../../../../core/service/api_result.dart';
@@ -116,7 +117,7 @@ class SaveBookingTableRestaurantPosInvoiceUseCase {
   final CartRepository repository;
   SaveBookingTableRestaurantPosInvoiceUseCase(this.repository);
 
-  Future<ApiResult<BaseResponse<dynamic>>> call(
+  Future<ApiResult<BaseResponse<SaveTableData>>> call(
     SaveRestaurantPosInvoiceRequest order,
   ) {
     return repository.saveBookingTableRestaurantPosInvoice(order);

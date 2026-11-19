@@ -15,6 +15,7 @@ import 'package:apex_restaurant/featchers/payment/presentation/widgets/payment_m
 import 'package:apex_restaurant/featchers/payment/presentation/widgets/reference_number_input_field.dart';
 import 'package:apex_restaurant/featchers/payment/presentation/widgets/total_amount_card.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -96,7 +97,7 @@ class TabletPaymentDialog extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Header — close (X) on the leading edge, title centered.
+                  // Header
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: spacing.md,
@@ -105,7 +106,7 @@ class TabletPaymentDialog extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(width: 48), // balances the close icon
+                        const SizedBox(width: 48),
                         Text(
                           lang.payment,
                           style: theme.textTheme.titleLarge?.copyWith(
@@ -113,7 +114,7 @@ class TabletPaymentDialog extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          onPressed: () => context.pop(),
                           icon: const Icon(Icons.close),
                         ),
                       ],

@@ -115,8 +115,11 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                 partialReturnResponseData: data?.data,
                 printResponseData: data?.printingData ?? PrintResponseData(),
                 status: PaymentStatus.success,
-                isFullReturn: true,
+                // isFullReturn: true,
                 errorMessage: null,
+                clearMessage: true,
+                successModel: null,
+                clearSuccessModel: true,
               ),
             );
           } else {
