@@ -42,7 +42,7 @@ class OrderSummaryCard extends StatelessWidget {
           _SummaryRow(
             title: lang.subtotal,
             value:
-                '${state.netSubtotal.toStringAsFixed(2)} ${lang.currencySarShort}',
+                '${state.subtotal.toStringAsFixed(2)} ${lang.currencySarShort}',
           ),
           SizedBox(height: spacing.xs),
           _SummaryRow(

@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:apex_restaurant/core/helpers/extensions.dart';
 import 'package:apex_restaurant/core/router/routes.dart';
 import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/home/presentation/bloc/home_bloc.dart';
 import 'package:apex_restaurant/featchers/orders/presentation/pages/tablet_orders_screen.dart';
-import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_bloc.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_event.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/bloc/pos_state.dart';
@@ -15,6 +13,7 @@ import 'package:apex_restaurant/featchers/pos/presentation/screens/customers_tab
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_menu_tab.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_more_option.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_top_header.dart';
+import 'package:apex_restaurant/featchers/pos/presentation/widgets/pos_add_item_handler.dart';
 import 'package:apex_restaurant/featchers/tables/presentation/pages/tablet_tables_screen.dart';
 import 'package:apex_restaurant/generated/l10n.dart';
 import 'package:go_router/go_router.dart';
@@ -33,16 +32,10 @@ class PosTabletMenuScreen extends StatefulWidget {
 }
 
 class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
-  static const int _pageSize = 100;
   static const Duration _searchDebounceDuration = Duration(milliseconds: 400);
-  static const Duration _loadMoreThrottleDuration = Duration(milliseconds: 600);
 
   Timer? _searchDebounce;
-
   String _currentSearchKey = '';
-  int _currentPage = 1;
-
-  DateTime? _lastLoadMoreAt;
 
   @override
   void initState() {
@@ -58,60 +51,56 @@ class _PosTabletMenuScreenState extends State<PosTabletMenuScreen> {
     super.dispose();
   }
 
-  /// Debounced search handler. Waits for the user to stop typing before
-  /// firing a request, and always resets pagination back to page 1 since a
-  /// new search key means a brand-new result set.
   void _onSearchChanged(String value) {
     final trimmed = value.trim();
-
     _searchDebounce?.cancel();
     _searchDebounce = Timer(_searchDebounceDuration, () {
-      if (!mounted) return;
-      // Skip re-fetching if the debounced value didn't actually change
-      // (e.g. user typed then quickly deleted back to the same text).
-      if (trimmed == _currentSearchKey && _currentPage == 1) return;
-
+      if (!mounted || trimmed == _currentSearchKey) return;
       _currentSearchKey = trimmed;
-      _currentPage = 1;
-      _fetchItems(page: 1, searchKey: _currentSearchKey);
+      context.read<PosBloc>().add(
+        SearchItemsEvent(
+          searchKey: trimmed,
+          deliveryCompanyId: context.read<CartBloc>().state.menuCompanyId,
+        ),
+      );
     });
   }
 
   /// Loads the next page for whatever search key is currently active.
   /// Throttled so it can be safely called from a scroll listener without
   /// worrying about duplicate calls near the end of the list.
-  void loadNextPage(CartState cartSate) {
-    final now = DateTime.now();
-    if (_lastLoadMoreAt != null &&
-        now.difference(_lastLoadMoreAt!) < _loadMoreThrottleDuration) {
-      return;
-    }
-    _lastLoadMoreAt = now;
+  // void loadNextPage(CartState cartSate) {
+  //   final now = DateTime.now();
+  //   if (_lastLoadMoreAt != null &&
+  //       now.difference(_lastLoadMoreAt!) < _loadMoreThrottleDuration) {
+  //     return;
+  //   }
+  //   _lastLoadMoreAt = now;
 
-    _currentPage += 1;
-    _fetchItems(
-      page: _currentPage,
-      searchKey: _currentSearchKey,
-      cartState: cartSate,
-    );
-  }
+  //   _currentPage += 1;
+  //   _fetchItems(
+  //     page: _currentPage,
+  //     searchKey: _currentSearchKey,
+  //     cartState: cartSate,
+  //   );
+  // }
 
-  void _fetchItems({
-    required int page,
-    required String searchKey,
-    CartState? cartState,
-  }) {
-    context.read<PosBloc>().add(
-      LoadItemsEvent(
-        GetItemsRequest(
-          pageNumber: page,
-          pageSize: _pageSize,
-          searchKey: searchKey.isEmpty ? null : searchKey,
-          companyId: cartState?.selectedDeliveryCompany?.id,
-        ),
-      ),
-    );
-  }
+  // void _fetchItems({
+  //   required int page,
+  //   required String searchKey,
+  //   CartState? cartState,
+  // }) {
+  //   context.read<PosBloc>().add(
+  //     LoadItemsEvent(
+  //       GetItemsRequest(
+  //         pageNumber: page,
+  //         pageSize: _pageSize,
+  //         searchKey: searchKey.isEmpty ? null : searchKey,
+  //         companyId: cartState?.selectedDeliveryCompany?.id,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

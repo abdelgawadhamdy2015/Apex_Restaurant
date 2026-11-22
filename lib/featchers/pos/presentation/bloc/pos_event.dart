@@ -15,6 +15,16 @@ abstract class PosEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Search across all items; an empty key restores the selected category.
+class SearchItemsEvent extends PosEvent {
+  final String searchKey;
+  final int? deliveryCompanyId;
+  const SearchItemsEvent({required this.searchKey, this.deliveryCompanyId});
+
+  @override
+  List<Object?> get props => [searchKey, deliveryCompanyId];
+}
+
 class LoadCategoriesEvent extends PosEvent {
   const LoadCategoriesEvent();
 }

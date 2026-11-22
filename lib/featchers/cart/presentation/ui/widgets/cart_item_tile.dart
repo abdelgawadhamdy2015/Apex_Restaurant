@@ -263,7 +263,7 @@ class CartItemTile extends StatelessWidget {
                                           item.totalPrice) ...[
                                     TextSpan(
                                       text:
-                                          '${item.selectedSize!.price!.toStringAsFixed(2)} ',
+                                          '${item.basePriceTotal.toStringAsFixed(2)} ',
                                       style: theme.textTheme.bodyMedium
                                           ?.copyWith(
                                             decoration:

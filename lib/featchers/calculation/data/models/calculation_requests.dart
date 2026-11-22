@@ -128,19 +128,16 @@ class EditCalculationItemRequest {
 class SetPosTypeRequest {
   final String cartId;
   final int posType;
-  final double deliveryCost;
-  final double dineInRatio;
+  final double serviceValue;
   const SetPosTypeRequest({
     required this.cartId,
     required this.posType,
-    this.deliveryCost = 0,
-    this.dineInRatio = 0,
+    required this.serviceValue,
   });
   Map<String, dynamic> toQuery() => {
     'CartID': cartId,
-    'PosType': posType,
-    'DeliveryCost': deliveryCost,
-    'DineInRatio': dineInRatio,
+    'posType': posType,
+    'ServiceValue': serviceValue,
   };
 }
 

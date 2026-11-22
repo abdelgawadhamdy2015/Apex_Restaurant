@@ -17,6 +17,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
   /// Number of items fetched per page for the menu grid (mobile & tablet).
   static const int _itemsPageSize = 20;
+  int _itemsRequestId = 0;
 
   PosBloc({
     required this._getMenuCategories,
@@ -35,7 +36,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
     on<LoadItemsEvent>(_onLoadItems);
     on<LoadMoreItemsEvent>(_onLoadMoreItems);
     on<LoadFoodAdditivesEvent>(_onLoadFoodAdditives);
-
+    on<SearchItemsEvent>(_onSearchItems);
     on<ShowToastEvent>(_onShowToast);
     on<DismissToastEvent>(_onDismissToast);
     on<SelectTableEvent>(_onSelectTable);
@@ -341,6 +342,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
           currentMenuItems: const [],
           itemsPageNumber: 1,
           hasMoreItems: true,
+          isLoadingMoreItems: false,
         ),
       );
     } else {
@@ -348,6 +350,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
       emit(state.copyWith(isLoadingMoreItems: true));
     }
 
+    final requestId = isFirstPage ? ++_itemsRequestId : _itemsRequestId;
     final nextPage = isFirstPage ? 1 : state.itemsPageNumber + 1;
     final baseRequest = event.requestModel ?? state.currentItemsRequest;
     final requestWithPaging = GetItemsRequest(
@@ -362,18 +365,18 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
     try {
       final response = await _itemsByCategoryUseCase(requestWithPaging);
+      if (requestId != _itemsRequestId) return; // stale response
+
       response.when(
         success: (data) {
           if (data.result == 1) {
             final newItems = data.data ?? [];
-            final combinedItems = isFirstPage
-                ? newItems
-                : [...state.currentMenuItems, ...newItems];
-
             emit(
               state.copyWith(
                 status: PosStatus.loaded,
-                currentMenuItems: combinedItems,
+                currentMenuItems: isFirstPage
+                    ? newItems
+                    : [...state.currentMenuItems, ...newItems],
                 itemsPageNumber: nextPage,
                 hasMoreItems: newItems.length >= _itemsPageSize,
                 isLoadingMoreItems: false,
@@ -405,6 +408,7 @@ class PosBloc extends Bloc<PosEvent, PosState> {
         },
       );
     } catch (e) {
+      if (requestId != _itemsRequestId) return;
       emit(
         state.copyWith(
           status: PosStatus.error,
@@ -486,5 +490,21 @@ class PosBloc extends Bloc<PosEvent, PosState> {
 
   void _onSelectTable(SelectTableEvent event, Emitter<PosState> emit) {
     emit(state.copyWith(selectedTable: event.table));
+  }
+
+  void _onSearchItems(SearchItemsEvent event, Emitter<PosState> emit) {
+    final key = event.searchKey.trim();
+    final category = state.selectedCategory;
+    final restoreCategory = key.isEmpty && category != null && category.id != 0;
+
+    add(
+      LoadItemsEvent(
+        GetItemsRequest(
+          categoryId: restoreCategory ? category.id : null,
+          companyId: event.deliveryCompanyId,
+          searchKey: key.isEmpty ? null : key,
+        ),
+      ),
+    );
   }
 }

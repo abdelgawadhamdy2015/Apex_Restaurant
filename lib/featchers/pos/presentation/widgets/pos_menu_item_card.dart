@@ -22,8 +22,18 @@ class PosMenuItemCard extends StatelessWidget {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
-    final canEdit = context.select((CartBloc b) => b.state.canEdit);
+    final canEdit = context.select((CartBloc b) => b.state.canEditInvoice);
 
+    final placeholder = Container(
+      color: theme.colorScheme.surface,
+      child: Center(
+        child: Icon(
+          Icons.fastfood,
+          size: iconSizes.xl,
+          color: theme.colorScheme.onPrimary,
+        ),
+      ),
+    );
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.onSurface,
@@ -42,44 +52,37 @@ class PosMenuItemCard extends StatelessWidget {
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
-                  child: item.imagePath != null
+                  child: (item.imagePath != null && item.imagePath!.isNotEmpty)
                       ? Image.network(
                           item.imagePath!,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => placeholder,
                         )
-                      : Container(
-                          color: theme.colorScheme.surface,
-                          child: Center(
-                            child: Icon(
-                              Icons.fastfood,
-                              size: iconSizes.xl,
-                              color: theme.colorScheme.onPrimary,
-                            ),
-                          ),
-                        ),
+                      : placeholder,
                 ),
-                Positioned(
-                  top: spacing.xs,
-                  left: spacing.xs,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: spacing.xs,
-                      vertical: spacing.xxs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(spacing.radiusLg),
-                    ),
-                    child: Text(
-                      item.isOffer ? lang.badgeOffer : lang.badgeNew,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onPrimary,
-                        fontWeight: FontWeight.bold,
+                if (item.isOffer)
+                  Positioned(
+                    top: spacing.xs,
+                    left: spacing.xs,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: spacing.xs,
+                        vertical: spacing.xxs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(spacing.radiusLg),
+                      ),
+                      child: Text(
+                        item.isOffer ? lang.badgeOffer : lang.badgeNew,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: theme.colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),

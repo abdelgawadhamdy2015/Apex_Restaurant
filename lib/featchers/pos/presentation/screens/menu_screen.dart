@@ -1,30 +1,23 @@
 import 'dart:async';
 
-import 'package:apex_restaurant/featchers/calculation/data/models/calculation_requests.dart';
-import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
-
 import '../../../../core/helpers/extensions.dart';
 import '../../../../core/helpers/helper_methods.dart';
-import '../../../../core/helpers/transactionid_generator.dart';
 import '../../../../core/router/routes.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
-import '../../../cart/presentation/bloc/cart_event.dart';
 import '../../../cart/presentation/bloc/cart_state.dart';
 import '../../data/models/category_model.dart';
 import '../../data/models/restaurant_item.dart';
-import '../../domain/entities/get_items_request_model.dart';
-import '../../domain/entities/order_item.dart';
 import '../bloc/pos_bloc.dart';
 import '../bloc/pos_event.dart';
 import '../bloc/pos_state.dart';
 import '../widgets/cart_floating_summary_bar.dart';
-import '../widgets/item_customization_sheet.dart';
 import '../widgets/pos_categories_bar.dart';
 import '../widgets/pos_menu_item_card.dart';
 import '../widgets/pos_top_app_bar.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/pos_add_item_handler.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -34,7 +27,6 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  static const int _pageSize = 20;
   static const Duration _searchDebounceDuration = Duration(milliseconds: 400);
 
   final ScrollController _scrollController = ScrollController();
@@ -85,17 +77,9 @@ class _MenuScreenState extends State<MenuScreen> {
       }
 
       context.read<PosBloc>().add(
-        LoadItemsEvent(
-          GetItemsRequest(
-            pageNumber: 1,
-            pageSize: _pageSize,
-            searchKey: trimmed.isEmpty ? null : trimmed,
-            companyId: context
-                .read<CartBloc>()
-                .state
-                .selectedDeliveryCompany
-                ?.id,
-          ),
+        SearchItemsEvent(
+          searchKey: trimmed,
+          deliveryCompanyId: context.read<CartBloc>().state.menuCompanyId,
         ),
       );
     });
@@ -131,63 +115,61 @@ class _MenuScreenState extends State<MenuScreen> {
           );
         },
       ),
-      body: BlocConsumer<PosBloc, PosState>(
-        listener: (context, state) {
-          if (state.toastMessage != null) {
-            HelperMethods.showSnackBar(
-              context: context,
-              message: state.toastMessage!,
-              isError: false,
-            );
+      body: PosMenuCompanySync(
+        child: BlocConsumer<PosBloc, PosState>(
+          listener: (context, state) {
+            if (state.toastMessage != null) {
+              HelperMethods.showSnackBar(
+                context: context,
+                message: state.toastMessage!,
+                isError: false,
+              );
 
-            context.read<PosBloc>().add(const DismissToastEvent());
-          }
-        },
-        builder: (context, state) {
-          final cartState = context.watch<CartBloc>().state;
-          return Column(
-            children: [
-              Divider(),
-              PosCategoriesBar(
-                categories: state.categories,
-                selectedCategoryId: state.selectedCategory?.id,
-                onCategorySelected: (cat) {
-                  if (_scrollController.hasClients) {
-                    _scrollController.jumpTo(0);
-                  }
-                  context.read<PosBloc>().add(
-                    SelectCategoryEvent(
-                      category: cat,
-                      deliveryCompanyId:
-                          cartState.selectedOrderType ==
-                              CartOrderType.DELIVERY_COMPANY
-                          ? cartState.selectedDeliveryCompany?.id
-                          : null,
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: spacing.sm),
-              Divider(),
-              SizedBox(height: spacing.sm),
-
-              Expanded(
-                child:
-                    state.status == PosStatus.loading &&
-                        state.currentMenuItems.isEmpty
-                    ? const Center(child: CircularProgressIndicator())
-                    : _buildItemsGrid(
-                        context,
-                        state.selectedCategory?.id,
-                        state.currentMenuItems,
-                        state.selectedCategory?.additives ?? [],
-                        cartState,
-                        state.isLoadingMoreItems,
+              context.read<PosBloc>().add(const DismissToastEvent());
+            }
+          },
+          builder: (context, state) {
+            final cartState = context.watch<CartBloc>().state;
+            return Column(
+              children: [
+                Divider(),
+                PosCategoriesBar(
+                  categories: state.categories,
+                  selectedCategoryId: state.selectedCategory?.id,
+                  onCategorySelected: (cat) {
+                    if (_scrollController.hasClients) {
+                      _scrollController.jumpTo(0);
+                    }
+                    context.read<PosBloc>().add(
+                      SelectCategoryEvent(
+                        category: cat,
+                        deliveryCompanyId: cartState.menuCompanyId,
                       ),
-              ),
-            ],
-          );
-        },
+                    );
+                  },
+                ),
+                SizedBox(height: spacing.sm),
+                Divider(),
+                SizedBox(height: spacing.sm),
+
+                Expanded(
+                  child:
+                      state.status == PosStatus.loading &&
+                          state.currentMenuItems.isEmpty
+                      ? const Center(child: CircularProgressIndicator())
+                      : _buildItemsGrid(
+                          context,
+                          state.selectedCategory?.id,
+                          state.currentMenuItems,
+                          state.selectedCategory?.additives ?? [],
+                          cartState,
+                          state.isLoadingMoreItems,
+                        ),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -223,25 +205,22 @@ class _MenuScreenState extends State<MenuScreen> {
               mainAxisSpacing: spacing.sm,
             ),
             delegate: SliverChildBuilderDelegate((context, index) {
-              final item = items[index];
-              final matchedCategory = context
-                  .read<PosBloc>()
-                  .state
-                  .categories
-                  .where((cat) => cat.id == item.categoryId);
-              final List<AdditiveModel> itemCatAdditives =
-                  matchedCategory.isNotEmpty
-                  ? matchedCategory.first.additives ?? []
-                  : [];
+              // final item = items[index];
+              // final matchedCategory = context
+              //     .read<PosBloc>()
+              //     .state
+              //     .categories
+              //     .where((cat) => cat.id == item.categoryId);
+              // final List<AdditiveModel> itemCatAdditives =
+              //     matchedCategory.isNotEmpty
+              //     ? matchedCategory.first.additives ?? []
+              //     : [];
 
+              final item = items[index];
               return PosMenuItemCard(
                 item: item,
-                onAddPressed: () => _onAddPressed(
-                  parentContext,
-                  item,
-                  itemCatAdditives,
-                  cartState,
-                ),
+                onAddPressed: () =>
+                    PosAddItemHandler.onAddPressed(parentContext, item),
               );
             }, childCount: items.length),
           ),
@@ -257,74 +236,74 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  void _onAddPressed(
-    BuildContext parentContext,
-    RestaurantItem item,
-    List<AdditiveModel> additives,
-    CartState cartState,
-  ) {
-    if (cartState.selectedPerson == null) {
-      HelperMethods.openPicker(parentContext, cartState.persons);
-      return;
-    }
+  // void _onAddPressed(
+  //   BuildContext parentContext,
+  //   RestaurantItem item,
+  //   List<AdditiveModel> additives,
+  //   CartState cartState,
+  // ) {
+  //   if (cartState.selectedPerson == null) {
+  //     HelperMethods.openPicker(parentContext, cartState.persons);
+  //     return;
+  //   }
 
-    context.read<CartBloc>().add(
-      OpenNewCartEvent(
-        openNewCartRequest: OpenNewCartRequest(
-          empId: 1,
-          companyName: "",
-          priceIncludeVAT: cartState.priceIncludeVat,
-          applyVAT: cartState.settingsModel?.vat?.vatActive ?? false,
-          vatRatio: 15,
-          applyTobaccoTax: true,
-          systemApplyDiscount: true,
-          userCanAddDiscount: true,
-          decimalCount: 2,
-        ),
-      ),
-    );
+  //   context.read<CartBloc>().add(
+  //     OpenNewCartEvent(
+  //       openNewCartRequest: OpenNewCartRequest(
+  //         empId: 1,
+  //         companyName: "",
+  //         priceIncludeVAT: cartState.priceIncludeVat,
+  //         applyVAT: cartState.settingsModel?.vat?.vatActive ?? false,
+  //         vatRatio: 15,
+  //         applyTobaccoTax: true,
+  //         systemApplyDiscount: true,
+  //         userCanAddDiscount: true,
+  //         decimalCount: 2,
+  //       ),
+  //     ),
+  //   );
 
-    // final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
+  //   // final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
 
-    // if (!needsCustomization) {
-    //   final orderItem = OrderItem(
-    //     transactionId: TransactionIdGenerator.nextId.toString(),
-    //     menuItem: item,
-    //     selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
-    //     quantity: 1,
-    //     discount:
-    //         item.sizes.first.discounts?.first?.discount?.discountValue ?? 0,
-    //     isPercentageDiscount:
-    //         item.sizes.first.discounts?.first?.discount?.discountNatural == 1,
-    //   );
-    //   parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
-    //   return;
-    // }
+  //   // if (!needsCustomization) {
+  //   //   final orderItem = OrderItem(
+  //   //     transactionId: TransactionIdGenerator.nextId.toString(),
+  //   //     menuItem: item,
+  //   //     selectedSize: item.sizes.isNotEmpty ? item.sizes.first : null,
+  //   //     quantity: 1,
+  //   //     discount:
+  //   //         item.sizes.first.discounts?.first?.discount?.discountValue ?? 0,
+  //   //     isPercentageDiscount:
+  //   //         item.sizes.first.discounts?.first?.discount?.discountNatural == 1,
+  //   //   );
+  //   //   parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+  //   //   return;
+  //   // }
 
-    final posBloc = parentContext.read<PosBloc>();
+  //   final posBloc = parentContext.read<PosBloc>();
 
-    ItemCustomizationSheet.show(parentContext, item, posBloc, (
-      customItem,
-      returnedAdditives, {
-      required selectedSize,
-      required selectedAddons,
-      required discount,
-      required isPercentageDiscount,
-      required notes,
-      required quantity,
-    }) {
-      final orderItem = OrderItem(
-        transactionId: TransactionIdGenerator.nextId.toString(),
-        menuItem: customItem,
-        selectedSize: selectedSize,
-        addons: selectedAddons,
-        quantity: quantity,
-        notes: notes,
-        discount: discount,
-        isPercentageDiscount: isPercentageDiscount,
-      );
+  //   ItemCustomizationSheet.show(parentContext, item, posBloc, (
+  //     customItem,
+  //     returnedAdditives, {
+  //     required selectedSize,
+  //     required selectedAddons,
+  //     required discount,
+  //     required isPercentageDiscount,
+  //     required notes,
+  //     required quantity,
+  //   }) {
+  //     final orderItem = OrderItem(
+  //       transactionId: TransactionIdGenerator.nextId.toString(),
+  //       menuItem: customItem,
+  //       selectedSize: selectedSize,
+  //       addons: selectedAddons,
+  //       quantity: quantity,
+  //       notes: notes,
+  //       discount: discount,
+  //       isPercentageDiscount: isPercentageDiscount,
+  //     );
 
-      parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
-    });
-  }
+  //     parentContext.read<CartBloc>().add(AddOrderItemToCartEvent(orderItem));
+  //   });
+  // }
 }

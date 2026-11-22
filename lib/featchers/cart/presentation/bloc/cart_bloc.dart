@@ -117,7 +117,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<LoadCartDataEvent>(_onLoadCartData);
     on<LoadPersonsData>(_onLoadPersonData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
-    on<AddOrderItemToCartEvent>(_onAddOrderItem);
     on<SelectPersonEvent>(_onSelectPerson);
 
     _onSerial<AddOrderItemToCartEvent>(_onAddOrderItem);
@@ -133,14 +132,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     _onSerial<ApplyVoucherDiscountEvent>(_onApplyVoucherDiscount);
     _onSerial<ClearVoucherDiscountEvent>(_onClearVoucher);
 
-    on<UpdateItemsPriceWithCompanyEvent>(_updateItemsPriceForCompanies);
-
     on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
       emit(state.copyWith(settingsModel: event.settings, clearMessage: true));
     });
-
-    on<ChangeOrderTypeEvent>(_onChangeOrderType);
 
     on<SelectWaiterEvent>(
       (event, emit) => emit(
@@ -190,19 +185,13 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         ),
       ),
     );
-    on<UpdateItemQuantityEvent>(_onUpdateItemQuantity);
-    on<RemoveItemEvent>(_onRemoveItem);
     on<HoldOrderEvent>(_onHoldOrder);
     on<SaveTableOrderEvent>(_saveTableOrder);
     on<GetInvoiceReportEvent>(_onInvoiceReport);
-    on<ClearCartEvent>(_onClearCartEvent);
     on<AddPosClientEvent>(_addPosClient);
     on<UpdatePosClientEvent>(_updatePosClient);
     on<LoadDynamicDiscountsEvent>(_onLoadDynamicDiscounts);
     on<ChangeAddressEvent>(_onChangeAddress);
-    on<EditCartItemEvent>(_onEditCartItem);
-    on<ApplyDiscountEvent>(_onApplyDiscount);
-    on<ApplyVoucherDiscountEvent>(_onApplyVoucherDiscount);
   }
 
   Future<void> _onOpenCalculationCart(
@@ -1148,17 +1137,16 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       await _ensureCalculationCart(emit);
       final cartId = state.calculationCartId!;
       final items = state.items;
-
+      final serviceValue = state.isDeliveryOrder
+          ? (state.settingsModel?.posRestaurant?.deliveryCost ?? 0.0)
+          : state.selectedOrderType == CartOrderType.DINE_IN
+          ? (state.selectedTable?.serviceRatio ?? 0.0)
+          : 0.0;
       await setPosTypeUseCase(
         SetPosTypeRequest(
           cartId: cartId,
           posType: state.selectedOrderType.apiValue,
-          deliveryCost: state.isDeliveryOrder
-              ? state.settingsModel?.posRestaurant?.deliveryCost ?? 0.0
-              : 0.0,
-          dineInRatio: state.selectedOrderType == CartOrderType.DINE_IN
-              ? state.selectedTable?.serviceRatio ?? 0.0
-              : 0.0,
+          serviceValue: serviceValue,
         ),
       );
 
