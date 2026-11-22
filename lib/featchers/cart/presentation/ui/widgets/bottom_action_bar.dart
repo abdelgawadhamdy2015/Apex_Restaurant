@@ -42,7 +42,16 @@ class BottomActionBar extends StatelessWidget {
   }
 
   void _checkout(BuildContext context) {
-    // Validate cart state before proceeding to checkout
+    final cart = context.read<CartBloc>().state;
+    if (cart.isCalculating) return;
+    if (cart.calculationResult == null) {
+      HelperMethods.showSnackBar(
+        context: context,
+        message: S.of(context).somethingWentWrong,
+        isError: true,
+      );
+      return;
+    }
     if (context.read<CartBloc>().state.items.isEmpty) {
       HelperMethods.showSnackBar(
         context: context,
@@ -165,6 +174,9 @@ class BottomActionBar extends StatelessWidget {
       child: BlocSelector<CartBloc, CartState, List<dynamic>>(
         selector: (state) => [state.selectedOrderType, state.status],
         builder: (context, selectedOrderTypeAndStatus) {
+          final isCalculating =
+              selectedOrderTypeAndStatus[1] == CartStatus.itemsUpdateing;
+
           return Container(
             padding: EdgeInsets.all(spacing.md),
             decoration: BoxDecoration(
@@ -194,9 +206,11 @@ class BottomActionBar extends StatelessWidget {
                         borderRadius: BorderRadius.circular(spacing.radiusMd),
                       ),
                     ),
-                    onPressed: canEdit || isReturnInvoice == true
+                    onPressed:
+                        (canEdit || isReturnInvoice == true) && !isCalculating
                         ? () => _checkout(context)
                         : null,
+
                     icon: Icon(Icons.payments_outlined, size: icons.md),
                     label: Text(
                       lang.checkout,
@@ -223,7 +237,7 @@ class BottomActionBar extends StatelessWidget {
                         borderRadius: BorderRadius.circular(spacing.radiusMd),
                       ),
                     ),
-                    onPressed: canEdit
+                    onPressed: canEdit && !isCalculating
                         ? () {
                             final state = context.read<CartBloc>().state;
 

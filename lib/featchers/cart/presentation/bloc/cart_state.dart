@@ -1,10 +1,11 @@
+import 'package:apex_restaurant/featchers/calculation/data/models/calculation_requests.dart';
 import 'package:apex_restaurant/featchers/calculation/data/models/calculation_result.dart';
+import 'package:apex_restaurant/featchers/calculation/data/models/enums/calculation_enums.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
 
-import '../../../../core/calculation/restaurant_invoice_calculator.dart';
 import '../../../../core/shared/model/settings_model.dart';
 import '../../data/enums/cart_enum.dart';
 import '../../data/models/dynamic_discount.dart';
@@ -86,6 +87,7 @@ class CartState extends Equatable {
   final DateTime? restoredInvoiceDate;
   final bool? isReturnInvoice;
   final bool priceIncludeVat;
+  final Map<String, double> returnInvoiceDiscountShares;
 
   const CartState({
     this.selectedOrderType = CartOrderType.TAKEAWAY,
@@ -129,6 +131,7 @@ class CartState extends Equatable {
     this.priceIncludeVat = false,
     this.calculationCartId,
     this.calculationResult,
+    this.returnInvoiceDiscountShares = const <String, double>{},
   });
 
   // ---------------------------------------------------------------------------
@@ -204,6 +207,8 @@ class CartState extends Equatable {
     InvoiceReportResponse? invoiceReportResponse,
     String? calculationCartId,
     CalculationResult? calculationResult,
+    Map<String, double>? returnInvoiceDiscountShares,
+
     // Flags to force an explicit null
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
@@ -284,6 +289,8 @@ class CartState extends Equatable {
       calculationResult: clearCalculationResult
           ? null
           : calculationResult ?? this.calculationResult,
+      returnInvoiceDiscountShares:
+          returnInvoiceDiscountShares ?? this.returnInvoiceDiscountShares,
     );
   }
 
@@ -329,5 +336,6 @@ class CartState extends Equatable {
     invoiceReportResponse,
     calculationCartId,
     calculationResult,
+    returnInvoiceDiscountShares,
   ];
 }

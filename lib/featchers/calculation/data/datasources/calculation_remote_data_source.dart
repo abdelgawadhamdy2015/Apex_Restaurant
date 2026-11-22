@@ -21,6 +21,18 @@ abstract class CalculationRemoteDataSource {
   );
 
   Future<CalculationApiResponse<CalculationResult?>> removeCart(String cartId);
+  Future<CalculationApiResponse<CalculationResult?>> setPosType(
+    SetPosTypeRequest r,
+  );
+  Future<CalculationApiResponse<CalculationResult?>> setDiscountOnTotal(
+    SetDiscountOnTotalRequest r,
+  );
+  Future<CalculationApiResponse<CalculationResult?>> addVoucher(
+    AddVoucherRequest r,
+  );
+  Future<CalculationApiResponse<CalculationResult?>> removeVoucher(
+    String cartId,
+  );
 }
 
 class CalculationRemoteDataSourceImpl implements CalculationRemoteDataSource {
@@ -60,4 +72,21 @@ class CalculationRemoteDataSourceImpl implements CalculationRemoteDataSource {
   Future<CalculationApiResponse<CalculationResult?>> removeCart(String cartId) {
     return apiService.removeCart({'CartID': cartId});
   }
+
+  @override
+  Future<CalculationApiResponse<CalculationResult?>> setPosType(
+    SetPosTypeRequest r,
+  ) => apiService.setPosType(r.toQuery());
+  @override
+  Future<CalculationApiResponse<CalculationResult?>> setDiscountOnTotal(
+    SetDiscountOnTotalRequest r,
+  ) => apiService.setDiscountOnTotal(r.toQuery());
+  @override
+  Future<CalculationApiResponse<CalculationResult?>> addVoucher(
+    AddVoucherRequest r,
+  ) => apiService.addVoucher(r.toQuery());
+  @override
+  Future<CalculationApiResponse<CalculationResult?>> removeVoucher(
+    String cartId,
+  ) => apiService.removeVoucher({'CartID': cartId});
 }

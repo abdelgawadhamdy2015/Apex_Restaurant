@@ -22,10 +22,6 @@ sealed class CartInvoiceMode {
   double quantityOf(OrderItem item);
   double itemDiscountValue(OrderItem item);
   bool priceIncludesVat(CartState state);
-  double totalDiscount(
-    InvoiceCalculationResult? result,
-    DiscountTypeEnum discountType,
-  );
 }
 
 /// New / pending / previous invoices.
@@ -60,16 +56,6 @@ class StandardInvoiceMode extends CartInvoiceMode {
   @override
   bool priceIncludesVat(CartState state) =>
       state.settingsModel?.posRestaurant?.priceIncludeVat ?? false;
-
-  @override
-  double totalDiscount(
-    InvoiceCalculationResult? result,
-    DiscountTypeEnum discountType,
-  ) {
-    return discountType == DiscountTypeEnum.direct
-        ? result?.totalDiscount ?? 0.0
-        : result?.voucherDiscount ?? 0.0;
-  }
 }
 
 /// Return invoices: only the discounts restored from the ORIGINAL invoice
@@ -121,10 +107,4 @@ class ReturnInvoiceMode extends CartInvoiceMode {
   /// Return invoices use the VAT mode of the original invoice.
   @override
   bool priceIncludesVat(CartState state) => state.priceIncludeVat;
-
-  @override
-  double totalDiscount(
-    InvoiceCalculationResult? result,
-    DiscountTypeEnum discountType,
-  ) => result?.totalDiscount ?? 0.0;
 }

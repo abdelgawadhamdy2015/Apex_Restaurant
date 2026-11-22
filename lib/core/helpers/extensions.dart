@@ -1,8 +1,6 @@
 import 'dart:developer';
 
-import 'package:apex_restaurant/core/calculation/restaurant_invoice_calculator.dart';
 import 'package:apex_restaurant/core/shared/model/return_request.dart';
-import 'package:apex_restaurant/featchers/cart/data/models/dynamic_discount.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/invoice_request.dart';
 
 import 'restaurant_constants.dart';
@@ -117,20 +115,6 @@ extension ReturnRequestFromSaveRequest on SaveRestaurantPosInvoiceRequest {
             ),
           )
           .toList(),
-    );
-  }
-}
-
-extension DiscountModelX on DiscountModel {
-  DynamicDiscountInput toDynamicDiscountInput() {
-    return DynamicDiscountInput(
-      id: id,
-      discountType: discountNatural == 1
-          ? DiscountNatural.percentage
-          : DiscountNatural.fixedAmount,
-      discountValue: discountValue ?? 0.0,
-      minInvoiceNET: minInvoiceNET,
-      maxDiscountValue: maxDiscountValue,
     );
   }
 }

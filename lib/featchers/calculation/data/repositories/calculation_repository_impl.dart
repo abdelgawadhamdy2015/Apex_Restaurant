@@ -84,4 +84,23 @@ class CalculationRepositoryImpl implements CalculationRepository {
 
     return response.data!;
   }
+
+  @override
+  Future<CalculationResult> setPosType(SetPosTypeRequest request) async =>
+      _parseCalculationResult(await remoteDataSource.setPosType(request));
+
+  @override
+  Future<CalculationResult> setDiscountOnTotal(
+    SetDiscountOnTotalRequest request,
+  ) async => _parseCalculationResult(
+    await remoteDataSource.setDiscountOnTotal(request),
+  );
+
+  @override
+  Future<CalculationResult> addVoucher(AddVoucherRequest request) async =>
+      _parseCalculationResult(await remoteDataSource.addVoucher(request));
+
+  @override
+  Future<CalculationResult> removeVoucher(String cartId) async =>
+      _parseCalculationResult(await remoteDataSource.removeVoucher(cartId));
 }

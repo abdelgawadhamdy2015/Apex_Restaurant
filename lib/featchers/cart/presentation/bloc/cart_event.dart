@@ -51,40 +51,6 @@ class UpdateCalculationItemEvent extends CartEvent {
   List<Object?> get props => [request];
 }
 
-// Add item to calculation cart.
-class AddCalculationItemEvent extends CartEvent {
-  final AddCalculationItemRequest request;
-
-  const AddCalculationItemEvent(this.request);
-
-  @override
-  List<Object?> get props => [request];
-}
-
-// Remove one item from calculation cart.
-class RemoveCalculationItemEvent extends CartEvent {
-  final String transactionId;
-  final List<AddCalculationItemRequest> remainingItems;
-
-  const RemoveCalculationItemEvent({
-    required this.transactionId,
-    required this.remainingItems,
-  });
-
-  @override
-  List<Object?> get props => [transactionId, remainingItems];
-}
-
-// Remove all items but keep the calculation cart.
-class RemoveAllCalculationItemsEvent extends CartEvent {
-  const RemoveAllCalculationItemsEvent();
-}
-
-// Remove the calculation cart itself.
-class RemoveCalculationCartEvent extends CartEvent {
-  const RemoveCalculationCartEvent();
-}
-
 class SyncRestoredInvoiceEvent extends CartEvent {
   final RestoredCartData data;
   final bool canEdit;

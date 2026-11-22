@@ -7,10 +7,13 @@ import 'package:apex_restaurant/featchers/calculation/data/datasources/calculati
 import 'package:apex_restaurant/featchers/calculation/data/repositories/calculation_repository_impl.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/repositories/calculation_repository.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/add_item_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/apply_discount_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/clear_calculation_items_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_calculation_item_usecase.dart.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/open_new_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/remove_calculation_cart_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/set_pos_type_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/voucher_usecases.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/datasource/more_action_datasource.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/repo/more_action_repo_imp.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
@@ -97,6 +100,20 @@ Future<void> setupGetIt() async {
   getIt.registerLazySingleton(
     () => RemoveCalculationCartUseCase(getIt<CalculationRepository>()),
   );
+
+  getIt.registerLazySingleton(
+    () => SetCalculationPosTypeUseCase(getIt<CalculationRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => SetDiscountOnTotalUseCase(getIt<CalculationRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => AddCalculationVoucherUseCase(getIt<CalculationRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => RemoveCalculationVoucherUseCase(getIt<CalculationRepository>()),
+  );
+
   // core
   final dio = await DioFactory.getDio();
 
@@ -423,6 +440,10 @@ Future<void> setupGetIt() async {
       editCalculationItemUseCase: getIt<EditCalculationItemUseCase>(),
       clearCalculationItemsUseCase: getIt<ClearCalculationItemsUseCase>(),
       removeCalculationCartUseCase: getIt<RemoveCalculationCartUseCase>(),
+      setPosTypeUseCase: getIt<SetCalculationPosTypeUseCase>(),
+      setDiscountOnTotalUseCase: getIt<SetDiscountOnTotalUseCase>(),
+      addVoucherUseCase: getIt<AddCalculationVoucherUseCase>(),
+      removeVoucherUseCase: getIt<RemoveCalculationVoucherUseCase>(),
     ),
   );
 

@@ -124,3 +124,72 @@ class EditCalculationItemRequest {
     'isAutoDiscount': isAutoDiscount,
   };
 }
+
+class SetPosTypeRequest {
+  final String cartId;
+  final int posType;
+  final double deliveryCost;
+  final double dineInRatio;
+  const SetPosTypeRequest({
+    required this.cartId,
+    required this.posType,
+    this.deliveryCost = 0,
+    this.dineInRatio = 0,
+  });
+  Map<String, dynamic> toQuery() => {
+    'CartID': cartId,
+    'PosType': posType,
+    'DeliveryCost': deliveryCost,
+    'DineInRatio': dineInRatio,
+  };
+}
+
+class AddVoucherRequest {
+  final String cartId;
+  final String code;
+  final int discountNatural; // 1 ratio / 2 value
+  final double discountValue;
+  final double minimumCharge;
+  final double maximumDiscount;
+  const AddVoucherRequest({
+    required this.cartId,
+    required this.code,
+    required this.discountNatural,
+    required this.discountValue,
+    this.minimumCharge = 0,
+    this.maximumDiscount = 0,
+  });
+  Map<String, dynamic> toQuery() => {
+    'CartID': cartId,
+    'VoucherCode': code,
+    'DiscountNatural': discountNatural,
+    'DiscountValue': discountValue,
+    'MinimumCharge': minimumCharge,
+    'MaximumDiscount': maximumDiscount,
+  };
+}
+
+class SetDiscountOnTotalRequest {
+  final String cartId;
+  final int discountNatural;
+  final double discountValue;
+  final bool isAutoDiscount;
+  final double minimumCharge;
+  final double maximumDiscount;
+  const SetDiscountOnTotalRequest({
+    required this.cartId,
+    required this.discountNatural,
+    required this.discountValue,
+    this.isAutoDiscount = false,
+    this.minimumCharge = 0,
+    this.maximumDiscount = 0,
+  });
+  Map<String, dynamic> toQuery() => {
+    'CartID': cartId,
+    'DiscountNatural': discountNatural,
+    'DiscountValue': discountValue,
+    'isAutoDiscount': isAutoDiscount,
+    'minimumCharge': minimumCharge,
+    'MaximumDiscount': maximumDiscount,
+  };
+}

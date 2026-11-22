@@ -209,6 +209,9 @@ class _CartContentState extends State<_CartContent> {
 
         return Column(
           children: [
+            if (state.isCalculating)
+              const LinearProgressIndicator(minHeight: 2),
+
             Expanded(
               child: Stack(
                 children: [
@@ -243,30 +246,39 @@ class _CartContentState extends State<_CartContent> {
                                 SizedBox(height: spacing.sm),
                                 _orderTypeSpecificSection(state),
                                 SizedBox(height: spacing.md),
-                                BlocBuilder<CartBloc, CartState>(
-                                  builder: (context, cartState) {
-                                    if (cartState.status ==
-                                        CartStatus.itemsUpdateing) {
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    }
+                                for (
+                                  var index = 0;
+                                  index < state.items.length;
+                                  index++
+                                )
+                                  CartItemTile(
+                                    index: index,
+                                    item: state.items[index],
+                                  ),
+                                // BlocBuilder<CartBloc, CartState>(
+                                //   builder: (context, cartState) {
+                                //     if (cartState.status ==
+                                //         CartStatus.itemsUpdateing) {
+                                //       return const Center(
+                                //         child: CircularProgressIndicator(),
+                                //       );
+                                //     }
 
-                                    return Column(
-                                      children: [
-                                        for (
-                                          int index = 0;
-                                          index < cartState.items.length;
-                                          index++
-                                        )
-                                          CartItemTile(
-                                            index: index,
-                                            item: cartState.items[index],
-                                          ),
-                                      ],
-                                    );
-                                  },
-                                ),
+                                //     return Column(
+                                //       children: [
+                                //         for (
+                                //           int index = 0;
+                                //           index < cartState.items.length;
+                                //           index++
+                                //         )
+                                //           CartItemTile(
+                                //             index: index,
+                                //             item: cartState.items[index],
+                                //           ),
+                                //       ],
+                                //     );
+                                //   },
+                                // ),
                                 SizedBox(height: spacing.md),
                                 if (state.manualDiscountSettingOn)
                                   DiscountSection(

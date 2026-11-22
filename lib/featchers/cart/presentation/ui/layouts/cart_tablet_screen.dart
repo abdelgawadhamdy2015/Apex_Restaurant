@@ -111,6 +111,7 @@ class _PosTabletCartContent extends StatelessWidget {
         (state.persons.isNotEmpty ? state.persons.first : null);
     return Column(
       children: [
+        if (state.isCalculating) const LinearProgressIndicator(minHeight: 2),
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(spacing.md),

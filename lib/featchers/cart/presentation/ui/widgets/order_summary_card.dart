@@ -34,6 +34,11 @@ class OrderSummaryCard extends StatelessWidget {
       ),
       child: Column(
         children: [
+          SizedBox(
+            height: 2,
+            child: state.isCalculating ? const LinearProgressIndicator() : null,
+          ),
+          SizedBox(height: spacing.xs),
           _SummaryRow(
             title: lang.subtotal,
             value:
@@ -42,8 +47,9 @@ class OrderSummaryCard extends StatelessWidget {
           SizedBox(height: spacing.xs),
           _SummaryRow(
             title: lang.discountCoupon,
-            value:
-                '-${state.totalDiscountAmount.toStringAsFixed(2)} ${lang.currencySarShort}',
+            value: lang.discountApplied(
+              state.invoiceDiscountAmount.toStringAsFixed(2),
+            ),
             isSuccess: true,
           ),
           if (showDeliveryFee) ...[
@@ -51,7 +57,7 @@ class OrderSummaryCard extends StatelessWidget {
             _SummaryRow(
               title: lang.deliveryFee,
               value:
-                  '${state.settingsModel?.posRestaurant?.deliveryCost?.toStringAsFixed(2) ?? 0} ${lang.currencySarShort}',
+                  '${state.deliveryCost.toStringAsFixed(2)} ${lang.currencySarShort}',
             ),
           ],
           if (dineInFee)

@@ -5,113 +5,79 @@ class _TxIdGenerator {
   String next() => (_next++).toString();
 }
 
-DiscountNatural _naturalOf(num? type) =>
-    type == 1 ? DiscountNatural.percentage : DiscountNatural.fixedAmount;
-
 extension CartStateCalculation on CartState {
-  // ---------------------------------------------------------------------------
-  // Public totals
-  // ---------------------------------------------------------------------------
-
+  // ---- Totals (all come from the calculation server) ----
   double get subtotal => calculationResult?.totalOfItems ?? 0.0;
   double get netSubtotal => calculationResult?.totalWithoutVAT ?? 0.0;
   double get vatAmount => calculationResult?.totalVAT ?? 0.0;
   double get tobaccoTaxAmount => calculationResult?.totalTobbacoTAX ?? 0.0;
   double get dineInCost => calculationResult?.dineInCost ?? 0.0;
+  double get deliveryCost => calculationResult?.deliveryCost ?? 0.0;
   double get grandTotal => calculationResult?.net ?? 0.0;
   double get totalDiscountAmount => calculationResult?.totalDiscount ?? 0.0;
-  // double get totalDiscountAmount =>
-  //     mode.totalDiscount(calculationResult, selectedDiscountType);
+  double get voucherDiscountAmount => calculationResult?.voucherDiscount ?? 0.0;
+  double get invoiceDiscountAmount => calculationResult?.invoiceDiscount ?? 0.0;
+  bool get isCalculating => status == CartStatus.itemsUpdateing;
 
-  // ---------------------------------------------------------------------------
-  // Calculator
-  // ---------------------------------------------------------------------------
+  double get _vatRatio => (settingsModel?.vat?.vatActive ?? false)
+      ? (settingsModel?.vat?.vatDefaultValue ?? 0).toDouble()
+      : 0.0;
 
-  // InvoiceCalculationResult? get calculationResult {
-  //   if (items.isEmpty) return null;
+  // ---- Invoice-level discount to push to the server ----
+  ({double value, int natural, bool isAuto, double min, double max})
+  get invoiceDiscountForCalculation {
+    const none = (
+      value: 0.0,
+      natural: DiscountNatural.ratio,
+      isAuto: false,
+      min: 0.0,
+      max: 0.0,
+    );
+    // Return invoices get their discount per item (see _itemDiscountAmount).
+    if (isReturn) return none;
 
-  //   final invoiceDiscount = _invoiceLevelDiscount;
+    int naturalOf(num? t) =>
+        t == 1 ? DiscountNatural.ratio : DiscountNatural.value;
 
-  //   final input = InvoiceCalculationInput(
-  //     discountOnTotal: invoiceDiscount.value,
-  //     discountType: invoiceDiscount.type,
-  //     exposeInvoiceDiscountPerItem: !isReturn,
-
-  //     deliveryCost: isDeliveryOrder
-  //         ? settingsModel?.posRestaurant?.deliveryCost ?? 0.0
-  //         : 0.0,
-  //     dineInRatio: selectedOrderType == CartOrderType.DINE_IN
-  //         ? selectedTable?.serviceRatio ?? 0.0
-  //         : 0.0,
-  //     applyVAT: settingsModel?.vat?.vatActive ?? false,
-  //     priceIncludesVAT: mode.priceIncludesVat(this),
-  //     items: _mapItemsToCalculationInputs(),
-  //     voucher: _voucherInput,
-  //     dynamicDiscount: matchedDynamicDiscount?.discount
-  //         ?.toDynamicDiscountInput(),
-  //   );
-
-  //   const calculator = InvoiceCalculator(
-  //     noteItemTypeId: 99,
-  //     offerItemTypeId: 100,
-  //   );
-  //   return calculator.calculate(input).data;
-  // }
-
-  /// Invoice-level discount sent to the calculator, based on the winning source.
-  ({double value, DiscountNatural type}) get _invoiceLevelDiscount {
     switch (activeDiscountSource) {
       case DiscountSource.dynamic:
-        final effective = effectiveDynamicInvoiceDiscount;
+        final d = matchedDynamicDiscount?.discount;
+        if (d == null) return none;
         return (
-          value: effective?.value ?? 0.0,
-          type: (effective?.isPercentage ?? false)
-              ? DiscountNatural.percentage
-              : DiscountNatural.fixedAmount,
+          value: d.discountValue ?? 0.0,
+          natural: naturalOf(d.discountNatural),
+          isAuto: true,
+          min: d.minInvoiceNET ?? 0.0,
+          max: d.maxDiscountValue ?? 0.0,
         );
       case DiscountSource.customer:
+        final c = customerDiscount;
         return (
-          value: customerDiscount?.value ?? 0.0,
-          type: _naturalOf(customerDiscount?.type),
+          value: c?.value ?? 0.0,
+          natural: naturalOf(c?.type),
+          isAuto: false,
+          min: 0.0,
+          max: 0.0,
         );
       case DiscountSource.manualInvoice:
+        final m = restaurantPosDiscountRequest;
         return (
-          value: restaurantPosDiscountRequest?.value ?? 0.0,
-          type: _naturalOf(restaurantPosDiscountRequest?.type),
+          value: m?.value ?? 0.0,
+          natural: naturalOf(m?.type),
+          isAuto: false,
+          min: 0.0,
+          max: 0.0,
         );
       case DiscountSource.size:
       case DiscountSource.manualItem:
       case DiscountSource.none:
-        return (value: 0.0, type: DiscountNatural.percentage);
+        return none;
     }
   }
 
-  VoucherInput? get _voucherInput {
-    final voucher = voucherData;
-    if (!mode.allowsVoucher ||
-        selectedDiscountType != DiscountTypeEnum.coupon ||
-        voucher == null ||
-        manualDiscountSettingOn) {
-      return null;
-    }
-    return VoucherInput(
-      code: voucher.voucherCode!,
-      discountType: _naturalOf(voucher.discountNatural),
-      value: voucher.discountValue ?? 0,
-      minimumCharge: voucher.minimumCharge ?? 0,
-      maximumDiscount: voucher.maximumDiscountValue ?? 0,
-    );
-  }
-
-  // ---------------------------------------------------------------------------
-  // Items -> calculator inputs
-  // ---------------------------------------------------------------------------
-
-  /// Existing transaction id if the item was restored, a generated one otherwise.
+  // ---- Item helpers (also used by cart_state_request.dart) ----
   String _parentTxIdFor(OrderItem item, int index) =>
-      item.transactionId.isNotEmpty
-      ? item.transactionId
-      : 'item_${index}_${DateTime.now().millisecondsSinceEpoch}';
+      item.transactionId.isNotEmpty ? item.transactionId : 'item_$index';
 
   String _addonTxId(AdditiveModel addon, _TxIdGenerator ids) {
     final id = addon.transactionId;
@@ -130,62 +96,91 @@ extension CartStateCalculation on CartState {
           : item.menuItem.defaultPrice) ??
       0.0;
 
-  List<InvoiceItemInput> _mapItemsToCalculationInputs() {
-    final ids = _TxIdGenerator();
-    final vatRatio = (settingsModel?.vat?.vatActive ?? false)
-        ? (settingsModel?.vat?.vatDefaultValue ?? 0).toDouble()
-        : 0.0;
+  /// Fixed discount amount for the quantity that is actually calculated.
+  double _itemDiscountAmount(OrderItem item) {
+    final unit = _unitPriceOf(item);
+    final qty = mode.quantityOf(item);
+    final gross = unit * qty;
 
-    final inputs = <InvoiceItemInput>[];
-    for (var i = 0; i < items.length; i++) {
-      final item = items[i];
-      final parentTxId = _parentTxIdFor(item, i);
-      final discount = _resolveItemDiscount(item);
+    if (isReturn) {
+      final sold = item.quantity.toDouble();
+      final own = item.isPercentageDiscount
+          ? gross * item.discount / 100
+          : mode.itemDiscountValue(item);
+      final share = sold <= 0
+          ? 0.0
+          : (returnInvoiceDiscountShares[item.transactionId] ?? 0.0) /
+                sold *
+                qty;
+      return (own + share).clamp(0.0, gross).toDouble();
+    }
 
-      inputs.add(
-        InvoiceItemInput(
-          transactionId: parentTxId,
-          parentTransactionId: null,
-          itemId: item.menuItem.itemId,
-          sizeId: item.selectedSize?.sizeId,
-          quantity: mode.quantityOf(item),
-          unitPrice: _unitPriceOf(item),
-          vatRatio: vatRatio,
-          discount: discount.value,
-          discountType: discount.isPercentage
-              ? DiscountNatural.percentage
-              : DiscountNatural.fixedAmount,
-          itemTypeId: item.menuItem.itemTypeId ?? 0,
-          isTobacco: item.menuItem.isTobaccoTax ?? false,
+    final d = _resolveItemDiscount(item);
+    if (d.value <= 0) return 0.0;
+    final amount = d.isPercentage ? gross * d.value / 100 : d.value;
+    return amount.clamp(0.0, gross).toDouble();
+  }
+
+  /// Main line + one line per addon type. Used for every add/rebuild.
+  List<AddCalculationItemRequest> calculationRequestsFor(
+    OrderItem item,
+    int index,
+    String cartId,
+  ) {
+    final parentTx = _parentTxIdFor(item, index);
+    final dyn = dynamicDiscountIsActive
+        ? matchedDynamicDiscount?.discount
+        : null;
+
+    final requests = <AddCalculationItemRequest>[
+      AddCalculationItemRequest(
+        cartId: cartId,
+        itemId: item.menuItem.itemId,
+        quantity: mode.quantityOf(item),
+        unitPrice: _unitPriceOf(item),
+        vatRatio: _vatRatio,
+        itemDiscount: _itemDiscountAmount(item),
+        minimumCharge: dyn?.minInvoiceNET ?? 0,
+        maximumDiscount: dyn?.maxDiscountValue ?? 0,
+        isAutoDiscount: dyn != null,
+        itemTypeId: item.menuItem.itemTypeId ?? 0,
+        isTobacco: item.menuItem.isTobaccoTax ?? false,
+        transactionId: parentTx,
+      ),
+    ];
+
+    final grouped = <String, ({AdditiveModel addon, int count})>{};
+    for (final addon in item.addons) {
+      final e = grouped[addon.id];
+      grouped[addon.id] = (
+        addon: e?.addon ?? addon,
+        count: (e?.count ?? 0) + 1,
+      );
+    }
+
+    for (final g in grouped.values) {
+      final addon = g.addon;
+      final txId = (addon.transactionId?.isNotEmpty ?? false)
+          ? addon.transactionId!
+          : '${parentTx}_a${addon.id}';
+      requests.add(
+        AddCalculationItemRequest(
+          cartId: cartId,
+          itemId: int.tryParse(addon.id) ?? item.menuItem.itemId,
+          quantity: g.count.toDouble(),
+          unitPrice: addon.price,
+          vatRatio: _vatRatio,
+          itemDiscount: 0,
+          minimumCharge: 0,
+          maximumDiscount: 0,
+          isAutoDiscount: false,
+          itemTypeId: CalculationItemTypes.additives,
+          isTobacco: false,
+          transactionId: txId,
+          parentTransactionId: _addonParentTxId(addon, parentTx),
         ),
       );
-
-      // One line per addon type, with its count.
-      final grouped = <String, ({AdditiveModel addon, int count})>{};
-      for (final addon in item.addons) {
-        final existing = grouped[addon.id];
-        grouped[addon.id] = (
-          addon: existing?.addon ?? addon,
-          count: (existing?.count ?? 0) + 1,
-        );
-      }
-
-      for (final entry in grouped.values) {
-        final addon = entry.addon;
-        inputs.add(
-          InvoiceItemInput(
-            transactionId: _addonTxId(addon, ids),
-            parentTransactionId: _addonParentTxId(addon, parentTxId),
-            itemId: item.menuItem.itemId,
-            additiveId: int.tryParse(addon.id),
-            quantity: entry.count.toDouble(),
-            unitPrice: addon.price,
-            vatRatio: vatRatio,
-            itemTypeId: item.menuItem.itemTypeId ?? 0,
-          ),
-        );
-      }
     }
-    return inputs;
+    return requests;
   }
 }

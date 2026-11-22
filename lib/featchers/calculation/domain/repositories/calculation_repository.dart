@@ -10,4 +10,10 @@ abstract class CalculationRepository {
   Future<CalculationResult> clearAllItems(String cartId);
 
   Future<void> removeCart(String cartId);
+  Future<CalculationResult> setPosType(SetPosTypeRequest request);
+  Future<CalculationResult> setDiscountOnTotal(
+    SetDiscountOnTotalRequest request,
+  );
+  Future<CalculationResult> addVoucher(AddVoucherRequest request);
+  Future<CalculationResult> removeVoucher(String cartId);
 }
