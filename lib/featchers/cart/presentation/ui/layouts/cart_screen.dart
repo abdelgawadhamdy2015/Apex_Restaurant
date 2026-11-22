@@ -37,36 +37,33 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  bool get canEdit => widget.args?.canEdite ?? true;
-
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
       final cartBloc = context.read<CartBloc>();
 
       if (widget.args?.isRestored == true) {
         cartBloc.add(const AcknowledgeCartRestoredEvent());
       }
 
-      cartBloc.add(LoadCartDataEvent());
-      cartBloc.add(LoadDynamicDiscountsEvent());
-
-      cartBloc.add(
-        LoadPersonsData(request: GetClientsRequest(isSupplier: false)),
-      );
+      cartBloc
+        ..add(LoadCartDataEvent())
+        ..add(LoadDynamicDiscountsEvent())
+        ..add(LoadPersonsData(request: GetClientsRequest(isSupplier: false)));
     });
+  }
+
+  bool _shouldClearCartOnExit(CartState state) {
+    return (state.isPreviousInvoice && !state.canEdit) || state.isReturn;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    final clearCrt = context.select(
-      (CartBloc c) =>
-          (c.state.isPreviousInvoice && !c.state.canEdit) || c.state.isReturn,
-    );
 
     return BlocConsumer<CartBloc, CartState>(
       listener: _onCartStateChanged,
@@ -85,27 +82,19 @@ class _CartScreenState extends State<CartScreen> {
           child: PopScope(
             canPop: true,
             onPopInvokedWithResult: (didPop, result) {
-              if (!didPop) return;
-
-              if (state.isPreviousInvoice && !state.canEdit) {
+              if (didPop && _shouldClearCartOnExit(state)) {
                 context.read<CartBloc>().add(ClearCartEvent());
               }
             },
             child: Scaffold(
               appBar: CartTopBar(
-                onClearAll: () {
-                  context.read<CartBloc>().add(ClearCartEvent());
-                },
-                onBack: () {
-                  if (clearCrt) {
-                    context.read<CartBloc>().add(ClearCartEvent());
-                  }
-
-                  context.pop();
-                },
+                onClearAll: state.canEdit
+                    ? () => context.read<CartBloc>().add(ClearCartEvent())
+                    : null,
+                onBack: () => context.pop(),
               ),
               backgroundColor: theme.colorScheme.surface,
-              body: _CartContent(state: state, canEdit: state.canEdit),
+              body: _CartContent(state: state),
             ),
           ),
         );
@@ -132,35 +121,63 @@ class _CartScreenState extends State<CartScreen> {
   }
 }
 
-/// The scrollable body of the cart screen plus the fixed bottom action bar.
-class _CartContent extends StatelessWidget {
-  const _CartContent({required this.state, required this.canEdit});
+/// Scrollable cart content with a fixed bottom action bar.
+class _CartContent extends StatefulWidget {
+  const _CartContent({required this.state});
 
   final CartState state;
-  final bool canEdit;
+
+  @override
+  State<_CartContent> createState() => _CartContentState();
+}
+
+class _CartContentState extends State<_CartContent> {
+  late final TextEditingController _fromBranchController;
+
+  String _formattedFromBranchDate(DateTime? dateTime) {
+    return dateTime == null
+        ? ''
+        : RestaurantConstants.dateTimeFormat.format(dateTime);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fromBranchController = TextEditingController(
+      text: _formattedFromBranchDate(widget.state.fromBranchDateTime),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _CartContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final oldValue = _formattedFromBranchDate(
+      oldWidget.state.fromBranchDateTime,
+    );
+    final newValue = _formattedFromBranchDate(widget.state.fromBranchDateTime);
+
+    if (oldValue != newValue && _fromBranchController.text != newValue) {
+      _fromBranchController.text = newValue;
+    }
+  }
+
+  @override
+  void dispose() {
+    _fromBranchController.dispose();
+    super.dispose();
+  }
 
   Widget _orderTypeSpecificSection(CartState state) {
     switch (state.selectedOrderType) {
       case CartOrderType.TAKEAWAY:
         return const SizedBox.shrink();
-
       case CartOrderType.DELIVERY:
         return DeliveryAgentSelector(deliveryMens: state.deliveryAgents);
-
       case CartOrderType.DINE_IN:
         return DineInSelector(persons: state.persons, waiters: state.waiters);
-
       case CartOrderType.FROMBRANCH:
-        return TakeawaySection(
-          controller: TextEditingController(
-            text: state.fromBranchDateTime != null
-                ? RestaurantConstants.dateTimeFormat.format(
-                    state.fromBranchDateTime!,
-                  )
-                : '',
-          ),
-        );
-
+        return TakeawaySection(controller: _fromBranchController);
       case CartOrderType.DELIVERY_COMPANY:
         return DeliveryCompanySelector();
     }
@@ -168,13 +185,14 @@ class _CartContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final state = widget.state;
     final spacing = context.spacing;
+    final canEdit = state.canEdit;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth > 700;
         final contentWidth = isWide ? 700.0 : constraints.maxWidth;
-
         final showAddressCard =
             state.selectedOrderType == CartOrderType.DELIVERY;
 
@@ -183,14 +201,14 @@ class _CartContent extends StatelessWidget {
             (state.persons.isNotEmpty ? state.persons.first : null);
 
         final saveButtonDisabled =
+            !canEdit ||
             state.status == CartStatus.saveDineInInvoiceSuccess ||
             state.items.isEmpty;
 
-        final showBottomActionBar = state.canEditInvoice || state.isReturn;
+        final showBottomActionBar = canEdit || state.isReturn;
 
         return Column(
           children: [
-            // Cart content area with floating save button.
             Expanded(
               child: Stack(
                 children: [
@@ -206,18 +224,13 @@ class _CartContent extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 const HeaderInfoCard(),
-
                                 SizedBox(height: spacing.sm),
-
                                 const OrderTypeSelector(),
-
                                 SizedBox(height: spacing.sm),
-
                                 CustomerInfoCard(
                                   persons: state.persons,
                                   selectedPerson: selectedPerson,
                                 ),
-
                                 if (showAddressCard) ...[
                                   SizedBox(height: spacing.sm),
                                   AddressCard(
@@ -227,16 +240,12 @@ class _CartContent extends StatelessWidget {
                                         const [],
                                   ),
                                 ],
-
                                 SizedBox(height: spacing.sm),
-
                                 _orderTypeSpecificSection(state),
-
                                 SizedBox(height: spacing.md),
-
                                 BlocBuilder<CartBloc, CartState>(
-                                  builder: (context, state) {
-                                    if (state.status ==
+                                  builder: (context, cartState) {
+                                    if (cartState.status ==
                                         CartStatus.itemsUpdateing) {
                                       return const Center(
                                         child: CircularProgressIndicator(),
@@ -247,20 +256,18 @@ class _CartContent extends StatelessWidget {
                                       children: [
                                         for (
                                           int index = 0;
-                                          index < state.items.length;
+                                          index < cartState.items.length;
                                           index++
                                         )
                                           CartItemTile(
                                             index: index,
-                                            item: state.items[index],
+                                            item: cartState.items[index],
                                           ),
                                       ],
                                     );
                                   },
                                 ),
-
                                 SizedBox(height: spacing.md),
-
                                 if (state.manualDiscountSettingOn)
                                   DiscountSection(
                                     selectedPerson: state.selectedPerson,
@@ -269,9 +276,7 @@ class _CartContent extends StatelessWidget {
                                     dynamicDiscountModel:
                                         state.activeDiscountModel,
                                   ),
-
                                 SizedBox(height: spacing.xxs),
-
                                 const OrderSummaryCard(),
                               ],
                             ),
@@ -280,8 +285,6 @@ class _CartContent extends StatelessWidget {
                       ),
                     ),
                   ),
-
-                  // Floating save button stays above BottomActionBar.
                   if (!saveButtonDisabled)
                     Positioned(
                       left: spacing.md,
@@ -300,8 +303,6 @@ class _CartContent extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Fixed bottom action bar, outside the Stack.
             if (showBottomActionBar) BottomActionBar(),
           ],
         );

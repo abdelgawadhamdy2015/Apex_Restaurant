@@ -1,9 +1,9 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
-import 'package:apex_restaurant/core/helpers/size_helper.dart';
-import 'package:apex_restaurant/core/themes/app_colors.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
-import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_event.dart';
-import 'package:apex_restaurant/generated/l10n.dart';
+import '../../../../../core/helpers/extensions.dart';
+import '../../../../../core/helpers/size_helper.dart';
+import '../../../../../core/themes/app_colors.dart';
+import '../../bloc/cart_bloc.dart';
+import '../../bloc/cart_event.dart';
+import '../../../../../generated/l10n.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +24,12 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
     final spacing = context.spacing;
     final iconSizes = context.iconSizes;
     final lang = S.of(context);
-    final clearCart = context.select((CartBloc c) => !c.state.canEditInvoice);
+
+    final cartPermissions = context.select(
+      (CartBloc bloc) =>
+          (canEdit: bloc.state.canEdit, hasItems: bloc.state.items.isNotEmpty),
+    );
+
     return SafeArea(
       child: Container(
         height: preferredSize.height,
@@ -40,14 +45,7 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
           children: [
             if (SizeHelper.isMobile)
               IconButton(
-                onPressed:
-                    onBack ??
-                    () {
-                      if (clearCart) {
-                        context.read<CartBloc>().add(ClearCartEvent());
-                      }
-                      context.pop();
-                    },
+                onPressed: onBack ?? context.pop,
                 icon: Icon(
                   Icons.arrow_back,
                   color: theme.colorScheme.onSecondary,
@@ -55,15 +53,23 @@ class CartTopBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             Text(
               lang.shoppingCart,
-              style: theme.textTheme.titleMedium?.copyWith(
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.colorScheme.onPrimary,
               ),
             ),
             TextButton.icon(
-              onPressed: onClearAll,
+              onPressed: cartPermissions.canEdit && cartPermissions.hasItems
+                  ? (onClearAll ??
+                        () {
+                          context.read<CartBloc>().add(ClearCartEvent());
+                        })
+                  : null,
               style: TextButton.styleFrom(
                 foregroundColor: theme.colorScheme.error,
+                disabledForegroundColor: theme.colorScheme.onSurface.withValues(
+                  alpha: 0.38,
+                ),
               ),
               icon: Icon(Icons.delete_outline, size: iconSizes.sm),
               label: Text(

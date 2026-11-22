@@ -6,8 +6,6 @@ import '../../../../../generated/l10n.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Shows the selected delivery address and lets the user change it
-/// via [AddressPickerSheet].
 class AddressCard extends StatelessWidget {
   const AddressCard({
     super.key,
@@ -33,8 +31,8 @@ class AddressCard extends StatelessWidget {
     final spacing = context.spacing;
     final icons = context.iconSizes;
     final lang = S.of(context);
-    final cartState = context.read<CartBloc>().state;
-    final canEdit = cartState.canEditInvoice;
+    final canEdit = context.select((CartBloc bloc) => bloc.state.canEdit);
+
     return Container(
       padding: EdgeInsets.all(spacing.sm),
       decoration: BoxDecoration(
@@ -57,7 +55,6 @@ class AddressCard extends StatelessWidget {
                     color: theme.colorScheme.primary,
                   ),
                   SizedBox(width: spacing.xxs),
-
                   Text(
                     '${lang.address}: ${selectedAddress?.id.toString() ?? ''}',
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -81,18 +78,23 @@ class AddressCard extends StatelessWidget {
                       Text(
                         lang.changeAddress,
                         style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.primary,
+                          color: canEdit
+                              ? theme.colorScheme.primary
+                              : theme.disabledColor,
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
-                          decorationColor: theme.colorScheme.primary,
+                          decorationColor: canEdit
+                              ? theme.colorScheme.primary
+                              : theme.disabledColor,
                         ),
                       ),
                       SizedBox(width: spacing.xxs),
-
                       Icon(
                         Icons.chevron_right,
                         size: icons.sm,
-                        color: theme.colorScheme.primary,
+                        color: canEdit
+                            ? theme.colorScheme.primary
+                            : theme.disabledColor,
                       ),
                     ],
                   ),

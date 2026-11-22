@@ -2,6 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
+import 'package:apex_restaurant/featchers/calculation/data/models/calculation_requests.dart';
+import 'package:apex_restaurant/featchers/calculation/data/models/calculation_result.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/add_item_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/clear_calculation_items_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_calculation_item_usecase.dart.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/open_new_cart_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/remove_calculation_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/delivery_company.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/restaurant_item.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
@@ -36,7 +43,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final AddPosClientUseCase addPosClientUseCase;
   final UpdatePosClientUseCase updatePosClientUseCase;
   final GetDynamicInvoiceDiscountUseCase getDynamicInvoiceDiscountUseCase;
+  final AddCalculationItemUseCase addCalculationItemUseCase;
+  final OpenNewCalculationCartUseCase openNewCalculationCartUseCase;
 
+  final EditCalculationItemUseCase editCalculationItemUseCase;
+  final ClearCalculationItemsUseCase clearCalculationItemsUseCase;
+  final RemoveCalculationCartUseCase removeCalculationCartUseCase;
   final Map<int, int> _returnLimits = {};
 
   int returnLimitFor(OrderItem item) {
@@ -69,7 +81,18 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.checkVoucherUseCase,
     required this.getMenuItemsByCompanyIdUseCase,
     required this.getInvoiceReportUseCase,
+    required this.addCalculationItemUseCase,
+    required this.openNewCalculationCartUseCase,
+    required this.editCalculationItemUseCase,
+    required this.clearCalculationItemsUseCase,
+    required this.removeCalculationCartUseCase,
   }) : super(const CartState()) {
+    on<OpenNewCartEvent>(_onOpenCalculationCart);
+    on<AddCalculationItemEvent>(_onAddCalculationItem);
+    on<UpdateCalculationItemEvent>(_onUpdateCalculationItem);
+    on<RemoveCalculationItemEvent>(_onRemoveCalculationItem);
+    on<RemoveAllCalculationItemsEvent>(_onRemoveAllCalculationItems);
+    on<RemoveCalculationCartEvent>(_onRemoveCalculationCart);
     on<LoadCartDataEvent>(_onLoadCartData);
     on<SyncCartItemsEvent>(_onSyncCartItems);
     on<AddOrderItemToCartEvent>(_onAddOrderItem);
@@ -171,6 +194,242 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<ApplyDiscountEvent>(_onApplyDiscount);
     on<ApplyVoucherDiscountEvent>(_onApplyVoucherDiscount);
   }
+  // Future<void> _openNewCart(
+  //   OpenNewCartEvent event,
+  //   Emitter<CartState> emit,
+  // ) async {
+  //   emit(state.copyWith(status: CartStatus.loading));
+  //   try {
+  //     final result = await openNewCalculationCartUseCase(
+  //       event.openNewCartRequest,
+  //     );
+  //     if (result != null) {
+  //       log("cart Id: $result");
+  //       emit(
+  //         state.copyWith(status: CartStatus.success, calculationCartId: result),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     emit(
+  //       state.copyWith(
+  //         status: CartStatus.failure,
+  //         errorMessage: ErrorHandler.handle(e).apiErrorModel.errorMessageAr,
+  //       ),
+  //     );
+  //   }
+  // }
+  Future<void> _onOpenCalculationCart(
+    OpenNewCartEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(status: CartStatus.loading, clearMessage: true));
+
+      final cartId = await openNewCalculationCartUseCase(
+        event.openNewCartRequest,
+      );
+
+      emit(
+        state.copyWith(
+          calculationCartId: cartId,
+          calculationResult: const CalculationResult(),
+          status: CartStatus.success,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onRemoveCalculationCart(
+    RemoveCalculationCartEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    final cartId = state.calculationCartId;
+
+    if (cartId == null) return;
+
+    try {
+      emit(state.copyWith(status: CartStatus.loading));
+
+      await removeCalculationCartUseCase(cartId);
+
+      emit(
+        state.copyWith(
+          clearCalculationCart: true,
+          clearCalculationResult: true,
+          status: CartStatus.success,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onAddCalculationItem(
+    AddCalculationItemEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      if (state.calculationCartId == null) {
+        throw Exception('Calculation cart is not opened');
+      }
+
+      emit(state.copyWith(status: CartStatus.itemsUpdateing));
+
+      final result = await addCalculationItemUseCase(request: event.request);
+
+      emit(
+        state.copyWith(
+          calculationResult: result,
+          status: CartStatus.itemsUpdated,
+          clearMessage: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onUpdateCalculationItem(
+    UpdateCalculationItemEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      if (state.calculationCartId == null) {
+        throw Exception('Calculation cart is not opened');
+      }
+
+      emit(state.copyWith(status: CartStatus.itemsUpdateing));
+
+      final result = await editCalculationItemUseCase(event.request);
+
+      emit(
+        state.copyWith(
+          calculationResult: result,
+          status: CartStatus.itemsUpdated,
+          clearMessage: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onRemoveCalculationItem(
+    RemoveCalculationItemEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    final cartId = state.calculationCartId;
+
+    if (cartId == null) return;
+
+    try {
+      emit(state.copyWith(status: CartStatus.itemsUpdateing));
+
+      await clearCalculationItemsUseCase(cartId);
+      CalculationResult? finalresult;
+      for (final item in event.remainingItems) {
+        finalresult = await addCalculationItemUseCase(
+          request: AddCalculationItemRequest(
+            cartId: cartId,
+            itemId: item.itemId,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            vatRatio: item.vatRatio,
+            itemDiscount: item.itemDiscount,
+            minimumCharge: item.minimumCharge,
+            maximumDiscount: item.maximumDiscount,
+            isAutoDiscount: item.isAutoDiscount,
+            itemTypeId: item.itemTypeId,
+            isTobacco: item.isTobacco,
+            transactionId: item.transactionId,
+            parentTransactionId: item.parentTransactionId,
+          ),
+        );
+      }
+
+      emit(
+        state.copyWith(
+          calculationResult: finalresult,
+          status: CartStatus.itemsUpdated,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onRemoveAllCalculationItems(
+    RemoveAllCalculationItemsEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    final cartId = state.calculationCartId;
+
+    if (cartId == null) return;
+
+    try {
+      emit(state.copyWith(status: CartStatus.itemsUpdateing));
+
+      final result = await clearCalculationItemsUseCase(cartId);
+
+      emit(
+        state.copyWith(
+          calculationResult: result,
+          status: CartStatus.itemsUpdated,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  /// The Calculation API does not expose a confirmed single-item delete
+  /// endpoint. Rebuild the calculation cart to keep it aligned with local items.
+  /// Return invoices are intentionally excluded from this integration.
+  Future<CalculationResult?> _replaceCalculationItems(
+    List<OrderItem> items,
+  ) async {
+    final cartId = state.calculationCartId;
+    if (cartId == null || cartId.isEmpty || state.isReturn) return null;
+
+    CalculationResult? result = await clearCalculationItemsUseCase(cartId);
+    for (final item in items) {
+      result = await addCalculationItemUseCase(
+        request: AddCalculationItemRequest(
+          cartId: cartId,
+          itemId: item.menuItem.itemId,
+          quantity: item.quantity.toDouble(),
+          unitPrice: item.selectedSize?.price ?? 0,
+          vatRatio: state.settingsModel?.vat?.vatDefaultValue ?? 0,
+          itemDiscount: item.discountAmount,
+          minimumCharge: state.dynamicDiscountIsActive
+              ? state.activeDiscountModel?.discount?.minInvoiceNET ?? 0
+              : 0,
+          maximumDiscount: state.dynamicDiscountIsActive
+              ? state.activeDiscountModel?.discount?.maxDiscountValue ?? 0
+              : 0,
+          isAutoDiscount: state.dynamicDiscountIsActive,
+          itemTypeId: item.menuItem.itemTypeId ?? 0,
+          isTobacco: item.menuItem.isTobaccoTax ?? false,
+          transactionId: item.transactionId,
+        ),
+      );
+    }
+    return result;
+  }
 
   void _onChangeAddress(ChangeAddressEvent event, Emitter<CartState> emit) {
     emit(
@@ -182,7 +441,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
-  void _onEditCartItem(EditCartItemEvent event, Emitter<CartState> emit) {
+  Future<void> _onEditCartItem(
+    EditCartItemEvent event,
+    Emitter<CartState> emit,
+  ) async {
     final items = List<OrderItem>.from(state.items);
     final old = items[event.index];
 
@@ -216,6 +478,27 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearMessage: true,
       ),
     );
+
+    if (!isReturn && state.calculationCartId != null) {
+      try {
+        emit(state.copyWith(status: CartStatus.itemsUpdateing));
+        final result = await _replaceCalculationItems(items);
+        emit(
+          state.copyWith(
+            calculationResult: result,
+            status: CartStatus.itemsUpdated,
+            clearMessage: true,
+          ),
+        );
+      } catch (e) {
+        emit(
+          state.copyWith(
+            status: CartStatus.failure,
+            errorMessage: e.toString(),
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _updateItemsPriceForCompanies(
@@ -435,41 +718,83 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
-  void _onAddOrderItem(AddOrderItemToCartEvent event, Emitter<CartState> emit) {
-    final existingItems = List<OrderItem>.from(state.items);
-
-    final exactMatchIndex = existingItems.indexWhere(
-      (i) =>
-          i.menuItem.itemId == event.item.menuItem.itemId &&
-          i.selectedSize?.sizeId == event.item.selectedSize?.sizeId &&
-          _areAddonsEqual(i.addons, event.item.addons) &&
-          i.discount == event.item.discount &&
-          i.isPercentageDiscount == event.item.isPercentageDiscount,
-    );
-
-    if (exactMatchIndex >= 0) {
-      final currentItem = existingItems[exactMatchIndex];
-      existingItems[exactMatchIndex] = OrderItem(
-        menuItem: currentItem.menuItem,
-        selectedSize: currentItem.selectedSize,
-        addons: currentItem.addons,
-        quantity: currentItem.quantity + event.item.quantity,
-        notes: currentItem.notes,
-        discount: currentItem.discount,
-        isPercentageDiscount: currentItem.isPercentageDiscount,
-        transactionId: currentItem.transactionId,
+  void _onAddOrderItem(
+    AddOrderItemToCartEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    emit(state.copyWith(status: CartStatus.itemsUpdateing));
+    try {
+      final calculationCartId = state.calculationCartId;
+      if (calculationCartId == null || calculationCartId.isEmpty) {
+        throw StateError('Calculation cart is not opened');
+      }
+      final response = await addCalculationItemUseCase(
+        request: AddCalculationItemRequest(
+          cartId: calculationCartId,
+          itemId: event.item.menuItem.itemId,
+          quantity: event.item.quantity.toDouble(),
+          unitPrice: event.item.selectedSize?.price ?? 0,
+          vatRatio: state.settingsModel?.vat?.vatDefaultValue ?? 0,
+          itemDiscount: event.item.discountAmount,
+          minimumCharge: state.dynamicDiscountIsActive
+              ? state.activeDiscountModel?.discount?.minInvoiceNET ?? 0
+              : 0,
+          maximumDiscount: state.dynamicDiscountIsActive
+              ? state.activeDiscountModel?.discount?.maxDiscountValue ?? 0
+              : 0,
+          isAutoDiscount: state.dynamicDiscountIsActive,
+          itemTypeId: event.item.menuItem.itemTypeId ?? 0,
+          isTobacco: event.item.menuItem.isTobaccoTax ?? false,
+          transactionId: event.item.transactionId,
+        ),
       );
-    } else {
-      existingItems.add(event.item);
+      final existingItems = List<OrderItem>.from(state.items);
+
+      final exactMatchIndex = existingItems.indexWhere(
+        (i) =>
+            i.menuItem.itemId == event.item.menuItem.itemId &&
+            i.selectedSize?.sizeId == event.item.selectedSize?.sizeId &&
+            _areAddonsEqual(i.addons, event.item.addons) &&
+            i.discount == event.item.discount &&
+            i.isPercentageDiscount == event.item.isPercentageDiscount,
+      );
+
+      if (exactMatchIndex >= 0) {
+        final currentItem = existingItems[exactMatchIndex];
+        existingItems[exactMatchIndex] = OrderItem(
+          menuItem: currentItem.menuItem,
+          selectedSize: currentItem.selectedSize,
+          addons: currentItem.addons,
+          quantity: currentItem.quantity + event.item.quantity,
+          notes: currentItem.notes,
+          discount: currentItem.discount,
+          isPercentageDiscount: currentItem.isPercentageDiscount,
+          transactionId: currentItem.transactionId,
+        );
+      } else {
+        existingItems.add(event.item);
+      }
+
+      emit(
+        state.copyWith(
+          status: .itemsUpdated,
+          calculationResult: response,
+          items: existingItems,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
     }
 
-    emit(
-      state.copyWith(
-        items: existingItems,
-        status: CartStatus.itemsUpdated,
-        clearMessage: true,
-      ),
-    );
+    // emit(
+    //   state.copyWith(
+    //     items: existingItems,
+    //     status: CartStatus.itemsUpdated,
+    //     clearMessage: true,
+    //   ),
+    // );
   }
 
   bool _areAddonsEqual(
@@ -515,10 +840,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  void _onUpdateItemQuantity(
+  Future<void> _onUpdateItemQuantity(
     UpdateItemQuantityEvent event,
     Emitter<CartState> emit,
-  ) {
+  ) async {
     if (event.index < 0 || event.index >= state.items.length) return;
 
     final updatedItems = List<OrderItem>.from(state.items);
@@ -552,24 +877,72 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearMessage: true,
       ),
     );
-  }
 
-  void _onRemoveItem(RemoveItemEvent event, Emitter<CartState> emit) {
-    if (event.index >= 0 && event.index < state.items.length) {
-      final updated = List<OrderItem>.from(state.items)..removeAt(event.index);
+    if (state.isReturn || state.calculationCartId == null) return;
+    try {
+      emit(state.copyWith(status: CartStatus.itemsUpdateing));
+      final result = await _replaceCalculationItems(updatedItems);
       emit(
         state.copyWith(
-          items: updated,
+          calculationResult: result,
           status: CartStatus.itemsUpdated,
           clearMessage: true,
         ),
       );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
     }
   }
 
-  void _onClearCartEvent(ClearCartEvent event, Emitter<CartState> emit) {
+  Future<void> _onRemoveItem(
+    RemoveItemEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    if (event.index < 0 || event.index >= state.items.length) return;
+
+    final updated = List<OrderItem>.from(state.items)..removeAt(event.index);
+    emit(
+      state.copyWith(
+        items: updated,
+        status: CartStatus.itemsUpdated,
+        clearMessage: true,
+      ),
+    );
+
+    if (state.isReturn || state.calculationCartId == null) return;
+    try {
+      emit(state.copyWith(status: CartStatus.itemsUpdateing));
+      final result = await _replaceCalculationItems(updated);
+      emit(
+        state.copyWith(
+          calculationResult: result,
+          status: CartStatus.itemsUpdated,
+          clearMessage: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(status: CartStatus.failure, errorMessage: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onClearCartEvent(
+    ClearCartEvent event,
+    Emitter<CartState> emit,
+  ) async {
     _returnLimits.clear();
     _addonReturnLimits.clear();
+    final calculationCartId = state.calculationCartId;
+    if (calculationCartId != null && calculationCartId.isNotEmpty) {
+      try {
+        await removeCalculationCartUseCase(calculationCartId);
+      } catch (e) {
+        log('Failed to remove calculation cart: $e');
+      }
+    }
     emit(
       state.copyWith(
         status: CartStatus.initial,
@@ -604,6 +977,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearRestaurantPosDiscountRequest: true,
         clearInvoiceId: true,
         clearCart: true,
+        clearCalculationCart: true,
+        clearCalculationResult: true,
         isReturnInvoice: false,
         // SaveTableData: null,
       ),

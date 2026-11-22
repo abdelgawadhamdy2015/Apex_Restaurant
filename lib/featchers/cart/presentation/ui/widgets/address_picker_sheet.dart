@@ -29,14 +29,11 @@ class AddressPickerSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: BlocProvider.value(
-          value: cartBloc,
-          child: AddressPickerSheet(
-            addresses: addresses,
-            selectedAddress: selectedAddress,
-          ),
+      builder: (_) => BlocProvider.value(
+        value: cartBloc,
+        child: AddressPickerSheet(
+          addresses: addresses,
+          selectedAddress: selectedAddress,
         ),
       ),
     );
@@ -47,6 +44,7 @@ class AddressPickerSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
     final lang = S.of(context);
+    final canEdit = context.select((CartBloc bloc) => bloc.state.canEdit);
 
     return Container(
       decoration: BoxDecoration(
@@ -72,7 +70,7 @@ class AddressPickerSheet extends StatelessWidget {
                 ),
               ),
               SizedBox(height: spacing.md),
-              _AddNewAddressButton(),
+              _AddNewAddressButton(enabled: canEdit),
               SizedBox(height: spacing.md),
               Flexible(
                 child: ListView.separated(
@@ -82,6 +80,7 @@ class AddressPickerSheet extends StatelessWidget {
                   itemBuilder: (context, index) => _AddressOption(
                     address: addresses[index],
                     selectedAddressId: selectedAddress?.id,
+                    enabled: canEdit,
                   ),
                 ),
               ),
@@ -94,7 +93,9 @@ class AddressPickerSheet extends StatelessWidget {
 }
 
 class _AddNewAddressButton extends StatelessWidget {
-  const _AddNewAddressButton();
+  const _AddNewAddressButton({required this.enabled});
+
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -103,13 +104,19 @@ class _AddNewAddressButton extends StatelessWidget {
     final lang = S.of(context);
 
     return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-        context.pushNamed(
-          Routes.addCustomerScreen,
-          extra: context.read<CartBloc>().state.selectedPerson,
-        );
-      },
+      onTap: enabled
+          ? () {
+              final selectedPerson = context
+                  .read<CartBloc>()
+                  .state
+                  .selectedPerson;
+              Navigator.pop(context);
+              context.pushNamed(
+                Routes.addCustomerScreen,
+                extra: selectedPerson,
+              );
+            }
+          : null,
       borderRadius: BorderRadius.circular(spacing.radiusMd),
       child: Container(
         width: double.infinity,
@@ -121,7 +128,9 @@ class _AddNewAddressButton extends StatelessWidget {
           color: theme.colorScheme.onSurface,
           borderRadius: BorderRadius.circular(spacing.radiusMd),
           border: Border.all(
-            color: theme.colorScheme.secondary,
+            color: enabled
+                ? theme.colorScheme.secondary
+                : theme.colorScheme.outlineVariant,
             strokeAlign: BorderSide.strokeAlignInside,
           ),
         ),
@@ -129,7 +138,7 @@ class _AddNewAddressButton extends StatelessWidget {
           '+ ${lang.addNewAddress}',
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.secondary,
+            color: enabled ? theme.colorScheme.secondary : theme.disabledColor,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -142,12 +151,15 @@ class _AddressOption extends StatelessWidget {
   const _AddressOption({
     required this.address,
     required this.selectedAddressId,
+    required this.enabled,
   });
 
   final ClientAddressModel address;
   final int? selectedAddressId;
+  final bool enabled;
 
   void _select(BuildContext context) {
+    if (!enabled) return;
     context.read<CartBloc>().add(ChangeAddressEvent(address));
     Navigator.pop(context);
   }
@@ -159,7 +171,7 @@ class _AddressOption extends StatelessWidget {
     final isSelected = address.id == selectedAddressId;
 
     return InkWell(
-      onTap: () => _select(context),
+      onTap: enabled ? () => _select(context) : null,
       borderRadius: BorderRadius.circular(spacing.radiusMd),
       child: Container(
         padding: EdgeInsets.all(spacing.sm),
@@ -196,7 +208,7 @@ class _AddressOption extends StatelessWidget {
                     address.fullAddress,
                     maxLines: 1,
                     overflow: TextOverflow.clip,
-                    style: theme.textTheme.bodyMedium?.copyWith(),
+                    style: theme.textTheme.bodyMedium,
                   ),
                 ],
               ),

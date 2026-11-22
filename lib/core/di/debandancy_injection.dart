@@ -1,6 +1,16 @@
+import 'package:apex_restaurant/core/service/calculation_api_service.dart';
+import 'package:apex_restaurant/core/service/calculation_dio_factory.dart';
 import 'package:apex_restaurant/core/shared/datasource/shared_datasource.dart';
 import 'package:apex_restaurant/core/shared/repo/shared_repo.dart';
 import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
+import 'package:apex_restaurant/featchers/calculation/data/datasources/calculation_remote_data_source.dart';
+import 'package:apex_restaurant/featchers/calculation/data/repositories/calculation_repository_impl.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/repositories/calculation_repository.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/add_item_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/clear_calculation_items_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_calculation_item_usecase.dart.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/open_new_cart_usecase.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/remove_calculation_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/datasource/more_action_datasource.dart';
 import 'package:apex_restaurant/featchers/more_actions/data/repo/more_action_repo_imp.dart';
 import 'package:apex_restaurant/featchers/more_actions/domain/repo/more_actions_repo.dart';
@@ -54,6 +64,40 @@ Future<void> setupGetIt() async {
   /// Core
   /// ─────────────────────────────────────────────────────────
 
+  /// Calcualtion System
+  final calculationDio = CalculationDioFactory.create();
+
+  getIt.registerLazySingleton<CalculationApiService>(
+    () => CalculationApiService(calculationDio),
+  );
+
+  getIt.registerLazySingleton<CalculationRemoteDataSource>(
+    () => CalculationRemoteDataSourceImpl(getIt<CalculationApiService>()),
+  );
+
+  getIt.registerLazySingleton<CalculationRepository>(
+    () => CalculationRepositoryImpl(getIt<CalculationRemoteDataSource>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => OpenNewCalculationCartUseCase(getIt<CalculationRepository>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => AddCalculationItemUseCase(getIt<CalculationRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => EditCalculationItemUseCase(getIt<CalculationRepository>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => ClearCalculationItemsUseCase(getIt<CalculationRepository>()),
+  );
+
+  getIt.registerLazySingleton(
+    () => RemoveCalculationCartUseCase(getIt<CalculationRepository>()),
+  );
+  // core
   final dio = await DioFactory.getDio();
 
   getIt.registerLazySingleton<ApiService>(() => ApiService(dio));
@@ -374,6 +418,11 @@ Future<void> setupGetIt() async {
       getDynamicInvoiceDiscountUseCase:
           getIt<GetDynamicInvoiceDiscountUseCase>(),
       checkVoucherUseCase: getIt<CheckVoucherUseCase>(),
+      openNewCalculationCartUseCase: getIt<OpenNewCalculationCartUseCase>(),
+      addCalculationItemUseCase: getIt<AddCalculationItemUseCase>(),
+      editCalculationItemUseCase: getIt<EditCalculationItemUseCase>(),
+      clearCalculationItemsUseCase: getIt<ClearCalculationItemsUseCase>(),
+      removeCalculationCartUseCase: getIt<RemoveCalculationCartUseCase>(),
     ),
   );
 

@@ -1,3 +1,4 @@
+import 'package:apex_restaurant/featchers/calculation/data/models/calculation_requests.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_request.dart';
 
@@ -32,6 +33,56 @@ class LoadCartDataEvent extends CartEvent {}
 
 class AcknowledgeCartRestoredEvent extends CartEvent {
   const AcknowledgeCartRestoredEvent();
+}
+
+class OpenNewCartEvent extends CartEvent {
+  final OpenNewCartRequest openNewCartRequest;
+  const OpenNewCartEvent({required this.openNewCartRequest});
+  @override
+  List<Object?> get props => [openNewCartRequest];
+}
+
+class UpdateCalculationItemEvent extends CartEvent {
+  final EditCalculationItemRequest request;
+
+  const UpdateCalculationItemEvent(this.request);
+
+  @override
+  List<Object?> get props => [request];
+}
+
+// Add item to calculation cart.
+class AddCalculationItemEvent extends CartEvent {
+  final AddCalculationItemRequest request;
+
+  const AddCalculationItemEvent(this.request);
+
+  @override
+  List<Object?> get props => [request];
+}
+
+// Remove one item from calculation cart.
+class RemoveCalculationItemEvent extends CartEvent {
+  final String transactionId;
+  final List<AddCalculationItemRequest> remainingItems;
+
+  const RemoveCalculationItemEvent({
+    required this.transactionId,
+    required this.remainingItems,
+  });
+
+  @override
+  List<Object?> get props => [transactionId, remainingItems];
+}
+
+// Remove all items but keep the calculation cart.
+class RemoveAllCalculationItemsEvent extends CartEvent {
+  const RemoveAllCalculationItemsEvent();
+}
+
+// Remove the calculation cart itself.
+class RemoveCalculationCartEvent extends CartEvent {
+  const RemoveCalculationCartEvent();
 }
 
 class SyncRestoredInvoiceEvent extends CartEvent {

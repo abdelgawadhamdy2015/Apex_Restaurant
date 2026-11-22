@@ -1,4 +1,4 @@
-import 'package:apex_restaurant/core/helpers/extensions.dart';
+import 'package:apex_restaurant/featchers/calculation/data/models/calculation_result.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_response.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/save_table_data.dart';
 import 'package:apex_restaurant/featchers/orders/data/model/invoice_report_response.dart';
@@ -49,7 +49,8 @@ class CartState extends Equatable {
   final CartOrderType selectedOrderType;
   final bool justRestored;
   final bool isPreviousInvoice;
-
+  final String? calculationCartId;
+  final CalculationResult? calculationResult;
   final CartStatus status;
   final DiscountTypeEnum selectedDiscountType;
   final ClientAddressModel? selectedAddress;
@@ -126,6 +127,8 @@ class CartState extends Equatable {
     this.voucherData,
     this.isReturnInvoice,
     this.priceIncludeVat = false,
+    this.calculationCartId,
+    this.calculationResult,
   });
 
   // ---------------------------------------------------------------------------
@@ -199,6 +202,8 @@ class CartState extends Equatable {
     bool? isPreviousInvoice,
     SaveTableData? saveTableData,
     InvoiceReportResponse? invoiceReportResponse,
+    String? calculationCartId,
+    CalculationResult? calculationResult,
     // Flags to force an explicit null
     bool clearActiveDiscountModel = false,
     bool clearRestaurantPosDiscountRequest = false,
@@ -207,6 +212,8 @@ class CartState extends Equatable {
     bool clearAddress = false,
     bool clearInvoiceId = false,
     bool clearCart = false,
+    bool clearCalculationCart = false,
+    bool clearCalculationResult = false,
     bool clearMessage = false,
     bool? isReturnInvoice,
     bool? priceIncludeVat,
@@ -271,6 +278,12 @@ class CartState extends Equatable {
       saveTableData: saveTableData ?? this.saveTableData,
       invoiceReportResponse:
           invoiceReportResponse ?? this.invoiceReportResponse,
+      calculationCartId: clearCalculationCart
+          ? null
+          : calculationCartId ?? this.calculationCartId,
+      calculationResult: clearCalculationResult
+          ? null
+          : calculationResult ?? this.calculationResult,
     );
   }
 
@@ -314,5 +327,7 @@ class CartState extends Equatable {
     priceIncludeVat,
     saveTableData,
     invoiceReportResponse,
+    calculationCartId,
+    calculationResult,
   ];
 }

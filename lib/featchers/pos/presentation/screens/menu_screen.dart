@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:apex_restaurant/featchers/calculation/data/models/calculation_requests.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 
 import '../../../../core/helpers/extensions.dart';
@@ -266,6 +267,22 @@ class _MenuScreenState extends State<MenuScreen> {
       HelperMethods.openPicker(parentContext, cartState.persons);
       return;
     }
+
+    context.read<CartBloc>().add(
+      OpenNewCartEvent(
+        openNewCartRequest: OpenNewCartRequest(
+          empId: 1,
+          companyName: "",
+          priceIncludeVAT: cartState.priceIncludeVat,
+          applyVAT: cartState.settingsModel?.vat?.vatActive ?? false,
+          vatRatio: 15,
+          applyTobaccoTax: true,
+          systemApplyDiscount: true,
+          userCanAddDiscount: true,
+          decimalCount: 2,
+        ),
+      ),
+    );
 
     // final needsCustomization = item.sizes.length > 1 || additives.isNotEmpty;
 

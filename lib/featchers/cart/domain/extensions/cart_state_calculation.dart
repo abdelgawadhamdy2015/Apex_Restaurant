@@ -16,47 +16,47 @@ extension CartStateCalculation on CartState {
   double get subtotal => calculationResult?.totalOfItems ?? 0.0;
   double get netSubtotal => calculationResult?.totalWithoutVAT ?? 0.0;
   double get vatAmount => calculationResult?.totalVAT ?? 0.0;
-  double get tobaccoTaxAmount => calculationResult?.totalTobaccoTax ?? 0.0;
+  double get tobaccoTaxAmount => calculationResult?.totalTobbacoTAX ?? 0.0;
   double get dineInCost => calculationResult?.dineInCost ?? 0.0;
-  double get grandTotal => calculationResult?.netTotal ?? 0.0;
-
-  double get totalDiscountAmount =>
-      mode.totalDiscount(calculationResult, selectedDiscountType);
+  double get grandTotal => calculationResult?.net ?? 0.0;
+  double get totalDiscountAmount => calculationResult?.totalDiscount ?? 0.0;
+  // double get totalDiscountAmount =>
+  //     mode.totalDiscount(calculationResult, selectedDiscountType);
 
   // ---------------------------------------------------------------------------
   // Calculator
   // ---------------------------------------------------------------------------
 
-  InvoiceCalculationResult? get calculationResult {
-    if (items.isEmpty) return null;
+  // InvoiceCalculationResult? get calculationResult {
+  //   if (items.isEmpty) return null;
 
-    final invoiceDiscount = _invoiceLevelDiscount;
+  //   final invoiceDiscount = _invoiceLevelDiscount;
 
-    final input = InvoiceCalculationInput(
-      discountOnTotal: invoiceDiscount.value,
-      discountType: invoiceDiscount.type,
-      exposeInvoiceDiscountPerItem: !isReturn,
+  //   final input = InvoiceCalculationInput(
+  //     discountOnTotal: invoiceDiscount.value,
+  //     discountType: invoiceDiscount.type,
+  //     exposeInvoiceDiscountPerItem: !isReturn,
 
-      deliveryCost: isDeliveryOrder
-          ? settingsModel?.posRestaurant?.deliveryCost ?? 0.0
-          : 0.0,
-      dineInRatio: selectedOrderType == CartOrderType.DINE_IN
-          ? selectedTable?.serviceRatio ?? 0.0
-          : 0.0,
-      applyVAT: settingsModel?.vat?.vatActive ?? false,
-      priceIncludesVAT: mode.priceIncludesVat(this),
-      items: _mapItemsToCalculationInputs(),
-      voucher: _voucherInput,
-      dynamicDiscount: matchedDynamicDiscount?.discount
-          ?.toDynamicDiscountInput(),
-    );
+  //     deliveryCost: isDeliveryOrder
+  //         ? settingsModel?.posRestaurant?.deliveryCost ?? 0.0
+  //         : 0.0,
+  //     dineInRatio: selectedOrderType == CartOrderType.DINE_IN
+  //         ? selectedTable?.serviceRatio ?? 0.0
+  //         : 0.0,
+  //     applyVAT: settingsModel?.vat?.vatActive ?? false,
+  //     priceIncludesVAT: mode.priceIncludesVat(this),
+  //     items: _mapItemsToCalculationInputs(),
+  //     voucher: _voucherInput,
+  //     dynamicDiscount: matchedDynamicDiscount?.discount
+  //         ?.toDynamicDiscountInput(),
+  //   );
 
-    const calculator = InvoiceCalculator(
-      noteItemTypeId: 99,
-      offerItemTypeId: 100,
-    );
-    return calculator.calculate(input).data;
-  }
+  //   const calculator = InvoiceCalculator(
+  //     noteItemTypeId: 99,
+  //     offerItemTypeId: 100,
+  //   );
+  //   return calculator.calculate(input).data;
+  // }
 
   /// Invoice-level discount sent to the calculator, based on the winning source.
   ({double value, DiscountNatural type}) get _invoiceLevelDiscount {
