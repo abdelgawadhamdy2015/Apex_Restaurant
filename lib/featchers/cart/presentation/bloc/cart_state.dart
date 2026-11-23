@@ -255,7 +255,7 @@ class CartState extends Equatable {
           ? null
           : selectedDeliveryMan ?? this.selectedDeliveryMan,
       discountAmount: clearCart ? 0.0 : discountAmount ?? this.discountAmount,
-      voucherData: clearVoucherDiscountValue
+      voucherData: clearCart || (clearVoucherDiscountValue && voucherData == null)
           ? null
           : voucherData ?? this.voucherData,
       isLoading: isLoading ?? this.isLoading,
