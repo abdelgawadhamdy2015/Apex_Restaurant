@@ -226,30 +226,35 @@ class CartState extends Equatable {
   }) {
     return CartState(
       settingsModel: settingsModel ?? this.settingsModel,
-      selectedOrderType: selectedOrderType ?? this.selectedOrderType,
-      selectedDiscountType: selectedDiscountType ?? this.selectedDiscountType,
-      selectedAddress: clearAddress
+      selectedOrderType: clearCart
+          ? CartOrderType.TAKEAWAY
+          : selectedOrderType ?? this.selectedOrderType,
+      selectedDiscountType: clearCart
+          ? DiscountTypeEnum.coupon
+          : selectedDiscountType ?? this.selectedDiscountType,
+      selectedAddress: clearCart || clearAddress
           ? null
           : selectedAddress ?? this.selectedAddress,
       status: status ?? this.status,
       items: items ?? this.items,
       activeDiscounts: activeDiscounts ?? this.activeDiscounts,
-      justRestored: justRestored ?? this.justRestored,
+      justRestored: clearCart ? false : justRestored ?? this.justRestored,
       canEdit: canEdit ?? this.canEdit,
       activeDiscountModel: clearActiveDiscountModel
           ? null
           : (activeDiscountModel ?? this.activeDiscountModel),
       waiters: waiters ?? this.waiters,
       persons: persons ?? this.persons,
-      selectedPerson: selectedPerson ?? this.selectedPerson,
+      selectedPerson: clearCart ? null : selectedPerson ?? this.selectedPerson,
       deliveryAgents: deliveryAgents ?? this.deliveryAgents,
-      selectedDeliveryCompany:
-          selectedDeliveryCompany ?? this.selectedDeliveryCompany,
+      selectedDeliveryCompany: clearCart
+          ? null
+          : selectedDeliveryCompany ?? this.selectedDeliveryCompany,
       selectedWaiter: clearCart ? null : selectedWaiter ?? this.selectedWaiter,
       selectedDeliveryMan: clearCart
           ? null
           : selectedDeliveryMan ?? this.selectedDeliveryMan,
-      discountAmount: discountAmount ?? this.discountAmount,
+      discountAmount: clearCart ? 0.0 : discountAmount ?? this.discountAmount,
       voucherData: clearVoucherDiscountValue
           ? null
           : voucherData ?? this.voucherData,
@@ -279,7 +284,7 @@ class CartState extends Equatable {
           ? null
           : restoredInvoiceDate ?? this.restoredInvoiceDate,
       isPreviousInvoice: isPreviousInvoice ?? this.isPreviousInvoice,
-      isReturnInvoice: isReturnInvoice ?? this.isReturnInvoice,
+      isReturnInvoice: clearCart ? false : isReturnInvoice ?? this.isReturnInvoice,
       priceIncludeVat: priceIncludeVat ?? this.priceIncludeVat,
       saveTableData: saveTableData ?? this.saveTableData,
       invoiceReportResponse:
@@ -290,8 +295,9 @@ class CartState extends Equatable {
       calculationResult: clearCalculationResult
           ? null
           : calculationResult ?? this.calculationResult,
-      returnInvoiceDiscountShares:
-          returnInvoiceDiscountShares ?? this.returnInvoiceDiscountShares,
+      returnInvoiceDiscountShares: clearCart
+          ? const <String, double>{}
+          : returnInvoiceDiscountShares ?? this.returnInvoiceDiscountShares,
     );
   }
 
