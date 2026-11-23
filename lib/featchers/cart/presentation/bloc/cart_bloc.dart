@@ -548,8 +548,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
       items.add(newItem);
       emit(
-        state.copyWith(items: items),
-      ); // so the discount rules see the new item
+        state.copyWith(items: items, calculationResult: result),
+      ); // make both items and partial server results visible to discount rules
       result = await _applyInvoiceLevel(cartId) ?? result;
 
       emit(
