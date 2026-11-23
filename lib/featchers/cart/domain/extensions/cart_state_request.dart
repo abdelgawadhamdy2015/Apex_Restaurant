@@ -151,7 +151,18 @@ extension CartStateRequest on CartState {
 
   RestaurantPosInvoiceItemRequest _buildItemRequest(OrderItem item, int index) {
     final parentTxId = _parentTxIdFor(item, index);
-    final discount = _resolveItemDiscount(item);
+    final resolvedDiscount = _resolveItemDiscount(item);
+
+    // A non-null discountId identifies an automatic/dynamic item discount.
+    final isDynamicItemDiscount =
+        resolvedDiscount.discountId != null && resolvedDiscount.value > 0;
+
+    final discountRequest = resolvedDiscount.value > 0 && !isDynamicItemDiscount
+        ? RestaurantPosDiscountRequest(
+            type: resolvedDiscount.isPercentage ? 1 : 2,
+            value: resolvedDiscount.value,
+          )
+        : null;
 
     return RestaurantPosInvoiceItemRequest(
       transactionID: parentTxId,
@@ -161,13 +172,15 @@ extension CartStateRequest on CartState {
       quantity: mode.quantityOf(item),
       price: _unitPriceOf(item),
       notes: item.notes,
-      discount: discount.value > 0
-          ? RestaurantPosDiscountRequest(
-              type: discount.isPercentage ? 1 : 2,
-              value: discount.value,
-            )
+
+      // Manual/non-dynamic discount only.
+      discount: discountRequest,
+
+      // Dynamic discount only.
+      itemDiscountId: isDynamicItemDiscount
+          ? resolvedDiscount.discountId
           : null,
-      itemDiscountId: discount.discountId,
+
       additives: _buildAdditiveRequests(item, parentTxId),
     );
   }

@@ -257,6 +257,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         quantity: quantity,
         availableQuantity: returnQuantity?.toDouble() ?? old.availableQuantity,
         notes: event.notes,
+
         discount: isReturn ? old.discount : event.discount,
         isPercentageDiscount: isReturn
             ? old.isPercentageDiscount
@@ -318,7 +319,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       newItems.add(
         oldItem.copyWith(
           menuItem: newItem,
-          selectedSize: selectedSize ??
+          selectedSize:
+              selectedSize ??
               (newItem.sizes.isNotEmpty ? newItem.sizes.first : null),
         ),
       );
@@ -360,8 +362,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     final selectedDeliveryCompany =
         isDeliveryCompany && state.companiesList.isNotEmpty
         ? state.companiesList
-            .where((c) => c.id == data.deliveryCompany?.id)
-            .firstOrNull
+              .where((c) => c.id == data.deliveryCompany?.id)
+              .firstOrNull
         : null;
     emit(
       state.copyWith(
@@ -378,16 +380,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         clearSelectedWaiter: !isDineIn || data.waiter == null,
         selectedDeliveryMan: isDelivery
             ? state.deliveryAgents
-                    .where((d) => d.id == data.deliveryMan?.id)
-                    .firstOrNull ??
-                data.deliveryMan
+                      .where((d) => d.id == data.deliveryMan?.id)
+                      .firstOrNull ??
+                  data.deliveryMan
             : null,
         clearSelectedDeliveryMan: !isDelivery || data.deliveryMan == null,
         selectedPerson: data.client,
         clearSelectedPerson: data.client == null,
         selectedDeliveryCompany:
             selectedDeliveryCompany ?? data.deliveryCompany,
-        clearSelectedDeliveryCompany: !isDeliveryCompany ||
+        clearSelectedDeliveryCompany:
+            !isDeliveryCompany ||
             (selectedDeliveryCompany == null && data.deliveryCompany == null),
         clearSelectedTable: !isDineIn || data.table == null,
         clearAddress: true,
@@ -553,7 +556,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         cartId,
       )) {
         final response = await addCalculationItemUseCase(request: r);
-        result = response.mergeChangedItems(result);
+        result = response?.mergeChangedItems(result);
       }
       items.add(newItem);
       emit(
@@ -629,8 +632,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     emit(
       state.copyWith(
         selectedPerson: event.person,
-        selectedAddress:
-            (event.person?.personAddress?.isNotEmpty ?? false)
+        selectedAddress: (event.person?.personAddress?.isNotEmpty ?? false)
             ? event.person!.personAddress!.first
             : null,
         clearAddress: event.person?.personAddress?.isNotEmpty != true,
@@ -1123,7 +1125,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       CalculationResult? result = await clearCalculationItemsUseCase(cartId);
       for (final r in state.calculationRequestsFor(draft, 0, cartId)) {
         final response = await addCalculationItemUseCase(request: r);
-        result = response.mergeChangedItems(result);
+        result = response?.mergeChangedItems(result);
       }
       if (result == null) return null;
       return state.linePreviewFrom(draft, result);
@@ -1175,8 +1177,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   double get _calculationServiceValue => state.isDeliveryOrder
       ? (state.settingsModel?.posRestaurant?.deliveryCost ?? 0.0)
       : state.selectedOrderType == CartOrderType.DINE_IN
-          ? (state.selectedTable?.serviceRatio ?? 0.0)
-          : 0.0;
+      ? (state.selectedTable?.serviceRatio ?? 0.0)
+      : 0.0;
 
   /// Voucher if one is applied, otherwise discount-on-total (possibly 0).
   Future<CalculationResult?> _applyInvoiceLevel(String cartId) async {
@@ -1204,8 +1206,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     CalculationResult? previous = s.calculationResult;
     if (hadVoucher) {
-      previous = (await removeVoucherUseCase(cartId))
-          .mergeChangedItems(previous);
+      previous = (await removeVoucherUseCase(
+        cartId,
+      )).mergeChangedItems(previous);
     }
 
     final d = s.invoiceDiscountForCalculation;
@@ -1241,7 +1244,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       for (var i = 0; i < items.length; i++) {
         for (final r in state.calculationRequestsFor(items[i], i, cartId)) {
           final response = await addCalculationItemUseCase(request: r);
-          result = response.mergeChangedItems(result);
+          result = response?.mergeChangedItems(result);
         }
       }
       if (items.isNotEmpty) {
@@ -1273,7 +1276,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       final result = await _applyInvoiceLevel(state.calculationCartId!);
       emit(
         state.copyWith(
-          calculationResult: result?.mergeChangedItems(state.calculationResult) ??
+          calculationResult:
+              result?.mergeChangedItems(state.calculationResult) ??
               state.calculationResult,
           status: CartStatus.itemsUpdated,
         ),

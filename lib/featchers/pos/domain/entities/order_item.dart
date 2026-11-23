@@ -12,7 +12,7 @@ class OrderItem extends Equatable {
   final double discount;
   final bool isPercentageDiscount;
   final double? availableQuantity;
-
+  final bool isAutoDiscount;
   final int? invoiceDetailsId;
 
   const OrderItem({
@@ -26,6 +26,7 @@ class OrderItem extends Equatable {
     this.isPercentageDiscount = false,
     this.invoiceDetailsId,
     this.availableQuantity,
+    this.isAutoDiscount = false,
   });
 
   /// Alias getter for selectedAddons.

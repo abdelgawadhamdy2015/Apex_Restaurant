@@ -2,7 +2,6 @@ import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
 import 'package:apex_restaurant/featchers/cart/data/models/check_voucher_request.dart';
 
 import '../../../../../core/helpers/extensions.dart';
-import '../../../../../core/helpers/helper_methods.dart';
 import '../../../../../core/shared/widgets/app_radio_group.dart';
 import '../../../data/models/dynamic_discount.dart';
 import '../../../data/models/invoice_request.dart';
@@ -110,11 +109,7 @@ class _DiscountSectionState extends State<DiscountSection> {
 
     final lang = S.of(context);
     final discountEnabled =
-        //state.isInvoiceManualDiscountEnabled && state.canEdit;
-        (!widget.dynamicIsActive &&
-            state.isInvoiceManualDiscountEnabled &&
-            !HelperMethods.anyItemHasDiscount(state.items)) &&
-        state.canEditInvoice;
+        state.isInvoiceManualDiscountEnabled && state.canEditInvoice;
     ValueChanged<DiscountTypeEnum?> onTypeChanged() {
       return (val) {
         if (val != null) {

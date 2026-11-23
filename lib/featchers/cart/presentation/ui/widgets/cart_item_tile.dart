@@ -109,6 +109,7 @@ class CartItemTile extends StatelessWidget {
           selectedSize: selectedSize,
           selectedAddons: selectedAddons,
           discount: discount,
+
           isPercentageDiscount: isPercentageDiscount,
           notes: notes,
           quantity: quantity,

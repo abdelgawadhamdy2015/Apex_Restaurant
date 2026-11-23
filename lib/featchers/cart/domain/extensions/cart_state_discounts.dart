@@ -4,6 +4,7 @@ typedef ResolvedItemDiscount = ({
   double value,
   bool isPercentage,
   int? discountId,
+  bool isAuto,
 });
 
 typedef EffectiveInvoiceDiscount = ({
@@ -16,6 +17,7 @@ const ResolvedItemDiscount _noItemDiscount = (
   value: 0.0,
   isPercentage: false,
   discountId: null,
+  isAuto: false,
 );
 
 extension CartStateDiscounts on CartState {
@@ -25,7 +27,7 @@ extension CartStateDiscounts on CartState {
       settingsModel?.posRestaurant?.activeDiscount ?? false;
 
   // ---------------------------------------------------------------------------
-  // Dynamic (invoice level)
+  // Dynamic invoice discount
   // ---------------------------------------------------------------------------
 
   bool get dynamicDiscountIsActive =>
@@ -34,23 +36,23 @@ extension CartStateDiscounts on CartState {
       mode.allowsDynamicDiscount &&
       activeDiscounts.any((d) => d.posTypeId == currentPosTypeId);
 
+  bool get dynamicInvoiceDiscountIsActive => dynamicDiscountIsActive;
+
   DynamicDiscountModel? get matchedDynamicDiscount {
-    if (!dynamicDiscountIsActive) return null;
+    if (!dynamicInvoiceDiscountIsActive) return null;
 
     if (activeDiscountModel?.posTypeId == currentPosTypeId) {
       return activeDiscountModel;
     }
+
     return activeDiscounts
         .where((d) => d.posTypeId == currentPosTypeId)
         .firstOrNull;
   }
 
-  /// Dynamic invoice discount after applying its rules:
-  /// - fixed (discountNatural == 2): ignored when total < `minInvoiceNet`.
-  /// - percentage (discountNatural == 1): amount is capped at
-  ///   `maxDiscountValue` (when > 0) and then becomes a fixed amount.
-  /// Returns null when no discount should be applied.
   EffectiveInvoiceDiscount? get effectiveDynamicInvoiceDiscount {
+    if (!dynamicInvoiceDiscountIsActive) return null;
+
     final d = matchedDynamicDiscount?.discount;
     if (d == null) return null;
 
@@ -61,26 +63,32 @@ extension CartStateDiscounts on CartState {
 
     if (d.discountNatural == 1) {
       final maxValue = d.maxDiscountValue ?? 0.0;
+
       if (maxValue > 0 && base * value / 100 > maxValue) {
         return (value: maxValue, isPercentage: false, capped: true);
       }
+
       return (value: value, isPercentage: true, capped: false);
     }
 
     final minNet = d.minInvoiceNET ?? 0.0;
-    if (minNet > 0 && _netOfVat(base) < minNet) return null;
+
+    if (minNet > 0 && _netOfVat(base) < minNet) {
+      return null;
+    }
+
     return (value: value, isPercentage: false, capped: false);
   }
 
   // Not based on calculationResult, to avoid a circular dependency.
   double get _itemsTotalBeforeDiscount =>
-      items.fold(0.0, (sum, i) => sum + i.totalPriceBeforeDiscount);
+      items.fold(0.0, (sum, item) => sum + item.totalPriceBeforeDiscount);
 
   // ---------------------------------------------------------------------------
-  // Customer
+  // Customer discount
   // ---------------------------------------------------------------------------
 
-  bool get isCustomerDiscountEditable => !dynamicDiscountIsActive;
+  bool get isCustomerDiscountEditable => !dynamicInvoiceDiscountIsActive;
 
   bool get isCustomerDiscountApplied =>
       mode.allowsCustomerDiscount &&
@@ -88,100 +96,155 @@ extension CartStateDiscounts on CartState {
       (customerDiscount?.value ?? 0) > 0;
 
   // ---------------------------------------------------------------------------
-  // Size (item level)
+  // Dynamic size / item discount
   // ---------------------------------------------------------------------------
 
   ItemDiscount? dynamicDiscountForSize(ItemSize? size) {
     if (!mode.allowsSizeDiscount || isPreviousInvoice || isPending) {
       return null;
     }
+
     final discount = size?.discountForPosType(currentPosTypeId);
-    if (discount == null || discount.discountValue <= 0) return null;
+
+    if (discount == null || discount.discountValue <= 0) {
+      return null;
+    }
+
     return discount;
   }
 
   bool get hasSizeDiscount =>
-      items.any((i) => dynamicDiscountForSize(i.selectedSize) != null);
+      items.any((item) => dynamicDiscountForSize(item.selectedSize) != null);
 
   // ---------------------------------------------------------------------------
-  // Manual
+  // Manual discounts
   // ---------------------------------------------------------------------------
 
   bool get isManualItemDiscountApplied =>
-      !hasSizeDiscount && items.any((i) => i.discount > 0);
+      !hasSizeDiscount && items.any((item) => item.discount > 0);
 
   bool get isManualInvoiceDiscountApplied =>
       (mode.allowsInvoiceDiscount || isReturn) &&
+      !dynamicInvoiceDiscountIsActive &&
       selectedDiscountType == DiscountTypeEnum.direct &&
       (restaurantPosDiscountRequest?.value ?? 0) > 0;
 
   bool get isInvoiceManualDiscountEnabled =>
       mode.allowsManualDiscountEditing &&
-      !dynamicDiscountIsActive &&
+      !dynamicInvoiceDiscountIsActive &&
       !isCustomerDiscountApplied &&
       manualDiscountSettingOn &&
       !isManualItemDiscountApplied;
 
   bool get isItemManualDiscountEnabled =>
       mode.allowsManualDiscountEditing &&
-      !dynamicDiscountIsActive &&
+      !dynamicInvoiceDiscountIsActive &&
       !isCustomerDiscountApplied &&
       !hasSizeDiscount &&
       manualDiscountSettingOn &&
       !isManualInvoiceDiscountApplied;
 
   // ---------------------------------------------------------------------------
-  // Which source wins
+  // Which invoice discount source wins
   // ---------------------------------------------------------------------------
 
   DiscountSource get activeDiscountSource {
-    if (dynamicDiscountIsActive) return DiscountSource.dynamic;
-    if (isCustomerDiscountApplied) return DiscountSource.customer;
-    if (hasSizeDiscount) return DiscountSource.size;
-    if (isManualInvoiceDiscountApplied) return DiscountSource.manualInvoice;
-    if (isManualItemDiscountApplied) return DiscountSource.manualItem;
+    if (dynamicInvoiceDiscountIsActive) {
+      return DiscountSource.dynamic;
+    }
+
+    if (isCustomerDiscountApplied) {
+      return DiscountSource.customer;
+    }
+
+    if (isManualInvoiceDiscountApplied) {
+      return DiscountSource.manualInvoice;
+    }
+
+    if (hasSizeDiscount) {
+      return DiscountSource.size;
+    }
+
+    if (isManualItemDiscountApplied) {
+      return DiscountSource.manualItem;
+    }
+
     return DiscountSource.none;
   }
 
   // ---------------------------------------------------------------------------
-  // Per-item discount
+  // Per-item discount resolution
   // ---------------------------------------------------------------------------
 
   ResolvedItemDiscount _resolveItemDiscount(OrderItem item) {
-    // An invoice-level discount replaces any item-level one.
-    if (dynamicDiscountIsActive || isCustomerDiscountApplied) {
+    // Dynamic size discount has its own priority.
+    // It is independent of an invoice-level dynamic discount.
+    final sizeDiscount = _sizeDiscountFor(item);
+
+    if (sizeDiscount != null) {
+      return sizeDiscount;
+    }
+
+    // Customer discount replaces item-level discounts.
+    if (isCustomerDiscountApplied) {
       return _noItemDiscount;
     }
 
-    final sizeDiscount = _sizeDiscountFor(item);
-    if (sizeDiscount != null) return sizeDiscount;
+    // Manual invoice discount is calculated at invoice level.
+    // Do not apply manual item discounts alongside it.
+    if (isManualInvoiceDiscountApplied) {
+      return _noItemDiscount;
+    }
 
-    if (isManualInvoiceDiscountApplied) return _noItemDiscount;
-
-    if (item.discount > 0) {
+    // Manual item discount.
+    if (item.discount > 0 && isItemManualDiscountAllowedFor(item)) {
       return (
         value: mode.itemDiscountValue(item),
         isPercentage: item.isPercentageDiscount,
         discountId: null,
+        isAuto: false,
       );
     }
+
     return _noItemDiscount;
   }
 
+  /// Allows dynamic size discounts even when a dynamic invoice discount
+  /// is active, but keeps manual item discounts disabled in that situation.
+  bool isItemManualDiscountAllowedFor(OrderItem item) {
+    if (dynamicInvoiceDiscountIsActive ||
+        isCustomerDiscountApplied ||
+        isManualInvoiceDiscountApplied ||
+        !manualDiscountSettingOn ||
+        !mode.allowsManualDiscountEditing) {
+      return false;
+    }
+
+    return dynamicDiscountForSize(item.selectedSize) == null;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Resolve dynamic size discount
+  // ---------------------------------------------------------------------------
+
   ResolvedItemDiscount? _sizeDiscountFor(OrderItem item) {
     final discount = dynamicDiscountForSize(item.selectedSize);
+
     if (discount == null) return null;
 
     final lineTotal = item.totalPriceBeforeDiscount;
 
+    // Check minimum invoice net for the individual item.
     if (discount.minInvoiceNet > 0 &&
         _netOfVat(lineTotal) < discount.minInvoiceNet) {
       return null;
     }
+
     final isPercentage = discount.discountNatural == 1;
     final value = discount.discountValue;
     final discountId = int.tryParse(discount.id.toString());
 
+    // Apply maximum discount cap.
     if (isPercentage &&
         discount.maxDiscountValue > 0 &&
         lineTotal * value / 100 > discount.maxDiscountValue) {
@@ -189,8 +252,15 @@ extension CartStateDiscounts on CartState {
         value: discount.maxDiscountValue,
         isPercentage: false,
         discountId: discountId,
+        isAuto: true,
       );
     }
-    return (value: value, isPercentage: isPercentage, discountId: discountId);
+
+    return (
+      value: value,
+      isPercentage: isPercentage,
+      discountId: discountId,
+      isAuto: true,
+    );
   }
 }

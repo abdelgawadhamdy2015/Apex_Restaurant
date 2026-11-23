@@ -393,6 +393,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
       discount: double.tryParse(discountController.text) ?? 0.0,
       isPercentageDiscount: isPercentageDiscount,
       notes: notesController.text,
+
       quantity: quantity,
     );
   }
