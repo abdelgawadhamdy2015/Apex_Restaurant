@@ -384,6 +384,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         selectedPerson: data.client,
         selectedDeliveryCompany: selectedDeliveryCompany,
         voucherId: data.voucherId,
+        voucherData: data.voucherData,
         invoiceCode: data.invoiceCode,
         orderNumber: data.orderNumber,
         selectedTable: isDineIn ? data.table : null,
@@ -415,6 +416,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         priceIncludeVat: data.priceIncludeVat,
       ),
     );
+
+    // Rebuild calculation data for restored invoices so server totals remain authoritative.
+    if (data.items.isNotEmpty) {
+      await _recalculate(emit);
+    }
   }
 
   Future<void> _onLoadCartData(
@@ -521,8 +527,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       await _ensureCalculationCart(emit);
       final cartId = state.calculationCartId!;
+      final posTypeResult = await setPosTypeUseCase(
+        SetPosTypeRequest(
+          cartId: cartId,
+          posType: state.selectedOrderType.apiValue,
+          serviceValue: _calculationServiceValue,
+        ),
+      );
 
-      CalculationResult? result;
+      CalculationResult? result = posTypeResult.mergeChangedItems(
+        state.calculationResult,
+      );
       for (final r in state.calculationRequestsFor(
         newItem,
         items.length,
@@ -1146,6 +1161,12 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     );
   }
 
+  double get _calculationServiceValue => state.isDeliveryOrder
+      ? (state.settingsModel?.posRestaurant?.deliveryCost ?? 0.0)
+      : state.selectedOrderType == CartOrderType.DINE_IN
+          ? (state.selectedTable?.serviceRatio ?? 0.0)
+          : 0.0;
+
   /// Voucher if one is applied, otherwise discount-on-total (possibly 0).
   Future<CalculationResult?> _applyInvoiceLevel(String cartId) async {
     final s = state;
@@ -1197,16 +1218,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       await _ensureCalculationCart(emit);
       final cartId = state.calculationCartId!;
       final items = state.items;
-      final serviceValue = state.isDeliveryOrder
-          ? (state.settingsModel?.posRestaurant?.deliveryCost ?? 0.0)
-          : state.selectedOrderType == CartOrderType.DINE_IN
-          ? (state.selectedTable?.serviceRatio ?? 0.0)
-          : 0.0;
       await setPosTypeUseCase(
         SetPosTypeRequest(
           cartId: cartId,
           posType: state.selectedOrderType.apiValue,
-          serviceValue: serviceValue,
+          serviceValue: _calculationServiceValue,
         ),
       );
 
