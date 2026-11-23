@@ -375,14 +375,22 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         isPreviousInvoice:
             !(event.data.isReturnInvoice ?? false) && !event.isPending,
         selectedWaiter: isDineIn ? data.waiter : null,
+        clearSelectedWaiter: !isDineIn,
         selectedDeliveryMan: isDelivery
             ? state.deliveryAgents
                     .where((d) => d.id == data.deliveryMan?.id)
                     .firstOrNull ??
                 data.deliveryMan
             : null,
+        clearSelectedDeliveryMan: !isDelivery,
         selectedPerson: data.client,
-        selectedDeliveryCompany: selectedDeliveryCompany,
+        clearSelectedPerson: data.client == null,
+        selectedDeliveryCompany:
+            selectedDeliveryCompany ?? data.deliveryCompany,
+        clearSelectedDeliveryCompany: !isDeliveryCompany,
+        clearSelectedTable: !isDineIn,
+        clearAddress: true,
+        clearFromBranchDateTime: true,
         voucherId: data.voucherId,
         voucherData: data.voucherData,
         invoiceCode: data.invoiceCode,
@@ -624,6 +632,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             (event.person?.personAddress?.isNotEmpty ?? false)
             ? event.person!.personAddress!.first
             : null,
+        clearAddress: event.person?.personAddress?.isNotEmpty != true,
         clearVoucherDiscountValue: state.selectedPerson != event.person,
         clearMessage: true,
       ),
@@ -1112,7 +1121,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       CalculationResult? result = await clearCalculationItemsUseCase(cartId);
       for (final r in state.calculationRequestsFor(draft, 0, cartId)) {
-        result = await addCalculationItemUseCase(request: r);
+        final response = await addCalculationItemUseCase(request: r);
+        result = response.mergeChangedItems(result);
       }
       if (result == null) return null;
       return state.linePreviewFrom(draft, result);
