@@ -1,8 +1,15 @@
 part of '../../presentation/bloc/cart_state.dart';
 
+class _TxIdGenerator {
+  int _next = 100000;
+  String next() => (_next++).toString();
+}
+
 extension CartStateCalculation on CartState {
   // ---- Totals (all come from the calculation server) ----
-  double get subtotal => calculationResult?.totalOfItems ?? 0.0;
+  double get subtotal =>
+      (calculationResult?.totalOfItems ?? 0.0) -
+      (calculationResult?.totalItemDiscount ?? 0.0);
   double get netSubtotal => calculationResult?.totalWithoutVAT ?? 0.0;
   double get vatAmount => calculationResult?.totalVAT ?? 0.0;
   double get tobaccoTaxAmount => calculationResult?.totalTobbacoTAX ?? 0.0;
@@ -14,51 +21,37 @@ extension CartStateCalculation on CartState {
   double get invoiceDiscountAmount => calculationResult?.invoiceDiscount ?? 0.0;
   bool get isCalculating => status == CartStatus.itemsUpdateing;
 
+  /// The server's result row for this cart line (matched by transactionID).
+  CalculationItemResult? _calcItemFor(OrderItem item, int index) {
+    final id = _parentTxIdFor(item, index);
+    return calculationResult?.items
+        .where((e) => e.transactionID == id)
+        .firstOrNull;
+  }
+
+  /// Main item gross for the quantity that is actually calculated.
+  double lineMainGrossFor(OrderItem item) =>
+      _unitPriceOf(item) * mode.quantityOf(item);
+
+  /// Main item + addons, before any discount.
+  double lineGrossFor(OrderItem item) =>
+      lineMainGrossFor(item) + item.addonsTotalPrice;
+
+  /// Item-level discount: server value first, local value as a fallback
+  /// (e.g. while the calculation is still running).
+  double lineDiscountFor(OrderItem item, int index) {
+    final fromServer = _calcItemFor(item, index)?.itemDiscountValue;
+    final value = fromServer ?? _itemDiscountAmount(item);
+    return value.clamp(0.0, lineMainGrossFor(item)).toDouble();
+  }
+
+  /// What the tile shows: gross - item discount (addons are never discounted).
+  /// The invoice-level discount and VAT are shown in the summary only.
+  double lineTotalFor(OrderItem item, int index) =>
+      lineGrossFor(item) - lineDiscountFor(item, index);
   double get _vatRatio => (settingsModel?.vat?.vatActive ?? false)
       ? (settingsModel?.vat?.vatDefaultValue ?? 0).toDouble()
       : 0.0;
-
-  /// Amount without VAT. Used for the "minimum invoice net" rules.
-  /// When prices already include VAT the VAT part is removed first.
-  double _netOfVat(double amount) {
-    final ratio = _vatRatio;
-    if (ratio <= 0 || !mode.priceIncludesVat(this)) return amount;
-    return amount / (1 + ratio / 100);
-  }
-
-  // ---- Per-item calculated values (merged from all server responses) ----
-
-  /// All calculated items keyed by transactionID.
-  Map<String, CalculationItemResult> get calculatedItemsById => {
-    for (final i in calculationResult?.items ?? const <CalculationItemResult>[])
-      i.transactionID: i,
-  };
-
-  /// Calculated values of the main line of [item] (null if not calculated yet).
-  CalculationItemResult? calcFor(OrderItem item, int index) =>
-      calculatedItemsById[_parentTxIdFor(item, index)];
-
-  // ---- Line prices shown in the cart tile ----
-
-  /// Main line + addons, before any discount.
-  double lineGrossFor(OrderItem item) {
-    final main = _unitPriceOf(item) * mode.quantityOf(item);
-    final addons = item.addons.fold<double>(0.0, (sum, a) => sum + a.price);
-    return main + addons;
-  }
-
-  /// Discount of the main line: the server value when available,
-  /// otherwise the local estimate (before the first calculation arrives).
-  double lineDiscountFor(OrderItem item, int index) {
-    final fromServer = calcFor(item, index)?.itemDiscountValue;
-    return fromServer ?? _itemDiscountAmount(item);
-  }
-
-  /// What the customer pays for this line (before invoice-level discount).
-  double lineTotalFor(OrderItem item, int index) {
-    final total = lineGrossFor(item) - lineDiscountFor(item, index);
-    return total < 0 ? 0.0 : total;
-  }
 
   // ---- Invoice-level discount to push to the server ----
   ({double value, int natural, bool isAuto, double min, double max})
@@ -116,11 +109,14 @@ extension CartStateCalculation on CartState {
   String _parentTxIdFor(OrderItem item, int index) =>
       item.transactionId.isNotEmpty ? item.transactionId : 'item_$index';
 
-  /// Same id is used for the calculation server and for the save request,
-  /// so it must be deterministic (no counter).
-  String _addonTxId(AdditiveModel addon, String parentTxId) {
+  String _addonTxId(AdditiveModel addon, String parentTx) {
     final id = addon.transactionId;
-    return (id != null && id.isNotEmpty) ? id : '${parentTxId}_a${addon.id}';
+    return (id != null && id.isNotEmpty) ? id : '${parentTx}_a${addon.id}';
+  }
+
+  double _netOfVat(double amount) {
+    if (!mode.priceIncludesVat(this) || _vatRatio <= 0) return amount;
+    return amount / (1 + _vatRatio / 100);
   }
 
   String _addonParentTxId(AdditiveModel addon, String fallback) {
@@ -179,6 +175,7 @@ extension CartStateCalculation on CartState {
         unitPrice: _unitPriceOf(item),
         vatRatio: _vatRatio,
         itemDiscount: _itemDiscountAmount(item),
+        discountNatural: DiscountNatural.value,
         minimumCharge: dyn?.minInvoiceNET ?? 0,
         maximumDiscount: dyn?.maxDiscountValue ?? 0,
         isAutoDiscount: dyn != null,
@@ -199,6 +196,7 @@ extension CartStateCalculation on CartState {
 
     for (final g in grouped.values) {
       final addon = g.addon;
+      final txId = _addonTxId(addon, parentTx);
       requests.add(
         AddCalculationItemRequest(
           cartId: cartId,
@@ -207,16 +205,32 @@ extension CartStateCalculation on CartState {
           unitPrice: addon.price,
           vatRatio: _vatRatio,
           itemDiscount: 0,
+          discountNatural: DiscountNatural.value,
           minimumCharge: 0,
           maximumDiscount: 0,
           isAutoDiscount: false,
           itemTypeId: CalculationItemTypes.additives,
           isTobacco: false,
-          transactionId: _addonTxId(addon, parentTx),
+          transactionId: txId,
           parentTransactionId: _addonParentTxId(addon, parentTx),
         ),
       );
     }
     return requests;
+  }
+
+  ItemLinePreview linePreviewFrom(OrderItem item, CalculationResult result) {
+    final id = _parentTxIdFor(item, 0);
+    final main = result.items.where((e) => e.transactionID == id).firstOrNull;
+    final mainGross = lineMainGrossFor(item);
+    final discount = (main?.itemDiscountValue ?? _itemDiscountAmount(item))
+        .clamp(0.0, mainGross)
+        .toDouble();
+    return ItemLinePreview(
+      gross: lineGrossFor(item),
+      discount: discount,
+      vat: result.totalVAT,
+      vatIncluded: mode.priceIncludesVat(this),
+    );
   }
 }

@@ -203,7 +203,8 @@ class _CartContentState extends State<_CartContent> {
         final saveButtonDisabled =
             !canEdit ||
             state.status == CartStatus.saveDineInInvoiceSuccess ||
-            state.items.isEmpty;
+            state.items.isEmpty ||
+            state.selectedOrderType != CartOrderType.DINE_IN;
 
         final showBottomActionBar = canEdit || state.isReturn;
 

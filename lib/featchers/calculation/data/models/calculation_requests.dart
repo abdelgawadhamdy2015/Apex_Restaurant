@@ -40,6 +40,7 @@ class AddCalculationItemRequest {
   final double quantity;
   final double unitPrice;
   final double vatRatio;
+  final int discountNatural;
   final double itemDiscount;
   final double minimumCharge;
   final double maximumDiscount;
@@ -63,6 +64,7 @@ class AddCalculationItemRequest {
     required this.isTobacco,
     required this.transactionId,
     this.parentTransactionId,
+    required this.discountNatural,
   });
 
   Map<String, dynamic> toQuery() {
@@ -73,6 +75,7 @@ class AddCalculationItemRequest {
       'unitPrice': unitPrice,
       'VATRatio': vatRatio,
       'itemDiscount': itemDiscount,
+      "discountNatural": discountNatural,
       'minimumCharge': minimumCharge,
       'MaximumDiscount': maximumDiscount,
       'isAutoDiscount': isAutoDiscount,
@@ -96,6 +99,7 @@ class EditCalculationItemRequest {
   final double unitPrice;
   final double vatRatio;
   final double itemDiscount;
+  final int discountNatural;
   final double minimumCharge;
   final double maximumDiscount;
   final bool isAutoDiscount;
@@ -110,6 +114,7 @@ class EditCalculationItemRequest {
     required this.minimumCharge,
     required this.maximumDiscount,
     required this.isAutoDiscount,
+    required this.discountNatural,
   });
 
   Map<String, dynamic> toQuery() => {
@@ -119,6 +124,7 @@ class EditCalculationItemRequest {
     'unitPrice': unitPrice,
     'VATRatio': vatRatio,
     'itemDiscount': itemDiscount,
+    'discountNatural': discountNatural,
     'minimumCharge': minimumCharge,
     'MaximumDiscount': maximumDiscount,
     'isAutoDiscount': isAutoDiscount,
