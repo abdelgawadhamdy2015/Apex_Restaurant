@@ -134,7 +134,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     _onSerial<ApplyVoucherDiscountEvent>(_onApplyVoucherDiscount);
     _onSerial<ClearVoucherDiscountEvent>(_onClearVoucher);
 
-    on<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
+    _onSerial<SyncRestoredInvoiceEvent>(_onSyncRestoredInvoice);
     on<UpdateSettingsEvent>((event, emit) {
       emit(state.copyWith(settingsModel: event.settings, clearMessage: true));
     });
@@ -235,6 +235,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     EditCartItemEvent event,
     Emitter<CartState> emit,
   ) async {
+    if (event.index < 0 || event.index >= state.items.length) return;
     final items = List<OrderItem>.from(state.items);
     final old = items[event.index];
 
@@ -299,17 +300,28 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     final oldItems = state.items;
     final List<OrderItem> newItems = [];
 
+    final fetchedById = <int, RestaurantItem>{
+      for (final item in items) item.itemId: item,
+    };
+
     for (final oldItem in oldItems) {
-      final newItem = items.firstWhere(
-        (e) => e.itemId == oldItem.menuItem.itemId,
-      );
+      final newItem = fetchedById[oldItem.menuItem.itemId];
+      if (newItem == null) {
+        newItems.add(oldItem);
+        continue;
+      }
 
-      final orderItem = oldItem.copyWith(
-        menuItem: newItem,
-        selectedSize: newItem.sizes.first,
-      );
+      final selectedSize = newItem.sizes
+          .where((size) => size.sizeId == oldItem.selectedSize?.sizeId)
+          .firstOrNull;
 
-      newItems.add(orderItem);
+      newItems.add(
+        oldItem.copyWith(
+          menuItem: newItem,
+          selectedSize: selectedSize ??
+              (newItem.sizes.isNotEmpty ? newItem.sizes.first : null),
+        ),
+      );
     }
 
     return newItems;
@@ -347,9 +359,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     final isDeliveryCompany = data.orderType == CartOrderType.DELIVERY_COMPANY;
     final selectedDeliveryCompany =
         isDeliveryCompany && state.companiesList.isNotEmpty
-        ? state.companiesList.firstWhere(
-            (c) => c.id == data.deliveryCompany?.id,
-          )
+        ? state.companiesList
+            .where((c) => c.id == data.deliveryCompany?.id)
+            .firstOrNull
         : null;
     emit(
       state.copyWith(
@@ -364,9 +376,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
             !(event.data.isReturnInvoice ?? false) && !event.isPending,
         selectedWaiter: isDineIn ? data.waiter : null,
         selectedDeliveryMan: isDelivery
-            ? state.deliveryAgents.firstWhere(
-                (d) => d.id == data.deliveryMan?.id,
-              )
+            ? state.deliveryAgents
+                    .where((d) => d.id == data.deliveryMan?.id)
+                    .firstOrNull ??
+                data.deliveryMan
             : null,
         selectedPerson: data.client,
         selectedDeliveryCompany: selectedDeliveryCompany,
@@ -515,7 +528,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         items.length,
         cartId,
       )) {
-        result = await addCalculationItemUseCase(request: r);
+        final response = await addCalculationItemUseCase(request: r);
+        result = response.mergeChangedItems(result);
       }
       items.add(newItem);
       emit(
@@ -579,8 +593,10 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     List<AdditiveModel> addons2,
   ) {
     if (addons1.length != addons2.length) return false;
-    for (int i = 0; i < addons1.length; i++) {
-      if (!addons1.any((a) => a.id == addons2[i].id)) return false;
+    final left = addons1.map((a) => a.id).toList()..sort();
+    final right = addons2.map((a) => a.id).toList()..sort();
+    for (var i = 0; i < left.length; i++) {
+      if (left[i] != right[i]) return false;
     }
     return true;
   }
@@ -590,9 +606,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       state.copyWith(
         selectedPerson: event.person,
         selectedAddress:
-            (event.person == null || event.person!.personAddress!.isEmpty)
-            ? null
-            : event.person!.personAddress!.first,
+            (event.person?.personAddress?.isNotEmpty ?? false)
+            ? event.person!.personAddress!.first
+            : null,
         clearVoucherDiscountValue: state.selectedPerson != event.person,
         clearMessage: true,
       ),
@@ -1139,7 +1155,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         s.selectedDiscountType == DiscountTypeEnum.coupon &&
         s.voucherData?.voucherCode != null) {
       final v = s.voucherData!;
-      return addVoucherUseCase(
+      final response = await addVoucherUseCase(
         AddVoucherRequest(
           cartId: cartId,
           code: v.voucherCode!,
@@ -1151,12 +1167,17 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           maximumDiscount: v.maximumDiscountValue ?? 0,
         ),
       );
+      return response.mergeChangedItems(s.calculationResult);
     }
 
-    if (hadVoucher) await removeVoucherUseCase(cartId);
+    CalculationResult? previous = s.calculationResult;
+    if (hadVoucher) {
+      previous = (await removeVoucherUseCase(cartId))
+          .mergeChangedItems(previous);
+    }
 
     final d = s.invoiceDiscountForCalculation;
-    return setDiscountOnTotalUseCase(
+    final response = await setDiscountOnTotalUseCase(
       SetDiscountOnTotalRequest(
         cartId: cartId,
         discountNatural: d.natural,
@@ -1166,6 +1187,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         maximumDiscount: d.max,
       ),
     );
+    return response.mergeChangedItems(previous);
   }
 
   /// Full rebuild: pos type -> items (+addons) -> invoice-level discount.
@@ -1191,10 +1213,14 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       CalculationResult? result = await clearCalculationItemsUseCase(cartId);
       for (var i = 0; i < items.length; i++) {
         for (final r in state.calculationRequestsFor(items[i], i, cartId)) {
-          result = await addCalculationItemUseCase(request: r);
+          final response = await addCalculationItemUseCase(request: r);
+          result = response.mergeChangedItems(result);
         }
       }
-      if (items.isNotEmpty) result = await _applyInvoiceLevel(cartId) ?? result;
+      if (items.isNotEmpty) {
+        final invoiceResult = await _applyInvoiceLevel(cartId);
+        result = invoiceResult?.mergeChangedItems(result) ?? result;
+      }
 
       emit(
         state.copyWith(
@@ -1220,7 +1246,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       final result = await _applyInvoiceLevel(state.calculationCartId!);
       emit(
         state.copyWith(
-          calculationResult: result ?? state.calculationResult,
+          calculationResult: result?.mergeChangedItems(state.calculationResult) ??
+              state.calculationResult,
           status: CartStatus.itemsUpdated,
         ),
       );
