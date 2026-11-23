@@ -216,6 +216,12 @@ class CartState extends Equatable {
     bool clearCustomerDiscount = false,
     bool clearVoucherDiscountValue = false,
     bool clearAddress = false,
+    bool clearSelectedPerson = false,
+    bool clearSelectedDeliveryCompany = false,
+    bool clearSelectedWaiter = false,
+    bool clearSelectedDeliveryMan = false,
+    bool clearSelectedTable = false,
+    bool clearFromBranchDateTime = false,
     bool clearInvoiceId = false,
     bool clearCart = false,
     bool clearCalculationCart = false,
@@ -245,13 +251,17 @@ class CartState extends Equatable {
           : (activeDiscountModel ?? this.activeDiscountModel),
       waiters: waiters ?? this.waiters,
       persons: persons ?? this.persons,
-      selectedPerson: clearCart ? null : selectedPerson ?? this.selectedPerson,
+      selectedPerson: clearCart || clearSelectedPerson
+          ? null
+          : selectedPerson ?? this.selectedPerson,
       deliveryAgents: deliveryAgents ?? this.deliveryAgents,
-      selectedDeliveryCompany: clearCart
+      selectedDeliveryCompany: clearCart || clearSelectedDeliveryCompany
           ? null
           : selectedDeliveryCompany ?? this.selectedDeliveryCompany,
-      selectedWaiter: clearCart ? null : selectedWaiter ?? this.selectedWaiter,
-      selectedDeliveryMan: clearCart
+      selectedWaiter: clearCart || clearSelectedWaiter
+          ? null
+          : selectedWaiter ?? this.selectedWaiter,
+      selectedDeliveryMan: clearCart || clearSelectedDeliveryMan
           ? null
           : selectedDeliveryMan ?? this.selectedDeliveryMan,
       discountAmount: clearCart ? 0.0 : discountAmount ?? this.discountAmount,
@@ -270,8 +280,10 @@ class CartState extends Equatable {
       customerDiscount: clearCustomerDiscount
           ? null
           : (customerDiscount ?? this.customerDiscount),
-      selectedTable: clearCart ? null : selectedTable ?? this.selectedTable,
-      fromBranchDateTime: clearCart
+      selectedTable: clearCart || clearSelectedTable
+          ? null
+          : selectedTable ?? this.selectedTable,
+      fromBranchDateTime: clearCart || clearFromBranchDateTime
           ? null
           : fromBranchDateTime ?? this.fromBranchDateTime,
       companiesList: companiesList ?? this.companiesList,
@@ -285,7 +297,7 @@ class CartState extends Equatable {
           : restoredInvoiceDate ?? this.restoredInvoiceDate,
       isPreviousInvoice: isPreviousInvoice ?? this.isPreviousInvoice,
       isReturnInvoice: clearCart ? false : isReturnInvoice ?? this.isReturnInvoice,
-      priceIncludeVat: priceIncludeVat ?? this.priceIncludeVat,
+      priceIncludeVat: clearCart ? false : priceIncludeVat ?? this.priceIncludeVat,
       saveTableData: saveTableData ?? this.saveTableData,
       invoiceReportResponse:
           invoiceReportResponse ?? this.invoiceReportResponse,
