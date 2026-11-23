@@ -66,7 +66,7 @@ extension CartStateDiscounts on CartState {
     }
 
     final minNet = d.minInvoiceNET ?? 0.0;
-    if (minNet > 0 && base < minNet) return null;
+    if (minNet > 0 && _netOfVat(base) < minNet) return null;
     return (value: value, isPercentage: false, capped: false);
   }
 
@@ -169,10 +169,11 @@ extension CartStateDiscounts on CartState {
     if (discount == null) return null;
 
     final lineTotal = item.totalPriceBeforeDiscount;
-    if (discount.minInvoiceNet > 0 && lineTotal < discount.minInvoiceNet) {
+
+    if (discount.minInvoiceNet > 0 &&
+        _netOfVat(lineTotal) < discount.minInvoiceNet) {
       return null;
     }
-
     final isPercentage = discount.discountNatural == 1;
     final value = discount.discountValue;
     final discountId = int.tryParse(discount.id.toString());

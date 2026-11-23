@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:apex_restaurant/core/helpers/restaurant_constants.dart';
+import 'package:apex_restaurant/core/helpers/transactionid_generator.dart';
 import 'package:apex_restaurant/core/service/api_constants.dart';
 import 'package:apex_restaurant/core/shared/usescase/shared_usescase.dart';
 import 'package:apex_restaurant/featchers/calculation/data/models/calculation_requests.dart';
 import 'package:apex_restaurant/featchers/calculation/data/models/calculation_result.dart';
 import 'package:apex_restaurant/featchers/calculation/data/models/enums/calculation_enums.dart';
+import 'package:apex_restaurant/featchers/calculation/data/models/item_line_preview.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/add_item_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/apply_discount_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/clear_calculation_items_usecase.dart';
@@ -247,16 +249,19 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       quantity = old.quantity;
     }
 
-    items[event.index] = old.copyWith(
-      selectedSize: event.selectedSize,
-      addons: event.selectedAddons,
-      quantity: quantity,
-      availableQuantity: returnQuantity?.toDouble() ?? old.availableQuantity,
-      notes: event.notes,
-      discount: isReturn ? old.discount : event.discount,
-      isPercentageDiscount: isReturn
-          ? old.isPercentageDiscount
-          : event.isPercentageDiscount,
+    items[event.index] = _withUniqueTransactionIds(
+      old.copyWith(
+        selectedSize: event.selectedSize,
+        addons: event.selectedAddons,
+        quantity: quantity,
+        availableQuantity: returnQuantity?.toDouble() ?? old.availableQuantity,
+        notes: event.notes,
+        discount: isReturn ? old.discount : event.discount,
+        isPercentageDiscount: isReturn
+            ? old.isPercentageDiscount
+            : event.isPercentageDiscount,
+      ),
+      ignoreIndex: event.index,
     );
 
     emit(state.copyWith(items: items, clearMessage: true));
@@ -499,19 +504,20 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
     // New line: only send this item (+ its addons) and re-apply the discount.
     emit(state.copyWith(status: CartStatus.itemsUpdateing, clearMessage: true));
+    final newItem = _withUniqueTransactionIds(event.item);
     try {
       await _ensureCalculationCart(emit);
       final cartId = state.calculationCartId!;
 
       CalculationResult? result;
       for (final r in state.calculationRequestsFor(
-        event.item,
+        newItem,
         items.length,
         cartId,
       )) {
         result = await addCalculationItemUseCase(request: r);
       }
-      items.add(event.item);
+      items.add(newItem);
       emit(
         state.copyWith(items: items),
       ); // so the discount rules see the new item
@@ -1052,30 +1058,62 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   Future<void> _ensureCalculationCart(Emitter<CartState> emit) async {
     final id = state.calculationCartId;
     if (id != null && id.isNotEmpty) return;
-
-    final s = state.settingsModel;
-    final discountOn =
-        (s?.posRestaurant?.activeDiscount ?? false) ||
-        state.mode.ignoresActiveDiscountSetting;
-
-    final cartId = await openNewCalculationCartUseCase(
-      OpenNewCartRequest(
-        empId: ApiConstants.empId ?? 0,
-        companyName: RestaurantConstants.appName,
-        priceIncludeVAT: state.mode.priceIncludesVat(state),
-        applyVAT: s?.vat?.vatActive ?? false,
-        vatRatio: s?.vat?.vatDefaultValue ?? 0,
-        applyTobaccoTax: s?.vat?.toppacoTaxActive ?? false,
-        systemApplyDiscount: discountOn,
-        userCanAddDiscount: discountOn,
-        decimalCount: s?.other?.decimals ?? 2,
-      ),
-    );
+    final cartId = await openNewCalculationCartUseCase(_openCartRequest());
     emit(
       state.copyWith(
         calculationCartId: cartId,
         calculationResult: const CalculationResult(),
       ),
+    );
+  }
+  // ---------------- Preview (customization sheet) ----------------
+
+  Future<String?> openPreviewCart() async {
+    try {
+      return await openNewCalculationCartUseCase(_openCartRequest());
+    } catch (e) {
+      log('openPreviewCart failed: $e');
+      return null;
+    }
+  }
+
+  Future<ItemLinePreview?> previewLine(String cartId, OrderItem draft) async {
+    try {
+      CalculationResult? result = await clearCalculationItemsUseCase(cartId);
+      for (final r in state.calculationRequestsFor(draft, 0, cartId)) {
+        result = await addCalculationItemUseCase(request: r);
+      }
+      if (result == null) return null;
+      return state.linePreviewFrom(draft, result);
+    } catch (e) {
+      log('previewLine failed: $e');
+      return null; // the sheet falls back to the local calculation
+    }
+  }
+
+  Future<void> discardPreviewCart(String cartId) async {
+    try {
+      await removeCalculationCartUseCase(cartId);
+    } catch (e) {
+      log('discardPreviewCart failed: $e');
+    }
+  }
+
+  OpenNewCartRequest _openCartRequest() {
+    final s = state.settingsModel;
+    final discountOn =
+        (s?.posRestaurant?.activeDiscount ?? false) ||
+        state.mode.ignoresActiveDiscountSetting;
+    return OpenNewCartRequest(
+      empId: ApiConstants.empId ?? 0,
+      companyName: RestaurantConstants.appName,
+      priceIncludeVAT: state.mode.priceIncludesVat(state), // same VAT mode
+      applyVAT: s?.vat?.vatActive ?? false,
+      vatRatio: s?.vat?.vatDefaultValue ?? 0,
+      applyTobaccoTax: s?.vat?.toppacoTaxActive ?? false,
+      systemApplyDiscount: discountOn,
+      userCanAddDiscount: discountOn,
+      decimalCount: s?.other?.decimals ?? 2,
     );
   }
 
@@ -1202,5 +1240,43 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         state.items.isNotEmpty) {
       await _recalculate(emit); // service ratio changed
     }
+  }
+
+  /// Gives the item (and its addon groups) ids that exist nowhere else in the
+  /// cart. Return invoices keep the server ids untouched.
+  OrderItem _withUniqueTransactionIds(OrderItem item, {int? ignoreIndex}) {
+    if (state.isReturn) return item;
+
+    final used = <String>{};
+    for (var i = 0; i < state.items.length; i++) {
+      if (i == ignoreIndex) continue;
+      final it = state.items[i];
+      used.add(it.transactionId);
+      for (final a in it.addons) {
+        final t = a.transactionId;
+        if (t != null && t.isNotEmpty) used.add(t);
+      }
+    }
+
+    var parentId = item.transactionId;
+    if (parentId.isEmpty || used.contains(parentId)) {
+      parentId = TransactionIdGenerator.next(used);
+    }
+    used.add(parentId);
+
+    final perAddon = <String, String>{}; // addon.id -> tx id (one per group)
+    final addons = <AdditiveModel>[];
+    for (final a in item.addons) {
+      final tx = perAddon.putIfAbsent(a.id, () {
+        final old = a.transactionId;
+        final id = (old != null && old.isNotEmpty && !used.contains(old))
+            ? old
+            : TransactionIdGenerator.next(used);
+        used.add(id);
+        return id;
+      });
+      addons.add(a.copyWith(transactionId: tx, parentTransactionId: parentId));
+    }
+    return item.copyWith(transactionId: parentId, addons: addons);
   }
 }

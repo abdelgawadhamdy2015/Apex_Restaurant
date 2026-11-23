@@ -57,6 +57,43 @@ class CalculationResult {
       net: number('net'),
     );
   }
+
+  CalculationResult copyWith({List<CalculationItemResult>? items}) {
+    return CalculationResult(
+      items: items ?? this.items,
+      totalOfItems: totalOfItems,
+      voucherDiscount: voucherDiscount,
+      invoiceDiscount: invoiceDiscount,
+      totalItemDiscount: totalItemDiscount,
+      totalDiscount: totalDiscount,
+      totalVAT: totalVAT,
+      totalTobbacoTAX: totalTobbacoTAX,
+      deliveryCost: deliveryCost,
+      dineInCost: dineInCost,
+      totalInvoice: totalInvoice,
+      totalWithoutVAT: totalWithoutVAT,
+      totalWithVAT: totalWithVAT,
+      net: net,
+    );
+  }
+
+  /// The server now returns ONLY the items that changed.
+  ///
+  /// - Totals (net, VAT, discounts ...) are taken from `this` (newest response,
+  ///   they are always for the whole cart).
+  /// - Items = [previous] items, overridden by the items in `this`
+  ///   (matched by `transactionID`).
+  CalculationResult mergeChangedItems(CalculationResult? previous) {
+    if (previous == null) return this;
+
+    final byId = <String, CalculationItemResult>{
+      for (final i in previous.items) i.transactionID: i,
+    };
+    for (final i in items) {
+      byId[i.transactionID] = i;
+    }
+    return copyWith(items: byId.values.toList());
+  }
 }
 
 class CalculationItemResult {

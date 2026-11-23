@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/helpers/helper_methods.dart';
 import '../../../../core/helpers/size_helper.dart';
-import '../../../../core/helpers/transactionid_generator.dart';
 import '../../../../generated/l10n.dart';
 import '../../../cart/data/enums/cart_enum.dart';
 import '../../../cart/presentation/bloc/cart_bloc.dart';
@@ -60,7 +59,7 @@ class PosAddItemHandler {
       cartBloc.add(
         AddOrderItemToCartEvent(
           OrderItem(
-            transactionId: TransactionIdGenerator.nextId.toString(),
+            transactionId: "",
             menuItem: item,
             selectedSize: item.sizes.first,
             quantity: 1,
@@ -83,7 +82,7 @@ class PosAddItemHandler {
       cartBloc.add(
         AddOrderItemToCartEvent(
           OrderItem(
-            transactionId: TransactionIdGenerator.nextId.toString(),
+            transactionId: "",
             menuItem: customItem,
             selectedSize: selectedSize as ItemSize,
             addons: selectedAddons,

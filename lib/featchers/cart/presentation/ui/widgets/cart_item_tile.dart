@@ -1,5 +1,6 @@
 import 'package:apex_restaurant/core/helpers/size_helper.dart';
 import 'package:apex_restaurant/featchers/cart/data/enums/cart_enum.dart';
+import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/pos/domain/entities/get_items_request_model.dart';
 import 'package:apex_restaurant/featchers/pos/presentation/tablet_widgets/tablet_item_customization.dart';
 
@@ -92,36 +93,38 @@ class CartItemTile extends StatelessWidget {
           }
         : <String, int>{};
 
+    void onConfirm(
+      restaurantItem,
+      additives, {
+      required selectedSize,
+      required selectedAddons,
+      required discount,
+      required isPercentageDiscount,
+      required String notes,
+      required int quantity,
+    }) {
+      cartBloc.add(
+        EditCartItemEvent(
+          index: index,
+          selectedSize: selectedSize,
+          selectedAddons: selectedAddons,
+          discount: discount,
+          isPercentageDiscount: isPercentageDiscount,
+          notes: notes,
+          quantity: quantity,
+        ),
+      );
+    }
+
     if (SizeHelper.isMobile) {
       ItemCustomizationSheet.show(
         context,
         restaurantItem,
         posBloc,
-        (
-          restaurantItem,
-          additives, {
-          required selectedSize,
-          required selectedAddons,
-          required discount,
-          required isPercentageDiscount,
-          required String notes,
-          required int quantity,
-        }) {
-          cartBloc.add(
-            EditCartItemEvent(
-              index: index,
-              selectedSize: selectedSize,
-              selectedAddons: selectedAddons,
-              discount: discount,
-              isPercentageDiscount: isPercentageDiscount,
-              notes: notes,
-              quantity: quantity,
-            ),
-          );
-        },
+        onConfirm,
         existingItem: item,
         cartIndex: index,
-        isReturnInvoice: cartBloc.state.isReturnInvoice == true,
+        isReturnInvoice: isReturn,
         returnLimit: cartBloc.returnLimitFor(item),
         addonReturnLimits: addonLimits,
       );
@@ -130,31 +133,10 @@ class CartItemTile extends StatelessWidget {
         context,
         restaurantItem,
         posBloc,
-        (
-          restaurantItem,
-          additives, {
-          required selectedSize,
-          required selectedAddons,
-          required discount,
-          required isPercentageDiscount,
-          required String notes,
-          required int quantity,
-        }) {
-          cartBloc.add(
-            EditCartItemEvent(
-              index: index,
-              selectedSize: selectedSize,
-              selectedAddons: selectedAddons,
-              discount: discount,
-              isPercentageDiscount: isPercentageDiscount,
-              notes: notes,
-              quantity: quantity,
-            ),
-          );
-        },
+        onConfirm,
         existingItem: item,
         cartIndex: index,
-        isReturnInvoice: cartBloc.state.isReturnInvoice == true,
+        isReturnInvoice: isReturn,
         returnLimit: cartBloc.returnLimitFor(item),
         addonReturnLimits: addonLimits,
       );
@@ -168,14 +150,19 @@ class CartItemTile extends StatelessWidget {
     final icons = context.iconSizes;
     final lang = S.of(context);
 
+    // watch (not read) so the price refreshes when the server result arrives.
+    final cartState = context.watch<CartBloc>().state;
+    final isReturnInvoice = cartState.isReturnInvoice == true;
+
     final sizeName = item.selectedSize?.sizeNameAr ?? '';
-    final formattedAddons = _formattedAddons(
-      isReturn: context.read<CartBloc>().state.isReturnInvoice == true,
-    );
+    final formattedAddons = _formattedAddons(isReturn: isReturnInvoice);
     final hasNotes = item.notes != null && item.notes!.isNotEmpty;
 
-    final cartState = context.read<CartBloc>().state;
-    final isReturnInvoice = cartState.isReturnInvoice == true;
+    // ---- Prices: same source as the summary (calculation server) ----
+    final lineGross = cartState.lineGrossFor(item); // before discount
+    final lineDiscount = cartState.lineDiscountFor(item, index);
+    final lineTotal = cartState.lineTotalFor(item, index); // after discount
+    final hasDiscount = lineDiscount > 0.0001;
 
     // Return invoice: show/edit availableQuantity. Normal: quantity.
     final int displayedQuantity = isReturnInvoice
@@ -258,12 +245,10 @@ class CartItemTile extends StatelessWidget {
                               softWrap: true,
                               TextSpan(
                                 children: [
-                                  if (item.selectedSize?.price != null &&
-                                      item.selectedSize!.price! >
-                                          item.totalPrice) ...[
+                                  // Old price (before discount), struck through.
+                                  if (hasDiscount)
                                     TextSpan(
-                                      text:
-                                          '${item.basePriceTotal.toStringAsFixed(2)} ',
+                                      text: '${lineGross.toStringAsFixed(2)} ',
                                       style: theme.textTheme.bodyMedium
                                           ?.copyWith(
                                             decoration:
@@ -274,14 +259,13 @@ class CartItemTile extends StatelessWidget {
                                                 .withValues(alpha: .5),
                                             color: theme.colorScheme.onPrimary
                                                 .withValues(alpha: .5),
-
                                             fontWeight: FontWeight.normal,
                                           ),
                                     ),
-                                  ],
+                                  // Final price (after discount).
                                   TextSpan(
                                     text:
-                                        '${item.totalPrice.toStringAsFixed(2)} ${lang.currencySarShort}',
+                                        '${lineTotal.toStringAsFixed(2)} ${lang.currencySarShort}',
                                     style: theme.textTheme.titleMedium
                                         ?.copyWith(
                                           fontWeight: FontWeight.bold,

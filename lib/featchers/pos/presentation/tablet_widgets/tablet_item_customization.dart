@@ -179,7 +179,11 @@ class _TabletItemCustomizationDialogState
             widget.existingItem,
             isReturn: _isReturn,
           );
-
+          syncPreview(
+            additives,
+            existing: widget.existingItem,
+            isReturn: _isReturn,
+          );
           return Column(
             children: [
               _buildHeader(theme, textTheme),
@@ -337,7 +341,7 @@ class _TabletItemCustomizationDialogState
                                     _isEditMode ? 'تعديل السلة' : 'أضف للسلة',
                                   ),
                                   Text(
-                                    '${calculateTotalPrice(additives: additives).toStringAsFixed(2)} ر.س',
+                                    '${previewTotal(additives).toStringAsFixed(2)} ر.س',
                                   ),
                                 ],
                               ),

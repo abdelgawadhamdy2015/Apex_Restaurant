@@ -52,6 +52,16 @@ class OrderSummaryCard extends StatelessWidget {
             ),
             isSuccess: true,
           ),
+          if ((state.calculationResult?.totalItemDiscount ?? 0) > 0) ...[
+            SizedBox(height: spacing.xs),
+            _SummaryRow(
+              title: 'خصم الأصناف',
+              value: lang.discountApplied(
+                state.calculationResult!.totalItemDiscount.toStringAsFixed(2),
+              ),
+              isSuccess: true,
+            ),
+          ],
           if (showDeliveryFee) ...[
             SizedBox(height: spacing.xs),
             _SummaryRow(

@@ -179,7 +179,11 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
               widget.existingItem,
               isReturn: _isReturn,
             );
-
+            syncPreview(
+              additives,
+              existing: widget.existingItem,
+              isReturn: _isReturn,
+            );
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -336,7 +340,7 @@ class _ItemCustomizationSheetState extends State<ItemCustomizationSheet>
                   onDecrement: () {
                     if (_canDecreaseQuantity) setState(() => quantity--);
                   },
-                  totalPrice: calculateTotalPrice(additives: additives),
+                  totalPrice: previewTotal(additives),
                   onConfirm: () {
                     if (_isLockedReturn) return;
                     _handleConfirm(context, additives, lang);

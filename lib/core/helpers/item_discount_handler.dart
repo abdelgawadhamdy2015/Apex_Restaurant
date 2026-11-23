@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:apex_restaurant/featchers/calculation/data/models/item_line_preview.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_bloc.dart';
 import 'package:apex_restaurant/featchers/cart/presentation/bloc/cart_state.dart';
 import 'package:apex_restaurant/featchers/pos/data/models/category_model.dart';
@@ -20,8 +23,26 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
 
   RestaurantItem get item;
 
+  // ---- server preview state ----
+  ItemLinePreview? _preview;
+  String? _previewKey; // signature the _preview belongs to
+  String? _pendingKey;
+  OrderItem? _pendingDraft;
+  String? _previewCartId;
+  CartBloc? _cartBloc;
+  Timer? _previewTimer;
+  bool _previewRunning = false;
+  bool _previewDirty = false;
+
+  /// Latest server numbers (gross / discount / vat) if they are up to date.
+  ItemLinePreview? get currentPreview =>
+      (_preview != null && _previewKey == _signature()) ? _preview : null;
+
   @override
   void dispose() {
+    _previewTimer?.cancel();
+    final id = _previewCartId;
+    if (id != null) _cartBloc?.discardPreviewCart(id);
     discountController.dispose();
     notesController.dispose();
     super.dispose();
@@ -29,7 +50,6 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
 
   // --- PREFILL LOGIC ---
 
-  /// Prefills fields when editing an existing cart item
   void prefillFromExistingItem(OrderItem? existing) {
     if (existing == null) return;
 
@@ -50,8 +70,6 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
     }
   }
 
-  /// Prefills addons once when additives are loaded.
-  /// Return invoice: the amount shown is the addon's availableQuantity.
   void prefillAddonsOnce(
     List<AdditiveModel> additives,
     OrderItem? existing, {
@@ -85,7 +103,6 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
 
   // --- ADDON & CATEGORY HELPERS ---
 
-  /// Retrieves additives for the item's category
   List<AdditiveModel> additivesFor(PosState posState) {
     final matchCat = posState.categories.where(
       (cat) => cat.id == item.categoryId,
@@ -93,20 +110,11 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
     return matchCat.isNotEmpty ? (matchCat.first.additives ?? []) : [];
   }
 
-  /// Converts selected addon quantities map to a flattened list of additives.
-  ///
-  /// When editing an existing cart item, addons that were already on it are
-  /// reused (matched by arabicName) so they keep their invoiceDetailsId,
-  /// transactionId and parentTransactionId. Only addons added during the edit
-  /// come from the fresh menu [additives].
   List<AdditiveModel> getSelectedAddonsList(
     List<AdditiveModel> additives, {
     OrderItem? existing,
     bool isReturn = false,
   }) {
-    // Return invoice: clone the original addon line (keeps invoiceDetailsId
-    // and transaction ids) once per selected unit, and store the selected
-    // amount in availableQuantity. New addons can't be added to a return.
     if (isReturn && existing != null) {
       final templates = <String, AdditiveModel>{};
       for (final a in existing.addons) {
@@ -183,42 +191,136 @@ mixin ItemDiscountHandler<T extends StatefulWidget> on State<T> {
         !item.isOffer;
   }
 
-  // --- PRICE CALCULATION ---
+  // --- LOCAL PRICE (fallback while the server answer is not ready) ---
 
   double calculateTotalPrice({required List<AdditiveModel> additives}) {
     final basePrice = item.sizes.isNotEmpty
         ? item.sizes[selectedSizeIndex].price ?? 0.0
         : 0.0;
 
-    // Calculate addons separately. They must not receive item discounts.
     double addonsTotal = 0.0;
-
     addonQuantities.forEach((index, qty) {
       if (index < additives.length) {
         addonsTotal += additives[index].price * qty;
       }
     });
 
-    // Main item price only.
     final mainItemTotal = basePrice * quantity;
-
     final discountVal = double.tryParse(discountController.text) ?? 0.0;
 
-    // Apply discount exclusively to the main item.
     double discountedMainItem;
-
     if (isPercentageDiscount) {
       final percentage = discountVal.clamp(0.0, 100.0);
       discountedMainItem = mainItemTotal * (1 - percentage / 100);
     } else {
-      // Fixed discount is applied to the main item only.
       discountedMainItem = (mainItemTotal - discountVal).clamp(
         0.0,
         double.infinity,
       );
     }
-
-    // Add addons after calculating the item discount.
     return discountedMainItem + addonsTotal;
+  }
+
+  // --- SERVER PREVIEW ---
+
+  /// What the sheet shows: server value if fresh, local value otherwise.
+  double previewTotal(List<AdditiveModel> additives) =>
+      currentPreview?.total ?? calculateTotalPrice(additives: additives);
+
+  String _signature() {
+    final addons = addonQuantities.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    return [
+      item.itemId,
+      selectedSizeIndex,
+      quantity,
+      isPercentageDiscount,
+      discountController.text.trim(),
+      addons.map((e) => '${e.key}:${e.value}').join(','),
+    ].join('|');
+  }
+
+  OrderItem _buildDraft(List<AdditiveModel> additives, OrderItem? existing) {
+    // Fresh addon objects: no transaction ids of the real cart leak into the
+    // preview cart.
+    final addons = getSelectedAddonsList(additives, existing: existing)
+        .map(
+          (a) => AdditiveModel(
+            id: a.id,
+            arabicName: a.arabicName,
+            latinName: a.latinName,
+            price: a.price,
+          ),
+        )
+        .toList();
+
+    return OrderItem(
+      transactionId: 'preview',
+      menuItem: item,
+      selectedSize: item.sizes.isNotEmpty
+          ? item.sizes[selectedSizeIndex]
+          : null,
+      quantity: quantity,
+      addons: addons,
+      discount: double.tryParse(discountController.text) ?? 0.0,
+      isPercentageDiscount: isPercentageDiscount,
+    );
+  }
+
+  /// Call from build(). Starts a (debounced) server calculation whenever an
+  /// input changed. Does nothing for return invoices (local calculation).
+  void syncPreview(
+    List<AdditiveModel> additives, {
+    OrderItem? existing,
+    bool isReturn = false,
+  }) {
+    if (isReturn || item.sizes.isEmpty) return;
+    final key = _signature();
+    if (key == _pendingKey) return;
+
+    _pendingKey = key;
+    _pendingDraft = _buildDraft(additives, existing);
+    _previewTimer?.cancel();
+    _previewTimer = Timer(const Duration(milliseconds: 300), _runPreview);
+  }
+
+  Future<void> _runPreview() async {
+    if (!mounted) return;
+    if (_previewRunning) {
+      _previewDirty = true;
+      return;
+    }
+    _previewRunning = true;
+    try {
+      do {
+        _previewDirty = false;
+        final draft = _pendingDraft;
+        final key = _pendingKey;
+        if (draft == null || key == null) break;
+
+        final bloc = _cartBloc ??= context.read<CartBloc>();
+        if (_previewCartId == null) {
+          final id = await bloc.openPreviewCart();
+          if (!mounted) {
+            if (id != null) bloc.discardPreviewCart(id);
+            return;
+          }
+          _previewCartId = id;
+        }
+        final cartId = _previewCartId;
+        if (cartId == null) break;
+
+        final result = await bloc.previewLine(cartId, draft);
+        if (!mounted) return;
+        if (key == _pendingKey) {
+          setState(() {
+            _preview = result;
+            _previewKey = key;
+          });
+        }
+      } while (_previewDirty && mounted);
+    } finally {
+      _previewRunning = false;
+    }
   }
 }

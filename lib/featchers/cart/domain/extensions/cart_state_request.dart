@@ -145,19 +145,11 @@ extension CartStateRequest on CartState {
   // Items
   // ---------------------------------------------------------------------------
 
-  List<RestaurantPosInvoiceItemRequest> _buildItemRequests() {
-    final ids = _TxIdGenerator();
-    return [
-      for (var i = 0; i < items.length; i++)
-        _buildItemRequest(items[i], i, ids),
-    ];
-  }
+  List<RestaurantPosInvoiceItemRequest> _buildItemRequests() => [
+    for (var i = 0; i < items.length; i++) _buildItemRequest(items[i], i),
+  ];
 
-  RestaurantPosInvoiceItemRequest _buildItemRequest(
-    OrderItem item,
-    int index,
-    _TxIdGenerator ids,
-  ) {
+  RestaurantPosInvoiceItemRequest _buildItemRequest(OrderItem item, int index) {
     final parentTxId = _parentTxIdFor(item, index);
     final discount = _resolveItemDiscount(item);
 
@@ -176,14 +168,13 @@ extension CartStateRequest on CartState {
             )
           : null,
       itemDiscountId: discount.discountId,
-      additives: _buildAdditiveRequests(item, parentTxId, ids),
+      additives: _buildAdditiveRequests(item, parentTxId),
     );
   }
 
   List<RestaurantPosItemAdditiveRequest> _buildAdditiveRequests(
     OrderItem item,
     String parentTxId,
-    _TxIdGenerator ids,
   ) {
     final addons = <String, AdditiveModel>{};
     final counts = <String, int>{};
@@ -198,7 +189,7 @@ extension CartStateRequest on CartState {
     return addons.entries.map((entry) {
       final addon = entry.value;
       return RestaurantPosItemAdditiveRequest(
-        transactionID: _addonTxId(addon, ids),
+        transactionID: _addonTxId(addon, parentTxId),
         parentTransactionId: _addonParentTxId(addon, parentTxId),
         additiveId: int.parse(addon.id),
         quantity: counts[entry.key]!.toDouble(),
