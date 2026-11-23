@@ -29,6 +29,8 @@ extension CartStateDiscounts on CartState {
   // ---------------------------------------------------------------------------
 
   bool get dynamicDiscountIsActive =>
+      !isPreviousInvoice &&
+      !isPending &&
       mode.allowsDynamicDiscount &&
       activeDiscounts.any((d) => d.posTypeId == currentPosTypeId);
 
@@ -90,7 +92,9 @@ extension CartStateDiscounts on CartState {
   // ---------------------------------------------------------------------------
 
   ItemDiscount? dynamicDiscountForSize(ItemSize? size) {
-    if (!mode.allowsSizeDiscount) return null;
+    if (!mode.allowsSizeDiscount || isPreviousInvoice || isPending) {
+      return null;
+    }
     final discount = size?.discountForPosType(currentPosTypeId);
     if (discount == null || discount.discountValue <= 0) return null;
     return discount;
