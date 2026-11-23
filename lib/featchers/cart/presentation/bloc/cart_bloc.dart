@@ -375,20 +375,21 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         isPreviousInvoice:
             !(event.data.isReturnInvoice ?? false) && !event.isPending,
         selectedWaiter: isDineIn ? data.waiter : null,
-        clearSelectedWaiter: !isDineIn,
+        clearSelectedWaiter: !isDineIn || data.waiter == null,
         selectedDeliveryMan: isDelivery
             ? state.deliveryAgents
                     .where((d) => d.id == data.deliveryMan?.id)
                     .firstOrNull ??
                 data.deliveryMan
             : null,
-        clearSelectedDeliveryMan: !isDelivery,
+        clearSelectedDeliveryMan: !isDelivery || data.deliveryMan == null,
         selectedPerson: data.client,
         clearSelectedPerson: data.client == null,
         selectedDeliveryCompany:
             selectedDeliveryCompany ?? data.deliveryCompany,
-        clearSelectedDeliveryCompany: !isDeliveryCompany,
-        clearSelectedTable: !isDineIn,
+        clearSelectedDeliveryCompany: !isDeliveryCompany ||
+            (selectedDeliveryCompany == null && data.deliveryCompany == null),
+        clearSelectedTable: !isDineIn || data.table == null,
         clearAddress: true,
         clearFromBranchDateTime: true,
         voucherId: data.voucherId,
