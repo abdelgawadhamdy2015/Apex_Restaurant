@@ -204,7 +204,7 @@ class ApplyDiscountEvent extends CartEvent {
   const ApplyDiscountEvent({this.restaurantPosDiscountRequest});
 
   @override
-  List<Object?> get props => [RestaurantPosDiscountRequest];
+  List<Object?> get props => [restaurantPosDiscountRequest];
 }
 
 class ApplyVoucherDiscountEvent extends CartEvent {
