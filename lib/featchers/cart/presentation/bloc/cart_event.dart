@@ -62,7 +62,7 @@ class SyncRestoredInvoiceEvent extends CartEvent {
   });
 
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [data, canEdit, isPending];
 }
 
 class UpdateItemsPriceWithCompanyEvent extends CartEvent {
