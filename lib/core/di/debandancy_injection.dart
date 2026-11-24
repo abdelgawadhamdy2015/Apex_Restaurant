@@ -10,6 +10,7 @@ import 'package:apex_restaurant/featchers/calculation/domain/usecases/add_item_u
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/apply_discount_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/clear_calculation_items_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_calculation_item_usecase.dart.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_list_of_item_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/open_new_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/remove_calculation_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/set_pos_type_usecase.dart';
@@ -112,6 +113,9 @@ Future<void> setupGetIt() async {
   );
   getIt.registerLazySingleton(
     () => RemoveCalculationVoucherUseCase(getIt<CalculationRepository>()),
+  );
+  getIt.registerLazySingleton(
+    () => EditListOfItemUsecase(getIt<CalculationRepository>()),
   );
 
   // core
@@ -444,6 +448,7 @@ Future<void> setupGetIt() async {
       setDiscountOnTotalUseCase: getIt<SetDiscountOnTotalUseCase>(),
       addVoucherUseCase: getIt<AddCalculationVoucherUseCase>(),
       removeVoucherUseCase: getIt<RemoveCalculationVoucherUseCase>(),
+      editListOfItemUsecase: getIt<EditListOfItemUsecase>(),
     ),
   );
 

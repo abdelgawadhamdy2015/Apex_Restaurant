@@ -246,7 +246,11 @@ extension CartStateCalculation on CartState {
     final sizeDynamicDiscount = item.selectedSize?.discountForPosType(
       currentPosTypeId,
     );
-
+    final requestItemDiscount = isReturn
+        ? _itemDiscountAmount(item)
+        : resolvedDiscount.isPercentage
+        ? resolvedDiscount.value
+        : _itemDiscountAmount(item);
     // An item discount is automatic only when it belongs to the
     // dynamic size discount, not merely because an invoice discount is active.
     final isAutoItemDiscount =
@@ -259,7 +263,7 @@ extension CartStateCalculation on CartState {
         quantity: mode.quantityOf(item),
         unitPrice: _unitPriceOf(item),
         vatRatio: _vatRatio,
-        itemDiscount: _itemDiscountAmount(item),
+        itemDiscount: requestItemDiscount,
         discountNatural: resolvedDiscount.isPercentage
             ? DiscountNatural.ratio
             : DiscountNatural.value,

@@ -124,6 +124,41 @@ class _CalculationApiService implements CalculationApiService {
   }
 
   @override
+  Future<CalculationApiResponse<CalculationResult?>> editListOfItem(
+    Map<String, dynamic> query,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.addAll(query);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<CalculationApiResponse<CalculationResult?>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/Calculation/EditListOfItem',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late CalculationApiResponse<CalculationResult?> _value;
+    try {
+      _value = CalculationApiResponse<CalculationResult?>.fromJson(
+        _result.data!,
+        (json) => json == null
+            ? null
+            : CalculationResult.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<CalculationApiResponse<CalculationResult?>> clearAllItems(
     Map<String, dynamic> query,
   ) async {

@@ -25,6 +25,10 @@ abstract class CalculationApiService {
     @Queries() Map<String, dynamic> query,
   );
 
+  @POST('/Calculation/EditListOfItem')
+  Future<CalculationApiResponse<CalculationResult?>> editListOfItem(
+    @Queries() Map<String, dynamic> query,
+  );
   @POST('/Calculation/ClearAllItems')
   Future<CalculationApiResponse<CalculationResult?>> clearAllItems(
     @Queries() Map<String, dynamic> query,

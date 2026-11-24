@@ -13,6 +13,7 @@ import 'package:apex_restaurant/featchers/calculation/domain/usecases/add_item_u
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/apply_discount_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/clear_calculation_items_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_calculation_item_usecase.dart.dart';
+import 'package:apex_restaurant/featchers/calculation/domain/usecases/edit_list_of_item_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/open_new_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/remove_calculation_cart_usecase.dart';
 import 'package:apex_restaurant/featchers/calculation/domain/usecases/set_pos_type_usecase.dart';
@@ -55,6 +56,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   final OpenNewCalculationCartUseCase openNewCalculationCartUseCase;
 
   final EditCalculationItemUseCase editCalculationItemUseCase;
+  final EditListOfItemUsecase editListOfItemUsecase;
   final ClearCalculationItemsUseCase clearCalculationItemsUseCase;
   final RemoveCalculationCartUseCase removeCalculationCartUseCase;
   final SetCalculationPosTypeUseCase setPosTypeUseCase;
@@ -114,6 +116,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     required this.setDiscountOnTotalUseCase,
     required this.addVoucherUseCase,
     required this.removeVoucherUseCase,
+    required this.editListOfItemUsecase,
   }) : super(const CartState()) {
     on<OpenNewCartEvent>(_onOpenCalculationCart);
     on<LoadCartDataEvent>(_onLoadCartData);

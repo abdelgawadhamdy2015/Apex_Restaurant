@@ -196,3 +196,125 @@ class SetDiscountOnTotalRequest {
     'MaximumDiscount': maximumDiscount,
   };
 }
+
+class EditListOfItemsRequest {
+  final String cardId;
+  final List<CalculationItemModel> items;
+
+  const EditListOfItemsRequest({required this.cardId, required this.items});
+
+  Map<String, dynamic> toQuery() => {
+    'CartID': cardId,
+    'Items': items.map((item) => item.toQuery()).toList(),
+  };
+}
+
+class CalculationItemModel {
+  final int itemId;
+  final double quantity;
+  final double unitPrice;
+  final double vatRatio;
+  final ItemDiscountModel discountOnItem;
+  final int itemTypeId;
+  final bool isTobacco;
+  final String transactionId;
+  final String parentTransactionId;
+  final double itemDiscountValue;
+  final double vatValue;
+  final double spDiscount;
+  final double tobaccoTaxValue;
+  final String name;
+
+  const CalculationItemModel({
+    required this.itemId,
+    required this.quantity,
+    required this.unitPrice,
+    required this.vatRatio,
+    required this.discountOnItem,
+    required this.itemTypeId,
+    required this.isTobacco,
+    required this.transactionId,
+    required this.parentTransactionId,
+    required this.itemDiscountValue,
+    required this.vatValue,
+    required this.spDiscount,
+    required this.tobaccoTaxValue,
+    required this.name,
+  });
+
+  factory CalculationItemModel.fromMap(Map<String, dynamic> map) {
+    return CalculationItemModel(
+      itemId: (map['itemID'] as num?)?.toInt() ?? 0,
+      quantity: (map['qty'] as num?)?.toDouble() ?? 0.0,
+      unitPrice: (map['unitPrice'] as num?)?.toDouble() ?? 0.0,
+      vatRatio: (map['vatRatio'] as num?)?.toDouble() ?? 0.0,
+      discountOnItem: ItemDiscountModel.fromMap(
+        map['discountOnItem'] as Map<String, dynamic>? ?? {},
+      ),
+      itemTypeId: (map['itemTypeId'] as num?)?.toInt() ?? 0,
+      isTobacco: map['isTobacco'] as bool? ?? false,
+      transactionId: map['transactionID'] as String? ?? '',
+      parentTransactionId: map['parentTransactionID'] as String? ?? '',
+      itemDiscountValue: (map['itemDiscountValue'] as num?)?.toDouble() ?? 0.0,
+      vatValue: (map['vatValue'] as num?)?.toDouble() ?? 0.0,
+      spDiscount: (map['spDiscount'] as num?)?.toDouble() ?? 0.0,
+      tobaccoTaxValue: (map['tobaccoTaxValue'] as num?)?.toDouble() ?? 0.0,
+      name: map['name'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toQuery() {
+    return {
+      'itemID': itemId,
+      'qty': quantity,
+      'unitPrice': unitPrice,
+      'vatRatio': vatRatio,
+      'discountOnItem': discountOnItem.toMap(),
+      'itemTypeId': itemTypeId,
+      'isTobacco': isTobacco,
+      'transactionID': transactionId,
+      'parentTransactionID': parentTransactionId,
+      'itemDiscountValue': itemDiscountValue,
+      'vatValue': vatValue,
+      'spDiscount': spDiscount,
+      'tobaccoTaxValue': tobaccoTaxValue,
+      'name': name,
+    };
+  }
+}
+
+class ItemDiscountModel {
+  final double discountValue;
+  final bool isAutoDiscount;
+  final int discountNatural;
+  final double minimumCharge;
+  final double maximumDiscount;
+
+  const ItemDiscountModel({
+    required this.discountValue,
+    required this.isAutoDiscount,
+    required this.discountNatural,
+    required this.minimumCharge,
+    required this.maximumDiscount,
+  });
+
+  factory ItemDiscountModel.fromMap(Map<String, dynamic> map) {
+    return ItemDiscountModel(
+      discountValue: (map['discountValue'] as num?)?.toDouble() ?? 0.0,
+      isAutoDiscount: map['isAutoDiscount'] as bool? ?? false,
+      discountNatural: (map['discountNatural'] as num?)?.toInt() ?? 1,
+      minimumCharge: (map['minimumCharge'] as num?)?.toDouble() ?? 0.0,
+      maximumDiscount: (map['maximumDiscount'] as num?)?.toDouble() ?? 0.0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'discountValue': discountValue,
+      'isAutoDiscount': isAutoDiscount,
+      'discountNatural': discountNatural,
+      'minimumCharge': minimumCharge,
+      'maximumDiscount': maximumDiscount,
+    };
+  }
+}

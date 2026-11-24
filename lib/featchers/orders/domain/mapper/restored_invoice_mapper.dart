@@ -181,7 +181,9 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
       // final discount = returning
       //     ? _returnItemDiscount(returnDiscounts[transId.toString()])
       //     : _normalItemDiscount(mainItem);
-      final discount = _normalItemDiscount(mainItem);
+      final discount = isReturn == true
+          ? _returnItemDiscount(mainItem)
+          : _normalItemDiscount(mainItem);
       orderItems.add(
         OrderItem(
           transactionId: transId.toString(),
@@ -237,9 +239,26 @@ extension RestoredInvoiceMapper on RestoredInvoiceModel {
 
   /// Return invoices: ONE fixed amount for the SOLD quantity
 
-  // _ItemDiscount _returnItemDiscount(ReturnLineDiscount? discount) =>
-  //     (value: (discount ?? ReturnLineDiscount.none).total, isPercentage: false);
+  _ItemDiscount _returnItemDiscount(RestoredInvoiceItem item) {
+    final itemDiscount = item.itemDiscount;
 
+    final itemDiscountValue = itemDiscount?.discountValue ?? 0.0;
+    final itemDiscountIsPercentage = itemDiscount?.discountNatural == 1;
+
+    final invoiceDiscountShare = item.splitedDiscountValue ?? 0.0;
+
+    // Keep the original item discount and add its allocated invoice discount.
+    if (itemDiscountIsPercentage) {
+      // Percentage item discount cannot safely be merged with a fixed amount.
+      // Keep the percentage separately in a future dedicated field if needed.
+      return (value: itemDiscountValue, isPercentage: true);
+    }
+
+    return (
+      value: itemDiscountValue + invoiceDiscountShare,
+      isPercentage: false,
+    );
+  }
   // Map<String, ReturnLineDiscount> _allocateReturnDiscounts(
   //   Map<int, RestoredInvoiceItem> mainItems,
   // ) {

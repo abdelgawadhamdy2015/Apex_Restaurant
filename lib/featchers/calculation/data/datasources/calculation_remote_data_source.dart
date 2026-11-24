@@ -15,7 +15,9 @@ abstract class CalculationRemoteDataSource {
   Future<CalculationApiResponse<CalculationResult?>> editItem(
     EditCalculationItemRequest request,
   );
-
+  Future<CalculationApiResponse<CalculationResult?>> editListOfItems(
+    EditListOfItemsRequest request,
+  );
   Future<CalculationApiResponse<CalculationResult?>> clearAllItems(
     String cartId,
   );
@@ -89,4 +91,11 @@ class CalculationRemoteDataSourceImpl implements CalculationRemoteDataSource {
   Future<CalculationApiResponse<CalculationResult?>> removeVoucher(
     String cartId,
   ) => apiService.removeVoucher({'CartID': cartId});
+
+  @override
+  Future<CalculationApiResponse<CalculationResult?>> editListOfItems(
+    EditListOfItemsRequest request,
+  ) {
+    return apiService.editListOfItem(request.toQuery());
+  }
 }

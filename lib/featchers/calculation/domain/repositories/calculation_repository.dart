@@ -6,6 +6,7 @@ abstract class CalculationRepository {
 
   Future<CalculationResult?> addItem(AddCalculationItemRequest request);
   Future<CalculationResult> editItem(EditCalculationItemRequest request);
+  Future<CalculationResult> editListOfItems(EditListOfItemsRequest request);
 
   Future<CalculationResult> clearAllItems(String cartId);
 

@@ -103,4 +103,10 @@ class CalculationRepositoryImpl implements CalculationRepository {
   @override
   Future<CalculationResult> removeVoucher(String cartId) async =>
       _parseCalculationResult(await remoteDataSource.removeVoucher(cartId));
+
+  @override
+  Future<CalculationResult> editListOfItems(
+    EditListOfItemsRequest request,
+  ) async =>
+      _parseCalculationResult(await remoteDataSource.editListOfItems(request));
 }
