@@ -4,12 +4,12 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 class CalculationDioFactory {
   CalculationDioFactory._();
 
-  static const String baseUrl = 'http://192.168.1.253:5050';
-
+  //static const String baseUrl = 'http://192.168.1.253:5050';
+  static const String upBaseUrl = "https://calc.erp-apex.com/";
   static Dio create() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl,
+        baseUrl: upBaseUrl,
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 30),
         sendTimeout: const Duration(seconds: 15),

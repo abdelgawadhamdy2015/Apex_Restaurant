@@ -31,6 +31,10 @@ abstract class CartEvent extends Equatable {
 
 class LoadCartDataEvent extends CartEvent {}
 
+class RunCalculationEvent extends CartEvent {
+  const RunCalculationEvent();
+}
+
 class AcknowledgeCartRestoredEvent extends CartEvent {
   const AcknowledgeCartRestoredEvent();
 }
